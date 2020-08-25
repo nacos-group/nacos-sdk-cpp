@@ -98,7 +98,7 @@ namespace Nacos
 
 		if (getProtectThreshold())
 		{
-//C# TO C++ CONVERTER TODO TASK: There is no C++ equivalent to 'ToString':
+
 			dict.emplace(L"protectThreshold", getProtectThreshold().value().ToString());
 		}
 
