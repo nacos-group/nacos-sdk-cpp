@@ -140,19 +140,17 @@ namespace Nacos
 
 		if (getEphemeral())
 		{
-//C# TO C++ CONVERTER TODO TASK: There is no C++ equivalent to 'ToString':
 			dict.emplace(L"ephemeral", getEphemeral().ToString());
 		}
 
 		if (getEnabled())
 		{
-//C# TO C++ CONVERTER TODO TASK: There is no C++ equivalent to 'ToString':
 			dict.emplace(L"enabled", getEnabled().value().ToString());
 		}
 
 		if (getWeight())
 		{
-//C# TO C++ CONVERTER TODO TASK: There is no C++ equivalent to 'ToString':
+
 			dict.emplace(L"weight", getWeight().value().ToString());
 		}
 
