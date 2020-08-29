@@ -12,7 +12,7 @@
 #define NACOS_ASSERT(x) \
 if (!(x)) \
 { \
-	log_error("Assertion failed!"); \
+	log_error("Assertion failed! %s,%d" __FILE__, __LINE__); \
 	abort(); \
 }
 

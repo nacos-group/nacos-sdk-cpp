@@ -49,6 +49,11 @@ public:
         this->group = group;
         this->listener = listener;
     }
+
+    NacosString toString() const
+    {
+        return tenant + ":" + group + ":" + dataId;
+    }
 };
 
 #endif

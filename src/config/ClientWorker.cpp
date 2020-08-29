@@ -9,6 +9,7 @@
 #include "md5/md5.h"
 #include "utils/ParamUtils.h"
 #include "Debug.h"
+#include "DebugAssertion.h"
 #include "Constants.h"
 #include "Parameters.h"
 
@@ -25,7 +26,9 @@ ClientWorker::ClientWorker(HttpAgent *_httpAgent)
 
 ClientWorker::~ClientWorker()
 {
+    log_debug("ClientWorker::~ClientWorker()\n");
 	stopListening();
+	cleanUp();
 }
 
 int64_t getCurrentTimeInMs()
@@ -149,6 +152,7 @@ void ClientWorker::startListening()
 	
 void ClientWorker::stopListening()
 {
+    log_debug("ClientWorker::stopListening()\n");
 	if (stopThread)//Stop in progress
 	{
 		log_debug("The thread is already stopped or the stop is in progress...\n");
@@ -192,6 +196,7 @@ void ClientWorker::addListener
         {
             log_warn("Key %s is already in the watch list, leaving...\n", key.c_str());
         }
+	    listener->incRef();
 		pthread_mutex_unlock(&watchListMutex);
 		return;
 	}
@@ -203,6 +208,7 @@ void ClientWorker::addListener
 	//If no, copy one
 	listeningKeys[key] = listeningData;
     listeningData->addListener(listener);
+    listener->incRef();
 	pthread_mutex_unlock(&watchListMutex);
 	log_debug("Key %s is added successfully!\n", key.c_str());
 }
@@ -241,8 +247,14 @@ void ClientWorker::removeListenerActively
     else
     {
         //remove the listener, it is created by the client but freed by nacos-sdk-cpp
-        log_warn("Removing a listener %s...\n", key.c_str());
-        delete listener;
+        log_debug("Removing a listener %s...\n", key.c_str());
+        int refcount = listener->decRef();
+        if (refcount == 0)
+        {
+            log_debug("Refcount of the listener(Name = %s) is 0 so delete it.\n", listener->getListenerName().c_str());
+            delete listener;
+            listener = NULL;
+        }
     }
 
     //no listener on the list, remove the entry
@@ -266,11 +278,19 @@ void ClientWorker::removeListenerActively
 //there is still risk when the user call removeListener() twice with the same listener pointer,
 //the first call will succeed, but the second one MAY CRASH (if the background thread happen to remove the listener)
 //use an internal map to keep the status will be a good solution
-void ClientWorker::removeListener(Listener *listener)
+void ClientWorker::removeListener
+(
+    const NacosString &dataId,
+    const NacosString &group,
+    const NacosString &tenant,
+    Listener *listener
+)
 {
     //set the remove flag and return quickly
     //the background process will remove the listener
-    listener->setRemove(true);
+    //add this listener to the remove list since it is marked to be removed
+    OperateItem operateItem(dataId, tenant, group, listener);
+    addDeleteItem(operateItem);
 }
 
 NacosString ClientWorker::checkListenedKeys()
@@ -367,41 +387,54 @@ void ClientWorker::performWatch()
                 listenerIt != listenerList->end(); listenerIt++)
             {
                 Listener *curListener = listenerIt->first;
-                if (!curListener->isRemoving())
-                {
-                    curListener->receiveConfigInfo(updatedcontent);
-                }
-                else
-                {
-                    //add this listener to the remove list since it is marked to be removed
-                    OperateItem operateItem(dataId, tenant, group, curListener);
-                    deleteList.push_back(operateItem);
-                }
+
+                NACOS_ASSERT(curListener->refCnt() > 0);
+                curListener->receiveConfigInfo(updatedcontent);
             }
 		}
 	}
-	clearDeleteList();
+	clearDeleteList(20);//TODO:constant
 	pthread_mutex_unlock(&watchListMutex);
 }
 
-void ClientWorker::clearDeleteList()
+/**
+* Removes listeners in deleteList
+*
+* *NOT THREAD SAFE*, must be called within a watchListMutex guarded area or after the watcher thread is stopped
+* @param maxRemoves if < 0, clear all items in the deleteList
+* @author Liu, Hanyu
+*/
+void ClientWorker::clearDeleteList(int maxRemoves)
 {
     int removeCount = 0;
     while (!deleteList.empty())
     {
         //remove limited items every time
-        if (removeCount >= 20)//TODO:constant
+        if (maxRemoves > 0 && removeCount >= maxRemoves)
         {
             break;
         }
         std::list<OperateItem>::iterator it = deleteList.begin();
         OperateItem itm = *it;
         NacosString key = GroupKey::getKeyTenant(itm.getDataId(), itm.getGroup(), itm.getTenant());
-        Listener *theListener = itm.getListener();
+
+        if (listeningKeys.find(key) == listeningKeys.end())
+        {
+            log_warn("Trying to remove non-existent key: %s\n", key.c_str());
+            deleteList.erase(it);
+            continue;
+        }
+
         ListeningData *slotOfListener = listeningKeys[key];
+
+        Listener *theListener = itm.getListener();
         slotOfListener->removeListener(theListener);
+        int refcount = theListener->decRef();
         log_debug("The listener (Name = %s) on deleteList is removed, key = %s.\n", theListener->getListenerName().c_str(), key.c_str());
-        delete theListener;
+        if (refcount == 0)
+        {
+            delete theListener;
+        }
         itm.setListener(NULL);
         if (slotOfListener->isEmpty())
         {
@@ -413,4 +446,26 @@ void ClientWorker::clearDeleteList()
         deleteList.erase(it);
         removeCount++;
     }
+}
+
+void ClientWorker::cleanUp()
+{
+    log_debug("ClientWorker::cleanUp()\n");
+    clearDeleteList(0);
+    for (map<NacosString, ListeningData *>::iterator it = listeningKeys.begin(); it != listeningKeys.end(); it++)
+    {
+        ListeningData *listeningData = it->second;
+        log_debug("Cleaning %s\n", listeningData->toString().c_str());
+        listeningData->clearListeners();
+        delete listeningData;
+        listeningData = NULL;
+    }
+}
+
+void ClientWorker::addDeleteItem(const OperateItem &operateItem)
+{
+    log_debug("Adding delete item: %s\n", operateItem.toString().c_str());
+    pthread_mutex_lock(&watchListMutex);
+    deleteList.push_back(operateItem);
+    pthread_mutex_unlock(&watchListMutex);
 }

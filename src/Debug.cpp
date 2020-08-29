@@ -20,12 +20,13 @@ int Debug::debug_helper(LOG_LEVEL level, const char *format, va_list args)
 	return retval;
 }
 
+//Output string in self-defined log_level
 int Debug::debug_print(LOG_LEVEL level, const char *format, ...)
 {
 	va_list argList;
 
 	va_start(argList, format);
-	int retval = debug_helper(DEBUG, format, argList);
+	int retval = debug_helper(level, format, argList);
 	va_end(argList);
 	return retval;
 }

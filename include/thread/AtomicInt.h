@@ -22,7 +22,7 @@ public:
 	{
 		return inc(-decval);
 	};
-	int get() { return _intval; };
+	int get() const { return _intval; };
 };
 
 #endif

@@ -24,6 +24,7 @@ NacosConfigService::~NacosConfigService()
 
 	if (clientWorker != NULL)
 	{
+	    log_debug("NacosConfigService::~NacosConfigService()\n");
 		clientWorker->stopListening();
 		delete clientWorker;
 		clientWorker = NULL;
@@ -235,8 +236,19 @@ void NacosConfigService::addListener
 	clientWorker->startListening();
 }
 
-void NacosConfigService::removeListener(Listener *listener)
+void NacosConfigService::removeListener
+(
+    const NacosString &dataId,
+    const NacosString &group,
+    Listener *listener
+)
 {
-    clientWorker->removeListener(listener);
+    NacosString parmgroup = Constants::DEFAULT_GROUP;
+    if (!isNull(group))
+    {
+        parmgroup = group;
+    }
+    log_debug("NacosConfigService::removeListener()\n");
+    clientWorker->removeListener(dataId, parmgroup, namesp, listener);
 }
 

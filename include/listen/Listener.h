@@ -1,21 +1,21 @@
 #ifndef __LISTENER_H_
 #define __LISTENER_H_
 #include "NacosString.h"
+#include "thread/AtomicInt.h"
 
 class Listener
 {
 private:
-    //Will be removed during next listening process if true
-    bool remove;
     NacosString listenerName;
+    AtomicInt refCount;
 public:
     Listener()
     {
-        remove = false;
         this->listenerName = "theListener";
     };
-    bool isRemoving() const { return remove; };
-    void setRemove(bool remove) { this->remove = remove; };
+    int incRef() { return refCount.inc(); };
+    int decRef() { return refCount.dec(); };
+    int refCnt() const { return refCount.get(); };
     void setListenerName(const NacosString &name) { this->listenerName = name; };
     NacosString getListenerName() const { return listenerName; };
 	virtual void receiveConfigInfo(const NacosString &configInfo) = 0;

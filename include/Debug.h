@@ -2,11 +2,23 @@
 #define __DEBUG_H_
 #include <cstdarg>
 
-#define log_print Debug::debug_print
-#define log_debug Debug::debug_debug
-#define log_info Debug::debug_info
-#define log_warn Debug::debug_warn
-#define log_error Debug::debug_error
+#define DETAILED_DEBUG_INFO
+
+//TODO:Line info
+#ifndef DETAILED_DEBUG_INFO
+#define log_print(level, format, args...) Debug::debug_print(level, format, ##args)
+#define log_debug(format, args...) Debug::debug_debug(format, ##args)
+#define log_info(format, args...) Debug::debug_info(format, ##args)
+#define log_warn(format, args...) Debug::debug_warn(format, ##args)
+#define log_error(format, args...) Debug::debug_error(format, ##args)
+#else
+#define STR(X) #X
+#define log_print(level, format, args...) Debug::debug_print(level, format, ##args)
+#define log_debug(format, args...) Debug::debug_debug(format, ##args)
+#define log_info(format, args...) Debug::debug_info(format, ##args)
+#define log_warn(format, args...) Debug::debug_warn(format, ##args)
+#define log_error(format, args...) Debug::debug_error(format, ##args)
+#endif
 
 enum LOG_LEVEL
 {
@@ -23,6 +35,7 @@ private:
 	static LOG_LEVEL _CUR_SYS_DEBUG_LEVEL;
 	static int debug_helper(LOG_LEVEL level, const char *format, va_list args);
 public:
+    //Output string in self-defined log_level
 	static int debug_print(LOG_LEVEL level, const char *format, ...);
 	static int debug_debug(const char *format, ...);
 	static int debug_info(const char *format, ...);

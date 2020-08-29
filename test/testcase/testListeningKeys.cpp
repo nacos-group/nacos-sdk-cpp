@@ -42,15 +42,25 @@ bool testListeningKeys()
     n->addListener("dqid", NULLSTR, theListener);
     n->addListener("dqid", NULLSTR, theListener2);
     n->addListener("dqid", NULLSTR, theListener3);
+    n->addListener("dqid1", NULLSTR, theListener3);
+    n->addListener("dqid2", NULLSTR, theListener3);
+    n->addListener("dqid3", NULLSTR, theListener3);
+
+    for (int i = 10; i < 60; i++)
+    {
+        NacosString strKey = "dqid" + NacosStringOps::valueOf(i);
+        n->addListener(strKey, NULLSTR, theListener3);
+    }
 
     cin >> cc;
     cout << "remove listener" << endl;
-    n->removeListener(theListener);
+    n->removeListener("dqid", NULLSTR, theListener);
 
-    cin >> bSucc;
-    n->removeListener(theListener2);
-    n->removeListener(theListener3);
-    cin >> bSucc;
+    cin >> cc;
+    cout << "remove listener2" << endl;
+    n->removeListener("dqid", NULLSTR, theListener2);
+    n->removeListener("dqid", NULLSTR, theListener3);
+    cin >> cc;
 
 	ReleaseResource(n);
 	return true;

@@ -59,7 +59,7 @@ public:
 	 *
 	 * @param listener listener
 	 */
-	virtual void removeListener(Listener *listener) = 0;
+	virtual void removeListener(const NacosString &dataId, const NacosString &group, Listener *listener) = 0;
 
 	/**
 	 * Get server status

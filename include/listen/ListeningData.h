@@ -1,9 +1,11 @@
 #ifndef __LISTENINGDATA_H_
 #define __LISTENINGDATA_H_
 #include <map>
+#include <list>
 #include "NacosString.h"
 #include "listen/Listener.h"
 #include "md5/md5.h"
+#include "debug.h"
 
 class ListeningData
 {
@@ -14,6 +16,10 @@ private:
 	NacosString dataMD5;
 	std::map<Listener*, char> listenerList;
 public:
+    NacosString toString() const
+    {
+        return tenant + ":" + dataId + ":" + group + ":" + dataMD5 + ", listenerList size=" + NacosStringOps::valueOf(listenerList.size());
+    }
     NacosString getDataId() const
     {
         return dataId;
@@ -59,13 +65,29 @@ public:
     */
     bool removeListener(Listener *listener)
     {
-        if (listenerList.find(listener) == listenerList.end())
+        if (listenerList.count(listener) <= 0)
         {
             return false;
         }
 
         listenerList.erase(listener);
         return true;
+    }
+
+    void clearListeners()
+    {
+        while (!listenerList.empty())
+        {
+            std::map<Listener*, char>::iterator it = listenerList.begin();
+            Listener *theListener = it->first;
+            int ref = theListener->decRef();
+            log_debug("ListeningData::clearListeners():Removing %s, refcnd = %d\n", theListener->getListenerName().c_str(), theListener->refCnt());
+            if (ref == 0)
+            {
+                delete theListener;
+            }
+            listenerList.erase(it);
+        }
     }
 
     bool isEmpty() const

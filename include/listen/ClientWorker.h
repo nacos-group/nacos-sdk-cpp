@@ -30,7 +30,7 @@ private:
 	//Listener thread related info
 	pthread_t threadId;
 
-	bool stopThread;
+	volatile bool stopThread;
 	pthread_mutex_t stopThreadMutex;
 
 	static void *listenerThread(void *watcher);
@@ -39,7 +39,9 @@ private:
 	ClientWorker();
 	std::vector<NacosString> parseListenedKeys(const NacosString &ReturnedKeys);
 	NacosString checkListenedKeys();
-	void clearDeleteList();
+	void clearDeleteList(int maxRemoves);
+	void cleanUp();
+	void addDeleteItem(const OperateItem &item);
 public:
 	ClientWorker(HttpAgent *_httpAgent);
 	~ClientWorker();
@@ -50,11 +52,16 @@ public:
                      const NacosString &tenant,
                      const NacosString &initialContent,
                      Listener *listener);
+
 	void removeListenerActively(const NacosString &dataId,
                     const NacosString &group,
                     const NacosString &tenant,
                     Listener *listener);
-    void removeListener(Listener *listener);
+
+    void removeListener(const NacosString &dataId,
+                        const NacosString &group,
+                        const NacosString &tenant,
+                        Listener *listener);
 	void performWatch();
 	NacosString getServerConfig(const NacosString &tenant, const NacosString &dataId, const NacosString &group, long timeoutMs) throw (NacosException);
 };
