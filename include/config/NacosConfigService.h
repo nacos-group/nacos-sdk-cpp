@@ -32,6 +32,7 @@ public:
 	bool publishConfig(const NacosString &dataId, const NacosString &group, const NacosString &content) throw (NacosException);
 	bool removeConfig(const NacosString &dataId, const NacosString &group) throw(NacosException);
 	void addListener(const NacosString &dataId, const NacosString &group, Listener *listener) throw(NacosException);
+	void removeListener(Listener *listener);
 	//ctors/dtor
 	NacosConfigService(Properties &props) throw (NacosException);
 	virtual ~NacosConfigService();

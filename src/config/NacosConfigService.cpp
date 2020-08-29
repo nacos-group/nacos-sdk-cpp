@@ -222,31 +222,21 @@ void NacosConfigService::addListener
 	Listener *listener
 ) throw(NacosException)
 {
-	Cachedata cachedata;
-	cachedata.tenant = namesp;
-	cachedata.dataId = dataId;
+    NacosString parmgroup = Constants::DEFAULT_GROUP;
+    if (!isNull(group))
+    {
+        parmgroup = group;
+    }
+
 	//TODO:give a constant to this hard-coded number
 	NacosString cfgcontent = getConfig(dataId, group, 3000);
-	if (!isNull(group))
-	{
-		cachedata.group = group;
-	}
-	else
-	{
-		cachedata.group = Constants::DEFAULT_GROUP;
-	}
 
-	if (!isNull(cfgcontent))
-	{
-		MD5 md5;
-		md5.update(cfgcontent);
-		cachedata.dataMD5 = md5.toString();
-	}
-	else
-	{
-		cachedata.dataMD5 = "";
-	}
-	cachedata.listener = listener;
-	clientWorker->addListener(cachedata);
+	clientWorker->addListener(dataId, parmgroup, namesp, cfgcontent, listener);
 	clientWorker->startListening();
 }
+
+void NacosConfigService::removeListener(Listener *listener)
+{
+    clientWorker->removeListener(listener);
+}
+

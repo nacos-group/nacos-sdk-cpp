@@ -57,11 +57,9 @@ public:
 	/**
 	 * Remove listener
 	 *
-	 * @param dataId   dataId
-	 * @param group    group
 	 * @param listener listener
 	 */
-	//virtual void removeListener(NacosString dataId, NacosString group, Listener listener) = 0;
+	virtual void removeListener(Listener *listener) = 0;
 
 	/**
 	 * Get server status

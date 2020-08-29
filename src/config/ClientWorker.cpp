@@ -171,71 +171,131 @@ void ClientWorker::stopListening()
 
 }
 
-void ClientWorker::addListener(const Cachedata &cachedata)
+void ClientWorker::addListener
+(
+    const NacosString &dataId,
+    const NacosString &group,
+    const NacosString &tenant,
+    const NacosString &initialContent,
+    Listener *listener
+)
 {
-	NacosString key = GroupKey::getKeyTenant(cachedata.dataId, cachedata.group, cachedata.tenant);
+	NacosString key = GroupKey::getKeyTenant(dataId, group, tenant);
 	log_debug("Adding listener with key: %s\n", key.c_str());
 	pthread_mutex_lock(&watchListMutex);
 
-	//Check whether the cachedata being added to the list already exists
-	if (watchList.find(key) != watchList.end())
+	//Check whether the listener being added to the list already exists
+	if (listeningKeys.find(key) != listeningKeys.end())
 	{
-		log_warn("Key %s is already in the watch list, leaving...\n", key.c_str());
+	    ListeningData *curListeningData = listeningKeys[key];
+	    if (!curListeningData->addListener(listener))
+        {
+            log_warn("Key %s is already in the watch list, leaving...\n", key.c_str());
+        }
 		pthread_mutex_unlock(&watchListMutex);
 		return;
 	}
 
+	//if the listener does not exist, just create it
+
+    ListeningData *listeningData = new ListeningData(tenant, dataId, group, initialContent);
+
 	//If no, copy one
-	Cachedata *copyOfCurWatchData = new Cachedata();
-	*copyOfCurWatchData = cachedata;
-	watchList[key] = copyOfCurWatchData;
+	listeningKeys[key] = listeningData;
+    listeningData->addListener(listener);
 	pthread_mutex_unlock(&watchListMutex);
 	log_debug("Key %s is added successfully!\n", key.c_str());
 }
 
-void ClientWorker::removeListener(const Cachedata &cachedata)
+/**
+* Removes a listener from the listened list actively, but slow
+* @param listener the listener to be removed
+* @author Liu, Hanyu
+*/
+void ClientWorker::removeListenerActively
+(
+    const NacosString &dataId,
+    const NacosString &group,
+    const NacosString &tenant,
+    Listener *listener
+)
 {
-	NacosString key = GroupKey::getKeyTenant(cachedata.dataId, cachedata.group, cachedata.tenant);
+	NacosString key = GroupKey::getKeyTenant(dataId, group, tenant);
 	pthread_mutex_lock(&watchListMutex);
-	map<NacosString, Cachedata *>::iterator it = watchList.find(key);
+	map<NacosString, ListeningData *>::iterator it = listeningKeys.find(key);
 	//Check whether the cachedata being removed exists
-	if (it == watchList.end())
+	if (it == listeningKeys.end())
 	{
+        log_warn("Removing a non-existing listener %s, leaving...\n", key.c_str());
 		pthread_mutex_unlock(&watchListMutex);
 		return;
 	}
 
 	//If so, remove it and free the resources
-	Cachedata *copyOfCurWatchData = it->second;
-	watchList.erase(it);
-	delete copyOfCurWatchData;
-	copyOfCurWatchData = NULL;
+    ListeningData *curListeningData = it->second;
+    bool succRemoved = curListeningData->removeListener(listener);
+    if (!succRemoved)
+    {
+        log_warn("Removing a non-existing listener %s...\n", key.c_str());
+    }
+    else
+    {
+        //remove the listener, it is created by the client but freed by nacos-sdk-cpp
+        log_warn("Removing a listener %s...\n", key.c_str());
+        delete listener;
+    }
+
+    //no listener on the list, remove the entry
+    if (curListeningData->isEmpty())
+    {
+        listeningKeys.erase(key);
+        //free the space for this slot
+        delete curListeningData;
+    }
 	pthread_mutex_unlock(&watchListMutex);
+}
+
+/**
+* Removes a listener from the listened list(very fast compared to removeListenerActively)
+* This function will return fast,
+* since it just mark the remove flag of the listener and wait for the watcher to actually remove it
+* @param listener the listener to be removed
+* @author Liu, Hanyu
+*/
+//TODO:
+//there is still risk when the user call removeListener() twice with the same listener pointer,
+//the first call will succeed, but the second one MAY CRASH (if the background thread happen to remove the listener)
+//use an internal map to keep the status will be a good solution
+void ClientWorker::removeListener(Listener *listener)
+{
+    //set the remove flag and return quickly
+    //the background process will remove the listener
+    listener->setRemove(true);
 }
 
 NacosString ClientWorker::checkListenedKeys()
 {
 	NacosString postData;
 	pthread_mutex_lock(&watchListMutex);
-	for (map<NacosString, Cachedata *>::iterator it = watchList.begin(); it != watchList.end(); it++)
+	for (map<NacosString, ListeningData *>::iterator it = listeningKeys.begin(); it != listeningKeys.end(); it++)
 	{
-		Cachedata *curCachedata = it->second;
+        ListeningData *curListenedKey = it->second;
 
-		postData += curCachedata->dataId;
+		postData += curListenedKey->getDataId();
 		postData += Constants::WORD_SEPARATOR;
-		postData += curCachedata->group;
+		postData += curListenedKey->getGroup();
 		postData += Constants::WORD_SEPARATOR;
 		
-		if (!isNull(curCachedata->tenant))
+		if (!isNull(curListenedKey->getTenant()))
 		{
-			postData += curCachedata->dataMD5;
+			postData += curListenedKey->getMD5();
 			postData += Constants::WORD_SEPARATOR;
-			postData += curCachedata->tenant;
+			postData += curListenedKey->getTenant();
 			postData += Constants::LINE_SEPARATOR;
 		}
 		else
 		{
-			postData += curCachedata->dataMD5;
+			postData += curListenedKey->getMD5();
 			postData += Constants::LINE_SEPARATOR;
 		}
 	}
@@ -289,21 +349,68 @@ void ClientWorker::performWatch()
 					it->c_str(), dataId.c_str(), group.c_str(), tenant.c_str());
 		
 		NacosString key = GroupKey::getKeyTenant(dataId, group, tenant);
-		map<NacosString, Cachedata *>::iterator cacheDataIt = watchList.find(key);
+		map<NacosString, ListeningData *>::iterator listenedDataIter = listeningKeys.find(key);
 		//check whether the data being watched still exists
-		if (cacheDataIt != watchList.end())
+		if (listenedDataIter != listeningKeys.end())
 		{
 			log_debug("Found entry for:%s\n", key.c_str());
-			Cachedata *cachedq = cacheDataIt->second;
+            ListeningData *listenedList = listenedDataIter->second;
 			//TODO:Constant
-			NacosString updatedcontent = getServerConfig(cachedq->tenant, cachedq->dataId, cachedq->group, 3000);
+			NacosString updatedcontent = getServerConfig(listenedList->getTenant(), listenedList->getDataId(), listenedList->getGroup(), 3000);
 			log_debug("Data fetched from the server: %s\n", updatedcontent.c_str());
 			md5.reset();
 			md5.update(updatedcontent.c_str());
-			cachedq->dataMD5 = md5.toString();
-			log_debug("MD5 got for that data: %s\n", cachedq->dataMD5.c_str());
-			cachedq->listener->receiveConfigInfo(updatedcontent);
+            listenedList->setMD5(md5.toString());
+			log_debug("MD5 got for that data: %s\n", listenedList->getMD5().c_str());
+            std::map<Listener*, char> const *listenerList = listenedList->getListenerList();
+            for (std::map< Listener* , char>::const_iterator listenerIt = listenerList->begin();
+                listenerIt != listenerList->end(); listenerIt++)
+            {
+                Listener *curListener = listenerIt->first;
+                if (!curListener->isRemoving())
+                {
+                    curListener->receiveConfigInfo(updatedcontent);
+                }
+                else
+                {
+                    //add this listener to the remove list since it is marked to be removed
+                    OperateItem operateItem(dataId, tenant, group, curListener);
+                    deleteList.push_back(operateItem);
+                }
+            }
 		}
 	}
+	clearDeleteList();
 	pthread_mutex_unlock(&watchListMutex);
+}
+
+void ClientWorker::clearDeleteList()
+{
+    int removeCount = 0;
+    while (!deleteList.empty())
+    {
+        //remove limited items every time
+        if (removeCount >= 20)//TODO:constant
+        {
+            break;
+        }
+        std::list<OperateItem>::iterator it = deleteList.begin();
+        OperateItem itm = *it;
+        NacosString key = GroupKey::getKeyTenant(itm.getDataId(), itm.getGroup(), itm.getTenant());
+        Listener *theListener = itm.getListener();
+        ListeningData *slotOfListener = listeningKeys[key];
+        slotOfListener->removeListener(theListener);
+        log_debug("The listener (Name = %s) on deleteList is removed, key = %s.\n", theListener->getListenerName().c_str(), key.c_str());
+        delete theListener;
+        itm.setListener(NULL);
+        if (slotOfListener->isEmpty())
+        {
+            log_debug("The slot (Name = %s) is empty and removed\n", key.c_str());
+            delete slotOfListener;
+            slotOfListener = NULL;
+            listeningKeys.erase(key);
+        }
+        deleteList.erase(it);
+        removeCount++;
+    }
 }
