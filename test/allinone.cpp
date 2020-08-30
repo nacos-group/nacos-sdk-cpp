@@ -41,6 +41,7 @@ bool testMalformedDouble2ServiceInfo();
 bool testLackcacheMillisServiceInfo();
 bool testGetAllInstances();
 bool testListeningKeys();
+bool testAppConfigManager();
 
 TestData testList1[] =
 TEST_ITEM_START
@@ -80,11 +81,12 @@ TEST_ITEM("Test serialization/deserialization of malformed Business Object (Doub
 TEST_ITEM("Test serialization/deserialization of malformed Business Object (no cacheMillis)", testLackcacheMillisServiceInfo)
 TEST_ITEM("Register many services and get one", testGetAllInstances)
 TEST_ITEM("Listen to key and remove it from listening list", testListeningKeys)
+TEST_ITEM("Test explode function", testStringExplode)
 TEST_ITEM_END
 
 TestData testList[] =
 TEST_ITEM_START
-        TEST_ITEM("Test explode function", testStringExplode)
+TEST_ITEM("AppConfigManager smoke test", testAppConfigManager)
 TEST_ITEM_END
 
 int main()

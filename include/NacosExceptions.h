@@ -61,6 +61,9 @@ public:
 	* One or more JSON field is missing
 	*/
 	static const int LACK_JSON_FIELD = 100002;
+
+	static const int MALFORMED_CONFIG_FILE = 1001;
+    static const int FILE_NOT_FOUND = 1002;
 };
 
 class NetworkException : public std::exception
@@ -87,5 +90,11 @@ public:
 	~IOException() throw() {};
 	const char* what() const throw() { return _errmsg.c_str(); };
 	const int errorcode() const throw() { return _errcode; };
+};
+
+class MalformedConfigException : public NacosException
+{
+public:
+    MalformedConfigException(const NacosString&file) : NacosException(NacosException::MALFORMED_CONFIG_FILE, "Malformed Config file:" + file) {};
 };
 #endif

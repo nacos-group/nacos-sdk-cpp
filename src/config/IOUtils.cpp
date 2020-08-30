@@ -26,6 +26,10 @@ NacosString IOUtils::readStringFromFile(const NacosString &file, const NacosStri
 {
 	size_t toRead = getFileSize(file);
 	FILE *fp = fopen(file.c_str(), "rb");
+	if (fp == NULL)
+    {
+	    throw IOException(NacosException::FILE_NOT_FOUND, "File not found:" + file);
+    }
 	char buf[toRead + 1];
 	fread(buf, toRead, 1, fp);
 	buf[toRead] = '\0';

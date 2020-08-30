@@ -7,15 +7,16 @@
 class AppConfigManager
 {
 private:
-    static Properties appConfig;
+    Properties appConfig;
     static Properties parseConfigFile(const NacosString&file);
     static NacosString LINE_SEPARATOR;
     static NacosString KV_SEPARATOR;
 public:
-    static int loadConfig();
-    static int clearConfig();
-    static NacosString get(const NacosString&key);
-    static void set(const NacosString&key, const NacosString&value);
+    size_t loadConfig(const NacosString &configFile);
+    void clearConfig();
+    NacosString get(const NacosString&key) const;
+    Properties getAllConfig() const { return appConfig; };
+    void set(const NacosString&key, const NacosString&value);
 };
 
 #endif
