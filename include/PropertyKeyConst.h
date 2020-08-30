@@ -5,6 +5,8 @@
 class PropertyKeyConst
 {
 public:
+    static const NacosString CONFIG_FILE_NAME;
+
 	static const NacosString IS_USE_ENDPOINT_PARSING_RULE;
     
 	static const NacosString ENDPOINT;

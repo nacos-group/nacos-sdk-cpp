@@ -1,5 +1,7 @@
 #include "PropertyKeyConst.h"
 
+const NacosString PropertyKeyConst::CONFIG_FILE_NAME = "nacos-cpp-cli.properties";
+
 const NacosString PropertyKeyConst::IS_USE_ENDPOINT_PARSING_RULE = "isUseEndpointParsingRule";
 
 const NacosString PropertyKeyConst::ENDPOINT = "endpoint";
