@@ -1,7 +1,7 @@
 #include <map>
 #include <stdlib.h>
 #include "naming/NamingProxy.h"
-#include "naming/CommonParams.h"
+#include "naming/NamingCommonParams.h"
 #include "utils/ParamUtils.h"
 #include "utils/UtilAndComs.h"
 #include "utils/UuidUtils.h"
@@ -41,10 +41,10 @@ void NamingProxy::registerService(const NacosString &serviceName, const NacosStr
 	namespaceId.c_str(), serviceName.c_str(), instance.toString().c_str());
 
 	map<NacosString, NacosString> params;
-	params[CommonParams::NAMESPACE_ID] = namespaceId;
-	params[CommonParams::SERVICE_NAME] = serviceName;
-	params[CommonParams::GROUP_NAME] = groupName;
-	params[CommonParams::CLUSTER_NAME] = instance.clusterName;
+	params[NamingCommonParams::NAMESPACE_ID] = namespaceId;
+	params[NamingCommonParams::SERVICE_NAME] = serviceName;
+	params[NamingCommonParams::GROUP_NAME] = groupName;
+	params[NamingCommonParams::CLUSTER_NAME] = instance.clusterName;
 	params["ip"] = instance.ip;
 	params["port"] = NacosStringOps::valueOf(instance.port);
 	params["weight"] = NacosStringOps::valueOf(instance.weight);
@@ -63,9 +63,9 @@ void NamingProxy::deregisterService(const NacosString &serviceName, Instance &in
 	namespaceId.c_str(), serviceName.c_str(), instance.toString().c_str());
 
 	map<NacosString, NacosString> params;
-	params[CommonParams::NAMESPACE_ID] = namespaceId;
-	params[CommonParams::SERVICE_NAME] = serviceName;
-	params[CommonParams::CLUSTER_NAME] = instance.clusterName;
+	params[NamingCommonParams::NAMESPACE_ID] = namespaceId;
+	params[NamingCommonParams::SERVICE_NAME] = serviceName;
+	params[NamingCommonParams::CLUSTER_NAME] = instance.clusterName;
 	params["ip"] = instance.ip;
 	params["port"] = NacosStringOps::valueOf(instance.port);
 	params["ephemeral"] = NacosStringOps::valueOf(instance.ephemeral);
@@ -76,8 +76,8 @@ void NamingProxy::deregisterService(const NacosString &serviceName, Instance &in
 NacosString NamingProxy::queryList(const NacosString &serviceName, const NacosString &clusters, int udpPort, bool healthyOnly) throw (NacosException)
 {
     map<NacosString, NacosString> params;
-    params[CommonParams::NAMESPACE_ID] = namespaceId;
-    params[CommonParams::SERVICE_NAME] = serviceName;
+    params[NamingCommonParams::NAMESPACE_ID] = namespaceId;
+    params[NamingCommonParams::SERVICE_NAME] = serviceName;
     params["clusters"] = clusters;
     params["udpPort"] = NacosStringOps::valueOf(udpPort);
     params["clientIP"] = NetUtils::localIP();
@@ -93,7 +93,7 @@ NacosString NamingProxy::reqAPI(const NacosString &api, map<NacosString, NacosSt
 
 NacosString NamingProxy::reqAPI(const NacosString &api, map<NacosString, NacosString> &params, list<NacosString> &servers, int method) throw (NacosException)
 {
-	params[CommonParams::NAMESPACE_ID] = getNamespaceId();
+	params[NamingCommonParams::NAMESPACE_ID] = getNamespaceId();
 
 	if (servers.empty() && ParamUtils::isBlank(nacosDomain))
 	{
@@ -260,9 +260,9 @@ long NamingProxy::sendBeat(BeatInfo &beatInfo)
 		NacosString beatInfoStr = beatInfo.toString();
 		log_info("[BEAT] %s sending beat to server: %s\n", namespaceId.c_str(), beatInfoStr.c_str());
 		map<NacosString, NacosString> params;
-		params["beat"] = JSON::toJSONString(beatInfo);
-		params[CommonParams::NAMESPACE_ID] = namespaceId;
-		params[CommonParams::SERVICE_NAME] = beatInfo.serviceName;
+		params[NamingCommonParams::BEAT] = JSON::toJSONString(beatInfo);
+		params[NamingCommonParams::NAMESPACE_ID] = namespaceId;
+		params[NamingCommonParams::SERVICE_NAME] = beatInfo.serviceName;
 		NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/instance/beat", params, HTTPCli::PUT);
 		//JSONObject jsonObject = JSON.parseObject(result);
 
