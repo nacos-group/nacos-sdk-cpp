@@ -34,8 +34,6 @@ public:
 	static bool cleanDirectory(const NacosString &file);
 
 	static void recursivelyCreate(const NacosString &file);
-	
-	static NacosString getCwd();
 
 	static std::list<NacosString> listFiles(const NacosString &path);
 };

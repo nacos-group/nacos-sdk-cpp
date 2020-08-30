@@ -31,5 +31,12 @@ bool testStringExplode()
 	SHOULD_BE_TRUE(specialExplode[3] == "Name", "specialExplode[3] should be Name");
 	SHOULD_BE_TRUE(specialExplode[4] == "Is", "specialExplode[4] should be Is");
 
+    vector<NacosString> nullEnd;
+    NacosString nullEndStr = "k=";
+    ParamUtils::Explode(nullEnd, nullEndStr, '=');
+    SHOULD_BE_TRUE(nullEnd.size() == 2, "exploding k= should get 2 items");
+    SHOULD_BE_TRUE(nullEnd[0] == "k", "nullEnd[0] should be k");
+    SHOULD_BE_TRUE(nullEnd[1] == "", "nullEnd[0] should be empty");
+
 	return true;
 }

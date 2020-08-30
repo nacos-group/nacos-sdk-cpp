@@ -67,7 +67,6 @@ TEST_ITEM("Save cache in test and prod env, then clean prod env, should only get
 TEST_ITEM("Save cache in test and prod env, then clean all, should not get any data", testCleanAllCache)
 TEST_ITEM("Test MD5", testMD5)
 TEST_ITEM("Test urlencode/urldecode of libcurl", testURLEncodeAndDecode)
-TEST_ITEM("Test explode function", testStringExplode)
 TEST_ITEM("Test Listener function for nacos", testAddListener)
 TEST_ITEM("Test basic function of NamingProxy's registerService", testNamingProxySmokeTest)
 TEST_ITEM("Check whether rapidjson is introduced into the project successfully", testRapidJsonIntroduce)
@@ -80,11 +79,12 @@ TEST_ITEM("Test serialization/deserialization of malformed Business Object", tes
 TEST_ITEM("Test serialization/deserialization of malformed Business Object (Double)", testMalformedDouble2ServiceInfo)
 TEST_ITEM("Test serialization/deserialization of malformed Business Object (no cacheMillis)", testLackcacheMillisServiceInfo)
 TEST_ITEM("Register many services and get one", testGetAllInstances)
+TEST_ITEM("Listen to key and remove it from listening list", testListeningKeys)
 TEST_ITEM_END
 
 TestData testList[] =
 TEST_ITEM_START
-TEST_ITEM("Listen to key and remove it from listening list", testListeningKeys)
+        TEST_ITEM("Test explode function", testStringExplode)
 TEST_ITEM_END
 
 int main()

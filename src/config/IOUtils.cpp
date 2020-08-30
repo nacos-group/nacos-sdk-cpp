@@ -232,12 +232,6 @@ void IOUtils::recursivelyCreate(const NacosString &file)
 	}
 }
 
-NacosString IOUtils::getCwd()
-{
-	char temp[PATH_MAX];
-	return ( getcwd(temp, sizeof(temp)) ? NacosString( temp ) : NacosString("") );
-}
-
 std::list<NacosString> IOUtils::listFiles(const NacosString &path)
 {
 	struct stat thestat;

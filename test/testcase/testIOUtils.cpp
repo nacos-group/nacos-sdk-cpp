@@ -1,6 +1,7 @@
 #include <iostream>
 #include "DebugAssertion.h"
 #include "config/IOUtils.h"
+#include "utils/DirUtils.h"
 #include "Debug.h"
 
 #define ENCODING "UTF-8"
@@ -11,7 +12,7 @@ bool testReadWriteFile()
 {
 	cout << "in function testReadWriteFile" << endl;
 	
-	NacosString cwd = IOUtils::getCwd();
+	NacosString cwd = DirUtils::getCwd();
 	NacosString tmpPath = cwd + "/tmp";
 	IOUtils::recursivelyCreate(tmpPath);
 	NacosString writeFile = tmpPath + "/testfile";
@@ -26,7 +27,7 @@ bool testGetFileSize()
 {
 	cout << "in function testGetFileSize" << endl;
 	
-	NacosString cwd = IOUtils::getCwd();
+	NacosString cwd = DirUtils::getCwd();
 	NacosString tmpPath = cwd + "/tmp";
 	IOUtils::recursivelyCreate(tmpPath);
 	NacosString writeFile = tmpPath + "/testfile";
@@ -41,7 +42,7 @@ bool testFileExists()
 {
 	cout << "in function testFileExists" << endl;
 
-	NacosString cwd = IOUtils::getCwd();
+	NacosString cwd = DirUtils::getCwd();
 	NacosString tmpPath = cwd + "/tmp";
 	NacosString writeFile = tmpPath + "/testfile";
 	IOUtils::recursivelyRemove(tmpPath);
@@ -61,7 +62,7 @@ bool testCreateAndRemove()
 {
 	cout << "in function testFileExists" << endl;
 
-	NacosString cwd = IOUtils::getCwd();
+	NacosString cwd = DirUtils::getCwd();
 	NacosString tmpPath = cwd + "/tmp/123/456/789/2312/afda/4__dsa/dd_";
 	NacosString rmpath = cwd + "/tmp/123";
 	IOUtils::recursivelyCreate(tmpPath);
@@ -77,7 +78,7 @@ bool testCleanDirectory()
 {
 	cout << "in function testCleanDirectory" << endl;
 
-	NacosString cwd = IOUtils::getCwd();
+	NacosString cwd = DirUtils::getCwd();
 	NacosString tmpPath = cwd + "/tmp/testcleandir/456/789/2312/afda/4__dsa/dd_";
 	NacosString cleanPath = cwd + "/tmp/testcleandir";
 	IOUtils::recursivelyCreate(tmpPath);

@@ -3,11 +3,11 @@
 #include <list>
 #include <unistd.h>
 #include <sys/types.h>
-#include <pwd.h>
 #include <errno.h>
 #include "NacosExceptions.h"
 #include "NacosString.h"
 #include "utils/ParamUtils.h"
+#include "utils/DirUtils.h"
 #include "config/SnapShotSwitch.h"
 #include "config/JVMUtil.h"
 #include "config/ConcurrentDiskUtil.h"
@@ -34,7 +34,7 @@ NacosString LocalConfigInfoProcessor::getFailover(const NacosString &serverName,
 };
 
 /**
- * »ñÈ¡±¾µØ»º´æÎÄ¼þÄÚÈÝ¡£NULL±íÊ¾Ã»ÓÐ±¾µØÎÄ¼þ»òÅ×³öÒì³£¡£
+ * èŽ·å–æœ¬åœ°ç¼“å­˜æ–‡ä»¶å†…å®¹ã€‚NULLè¡¨ç¤ºæ²¡æœ‰æœ¬åœ°æ–‡ä»¶æˆ–æŠ›å‡ºå¼‚å¸¸ã€‚
  */
 NacosString LocalConfigInfoProcessor::getSnapshot
 (
@@ -117,7 +117,7 @@ void LocalConfigInfoProcessor::saveSnapshot(const NacosString &envName, const Na
 };
 
 /**
- * Çå³ýsnapshotÄ¿Â¼ÏÂËùÓÐ»º´æÎÄ¼þ¡£
+ * æ¸…é™¤snapshotç›®å½•ä¸‹æ‰€æœ‰ç¼“å­˜æ–‡ä»¶ã€‚
  */
 void LocalConfigInfoProcessor::cleanAllSnapshot()
 {
@@ -181,8 +181,7 @@ void LocalConfigInfoProcessor::init()
 	LOCAL_SNAPSHOT_PATH = System.getProperty("JM.SNAPSHOT.PATH", System.getProperty("user.home")) + File.separator
 		+ "nacos" + File.separator + "config";*/
 
-	struct passwd *pw = getpwuid(getuid());
-	NacosString homedir = pw->pw_dir;
+	NacosString homedir = DirUtils::getHome();
 	LOCAL_FILEROOT_PATH = homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "config";
 	LOCAL_SNAPSHOT_PATH = homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "config";
 	log_info("LOCAL_SNAPSHOT_PATH:%s\n", LOCAL_SNAPSHOT_PATH.c_str());
