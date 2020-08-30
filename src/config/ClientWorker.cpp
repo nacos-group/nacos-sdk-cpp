@@ -274,10 +274,6 @@ void ClientWorker::removeListenerActively
 * @param listener the listener to be removed
 * @author Liu, Hanyu
 */
-//TODO:
-//there is still risk when the user call removeListener() twice with the same listener pointer,
-//the first call will succeed, but the second one MAY CRASH (if the background thread happen to remove the listener)
-//use an internal map to keep the status will be a good solution
 void ClientWorker::removeListener
 (
     const NacosString &dataId,
