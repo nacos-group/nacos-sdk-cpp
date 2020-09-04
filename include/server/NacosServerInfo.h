@@ -2,11 +2,13 @@
 // Created by Liu, Hanyu on 2020/9/4.
 //
 
-#ifndef NACOS_SDK_CPP_SERVERINFO_H
-#define NACOS_SDK_CPP_SERVERINFO_H
+#ifndef NACOS_SDK_CPP_NACOSSERVERINFO_H
+#define NACOS_SDK_CPP_NACOSSERVERINFO_H
+
+#include <ostream>
 #include "NacosString.h"
 
-class ServerInfo
+class NacosServerInfo
 {
 private:
     NacosString ip;
@@ -19,12 +21,12 @@ private:
     NacosString lastRefTimeStr;
     NacosString key;
 public:
-    const NacosString &getIp() const {
+    const NacosString getIp() const {
         return ip;
     }
 
     void setIp(const NacosString &ip) {
-        ServerInfo::ip = ip;
+        NacosServerInfo::ip = ip;
     }
 
     int getPort() const {
@@ -32,15 +34,15 @@ public:
     }
 
     void setPort(int port) {
-        ServerInfo::port = port;
+        NacosServerInfo::port = port;
     }
 
-    const NacosString &getSite() const {
+    const NacosString getSite() const {
         return site;
     }
 
     void setSite(const NacosString &site) {
-        ServerInfo::site = site;
+        NacosServerInfo::site = site;
     }
 
     float getWeight() const {
@@ -48,7 +50,7 @@ public:
     }
 
     void setWeight(float weight) {
-        ServerInfo::weight = weight;
+        NacosServerInfo::weight = weight;
     }
 
     float getAdWeight() const {
@@ -56,7 +58,7 @@ public:
     }
 
     void setAdWeight(float adWeight) {
-        ServerInfo::adWeight = adWeight;
+        NacosServerInfo::adWeight = adWeight;
     }
 
     bool isAlive() const {
@@ -64,7 +66,7 @@ public:
     }
 
     void setAlive(bool alive) {
-        ServerInfo::alive = alive;
+        NacosServerInfo::alive = alive;
     }
 
     long getLastRefTime() const {
@@ -72,24 +74,30 @@ public:
     }
 
     void setLastRefTime(long lastRefTime) {
-        ServerInfo::lastRefTime = lastRefTime;
+        NacosServerInfo::lastRefTime = lastRefTime;
     }
 
-    const NacosString &getLastRefTimeStr() const {
+    const NacosString getLastRefTimeStr() const {
         return lastRefTimeStr;
     }
 
     void setLastRefTimeStr(const NacosString &lastRefTimeStr) {
-        ServerInfo::lastRefTimeStr = lastRefTimeStr;
+        NacosServerInfo::lastRefTimeStr = lastRefTimeStr;
     }
 
-    const NacosString &getKey() const {
+    const NacosString getKey() const {
         return key;
     }
 
     void setKey(const NacosString &key) {
-        ServerInfo::key = key;
+        NacosServerInfo::key = key;
+    }
+
+    NacosString toString() {
+        NacosString res;
+        res = ip + NacosStringOps::valueOf(port);
+        return res;
     }
 };
 
-#endif //NACOS_SDK_CPP_SERVERINFO_H
+#endif //NACOS_SDK_CPP_NACOSSERVERINFO_H

@@ -42,6 +42,7 @@ bool testLackcacheMillisServiceInfo();
 bool testGetAllInstances();
 bool testListeningKeys();
 bool testAppConfigManager();
+bool testServerListManager();
 
 TestData testList1[] =
 TEST_ITEM_START
@@ -87,6 +88,7 @@ TEST_ITEM_END
 TestData testList[] =
 TEST_ITEM_START
 TEST_ITEM("AppConfigManager smoke test", testAppConfigManager)
+TEST_ITEM("ServerListManager smoke test", testServerListManager)
 TEST_ITEM_END
 
 int main()

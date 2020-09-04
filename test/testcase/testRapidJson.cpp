@@ -30,6 +30,7 @@ bool testRapidJsonIntroduce()
 	Value& s2 = parsedAgain["stars"];
 	int expectedtoBe11 = s2.GetInt();
 	SHOULD_BE_TRUE(expectedtoBe11 == 11, "There should be 11 stars");
+
 	return true;
 }
 

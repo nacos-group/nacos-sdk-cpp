@@ -215,3 +215,50 @@ ServiceInfo JSON::JsonStr2ServiceInfo(const NacosString &jsonString) throw (Naco
 
 	return si;
 }
+
+NacosServerInfo parseOneNacosSvr(const Value &curSvr)
+{
+    NacosServerInfo res;
+    res.setIp(curSvr["ip"].GetString());
+    res.setPort(curSvr["servePort"].GetInt());
+    res.setSite(curSvr["site"].GetString());
+    res.setWeight(curSvr["weight"].GetFloat());
+    res.setAdWeight(curSvr["adWeight"].GetFloat());
+    res.setAlive(curSvr["alive"].GetBool());
+    res.setLastRefTime(curSvr["lastRefTime"].GetInt64());
+    if (!curSvr["lastRefTimeStr"].IsNull())
+    {
+        res.setLastRefTimeStr(curSvr["lastRefTimeStr"].GetString());
+    }
+    res.setKey(curSvr["key"].GetString());
+    return res;
+}
+
+map<NacosString, NacosServerInfo> JSON::Json2NacosServerInfo(const NacosString &nacosString) throw (NacosException)
+{
+    map<NacosString, NacosServerInfo> nacosServerList;
+    ServiceInfo si;
+    Document d;
+    d.Parse(nacosString.c_str());
+
+    if (d.HasParseError())
+    {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing the JSON String for NacosServerInfo!");
+    }
+
+    markRequired(d, "servers");
+    const Value &servers = d["servers"];
+    if (!servers.IsArray())
+    {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing servers for NacosServerInfo!");
+    }
+
+    for (SizeType i = 0; i < servers.Size(); i++)
+    {
+        const Value &curSvr = servers[i];
+        NacosServerInfo curSvrInfo = parseOneNacosSvr(curSvr);
+        nacosServerList[curSvrInfo.getKey()] = curSvrInfo;
+    }
+
+    return nacosServerList;
+}

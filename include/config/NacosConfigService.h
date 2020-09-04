@@ -4,7 +4,7 @@
 #include "http/HTTPAgent.h"
 #include "listen/ClientWorker.h"
 #include "NacosString.h"
-#include "ServerListManager.h"
+#include "server/ServerListManager.h"
 #include "Properties.h"
 
 class NacosConfigService : public ConfigService
