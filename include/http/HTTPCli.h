@@ -78,8 +78,8 @@ private:
 		long readTimeoutMs
 	) throw (NetworkException);
 public:
-	static NacosString encodingParams(std::list<NacosString> &params);
-	static NacosString encodingParams(std::map<NacosString, NacosString> &params);
+	static NacosString &encodingParams(std::list<NacosString> &params);
+	static NacosString &encodingParams(std::map<NacosString, NacosString> &params);
 	static void assembleHeaders(std::list<NacosString> &assembledHeaders, std::list<NacosString> &headers);
 	static void HTTPBasicSettings(CURL *curlHandle);
 	static void HTTP_GLOBAL_INIT();

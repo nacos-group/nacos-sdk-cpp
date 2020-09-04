@@ -87,7 +87,7 @@ void HTTPCli::HTTPBasicSettings(CURL *curlHandle)
 	curl_easy_setopt(curlHandle, CURLOPT_HEADERFUNCTION, receiveHeaderCallback);
 }
 
-NacosString HTTPCli::encodingParams(list<NacosString> &params)
+NacosString &HTTPCli::encodingParams(list<NacosString> &params)
 {
 	NacosString encodedParms = "";
 	for (list<NacosString>::iterator it = params.begin(); it != params.end(); it++)
@@ -104,7 +104,7 @@ NacosString HTTPCli::encodingParams(list<NacosString> &params)
 	return encodedParms;
 }
 
-NacosString HTTPCli::encodingParams(map<NacosString, NacosString> &params)
+NacosString &HTTPCli::encodingParams(map<NacosString, NacosString> &params)
 {
 	NacosString encodedParms = "";
 	for (map<NacosString, NacosString>::iterator it = params.begin(); it != params.end(); it++)
