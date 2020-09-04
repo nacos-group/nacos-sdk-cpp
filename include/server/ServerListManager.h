@@ -10,6 +10,7 @@
 class ServerListManager
 {
 private:
+    //Fixed serverList, only keep the servers loaded from the config file
 	std::list<NacosString> serverList;
 	NacosString contentPath;
 	void initParams();

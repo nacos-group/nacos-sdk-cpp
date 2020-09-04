@@ -87,9 +87,44 @@ std::map<NacosString, NacosServerInfo> ServerListManager::getServerList()
 
     std::list<NacosString> headers;
     std::list<NacosString> paramValues;
-    HttpResult serverRes = httpCli->httpGet(url, headers, paramValues, NULLSTR, 3000);//TODO:readTimeout to a constant
 
-    return JSON::Json2NacosServerInfo(serverRes.content);
+
+    size_t maxSvrSlot = serverList.size();
+    if (maxSvrSlot == 0)
+    {
+        throw NacosException(0, "failed to get nacos servers, raison: no server(s) available");
+    }
+    log_debug("nr_servers:%d\n", maxSvrSlot);
+    srand(time(NULL));
+    size_t selectedServer = rand() % maxSvrSlot;
+    log_debug("selected_server:%d\n", selectedServer);
+
+    NacosString errmsg;
+    for (size_t i = 0; i < serverList.size(); i++)
+    {
+        NacosString server = ParamUtils::getNthElem(serverList, selectedServer);
+        log_debug("Trying to access server:%s\n", server.c_str());
+        try
+        {
+            HttpResult serverRes = httpCli->httpGet(url, headers, paramValues, NULLSTR, 3000);//TODO:readTimeout to a constant
+            return JSON::Json2NacosServerInfo(serverRes.content);
+        }
+        catch (NacosException &e)
+        {
+            errmsg = e.what();
+            log_error("request %s failed.\n", server.c_str());
+        }
+        catch (exception &e)
+        {
+            errmsg = e.what();
+            log_error("request %s failed.\n", server.c_str());
+        }
+
+        selectedServer = (selectedServer + 1) % serverList.size();
+    }
+
+    throw NacosException(0, "failed to get nacos servers after all servers(" + ParamUtils::Implode(serverList) + ") tried: "
+                            + errmsg);
 }
 
 std::map<NacosString, NacosServerInfo> ServerListManager::__debug()
