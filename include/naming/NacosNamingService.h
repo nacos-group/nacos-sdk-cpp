@@ -55,6 +55,14 @@ public:
 	std::list<Instance> getAllInstances(const NacosString &serviceName, const NacosString &groupName, std::list<NacosString> clusters) throw (NacosException);
 	std::list<Instance> getAllInstances(const NacosString &serviceName, std::list<NacosString> clusters, bool subscribe) throw (NacosException);
 	std::list<Instance> getAllInstances(const NacosString &serviceName, const NacosString &groupName, std::list<NacosString> clusters, bool subscribe) throw (NacosException);
+
+    HTTPCli * getHttpCli() const { return httpCli; };
+    NamingProxy * getServerProxy() const { return serverProxy; };
+    BeatReactor * getBeatReactor() const { return beatReactor; };
+
+    void setHttpCli(HTTPCli *_httpCli) { this->httpCli = _httpCli; };
+    void setServerProxy(NamingProxy *_namingProxy) { this->serverProxy = _namingProxy; };
+    void setBeatReactor(BeatReactor *_beatReactor) { this->beatReactor = beatReactor; };
 };
 
 #endif
