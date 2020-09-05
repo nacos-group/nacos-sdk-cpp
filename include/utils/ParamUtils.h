@@ -12,10 +12,11 @@
 class ParamUtils
 {
 public:
-	static NacosString getNthElem(std::list<NacosString> &parm, size_t i)
+    template<typename T>
+	static T getNthElem(std::list<T> &parm, size_t i)
 	{
 		assert(parm.size() > i);
-		std::list<NacosString>::iterator it = parm.begin();
+		std::list<T>::iterator it = parm.begin();
 		for (size_t skipper = 0; skipper < i; skipper++)
 		{
 			it++;
