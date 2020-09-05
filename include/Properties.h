@@ -15,6 +15,16 @@ public:
         }
         return content;
     }
+
+    bool contains(const NacosString &key) const
+    {
+        if (count(key) > 0)
+        {
+            return true;
+        }
+
+        return false;
+    }
 };
 
 #endif
