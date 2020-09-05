@@ -93,9 +93,20 @@ public:
         NacosServerInfo::key = key;
     }
 
-    NacosString toString() {
+    NacosString getCompleteAddress() const
+    {
+        if (port != 0)
+        {
+            return ip + ":" + NacosStringOps::valueOf(port);
+        } else
+        {
+            return ip;
+        }
+    }
+
+    NacosString toString() const {
         NacosString res;
-        res = ip + NacosStringOps::valueOf(port);
+        res = ip + ":" + NacosStringOps::valueOf(port);
         return res;
     }
 };
