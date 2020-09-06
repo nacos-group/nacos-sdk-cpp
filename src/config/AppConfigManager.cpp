@@ -48,16 +48,36 @@ Properties AppConfigManager::parseConfigFile(const NacosString&file)
     return parsedConfig;
 }
 
-size_t AppConfigManager::loadConfig(const NacosString &configFile)
+
+void AppConfigManager::checkReloadable() throw(NacosException)
 {
+    if (!reloadable)
+    {
+        throw NacosException(0, "This object is initialized as a non-reloadable one");
+    }
+}
+
+size_t AppConfigManager::loadConfig() throw(NacosException)
+{
+    checkReloadable();
     appConfig = parseConfigFile(configFile);
     log_debug("loaded config file:%s\n", appConfig.toString().c_str());
     return appConfig.size();
 }
+
+size_t AppConfigManager::loadConfig(const NacosString &_configFile) throw(NacosException)
+{
+    checkReloadable();
+    configFile = _configFile;
+    loadConfig();
+    return appConfig.size();
+}
+
 void AppConfigManager::clearConfig()
 {
     appConfig.clear();
 }
+
 NacosString AppConfigManager::get(const NacosString&key) const
 {
     if (appConfig.count(key) == 0)
@@ -67,7 +87,25 @@ NacosString AppConfigManager::get(const NacosString&key) const
     Properties copyProps = appConfig;
     return copyProps[key];
 }
+
 void AppConfigManager::set(const NacosString&key, const NacosString&value)
 {
     appConfig[key] = value;
+}
+
+bool AppConfigManager::contains(const std::string &key) const
+{
+    return appConfig.contains(key);
+}
+
+AppConfigManager::AppConfigManager(Properties &props)
+{
+    reloadable = false;
+    appConfig = props;
+}
+
+AppConfigManager::AppConfigManager(const NacosString &_configFile)
+{
+    reloadable = true;
+    configFile = _configFile;
 }
