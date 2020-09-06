@@ -8,33 +8,11 @@
 
 using namespace std;
 
-void NacosNamingService::initNamespace(Properties &props)
+NacosNamingService::NacosNamingService(HTTPCli *_httpCli, NamingProxy *_serverProxy, BeatReactor *_beatReactor)
 {
-	if (props.count(PropertyKeyConst::NAMESPACE) == 0)//TODO:implement initNamespace
-	{
-		namesp = UtilAndComs::DEFAULT_NAMESPACE_ID;
-	}
-	else
-	{
-		namesp = props[PropertyKeyConst::NAMESPACE];
-	}
-}
-
-void NacosNamingService::initEndpoint(Properties &properties)
-{
-    //TODO:implement initEndpoint
-
-}
-
-NacosNamingService::NacosNamingService(Properties &props)
-{
-	serverList = props[PropertyKeyConst::SERVER_ADDR];
-
-	initNamespace(props);
-	initEndpoint(props);
-	httpCli = new HTTPCli();
-	serverProxy = new NamingProxy(httpCli, namesp, endpoint, serverList);
-	beatReactor = new BeatReactor(serverProxy);
+	httpCli = _httpCli;
+	serverProxy = _serverProxy;
+	beatReactor = _beatReactor;
 	beatReactor->start();
 }
 
@@ -46,13 +24,11 @@ NacosNamingService::~NacosNamingService()
 	}
 	beatReactor = NULL;
 
-
 	if (serverProxy != NULL)
 	{
 		delete serverProxy;
 	}
 	serverProxy = NULL;
-
 
 	if (httpCli != NULL)
 	{

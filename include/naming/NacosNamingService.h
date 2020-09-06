@@ -4,6 +4,7 @@
 #include "naming/Instance.h"
 #include "naming/NamingProxy.h"
 #include "naming/beat/BeatReactor.h"
+#include "config/ObjectConfigData.h"
 #include "http/HTTPCli.h"
 #include "NacosString.h"
 #include "Properties.h"
@@ -15,11 +16,6 @@ private:
     NamingProxy *serverProxy;
     BeatReactor *beatReactor;
 	NacosNamingService();
-	NacosString namesp;
-
-	NacosString endpoint;
-
-	NacosString serverList;
 
 	NacosString cacheDir;
 
@@ -28,11 +24,8 @@ private:
 	//HostReactor hostReactor;
 
 	//EventDispatcher eventDispatcher;
-
-	void initNamespace(Properties &props);
-	void initEndpoint(Properties &properties);
 public:
-	NacosNamingService(Properties &props);
+	NacosNamingService(HTTPCli *httpCli, NamingProxy *serverProxy, BeatReactor *beatReactor);
 	~NacosNamingService();
 	void registerInstance(const NacosString &serviceName, const NacosString &ip, int port) throw (NacosException);
 	void registerInstance(const NacosString &serviceName, const NacosString &groupName, const NacosString &ip, int port) throw (NacosException);
