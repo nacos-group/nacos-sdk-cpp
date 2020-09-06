@@ -109,6 +109,16 @@ public:
         res = ip + ":" + NacosStringOps::valueOf(port);
         return res;
     }
+
+    bool operator <(const NacosServerInfo & other) const
+    {
+        return getCompleteAddress().compare(other.getCompleteAddress());
+    }
+
+    bool operator == (const NacosServerInfo & other) const
+    {
+        return getCompleteAddress().compare(other.getCompleteAddress()) == 0;
+    }
 };
 
 #endif //NACOS_SDK_CPP_NACOSSERVERINFO_H
