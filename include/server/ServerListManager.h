@@ -32,7 +32,7 @@ private:
 
 	void initAll() throw(NacosException);
 	void addToSrvList(NacosString &address);
-	std::map<NacosString, NacosServerInfo> tryPullServerListFromNacosServer() throw(NacosException);
+	std::list<NacosServerInfo> tryPullServerListFromNacosServer() throw(NacosException);
 	std::list<NacosServerInfo> pullServerList() throw(NacosException);
 	HTTPCli *httpCli = NULL;
 	AppConfigManager *appConfigManager = NULL;
@@ -44,7 +44,7 @@ public:
     inline NacosString getContextPath() const;
     inline NacosString getNamespace() const { return appConfigManager->get(PropertyKeyConst::NAMESPACE); };
 
-    std::map<NacosString, NacosServerInfo> __debug();//DO NOT use, may be changed without prior notification
+	std::list<NacosServerInfo> __debug();//DO NOT use, may be changed without prior notification
 
     HTTPCli * getHttpCli() const { return httpCli; };
     void setHttpCli(HTTPCli *_httpCli) { this->httpCli = _httpCli; };

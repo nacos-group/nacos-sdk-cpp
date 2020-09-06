@@ -26,12 +26,12 @@ bool testServerListManager()
     NacosConfigService *nn = (NacosConfigService*)n;
     ServerListManager *serverListManager = nn->getServerListManager();
 
-    std::map<NacosString, NacosServerInfo> res = serverListManager->__debug();
+    list<NacosServerInfo> res = serverListManager->__debug();
 
-    for (std::map<NacosString, NacosServerInfo>::iterator it = res.begin(); it != res.end(); it++)
+    for (list<NacosServerInfo>::iterator it = res.begin(); it != res.end(); it++)
     {
-        NacosString key = it->first;
-        NacosString val = it->second.toString();
+        NacosString key = it->getKey();
+        NacosString val = it->getCompleteAddress();
 
         cout << key << ":" << endl << val << endl;
     }

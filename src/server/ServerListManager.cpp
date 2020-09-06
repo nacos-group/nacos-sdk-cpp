@@ -113,7 +113,7 @@ ServerListManager::ServerListManager(HTTPCli *_httpCli, AppConfigManager *_appCo
     initAll();
 }
 
-std::map<NacosString, NacosServerInfo> ServerListManager::tryPullServerListFromNacosServer() throw(NacosException)
+list<NacosServerInfo> ServerListManager::tryPullServerListFromNacosServer() throw(NacosException)
 {
     std::list<NacosString> headers;
     std::list<NacosString> paramValues;
@@ -137,6 +137,7 @@ std::map<NacosString, NacosServerInfo> ServerListManager::tryPullServerListFromN
             HttpResult serverRes = httpCli->httpGet(
                     server.getCompleteAddress() + "/" + DEFAULT_CONTEXT_PATH + "/" + PROTOCOL_VERSION + "/" + GET_SERVERS_PATH,
                     headers, paramValues, NULLSTR, 3000);//TODO:readTimeout to a constant
+            return JSON::Json2NacosServerInfo(serverRes.content);
         }
         catch (NacosException &e)
         {
@@ -174,7 +175,7 @@ list<NacosServerInfo> ServerListManager::pullServerList() throw(NacosException)
     throw NacosException(0, "addressServerUrl is not set, please config it on properties");
 }
 
-std::map<NacosString, NacosServerInfo> ServerListManager::__debug()
+std::list<NacosServerInfo> ServerListManager::__debug()
 {
     return tryPullServerListFromNacosServer();
 }

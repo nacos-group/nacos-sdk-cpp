@@ -42,14 +42,9 @@ bool testGetAllInstances();
 bool testListeningKeys();
 bool testAppConfigManager();
 bool testServerListManager();
+bool testDeleteConfig();
 
 TestData testList1[] =
-TEST_ITEM_START
-
-TEST_ITEM_END
-
-bool testDeleteConfig();
-TestData testList[] =
 TEST_ITEM_START
 TEST_ITEM("Normal http test", testNormalHttpRequest)
 TEST_ITEM("No server request, should fail", testNoServerRequest)
@@ -89,6 +84,10 @@ TEST_ITEM("Register many services and get one", testGetAllInstances)
 TEST_ITEM("Listen to key and remove it from listening list", testListeningKeys)
 TEST_ITEM("Test explode function", testStringExplode)
 TEST_ITEM("AppConfigManager smoke test", testAppConfigManager)
+TEST_ITEM_END
+
+TestData testList[] =
+TEST_ITEM_START
 TEST_ITEM("ServerListManager smoke test", testServerListManager)
 TEST_ITEM_END
 
