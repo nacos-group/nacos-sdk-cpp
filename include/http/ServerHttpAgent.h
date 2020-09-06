@@ -19,9 +19,9 @@ private:
 	NacosString encoding;
 	HTTPCli *httpCli = NULL;
 	ServerListManager *svrListMgr = NULL;
+	AppConfigManager *appConfigManager = NULL;
 public:
-	ServerHttpAgent(HTTPCli *httpcli, const NacosString &_encoding, ServerListManager *_svrListMgr, const NacosString &_namesp);
-	ServerHttpAgent(HTTPCli *httpcli, const NacosString &encoding, ServerListManager *_svrListMgr);
+	ServerHttpAgent(AppConfigManager *appConfigManager, HTTPCli *httpcli, const NacosString &encoding, ServerListManager *_svrListMgr);
 	HttpResult httpGet(const NacosString &path, std::list<NacosString> &headers, std::list<NacosString> &paramValues, const NacosString &encoding, long readTimeoutMs) throw (NetworkException);
 	HttpResult httpPost(const NacosString &path, std::list<NacosString> &headers, std::list<NacosString> &paramValues, const NacosString &encoding, long readTimeoutMs) throw (NetworkException);
 	HttpResult httpDelete(const NacosString &path, std::list<NacosString> &headers, std::list<NacosString> &paramValues, const NacosString &encoding, long readTimeoutMs) throw (NetworkException);

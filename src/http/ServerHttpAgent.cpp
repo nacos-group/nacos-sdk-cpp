@@ -11,28 +11,16 @@ NacosString ServerHttpAgent::getEncode() const
 
 ServerHttpAgent::ServerHttpAgent
 (
+    AppConfigManager *_appConfigManager,
 	HTTPCli *httpcli,
 	const NacosString &_encoding,
 	ServerListManager *_svrListMgr
 )
 {
-	encoding = _encoding;
-	httpCli = httpcli;
-	svrListMgr = svrListMgr;
-}
-
-ServerHttpAgent::ServerHttpAgent
-(
-	HTTPCli *httpcli,
-	const NacosString &_encoding,
-	ServerListManager *_svrListMgr,
-	const NacosString &_namesp
-)
-{
+    appConfigManager = _appConfigManager;
 	encoding = _encoding;
 	httpCli = httpcli;
 	svrListMgr = _svrListMgr;
-	namesp = _namesp;
 }
 
 HttpResult ServerHttpAgent::httpGet
