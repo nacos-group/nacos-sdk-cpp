@@ -64,6 +64,7 @@ public:
 
 	static const int MALFORMED_CONFIG_FILE = 1001;
     static const int FILE_NOT_FOUND = 1002;
+    static const int INVALID_FACTORY_CONFIG = 1003;
 };
 
 class NetworkException : public std::exception
@@ -96,5 +97,11 @@ class MalformedConfigException : public NacosException
 {
 public:
     MalformedConfigException(const NacosString&file) : NacosException(NacosException::MALFORMED_CONFIG_FILE, "Malformed Config file:" + file) {};
+};
+
+class InvalidFactoryConfigException : public NacosException
+{
+public:
+	InvalidFactoryConfigException() : NacosException(NacosException::INVALID_FACTORY_CONFIG, "Either config file or property should be configed.") {};
 };
 #endif
