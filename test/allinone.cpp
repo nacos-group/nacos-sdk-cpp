@@ -43,6 +43,7 @@ bool testListeningKeys();
 bool testAppConfigManager();
 bool testServerListManager();
 bool testDeleteConfig();
+bool testEndpointWithNamingProxy();
 
 TestData testList1[] =
 TEST_ITEM_START
@@ -89,6 +90,7 @@ TEST_ITEM_END
 TestData testList[] =
 TEST_ITEM_START
 TEST_ITEM("ServerListManager smoke test", testServerListManager)
+TEST_ITEM("Endpoint function test, get available nacos server from endpoint", testEndpointWithNamingProxy)
 TEST_ITEM_END
 
 int main()
