@@ -4,16 +4,24 @@
 
 #ifndef NACOS_SDK_CPP_NACOSSERVICEFACTORY_H
 #define NACOS_SDK_CPP_NACOSSERVICEFACTORY_H
-#include "naming/NamingService.h"
-#include "config/ConfigService.h"
+#include "INacosServiceFactory.h"
 
-class NacosServiceFactory {
+class NacosServiceFactory : public INacosServiceFactory {
 private:
+    NacosString configFile;
+    Properties props;
+    bool configIsSet;
+    bool propsIsSet;
+    void checkConfig()  throw(InvalidFactoryConfigException);
 public:
-    NamingService *CreateNamingService() {//TODO
-    };
-    ConfigService *CreateConfigService() {//TODO
-    };
+    void setConfig(const NacosString &_configFile);
+    void setProps(Properties &_props);
+    virtual NamingService *CreateNamingService()  throw(NacosException);
+    virtual ConfigService *CreateConfigService()  throw(NacosException);
+    NacosServiceFactory();
+    NacosServiceFactory(const NacosString &_configFile);
+    NacosServiceFactory(Properties &_props);
+    virtual ~NacosServiceFactory();
 };
 
 
