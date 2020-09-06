@@ -13,35 +13,47 @@
 
 using namespace std;
 
-NamingProxy::NamingProxy(HTTPCli *httpcli, const NacosString &_namespaceId, const NacosString &_endpoint, const NacosString &_serverList)
+NamingProxy::NamingProxy(HTTPCli *httpcli, ServerListManager *_serverListManager, AppConfigManager *_appConfigManager)
 {
 	log_debug("NamingProxy Constructor:\n"
 		"namespace:%s, endpoint:%s, Servers:%s\n",
-		_namespaceId.c_str(), _endpoint.c_str(), _serverList.c_str());
-	serverPort = "8848";//TODO:get this from the environment variable
+		_serverListManager->getNamespace().c_str(), _serverListManager->getEndpoint().c_str(), _serverListManager->toString().c_str());
+    serverListManager = _serverListManager;
 	httpCli = httpcli;
-	namespaceId = _namespaceId;
-	endpoint = _endpoint;
-	ParamUtils::Explode(serverList, _serverList, ',');
-	log_debug("The serverlist:%s\n", ParamUtils::Implode(serverList).c_str());
-	if (serverList.size() == 1)
-	{
-		nacosDomain = _serverList;
-	}
+	appConfigManager = _appConfigManager;
+    serverPort = "8848";
+
+	if (serverListManager->getServerCount() == 1)
+    {
+        nacosDomain = serverListManager->getServerList().begin()->getCompleteAddress();
+    }
+	log_debug("The serverlist:%s\n", _serverListManager->toString().c_str());
 }
 
 NamingProxy::~NamingProxy()
 {
 	httpCli = NULL;
+
+	if (appConfigManager != NULL)
+    {
+	    delete appConfigManager;
+        appConfigManager = NULL;
+    }
+
+    if (serverListManager != NULL)
+    {
+        delete serverListManager;
+        serverListManager = NULL;
+    }
 }
 
 void NamingProxy::registerService(const NacosString &serviceName, const NacosString &groupName, Instance &instance) throw (NacosException)
 {
 	log_info("[REGISTER-SERVICE] %s registering service %s with instance: %s\n",
-	namespaceId.c_str(), serviceName.c_str(), instance.toString().c_str());
+	getNamespaceId().c_str(), serviceName.c_str(), instance.toString().c_str());
 
 	map<NacosString, NacosString> params;
-	params[NamingCommonParams::NAMESPACE_ID] = namespaceId;
+	params[NamingCommonParams::NAMESPACE_ID] = getNamespaceId();
 	params[NamingCommonParams::SERVICE_NAME] = serviceName;
 	params[NamingCommonParams::GROUP_NAME] = groupName;
 	params[NamingCommonParams::CLUSTER_NAME] = instance.clusterName;
@@ -60,10 +72,10 @@ void NamingProxy::registerService(const NacosString &serviceName, const NacosStr
 void NamingProxy::deregisterService(const NacosString &serviceName, Instance &instance) throw (NacosException)
 {
 	log_info("[DEREGISTER-SERVICE] %s deregistering service %s with instance: %s\n",
-	namespaceId.c_str(), serviceName.c_str(), instance.toString().c_str());
+	getNamespaceId().c_str(), serviceName.c_str(), instance.toString().c_str());
 
 	map<NacosString, NacosString> params;
-	params[NamingCommonParams::NAMESPACE_ID] = namespaceId;
+	params[NamingCommonParams::NAMESPACE_ID] = getNamespaceId();
 	params[NamingCommonParams::SERVICE_NAME] = serviceName;
 	params[NamingCommonParams::CLUSTER_NAME] = instance.clusterName;
 	params["ip"] = instance.ip;
@@ -76,7 +88,7 @@ void NamingProxy::deregisterService(const NacosString &serviceName, Instance &in
 NacosString NamingProxy::queryList(const NacosString &serviceName, const NacosString &clusters, int udpPort, bool healthyOnly) throw (NacosException)
 {
     map<NacosString, NacosString> params;
-    params[NamingCommonParams::NAMESPACE_ID] = namespaceId;
+    params[NamingCommonParams::NAMESPACE_ID] = getNamespaceId();
     params[NamingCommonParams::SERVICE_NAME] = serviceName;
     params["clusters"] = clusters;
     params["udpPort"] = NacosStringOps::valueOf(udpPort);
@@ -88,14 +100,10 @@ NacosString NamingProxy::queryList(const NacosString &serviceName, const NacosSt
 
 NacosString NamingProxy::reqAPI(const NacosString &api, map<NacosString, NacosString> &params, int method) throw (NacosException)
 {
-    return reqAPI(api, params, serverList, method);
-}
-
-NacosString NamingProxy::reqAPI(const NacosString &api, map<NacosString, NacosString> &params, list<NacosString> &servers, int method) throw (NacosException)
-{
 	params[NamingCommonParams::NAMESPACE_ID] = getNamespaceId();
+    list<NacosServerInfo> servers = serverListManager->getServerList();
 
-	if (servers.empty() && ParamUtils::isBlank(nacosDomain))
+	if (serverListManager->getServerCount() == 0)
 	{
 		throw NacosException(0, "no server available");
 	}
@@ -111,27 +119,27 @@ NacosString NamingProxy::reqAPI(const NacosString &api, map<NacosString, NacosSt
 
 		for (size_t i = 0; i < servers.size(); i++)
 		{
-			NacosString server = ParamUtils::getNthElem(servers, selectedServer);
-			log_debug("Trying to access server:%s\n", server.c_str());
+			NacosServerInfo server = ParamUtils::getNthElem(servers, selectedServer);
+			log_debug("Trying to access server:%s\n", server.toString().c_str());
 			try
 			{
-				return callServer(api, params, server, method);
+				return callServer(api, params, server.getCompleteAddress(), method);
 			}
 			catch (NacosException &e)
 			{
 				errmsg = e.what();
-				log_error("request %s failed.\n", server.c_str());
+				log_error("request %s failed.\n", server.toString().c_str());
 			}
 			catch (exception &e)
 			{
 				errmsg = e.what();
-				log_error("request %s failed.\n", server.c_str());
+				log_error("request %s failed.\n", server.toString().c_str());
 			}
 
 			selectedServer = (selectedServer + 1) % servers.size();
 		}
 
-		throw NacosException(0, "failed to req API:" + api + " after all servers(" + ParamUtils::Implode(servers) + ") tried: "
+		throw NacosException(0, "failed to req API:" + api + " after all servers(" + serverListManager->toString() + ") tried: "
 		+ errmsg);
 	}
 
@@ -148,7 +156,7 @@ NacosString NamingProxy::reqAPI(const NacosString &api, map<NacosString, NacosSt
 		}
 	}
 
-	throw NacosException(0, "failed to req API:/api/" + api + " after all servers(" + ParamUtils::Implode(servers) + ") tried: " + errmsg);
+	throw NacosException(0, "failed to req API:/api/" + api + " after all servers(" + serverListManager->toString() + ") tried: " + errmsg);
 }
 
 NacosString NamingProxy::callServer
@@ -225,9 +233,9 @@ NacosString NamingProxy::callServer
 	throw NacosException(NacosException::SERVER_ERROR, "failed to req API:" + requestUrl + " code:" + NacosStringOps::valueOf(requestRes.code) + " errormsg:" + requestRes.content);
 }
 
-NacosString NamingProxy::getNamespaceId()
+inline NacosString NamingProxy::getNamespaceId()
 {
-	return namespaceId;
+	return appConfigManager->get(PropertyKeyConst::NAMESPACE);
 }
 
 list<NacosString> NamingProxy::builderHeaders()
@@ -258,10 +266,10 @@ long NamingProxy::sendBeat(BeatInfo &beatInfo)
 	try
 	{
 		NacosString beatInfoStr = beatInfo.toString();
-		log_info("[BEAT] %s sending beat to server: %s\n", namespaceId.c_str(), beatInfoStr.c_str());
+		log_info("[BEAT] %s sending beat to server: %s\n", getNamespaceId().c_str(), beatInfoStr.c_str());
 		map<NacosString, NacosString> params;
 		params[NamingCommonParams::BEAT] = JSON::toJSONString(beatInfo);
-		params[NamingCommonParams::NAMESPACE_ID] = namespaceId;
+		params[NamingCommonParams::NAMESPACE_ID] = getNamespaceId();
 		params[NamingCommonParams::SERVICE_NAME] = beatInfo.serviceName;
 		NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/instance/beat", params, HTTPCli::PUT);
 		//JSONObject jsonObject = JSON.parseObject(result);
