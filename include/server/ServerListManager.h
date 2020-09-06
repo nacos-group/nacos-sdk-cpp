@@ -36,6 +36,7 @@ private:
 	std::list<NacosServerInfo> pullServerList() throw(NacosException);
 	HTTPCli *httpCli = NULL;
 	AppConfigManager *appConfigManager = NULL;
+	static NacosString serverListToString(const std::list<NacosServerInfo> &serverList);
 public:
     //Cluster info
     inline NacosString getClusterName() const { return appConfigManager->get(PropertyKeyConst::CLUSTER_NAME); };
@@ -54,9 +55,9 @@ public:
 	ServerListManager(HTTPCli *_httpCli, AppConfigManager *_appConfigManager) throw(NacosException);
 	NacosString getCurrentServerAddr();
 
-	inline int getServerCount() const { return serverList.size(); };
+	int getServerCount();
 
-	inline std::list<NacosServerInfo>  getServerList() const { return serverList; };
+	std::list<NacosServerInfo> getServerList();
 
 	NacosString toString() const;
 

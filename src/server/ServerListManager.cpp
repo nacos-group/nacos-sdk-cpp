@@ -102,6 +102,11 @@ void ServerListManager::initAll() throw(NacosException)
             addressServerUrl = getEndpoint() + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
                     getContextPath() + "/" + getClusterName() + "?namespace=" + getNamespace();
         }
+
+        log_debug("Assembled addressServerUrl:%s\n", addressServerUrl.c_str());
+
+        serverList = pullServerList();
+        start();
     }
 }
 ServerListManager::ServerListManager(HTTPCli *_httpCli, AppConfigManager *_appConfigManager) throw(NacosException)
@@ -169,6 +174,7 @@ list<NacosServerInfo> ServerListManager::pullServerList() throw(NacosException)
         list<NacosServerInfo> serversPulled = JSON::Json2NacosServerInfo(serverRes.content);
         serversPulled.sort();
 
+        log_debug("pullServerList: servers list: %s\n", serverListToString(serversPulled).c_str());
         return serversPulled;
     }
     //usually this should not be happening
@@ -180,7 +186,7 @@ std::list<NacosServerInfo> ServerListManager::__debug()
     return tryPullServerListFromNacosServer();
 }
 
-NacosString ServerListManager::toString() const
+NacosString ServerListManager::serverListToString(const std::list<NacosServerInfo> &serverList)
 {
     NacosString res;
     bool first = true;
@@ -198,6 +204,11 @@ NacosString ServerListManager::toString() const
     }
 
     return res;
+}
+
+NacosString ServerListManager::toString() const
+{
+    return serverListToString(serverList);
 }
 
 void *ServerListManager::pullWorkerThread(void *param)
@@ -246,9 +257,12 @@ void ServerListManager::start()
 
     started = true;
 
-    NacosString threadName = getClusterName() + "," + getEndpoint() + ":" +
-            NacosStringOps::valueOf(getEndpointPort()) + "-" + getNamespace();
-    _pullThread = new Thread(threadName, pullWorkerThread, (void*)this);
+    if (_pullThread == NULL)
+    {
+        NacosString threadName = getClusterName() + "," + getEndpoint() + ":" +
+                                 NacosStringOps::valueOf(getEndpointPort()) + "-" + getNamespace();
+        _pullThread = new Thread(threadName, pullWorkerThread, (void*)this);
+    }
     _pullThread->start();
 }
 
@@ -263,8 +277,6 @@ void ServerListManager::stop()
     if (_pullThread != NULL)
     {
         _pullThread->join();
-        delete _pullThread;
-        _pullThread = NULL;
     }
 }
 
@@ -272,12 +284,38 @@ NacosString ServerListManager::getContextPath() const
 {
     if (appConfigManager->contains(PropertyKeyConst::CONTEXT_PATH))
     {
-        appConfigManager->get(PropertyKeyConst::CONTEXT_PATH);
+        return appConfigManager->get(PropertyKeyConst::CONTEXT_PATH);
     }
 
     return DEFAULT_CONTEXT_PATH;
 }
+
 ServerListManager::~ServerListManager()
 {
     stop();
+    if (_pullThread != NULL)
+    {
+        delete _pullThread;
+        _pullThread = NULL;
+    }
 }
+
+int ServerListManager::getServerCount()
+{
+    int count = 0;
+    {
+        ReadGuard _readGuard(rwLock);
+        count = serverList.size();
+    }
+    return count;
+};
+
+list<NacosServerInfo> ServerListManager::getServerList()
+{
+    std::list<NacosServerInfo> res;
+    {
+        ReadGuard _readGuard(rwLock);
+        res = serverList;
+    }
+    return res;
+};
