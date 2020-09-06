@@ -10,6 +10,14 @@
 
 typedef void *(*ThreadFn)(void *);
 
+/*
+* Thread.h
+* Author: Liu, Hanyu
+* This is NOT like the thread class in Java!
+* It's just a simple encapsulation of pthread_create() and pthread_join
+* It doesn't have a virtual run() function,
+ * a function pointer(ThreadFn) should be passed to the constructor so it will be used as the function pointer parameter for pthread_create
+*/
 class Thread{
 private:
 	NacosString _threadName;
