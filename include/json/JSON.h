@@ -27,7 +27,7 @@ public:
 	static Instance Json2Instance(const rapidjson::Value &jsonString) throw (NacosException);
 	static void markRequired(const rapidjson::Document &d, const NacosString &requiredField) throw (NacosException);
 	static void markRequired(const rapidjson::Value &d, const NacosString &requiredField) throw (NacosException);
-	static std::map<NacosString, NacosServerInfo> Json2NacosServerInfo(const NacosString &nacosString) throw (NacosException);
+	static std::list<NacosServerInfo> Json2NacosServerInfo(const NacosString &nacosString) throw (NacosException);
 };
 
 

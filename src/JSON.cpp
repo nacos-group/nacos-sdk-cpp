@@ -234,9 +234,9 @@ NacosServerInfo parseOneNacosSvr(const Value &curSvr)
     return res;
 }
 
-map<NacosString, NacosServerInfo> JSON::Json2NacosServerInfo(const NacosString &nacosString) throw (NacosException)
+list<NacosServerInfo> JSON::Json2NacosServerInfo(const NacosString &nacosString) throw (NacosException)
 {
-    map<NacosString, NacosServerInfo> nacosServerList;
+    list<NacosServerInfo> nacosServerList;
     ServiceInfo si;
     Document d;
     d.Parse(nacosString.c_str());
@@ -257,7 +257,7 @@ map<NacosString, NacosServerInfo> JSON::Json2NacosServerInfo(const NacosString &
     {
         const Value &curSvr = servers[i];
         NacosServerInfo curSvrInfo = parseOneNacosSvr(curSvr);
-        nacosServerList[curSvrInfo.getKey()] = curSvrInfo;
+        nacosServerList.push_back(curSvrInfo);
     }
 
     return nacosServerList;
