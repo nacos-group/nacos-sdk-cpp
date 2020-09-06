@@ -9,22 +9,27 @@
 
 using namespace std;
 
-NacosConfigService::NacosConfigService(Properties &props) throw (NacosException)
+NacosConfigService::NacosConfigService
+(
+    AppConfigManager *_appConfigManager,
+    HTTPCli *_httpCli,
+    ServerListManager *_serverListManager,
+    HttpAgent *_httpAgent,
+    ClientWorker *_clientWorker
+) throw (NacosException)
 {
-	httpcli = new HTTPCli();
-	encoding = "UTF-8";
-	namesp = "";//TODO:According to Ali's logic
-	svrListMgr = new ServerListManager(props);
-	httpAgent = new ServerHttpAgent(httpcli, encoding, svrListMgr, namesp);
-	clientWorker = new ClientWorker(httpAgent);
+	appConfigManager = _appConfigManager;
+	httpcli = _httpCli;
+	svrListMgr = _serverListManager;
+	httpAgent = _httpAgent;
+	clientWorker = _clientWorker;
 }
 
 NacosConfigService::~NacosConfigService()
 {
-
+    log_debug("NacosConfigService::~NacosConfigService()\n");
 	if (clientWorker != NULL)
 	{
-	    log_debug("NacosConfigService::~NacosConfigService()\n");
 		clientWorker->stopListening();
 		delete clientWorker;
 		clientWorker = NULL;
@@ -47,6 +52,12 @@ NacosConfigService::~NacosConfigService()
 		delete httpcli;
 		httpcli = NULL;
 	}
+
+    if (appConfigManager != NULL)
+    {
+        delete appConfigManager;
+        appConfigManager = NULL;
+    }
 }
 
 NacosString NacosConfigService::getConfig
@@ -56,7 +67,7 @@ NacosString NacosConfigService::getConfig
 	long timeoutMs
 ) throw(NacosException)
 {
-	return getConfigInner(namesp, dataId, group, timeoutMs);
+	return getConfigInner(getNamespace(), dataId, group, timeoutMs);
 }
 
 bool NacosConfigService::publishConfig
@@ -66,7 +77,7 @@ bool NacosConfigService::publishConfig
 	const NacosString &content
 ) throw (NacosException)
 {
-	return publishConfigInner(namesp, dataId, group, NULLSTR, NULLSTR, NULLSTR, content);
+	return publishConfigInner(getNamespace(), dataId, group, NULLSTR, NULLSTR, NULLSTR, content);
 }
 	
 bool NacosConfigService::removeConfig
@@ -75,7 +86,7 @@ bool NacosConfigService::removeConfig
 	const NacosString &group
 ) throw (NacosException)
 {
-	return removeConfigInner(namesp, dataId, group, NULLSTR);
+	return removeConfigInner(getNamespace(), dataId, group, NULLSTR);
 }
 
 NacosString NacosConfigService::getConfigInner
@@ -232,7 +243,7 @@ void NacosConfigService::addListener
 	//TODO:give a constant to this hard-coded number
 	NacosString cfgcontent = getConfig(dataId, group, 3000);
 
-	clientWorker->addListener(dataId, parmgroup, namesp, cfgcontent, listener);
+	clientWorker->addListener(dataId, parmgroup, getNamespace(), cfgcontent, listener);
 	clientWorker->startListening();
 }
 
@@ -249,6 +260,6 @@ void NacosConfigService::removeListener
         parmgroup = group;
     }
     log_debug("NacosConfigService::removeListener()\n");
-    clientWorker->removeListener(dataId, parmgroup, namesp, listener);
+    clientWorker->removeListener(dataId, parmgroup, getNamespace(), listener);
 }
 
