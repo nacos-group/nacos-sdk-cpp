@@ -6,25 +6,62 @@
 #include "NacosExceptions.h"
 #include "NacosServerInfo.h"
 #include "http/HTTPCli.h"
+#include "thread/Thread.h"
+#include "config/AppConfigManager.h"
+#include "PropertyKeyConst.h"
+#include "thread/RWLock.h"
 
 class ServerListManager
 {
 private:
-    //Fixed serverList, only keep the servers loaded from the config file
-	std::list<NacosString> serverList;
-	NacosString contentPath;
-	void initParams();
-	void initSrvListWithAddress(NacosString &address);
-	std::map<NacosString, NacosServerInfo> getServerList();
+    //status info
+    bool started;
+    bool isFixed;
+
+    //Nacos server info
+	std::list<NacosServerInfo> serverList;
+
+	//url to pull nacos cluster nodes info from
+    NacosString addressServerUrl;
+
+	//Worker thread
+	Thread *_pullThread;
+	static void *pullWorkerThread(void *param);
+	long refreshInterval;//in Millis
+	RWLock rwLock;//to lock the serverList
+
+	void initAll() throw(NacosException);
+	void addToSrvList(NacosString &address);
+	std::map<NacosString, NacosServerInfo> tryPullServerListFromNacosServer() throw(NacosException);
+	std::list<NacosServerInfo> pullServerList() throw(NacosException);
 	HTTPCli *httpCli = NULL;
+	AppConfigManager *appConfigManager = NULL;
 public:
-    std::map<NacosString, NacosServerInfo> __debug();
+    //Cluster info
+    inline NacosString getClusterName() const { return appConfigManager->get(PropertyKeyConst::CLUSTER_NAME); };
+    inline NacosString getEndpoint() const { return appConfigManager->get(PropertyKeyConst::ENDPOINT); };
+    inline int getEndpointPort() const { return atoi(appConfigManager->get(PropertyKeyConst::ENDPOINT_PORT).c_str()); };
+    inline NacosString getContextPath() const;
+    inline NacosString getNamespace() const { return appConfigManager->get(PropertyKeyConst::NAMESPACE); };
+
+    std::map<NacosString, NacosServerInfo> __debug();//DO NOT use, may be changed without prior notification
 
     HTTPCli * getHttpCli() const { return httpCli; };
     void setHttpCli(HTTPCli *_httpCli) { this->httpCli = _httpCli; };
+    AppConfigManager * getAppConfigManager() const { return appConfigManager; };
+    void setAppConfigManager(AppConfigManager *_appConfigManager) { this->appConfigManager = _appConfigManager; };
 	ServerListManager(std::list<NacosString> &fixed);
-	ServerListManager(Properties &props) throw(NacosException);
-	NacosString getContentPath() { return contentPath; };
+	ServerListManager(HTTPCli *_httpCli, AppConfigManager *_appConfigManager) throw(NacosException);
 	NacosString getCurrentServerAddr();
+
+	inline int getServerCount() const { return serverList.size(); };
+
+	inline std::list<NacosServerInfo>  getServerList() const { return serverList; };
+
+	NacosString toString() const;
+
+    void start();
+    void stop();
+	~ServerListManager();
 };
 #endif

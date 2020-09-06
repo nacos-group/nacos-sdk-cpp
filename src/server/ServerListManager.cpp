@@ -1,94 +1,122 @@
 #include <stdlib.h>
+#include <unistd.h>
 #include "server/ServerListManager.h"
 #include "PropertyKeyConst.h"
 #include "Parameters.h"
+#include "utils/ParamUtils.h"
 #include "Debug.h"
 #include "json/JSON.h"
 
 using namespace std;
 
-void ServerListManager::initParams()
-{
-	contentPath = DEFAULT_CONTEXT_PATH;
-}
-
-void ServerListManager::initSrvListWithAddress(NacosString &address)
+void ServerListManager::addToSrvList(NacosString &address)
 {
 	//If the address doesn't contain port, add 8848 as the default port for it
 	if (address.find(':') == std::string::npos)
 	{
-		//TODO:dynamically read default port, don't use hard-coded value
-		serverList.push_back( address + ":8848");
+	    NacosServerInfo curServer;
+	    curServer.setKey(address + ":8848");
+        curServer.setAlive(true);
+        curServer.setIp(address);
+        //TODO:dynamically read default port, don't use hard-coded value
+        curServer.setPort(8848);
+        curServer.setWeight(1.0);
+        curServer.setAdWeight(1.0);
+		serverList.push_back(curServer);
 	}
 	else
 	{
-		serverList.push_back(address);
+	    vector<NacosString> explodedAddress;
+        ParamUtils::Explode(explodedAddress, address, ':');
+        NacosServerInfo curServer;
+        curServer.setKey(address);
+        curServer.setAlive(true);
+        curServer.setIp(explodedAddress[0]);
+        curServer.setPort(atoi(explodedAddress[1].c_str()));
+        curServer.setWeight(1.0);
+        curServer.setAdWeight(1.0);
+		serverList.push_back(curServer);
 	}
 }
 
-
-ServerListManager::ServerListManager(std::list<NacosString> &fixed)
+ServerListManager::ServerListManager(list<NacosString> &fixed)
 {
-	initParams();
-	for (std::list<NacosString>::iterator it = fixed.begin(); it != fixed.end(); it++)
+    started = false;
+    refreshInterval = 30000;
+    isFixed = true;
+	for (list<NacosString>::iterator it = fixed.begin(); it != fixed.end(); it++)
 	{
-		initSrvListWithAddress(*it);
+		addToSrvList(*it);
 	}
 }
 
 NacosString ServerListManager::getCurrentServerAddr()
 {
-	//TODO:Currently we just choose a server randomly,
+    //By default, this function returns a server in the serverList randomly
 	//later we should sort it according to the java client and use cache
+	ReadGuard _readGuard(rwLock);
 	size_t max_serv_slot = serverList.size();
 	srand(time(NULL));
 	int to_skip = rand() % max_serv_slot;
-	std::list<NacosString>::iterator it = serverList.begin();
+	std::list<NacosServerInfo>::iterator it = serverList.begin();
 	for (int skipper = 0; skipper < to_skip; skipper++)
 	{
 		it++;
 	}
 	
-	return *it;
+	return it->getCompleteAddress();
 }
 
-ServerListManager::ServerListManager(Properties &props) throw(NacosException)
+void ServerListManager::initAll() throw(NacosException)
 {
-	initParams();
-	serverList.clear();
-	//TODO:endpoint is not implemented
-	if (props.count(PropertyKeyConst::SERVER_ADDR) <= 0)
-	{
-		throw NacosException(NacosException::CLIENT_INVALID_PARAM, "endpoint is blank");
-	}
-	
-	NacosString server_addr = props[PropertyKeyConst::SERVER_ADDR];
-	size_t start_pos = 0;
-	size_t cur_pos = 0;
-	cur_pos = server_addr.find(',', start_pos);
-	
-	//break the string with ',' separator
-	while (cur_pos != std::string::npos)
-	{
-		NacosString cur_addr = server_addr.substr(start_pos, cur_pos - start_pos);
-		initSrvListWithAddress(cur_addr);
-		start_pos = cur_pos + 1;
-		cur_pos = server_addr.find(',', start_pos);
-	}
-	
-	//deal with the last string
-	NacosString last_addr = server_addr.substr(start_pos);
-	initSrvListWithAddress(last_addr);
+    serverList.clear();
+    Properties props = appConfigManager->getAllConfig();
+    if (props.contains(PropertyKeyConst::SERVER_ADDR))
+    {//Server address is configured
+        isFixed = true;
+        NacosString server_addr = props[PropertyKeyConst::SERVER_ADDR];
+
+        vector<NacosString> explodedServers;
+        ParamUtils::Explode(explodedServers, server_addr, ',');
+        for (vector<NacosString>::iterator it = explodedServers.begin(); it != explodedServers.end(); it++)
+        {
+            addToSrvList(*it);
+        }
+        serverList.sort();
+    }
+    else
+    {//use endpoint mode to pull nacos server info from server
+        if (!props.contains(PropertyKeyConst::ENDPOINT))
+        {
+            throw NacosException(NacosException::CLIENT_INVALID_PARAM, "endpoint is blank");
+        }
+
+        isFixed = false;
+        if (NacosStringOps::isNullStr(getNamespace()))
+        {
+            addressServerUrl = getEndpoint() + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
+                    getContextPath() + "/" + getClusterName();
+        }
+        else
+        {
+            addressServerUrl = getEndpoint() + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
+                    getContextPath() + "/" + getClusterName() + "?namespace=" + getNamespace();
+        }
+    }
+}
+ServerListManager::ServerListManager(HTTPCli *_httpCli, AppConfigManager *_appConfigManager) throw(NacosException)
+{
+    started = false;
+    refreshInterval = 30000;
+    this->httpCli = _httpCli;
+    this->appConfigManager = _appConfigManager;
+    initAll();
 }
 
-std::map<NacosString, NacosServerInfo> ServerListManager::getServerList()
+std::map<NacosString, NacosServerInfo> ServerListManager::tryPullServerListFromNacosServer() throw(NacosException)
 {
-    NacosString url = getCurrentServerAddr() + "/" + DEFAULT_CONTEXT_PATH + "/" + PROTOCOL_VERSION + "/" + GET_SERVERS_PATH;
-
     std::list<NacosString> headers;
     std::list<NacosString> paramValues;
-
-
     size_t maxSvrSlot = serverList.size();
     if (maxSvrSlot == 0)
     {
@@ -96,38 +124,159 @@ std::map<NacosString, NacosServerInfo> ServerListManager::getServerList()
     }
     log_debug("nr_servers:%d\n", maxSvrSlot);
     srand(time(NULL));
-    size_t selectedServer = rand() % maxSvrSlot;
-    log_debug("selected_server:%d\n", selectedServer);
 
     NacosString errmsg;
     for (size_t i = 0; i < serverList.size(); i++)
     {
-        NacosString server = ParamUtils::getNthElem(serverList, selectedServer);
-        log_debug("Trying to access server:%s\n", server.c_str());
+        size_t selectedServer = rand() % maxSvrSlot;
+        NacosServerInfo server = ParamUtils::getNthElem(serverList, selectedServer);
+        log_debug("selected_server:%d\n", selectedServer);
+        log_debug("Trying to access server:%s\n", server.getCompleteAddress().c_str());
         try
         {
-            HttpResult serverRes = httpCli->httpGet(url, headers, paramValues, NULLSTR, 3000);//TODO:readTimeout to a constant
-            return JSON::Json2NacosServerInfo(serverRes.content);
+            HttpResult serverRes = httpCli->httpGet(
+                    server.getCompleteAddress() + "/" + DEFAULT_CONTEXT_PATH + "/" + PROTOCOL_VERSION + "/" + GET_SERVERS_PATH,
+                    headers, paramValues, NULLSTR, 3000);//TODO:readTimeout to a constant
         }
         catch (NacosException &e)
         {
             errmsg = e.what();
-            log_error("request %s failed.\n", server.c_str());
+            log_error("request %s failed.\n", server.getCompleteAddress().c_str());
         }
         catch (exception &e)
         {
             errmsg = e.what();
-            log_error("request %s failed.\n", server.c_str());
+            log_error("request %s failed.\n", server.getCompleteAddress().c_str());
         }
 
         selectedServer = (selectedServer + 1) % serverList.size();
     }
 
-    throw NacosException(0, "failed to get nacos servers after all servers(" + ParamUtils::Implode(serverList) + ") tried: "
-                            + errmsg);
+    throw NacosException(0,
+                         "failed to get nacos servers after all servers(" + toString() + ") tried: "
+                         + errmsg);
+}
+
+list<NacosServerInfo> ServerListManager::pullServerList() throw(NacosException)
+{
+    std::list<NacosString> headers;
+    std::list<NacosString> paramValues;
+
+    if (!NacosStringOps::isNullStr(addressServerUrl))
+    {
+        HttpResult serverRes = httpCli->httpGet(addressServerUrl, headers, paramValues, NULLSTR, 3000);//TODO:readTimeout to a constant
+        list<NacosServerInfo> serversPulled = JSON::Json2NacosServerInfo(serverRes.content);
+        serversPulled.sort();
+
+        return serversPulled;
+    }
+    //usually this should not be happening
+    throw NacosException(0, "addressServerUrl is not set, please config it on properties");
 }
 
 std::map<NacosString, NacosServerInfo> ServerListManager::__debug()
 {
-    return getServerList();
+    return tryPullServerListFromNacosServer();
+}
+
+NacosString ServerListManager::toString() const
+{
+    NacosString res;
+    bool first = true;
+    for (list<NacosServerInfo>::const_iterator it = serverList.begin(); it != serverList.end(); it++)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            res += ",";
+        }
+        res += it->toString();
+    }
+
+    return res;
+}
+
+void *ServerListManager::pullWorkerThread(void *param)
+{
+    ServerListManager *thisMgr = (ServerListManager*)param;
+    while (thisMgr->started)
+    {
+        try
+        {
+            bool changed = false;
+            list<NacosServerInfo> serverList = thisMgr->pullServerList();
+
+            {
+                ReadGuard _readGuard(thisMgr->rwLock);
+                if (serverList != thisMgr->serverList)
+                {
+                    log_debug("Servers got from nacos differs from local one, updating...\n");
+                    changed = true;
+                }
+            }
+
+            if (changed)
+            {
+                WriteGuard _writeGuard(thisMgr->rwLock);
+                log_debug("updated!\n");
+                thisMgr->serverList = serverList;
+            }
+        }
+        catch (NacosException e)
+        {
+            //Error occured during the invocation, sleep for a longer time
+            sleep(thisMgr->refreshInterval / 1000);
+        }
+        sleep(thisMgr->refreshInterval / 1000);
+    }
+
+    return NULL;
+}
+
+void ServerListManager::start()
+{
+    if (started && !isFixed)
+    {
+        return;
+    }
+
+    started = true;
+
+    NacosString threadName = getClusterName() + "," + getEndpoint() + ":" +
+            NacosStringOps::valueOf(getEndpointPort()) + "-" + getNamespace();
+    _pullThread = new Thread(threadName, pullWorkerThread, (void*)this);
+    _pullThread->start();
+}
+
+void ServerListManager::stop()
+{
+    if (!started)
+    {
+        return;
+    }
+
+    started = false;
+    if (_pullThread != NULL)
+    {
+        _pullThread->join();
+        delete _pullThread;
+        _pullThread = NULL;
+    }
+}
+
+NacosString ServerListManager::getContextPath() const
+{
+    if (appConfigManager->contains(PropertyKeyConst::CONTEXT_PATH))
+    {
+        appConfigManager->get(PropertyKeyConst::CONTEXT_PATH);
+    }
+
+    return DEFAULT_CONTEXT_PATH;
+}
+ServerListManager::~ServerListManager()
+{
+    stop();
 }
