@@ -16,7 +16,7 @@ public:
 	static T getNthElem(std::list<T> &parm, size_t i)
 	{
 		assert(parm.size() > i);
-		std::list<T>::iterator it = parm.begin();
+		typename std::list<T>::iterator it = parm.begin();
 		for (size_t skipper = 0; skipper < i; skipper++)
 		{
 			it++;
