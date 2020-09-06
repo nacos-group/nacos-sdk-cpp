@@ -128,7 +128,7 @@ bool testNamingServiceRegister()
 
 	try
 	{
-		for (int i = 0; i < 400; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
 			instance.port = 2000 + i;
@@ -143,7 +143,7 @@ bool testNamingServiceRegister()
 	sleep(30);
 	try
 	{
-		for (int i = 20; i < 40; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
 			

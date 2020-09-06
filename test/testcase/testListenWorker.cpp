@@ -52,6 +52,7 @@ bool testAddListener()
 		return false;
 	}
 
+    cout << "Input a character to continue" << endl;
 	getchar();
 	SHOULD_BE_TRUE(bSucc, "Publish should succeed");
 	return true;

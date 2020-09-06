@@ -56,10 +56,12 @@ bool testListeningKeys()
         n->addListener(strKey, NULLSTR, theListener3);
     }
 
+    cout << "Input a character to continue" << endl;
     cin >> cc;
     cout << "remove listener" << endl;
     n->removeListener("dqid", NULLSTR, theListener);
 
+    cout << "Input a character to continue" << endl;
     cin >> cc;
     cout << "remove listener2" << endl;
     n->removeListener("dqid", NULLSTR, theListener2);
