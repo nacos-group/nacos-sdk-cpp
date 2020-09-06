@@ -1,5 +1,5 @@
-#ifndef __MUTEX_H_
-#define __MUTEX_H_
+#ifndef __RWLOCK_H_
+#define __RWLOCK_H_
 #include <pthread.h>
 #include <unistd.h>
 /*
@@ -13,7 +13,7 @@ private:
     pthread_rwlock_t _pthread_rwlock;
 public:
     RWLock() { pthread_rwlock_init(&_pthread_rwlock, NULL); };
-    ~RWLock() { pthread_rwlock_destroy(&_pthread_rwlock, NULL); };
+    ~RWLock() { pthread_rwlock_destroy(&_pthread_rwlock); };
     int unlock() { return pthread_rwlock_unlock(&_pthread_rwlock); };
     int readLock() { return pthread_rwlock_rdlock(&_pthread_rwlock); };
     int writeLock() { return pthread_rwlock_wrlock(&_pthread_rwlock); };
