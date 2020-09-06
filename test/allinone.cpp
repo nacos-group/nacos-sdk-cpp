@@ -13,7 +13,6 @@ bool testDebug();
 bool testVaArgs();
 bool testVaArgs2();
 bool testlogPrint();
-bool testDeleteConfig();
 bool testPublishConfig();
 bool testStringEqual();
 bool testAddListener();
@@ -46,6 +45,12 @@ bool testServerListManager();
 
 TestData testList1[] =
 TEST_ITEM_START
+
+TEST_ITEM_END
+
+bool testDeleteConfig();
+TestData testList[] =
+TEST_ITEM_START
 TEST_ITEM("Normal http test", testNormalHttpRequest)
 TEST_ITEM("No server request, should fail", testNoServerRequest)
 TEST_ITEM("Publish config to server", testPublishConfig)
@@ -53,10 +58,10 @@ TEST_ITEM("Get config from server", testGetConfig)
 TEST_ITEM("Get config from server (with default port)", testGetConfigwithDefaultPort)
 TEST_ITEM("Connect the server with invalid config, should throw an exception", testInvalidConfig)
 TEST_ITEM("Test printing logs", testDebug)
+TEST_ITEM("Delete config from server", testDeleteConfig)
 TEST_ITEM("Test printing logs with va_args", testVaArgs)
 TEST_ITEM("Test printing logs with va_args2", testVaArgs2)
 TEST_ITEM("Test printing logs", testlogPrint)
-TEST_ITEM("Delete config from server", testDeleteConfig)
 TEST_ITEM("Test for string characteristics", testStringEqual)
 TEST_ITEM("Read&Write file test", testReadWriteFile)
 TEST_ITEM("GetFileSize, should work well", testGetFileSize)
@@ -83,10 +88,6 @@ TEST_ITEM("Test serialization/deserialization of malformed Business Object (no c
 TEST_ITEM("Register many services and get one", testGetAllInstances)
 TEST_ITEM("Listen to key and remove it from listening list", testListeningKeys)
 TEST_ITEM("Test explode function", testStringExplode)
-TEST_ITEM_END
-
-TestData testList[] =
-TEST_ITEM_START
 TEST_ITEM("AppConfigManager smoke test", testAppConfigManager)
 TEST_ITEM("ServerListManager smoke test", testServerListManager)
 TEST_ITEM_END

@@ -12,8 +12,8 @@ bool testAppConfigManager()
 {
 	cout << "in function testAppConfigManager" << endl;
 
-	AppConfigManager appConfigManager;
     NacosString configFile = DirUtils::getCwd() + Constants::FILE_SEPARATOR + PropertyKeyConst::CONFIG_FILE_NAME;
+	AppConfigManager appConfigManager(configFile);
     appConfigManager.loadConfig(configFile);
     Properties configs = appConfigManager.getAllConfig();
 	return true;

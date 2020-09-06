@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <list>
 #include "naming/NamingProxy.h"
-#include "naming/NacosNamingService.h"
+#include "factory/NacosServiceFactory.h"
 #include "naming/Instance.h"
 #include "Constants.h"
 #include "utils/UtilAndComs.h"
@@ -13,6 +13,7 @@
 #include "NacosString.h"
 #include "Properties.h"
 #include "PropertyKeyConst.h"
+#include "ResourceGuard.h"
 
 using namespace std;
 
@@ -21,7 +22,11 @@ bool testGetAllInstances()
 	cout << "in function testGetAllInstances" << endl;
 	Properties configProps;
 	configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
-	NacosNamingService *namingSvc = new NacosNamingService(configProps);
+    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
+    ResourceGuard<NacosServiceFactory> _guardFactory(factory);
+	NamingService *namingSvc = factory->CreateNamingService();
+    ResourceGuard<NamingService> _guardService(namingSvc);
+
 	Instance instance;
 	instance.clusterName = "DefaultCluster";
 	instance.ip = "127.0.0.1";
@@ -41,7 +46,6 @@ bool testGetAllInstances()
 	catch (NacosException e)
 	{
 		cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
-		ReleaseResource(namingSvc);
 		return false;
 	}
 	sleep(20);
@@ -56,21 +60,18 @@ bool testGetAllInstances()
 	if (instances.size() != 1)
 	{
 		cout << "There should be only 1 instance for TestNamingService1" << endl;
-		ReleaseResource(namingSvc);
 		return false;
 	}
 
 	if (instances.front().port != 2001)
 	{
 		cout << "TestNamingService1's port should be 2001" << endl;
-		ReleaseResource(namingSvc);
 		return false;
 	}
 
 	if (instances.front().ip != "127.0.0.1")
 	{
 		cout << "TestNamingService1's ip should be 127.0.0.1" << endl;
-		ReleaseResource(namingSvc);
 		return false;
 	}
 
@@ -88,10 +89,8 @@ bool testGetAllInstances()
 	catch (NacosException e)
 	{
 		cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
-		ReleaseResource(namingSvc);
 		return false;
 	}
 
-	ReleaseResource(namingSvc);
 	return true;
 }

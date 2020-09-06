@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include "naming/NamingProxy.h"
 #include "naming/NacosNamingService.h"
+#include "factory/NacosServiceFactory.h"
+#include "ResourceGuard.h"
 #include "naming/Instance.h"
 #include "Constants.h"
 #include "utils/UtilAndComs.h"
@@ -19,8 +21,14 @@ bool testNamingProxySmokeTest()
 {
 	cout << "in function testNamingProxySmokeTest" << endl;
 	NacosString servers = "127.0.0.1:8848";
-	HTTPCli *httpcli = new HTTPCli();
-	NamingProxy *namingProxy = new NamingProxy(httpcli, UtilAndComs::DEFAULT_NAMESPACE_ID, NULLSTR/*endpoint*/, servers);
+	Properties props;
+	props[PropertyKeyConst::SERVER_ADDR] = servers;
+    NacosServiceFactory *factory = new NacosServiceFactory(props);
+    ResourceGuard<NacosServiceFactory> _guardFactory(factory);
+    NamingService *n = factory->CreateNamingService();
+    ResourceGuard<NamingService> _serviceFactory(n);
+    NacosNamingService *nn =(NacosNamingService*)n;
+    NamingProxy *namingProxy = nn->getServerProxy();
 	Instance theinstance;
 	theinstance.instanceId = "TestInstance";
 	theinstance.ip = "127.0.0.1";
@@ -41,8 +49,6 @@ bool testNamingProxySmokeTest()
 	{
 	    cout << "Exception caught during deregistering service, raison:" << e.what() << endl;
 
-        ReleaseResource(namingProxy);
-        ReleaseResource(httpcli);
         return false;
 	}
 
@@ -61,8 +67,6 @@ bool testNamingProxySmokeTest()
 	{
 	    cout << "Exception caught during registering service, raison:" << e.what() << endl;
 
-        ReleaseResource(namingProxy);
-        ReleaseResource(httpcli);
         return false;
 	}
 
@@ -75,8 +79,6 @@ bool testNamingProxySmokeTest()
         if (serverlist.find("\"serviceName\":\"" + serviceName + "\"") == string::npos)
         {
             cout << "Failed to get data for:" << serviceName << endl;
-            ReleaseResource(namingProxy);
-            ReleaseResource(httpcli);
             return false;
         }
         cout << "Servers from nacos:" + serverlist << endl;
@@ -96,13 +98,9 @@ bool testNamingProxySmokeTest()
 	{
 	    cout << "Exception caught during cleaning the test environment, raison:" << e.what() << endl;
 
-        ReleaseResource(namingProxy);
-        ReleaseResource(httpcli);
         return false;
 	}
 
-	ReleaseResource(namingProxy);
-	ReleaseResource(httpcli);
 	return true;
 }
 
@@ -117,7 +115,10 @@ bool testNamingServiceRegister()
 	cout << "in function testNamingServiceRegister" << endl;
 	Properties configProps;
 	configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
-	NacosNamingService *namingSvc = new NacosNamingService(configProps);
+    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
+    ResourceGuard<NacosServiceFactory> _guardFactory(factory);
+    NamingService *namingSvc = factory->CreateNamingService();
+    ResourceGuard<NamingService> _serviceFactory(namingSvc);
 	Instance instance;
 	instance.clusterName = "DefaultCluster";
 	instance.ip = "127.0.0.1";
@@ -137,7 +138,6 @@ bool testNamingServiceRegister()
 	catch (NacosException e)
 	{
 		cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
-		ReleaseResource(namingSvc);
 		return false;
 	}
 	sleep(30);
@@ -154,11 +154,9 @@ bool testNamingServiceRegister()
 	catch (NacosException e)
 	{
 		cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
-		ReleaseResource(namingSvc);
 		return false;
 	}
 	sleep(30);
 
-	ReleaseResource(namingSvc);
 	return true;
 }

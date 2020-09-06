@@ -1,7 +1,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
-#include "config/NacosConfigService.h"
+#include "factory/NacosServiceFactory.h"
+#include "ResourceGuard.h"
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
 #include "Debug.h"
@@ -13,7 +14,10 @@ bool testPublishConfig()
 	cout << "in function testPublishConfig" << endl;
 	Properties props;
 	props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
-	NacosConfigService *n = new NacosConfigService(props);
+    NacosServiceFactory *factory = new NacosServiceFactory(props);
+    ResourceGuard<NacosServiceFactory> _guardFactory(factory);
+    ConfigService *n = factory->CreateConfigService();
+    ResourceGuard<ConfigService> _serviceFactory(n);
 	bool bSucc;
 	for (int i = 0; i < 50; i++)
 	{
@@ -44,12 +48,10 @@ bool testPublishConfig()
 			"Request failed with curl code:"<<e.errorcode() << endl <<
 			"Reason:" << e.what() << endl;
 
-			ReleaseResource(n);
 			return false;
 		}
 		cout << "Publishing Key:" << key_s << " with value:" << val_s << " result:" << bSucc << endl;
 	}
 
-	ReleaseResource(n);
 	return true;
 }

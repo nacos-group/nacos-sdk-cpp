@@ -1,7 +1,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
-#include "config/NacosConfigService.h"
+#include "factory/NacosServiceFactory.h"
+#include "ResourceGuard.h"
 #include "listen/Listener.h"
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
@@ -32,7 +33,10 @@ bool testListeningKeys()
 	cout << "in function testPublishConfig" << endl;
 	Properties props;
 	props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
-	NacosConfigService *n = new NacosConfigService(props);
+	NacosServiceFactory *factory = new NacosServiceFactory(props);
+    ResourceGuard<NacosServiceFactory> _guardFactory(factory);
+    ConfigService *n = factory->CreateConfigService();
+    ResourceGuard<ConfigService> _serviceFactory(n);
 	bool bSucc;
 	char cc;
 
@@ -62,6 +66,5 @@ bool testListeningKeys()
     n->removeListener("dqid", NULLSTR, theListener3);
     cin >> cc;
 
-	ReleaseResource(n);
 	return true;
 }
