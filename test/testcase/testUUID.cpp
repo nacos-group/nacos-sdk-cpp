@@ -1,5 +1,6 @@
 #include <iostream>
 #include "utils//UuidUtils.h"
+#include "thread/Thread.h"
 
 using namespace std;
 
@@ -15,4 +16,39 @@ bool testUUID()
     cout << "test end..." << endl;
 
 	return true;
+}
+
+void *UUIDThreadFunc(void *param)
+{
+    Thread *thisThread = *((Thread**)param);
+    for (int i = 0; i < 100; i++)
+    {
+        log_debug("Thread %s UUID: %s\n", thisThread->getThreadName().c_str(), UuidUtils::generateUuid().c_str());
+    }
+
+    return NULL;
+}
+
+bool testUUIDMT()
+{
+    cout << "in function testUUIDMT" << endl;
+
+    cout << "Generating UUID..." << endl;
+
+    Thread *threads[10] = {NULL};
+    for (int i = 0; i < 10; i++)
+    {
+        NacosString threadName = "UUIDThread-" + NacosStringOps::valueOf(i);
+        threads[i] = new Thread(threadName, UUIDThreadFunc, (void*)&threads[i]);
+        threads[i]->start();
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        threads[i]->join();
+    }
+
+    cout << "test end..." << endl;
+
+    return true;
 }

@@ -5,8 +5,12 @@
 #define UUID_LEN_BYTES 16
 class UuidUtils
 {
+private:
+    static int fd;
 public:
     static NacosString generateUuid();
+    static void Init();
+    static void DeInit();
 };
 
 #endif

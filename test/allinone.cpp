@@ -45,6 +45,7 @@ bool testServerListManager();
 bool testDeleteConfig();
 bool testEndpointWithNamingProxy();
 bool testUUID();
+bool testUUIDMT();
 
 TestData testList1[] =
 TEST_ITEM_START
@@ -94,6 +95,7 @@ TEST_ITEM_END
 TestData testList[] =
 TEST_ITEM_START
 TEST_ITEM("Test UUID generation", testUUID)
+TEST_ITEM("Test UUID generation(Multi-thread)", testUUIDMT)
 TEST_ITEM_END
 
 int main()
