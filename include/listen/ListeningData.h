@@ -5,7 +5,7 @@
 #include "NacosString.h"
 #include "listen/Listener.h"
 #include "md5/md5.h"
-#include "debug.h"
+#include "Debug.h"
 
 class ListeningData
 {
