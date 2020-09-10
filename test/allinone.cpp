@@ -44,6 +44,7 @@ bool testAppConfigManager();
 bool testServerListManager();
 bool testDeleteConfig();
 bool testEndpointWithNamingProxy();
+bool testUUID();
 
 TestData testList1[] =
 TEST_ITEM_START
@@ -85,12 +86,14 @@ TEST_ITEM("Register many services and get one", testGetAllInstances)
 TEST_ITEM("Listen to key and remove it from listening list", testListeningKeys)
 TEST_ITEM("Test explode function", testStringExplode)
 TEST_ITEM("AppConfigManager smoke test", testAppConfigManager)
+TEST_ITEM("ServerListManager smoke test", testServerListManager)
+TEST_ITEM("Endpoint function test, get available nacos server from endpoint", testEndpointWithNamingProxy)
+
 TEST_ITEM_END
 
 TestData testList[] =
 TEST_ITEM_START
-TEST_ITEM("ServerListManager smoke test", testServerListManager)
-TEST_ITEM("Endpoint function test, get available nacos server from endpoint", testEndpointWithNamingProxy)
+TEST_ITEM("Test UUID generation", testUUID)
 TEST_ITEM_END
 
 int main()

@@ -1,7 +1,7 @@
 #ifndef __NACOS_CFG_SVC_H_
 #define __NACOS_CFG_SVC_H_
 #include "config/ConfigService.h"
-#include "http/HTTPAgent.h"
+#include "http/HttpAgent.h"
 #include "listen/ClientWorker.h"
 #include "NacosString.h"
 #include "server/ServerListManager.h"
