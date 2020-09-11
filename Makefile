@@ -1,37 +1,41 @@
-SRCS = $(wildcard *.c *.cpp ../lib/*.c ../lib/*.cpp src/*.c src/*.cpp)
-SRCS += $(wildcard src/http/*.c src/http/*.cpp)
-SRCS += $(wildcard src/listen/*.c src/listen/*.cpp)
-SRCS += $(wildcard src/config/*.c src/config/*.cpp)
-SRCS += $(wildcard src/server/*.c src/server/*.cpp)
-SRCS += $(wildcard src/init/*.c src/init/*.cpp)
-SRCS += $(wildcard src/md5/*.c src/md5/*.cpp)
-SRCS += $(wildcard src/utils/*.c src/utils/*.cpp)
-SRCS += $(wildcard src/naming/*.c src/naming/*.cpp)
-SRCS += $(wildcard src/naming/beat/*.c src/naming/beat/*.cpp)
-SRCS += $(wildcard src/thread/*.c src/thread/*.cpp)
-SRCS += $(wildcard src/factory/*.c src/factory/*.cpp)
-SRCS += $(wildcard test/*.c test/*.cpp test/testcase/*.c test/testcase/*.cpp)
-OBJS = $(SRCS:.c = .o)
+SRCS_DIRS := $(shell find ./src/ -maxdepth 3 -type d)
+SRCS_DIRS += $(shell find ./test/ -maxdepth 3 -type d)
+SRCS := $(foreach dir,$(SRCS_DIRS),$(wildcard $(dir)/*.cpp))
+
+MAKEROOT := $(shell pwd)
+OBJ_DIR= $(MAKEROOT)/obj
+$(shell mkdir -p "$(OBJ_DIR)")
+
+OBJS = $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(notdir $(SRCS)))
+
 CC = g++
 INCLUDES = -Iinclude \
-			-Itest \
-			-I.
+		   -Itest \
+		   -I.
 LIBS = -lcurl -lpthread
 CCFLAGS = -g -Wall -O0
 OUTPUT = nacos-cli.out
+
+vpath %.cpp $(SRCS_DIRS)
+
+DEP:=$(OBJS:%.o=%.d)
 
 all : $(OUTPUT)
 
 $(OUTPUT) : $(OBJS)
 	$(CC) $^ -o $@ $(INCLUDES) $(LIBS) $(CCFLAGS)
-%.o : %.c
-	$(CC) -c $< $(CCFLAGS)
-%.o : %.cpp
-	$(CC) -c $< $(CCFLAGS)
+
+-include $(DEP)
+
+$(OBJS) : $(OBJ_DIR)/%.o : %.cpp
+	$(CC) -c $< -o $@ $(CCFLAGS) $(INCLUDES)
+	$(CC) $(CFLAGS) $(INCLUDES) -MM -MT $@ -MF $(patsubst %.o, %.d, $@) $<
+
 testcase : all
-SRCS = $(SRCS:testcase/*.c)
+	SRCS = $(SRCS:testcase/*.cpp)
 
 clean:
-	rm -rf *.out *.o
+	rm -rf *.out
+	rm -rf obj
 
 .PHONY:clean
