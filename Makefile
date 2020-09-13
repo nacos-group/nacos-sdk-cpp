@@ -15,7 +15,7 @@ INCLUDES = -Iinclude \
 		   -I.
 
 LIBS = -lcurl -lpthread
-CCFLAGS = -g -Wall -std=c++11 -O0 -fPIC
+CCFLAGS = -g -Wall -O0 -fPIC
 OUTPUT = nacos-cli.out
 OUTLIB = nacos-cli.so
 
