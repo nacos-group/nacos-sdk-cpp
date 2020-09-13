@@ -3,6 +3,14 @@
 #include "NacosString.h"
 
 #define UUID_LEN_BYTES 16
+
+/**
+ * UuidUtils
+ *
+ * @author yzz-ihep
+ * Generates UUID from /dev/urandom
+ */
+
 class UuidUtils
 {
 private:
