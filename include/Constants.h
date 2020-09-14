@@ -119,5 +119,4 @@ public:
 	const static NacosString FILE_SEPARATOR;
 };
 
-
 #endif
