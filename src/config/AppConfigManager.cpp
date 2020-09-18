@@ -60,7 +60,9 @@ void AppConfigManager::checkReloadable() throw(NacosException)
 size_t AppConfigManager::loadConfig() throw(NacosException)
 {
     checkReloadable();
-    appConfig = parseConfigFile(configFile);
+    initDefaults();
+    Properties parsedConfig = parseConfigFile(configFile);
+    applyConfig(parsedConfig);
     log_debug("loaded config file:%s\n", appConfig.toString().c_str());
     return appConfig.size();
 }
@@ -101,11 +103,28 @@ bool AppConfigManager::contains(const std::string &key) const
 AppConfigManager::AppConfigManager(Properties &props)
 {
     reloadable = false;
-    appConfig = props;
+    initDefaults();
+    applyConfig(props);
 }
 
 AppConfigManager::AppConfigManager(const NacosString &_configFile)
 {
     reloadable = true;
     configFile = _configFile;
+}
+
+void AppConfigManager::initDefaults()
+{
+    appConfig.clear();
+    appConfig[PropertyKeyConst::NAMESPACE] = "public";
+}
+
+
+void AppConfigManager::applyConfig(Properties &rhs)
+{
+    for (map<NacosString, NacosString>::iterator it = rhs.begin();
+        it != rhs.end(); it++)
+    {
+        appConfig[it->first] = it->second;
+    }
 }

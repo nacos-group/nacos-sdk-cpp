@@ -15,6 +15,8 @@ private:
     static NacosString KV_SEPARATOR;
     AppConfigManager();
     void checkReloadable() throw(NacosException);
+    void initDefaults();
+    void applyConfig(Properties &rhs);
 public:
     bool isReloadable() const { return reloadable; };
     AppConfigManager(Properties &props);
