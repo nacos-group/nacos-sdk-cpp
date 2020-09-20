@@ -1,5 +1,6 @@
 #ifndef __BLOCKING_Q_H_
 #define __BLOCKING_Q_H_
+
 #include <deque>
 #include "Mutex.h"
 /*
