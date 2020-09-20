@@ -33,6 +33,7 @@ private:
 
     std::list <NacosString> builderHeaders();
 
+    long _http_req_timeout;
 public:
     NamingProxy(HTTPCli *httpcli, ServerListManager *serverListManager, AppConfigManager *appConfigManager);
 

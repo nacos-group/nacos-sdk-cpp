@@ -99,6 +99,9 @@ AppConfigManager::AppConfigManager(const NacosString &_configFile) {
 void AppConfigManager::initDefaults() {
     appConfig.clear();
     appConfig[PropertyKeyConst::NAMESPACE] = "public";
+    appConfig[PropertyKeyConst::HTTP_REQ_TIMEOUT] = "50000";
+    appConfig[PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL] = "30000";
+    appConfig[PropertyKeyConst::SRVLISTMGR_READ_TIMEOUT] = "3000";
 }
 
 

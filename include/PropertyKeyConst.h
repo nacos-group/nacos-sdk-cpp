@@ -35,6 +35,12 @@ public:
 
     static const NacosString NAMING_POLLING_THREAD_COUNT;
 
+    static const NacosString HTTP_REQ_TIMEOUT;
+
+    static const NacosString SRVLISTMGR_REFRESH_INTERVAL;
+
+    static const NacosString SRVLISTMGR_READ_TIMEOUT;
+
     /*public static class SystemEnv {
 
         static const NacosString ALIBABA_ALIWARE_ENDPOINT_PORT = "ALIBABA_ALIWARE_ENDPOINT_PORT";
