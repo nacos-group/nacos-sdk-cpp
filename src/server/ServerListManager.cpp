@@ -241,11 +241,7 @@ void ServerListManager::stop() {
 }
 
 NacosString ServerListManager::getContextPath() const {
-    if (appConfigManager->contains(PropertyKeyConst::CONTEXT_PATH)) {
-        return appConfigManager->get(PropertyKeyConst::CONTEXT_PATH);
-    }
-
-    return DEFAULT_CONTEXT_PATH;
+    return appConfigManager->get(PropertyKeyConst::CONTEXT_PATH);
 }
 
 ServerListManager::~ServerListManager() {
