@@ -184,28 +184,9 @@ list <Instance> NacosNamingService::getAllInstances
 list <Instance> NacosNamingService::getAllInstances
         (
                 const NacosString &serviceName,
-                bool subscribe
-        ) throw(NacosException) {
-    list <NacosString> clusters;
-    return getAllInstances(serviceName, clusters, subscribe);
-}
-
-list <Instance> NacosNamingService::getAllInstances
-        (
-                const NacosString &serviceName,
-                const NacosString &groupName,
-                bool subscribe
-        ) throw(NacosException) {
-    list <NacosString> clusters;
-    return getAllInstances(serviceName, groupName, clusters, subscribe);
-}
-
-list <Instance> NacosNamingService::getAllInstances
-        (
-                const NacosString &serviceName,
                 list <NacosString> clusters
         ) throw(NacosException) {
-    return getAllInstances(serviceName, clusters, true);
+    return getAllInstances(serviceName, Constants::DEFAULT_GROUP, clusters);
 }
 
 list <Instance> NacosNamingService::getAllInstances
@@ -213,25 +194,6 @@ list <Instance> NacosNamingService::getAllInstances
                 const NacosString &serviceName,
                 const NacosString &groupName,
                 list <NacosString> clusters
-        ) throw(NacosException) {
-    return getAllInstances(serviceName, groupName, clusters, true);
-}
-
-list <Instance> NacosNamingService::getAllInstances
-        (
-                const NacosString &serviceName,
-                list <NacosString> clusters,
-                bool subscribe
-        ) throw(NacosException) {
-    return getAllInstances(serviceName, Constants::DEFAULT_GROUP, clusters, subscribe);
-}
-
-list <Instance> NacosNamingService::getAllInstances
-        (
-                const NacosString &serviceName,
-                const NacosString &groupName,
-                list <NacosString> clusters,
-                bool subscribe
         ) throw(NacosException) {
     ServiceInfo serviceInfo;
     //TODO:
@@ -247,4 +209,3 @@ list <Instance> NacosNamingService::getAllInstances
     list <Instance> hostlist = serviceInfo.getHosts();
     return hostlist;
 }
-
