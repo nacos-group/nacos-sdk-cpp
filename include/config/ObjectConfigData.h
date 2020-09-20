@@ -7,8 +7,7 @@
 #include "config/AppConfigManager.h"
 #include "naming/beat/BeatReactor.h"
 
-class ObjectConfigData
-{
+class ObjectConfigData {
 public:
     NacosString name;
     NamingProxy *namingProxy;

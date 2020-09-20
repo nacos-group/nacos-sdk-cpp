@@ -15,202 +15,182 @@
 
 using namespace std;
 
-ClientWorker::ClientWorker(HttpAgent *_httpAgent)
-{
-	threadId = 0;
-	stopThread = true;
-	pthread_mutex_init(&watchListMutex, NULL);
-	pthread_mutex_init(&stopThreadMutex, NULL);
-	httpAgent = _httpAgent;
+ClientWorker::ClientWorker(HttpAgent *_httpAgent) {
+    threadId = 0;
+    stopThread = true;
+    pthread_mutex_init(&watchListMutex, NULL);
+    pthread_mutex_init(&stopThreadMutex, NULL);
+    httpAgent = _httpAgent;
 }
 
-ClientWorker::~ClientWorker()
-{
+ClientWorker::~ClientWorker() {
     log_debug("ClientWorker::~ClientWorker()\n");
-	stopListening();
-	cleanUp();
+    stopListening();
+    cleanUp();
 }
 
-int64_t getCurrentTimeInMs()
-{
-	struct timeval tv;
-	gettimeofday(&tv,NULL);
+int64_t getCurrentTimeInMs() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
 
-	return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 
 NacosString ClientWorker::getServerConfig
-(
-	const NacosString &tenant,
-	const NacosString &dataId,
-	const NacosString &group,
-	long timeoutMs
-) throw (NacosException)
-{
-	std::list<NacosString> headers;
-	std::list<NacosString> paramValues;
-	//Get the request url
-	NacosString url = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
+        (
+                const NacosString &tenant,
+                const NacosString &dataId,
+                const NacosString &group,
+                long timeoutMs
+        ) throw(NacosException) {
+    std::list <NacosString> headers;
+    std::list <NacosString> paramValues;
+    //Get the request url
+    NacosString url = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
 
-	HttpResult res;
+    HttpResult res;
 
-	paramValues.push_back("dataId");
-	paramValues.push_back(dataId);
-	if (!isNull(group))
-	{
-		paramValues.push_back("group");
-		paramValues.push_back(group);
-	}
-	else
-	{
-		paramValues.push_back("group");
-		paramValues.push_back(Constants::DEFAULT_GROUP);
-	}
+    paramValues.push_back("dataId");
+    paramValues.push_back(dataId);
+    if (!isNull(group)) {
+        paramValues.push_back("group");
+        paramValues.push_back(group);
+    } else {
+        paramValues.push_back("group");
+        paramValues.push_back(Constants::DEFAULT_GROUP);
+    }
 
-	if (!isNull(tenant))
-	{
-		paramValues.push_back("tenant");
-		paramValues.push_back(tenant);
-	}
+    if (!isNull(tenant)) {
+        paramValues.push_back("tenant");
+        paramValues.push_back(tenant);
+    }
 
-	try
-	{
-		res = httpAgent->httpGet(url, headers, paramValues, httpAgent->getEncode(), timeoutMs);
-	}
-	catch (NetworkException e)
-	{
-		throw NacosException(NacosException::SERVER_ERROR, e.what());
-	}
+    try {
+        res = httpAgent->httpGet(url, headers, paramValues, httpAgent->getEncode(), timeoutMs);
+    }
+    catch (NetworkException e) {
+        throw NacosException(NacosException::SERVER_ERROR, e.what());
+    }
 
-	switch (res.code)
-	{
-		case HTTP_OK: return res.content;
-		case HTTP_NOT_FOUND: return NULLSTR;
-	}
-	return NULLSTR;
+    switch (res.code) {
+        case HTTP_OK:
+            return res.content;
+        case HTTP_NOT_FOUND:
+            return NULLSTR;
+    }
+    return NULLSTR;
 }
 
-void *ClientWorker::listenerThread(void *parm)
-{
-	log_debug("Entered watch thread...\n");
-	ClientWorker *thelistener = (ClientWorker*)parm;
+void *ClientWorker::listenerThread(void *parm) {
+    log_debug("Entered watch thread...\n");
+    ClientWorker *thelistener = (ClientWorker *) parm;
 
-	while (!thelistener->stopThread)
-	{
-		int64_t start_time = getCurrentTimeInMs();
-		log_debug("Start watching at %u...\n", start_time);
-		thelistener->performWatch();
-		
-		log_debug("Watch function exit at %u...\n", getCurrentTimeInMs());
-	}
-	
-	return 0;
+    while (!thelistener->stopThread) {
+        int64_t start_time = getCurrentTimeInMs();
+        log_debug("Start watching at %u...\n", start_time);
+        thelistener->performWatch();
+
+        log_debug("Watch function exit at %u...\n", getCurrentTimeInMs());
+    }
+
+    return 0;
 }
 
-vector<NacosString> ClientWorker::parseListenedKeys(const NacosString &ReturnedKeys)
-{
-	NacosString changedKeyList = urldecode(ReturnedKeys);
+vector <NacosString> ClientWorker::parseListenedKeys(const NacosString &ReturnedKeys) {
+    NacosString changedKeyList = urldecode(ReturnedKeys);
 
-	vector<NacosString> explodedList;
-	ParamUtils::Explode(explodedList, changedKeyList, Constants::LINE_SEPARATOR);
+    vector <NacosString> explodedList;
+    ParamUtils::Explode(explodedList, changedKeyList, Constants::LINE_SEPARATOR);
 
-	//If the server returns a string with a trailing \x01, actually there is no data after that
-	//but ParamUtils::Explode will return an extra item with empty string, we need to remove that
-	//from the list so it won't disrupt subsequent operations
-	log_debug("extra data:%s\n", explodedList[explodedList.size() - 1].c_str());
-	if (explodedList.size() >= 1 && ParamUtils::isBlank(explodedList[explodedList.size() - 1]))
-	{
-		explodedList.pop_back();
-	}
-	return explodedList;
+    //If the server returns a string with a trailing \x01, actually there is no data after that
+    //but ParamUtils::Explode will return an extra item with empty string, we need to remove that
+    //from the list so it won't disrupt subsequent operations
+    log_debug("extra data:%s\n", explodedList[explodedList.size() - 1].c_str());
+    if (explodedList.size() >= 1 && ParamUtils::isBlank(explodedList[explodedList.size() - 1])) {
+        explodedList.pop_back();
+    }
+    return explodedList;
 }
 
-void ClientWorker::startListening()
-{
-	//Already started, skip this
-	if (!stopThread)
-	{
-		log_debug("The thread is already started or the starting is in progress...\n");
-		return;
-	}
+void ClientWorker::startListening() {
+    //Already started, skip this
+    if (!stopThread) {
+        log_debug("The thread is already started or the starting is in progress...\n");
+        return;
+    }
 
-	pthread_mutex_lock(&stopThreadMutex);
-	if (!stopThread)
-	{
-		pthread_mutex_unlock(&stopThreadMutex);
-		log_debug("The thread is already started or the starting is in progress...\n");
-		return;
-	}
+    pthread_mutex_lock(&stopThreadMutex);
+    if (!stopThread) {
+        pthread_mutex_unlock(&stopThreadMutex);
+        log_debug("The thread is already started or the starting is in progress...\n");
+        return;
+    }
 
-	stopThread = false;
-	pthread_mutex_unlock(&stopThreadMutex);
+    stopThread = false;
+    pthread_mutex_unlock(&stopThreadMutex);
 
-	log_debug("Starting the thread...\n");
-	pthread_create(&threadId, NULL, listenerThread, (void*)this);
-	log_debug("Started thread with id:%d...\n", threadId);
+    log_debug("Starting the thread...\n");
+    pthread_create(&threadId, NULL, listenerThread, (void *) this);
+    log_debug("Started thread with id:%d...\n", threadId);
 }
-	
-void ClientWorker::stopListening()
-{
+
+void ClientWorker::stopListening() {
     log_debug("ClientWorker::stopListening()\n");
-	if (stopThread)//Stop in progress
-	{
-		log_debug("The thread is already stopped or the stop is in progress...\n");
-		return;
-	}
+    if (stopThread)//Stop in progress
+    {
+        log_debug("The thread is already stopped or the stop is in progress...\n");
+        return;
+    }
 
-	pthread_mutex_lock(&stopThreadMutex);
-	if (stopThread)//Stop in progress
-	{
-		pthread_mutex_unlock(&stopThreadMutex);
-		log_debug("The thread is already stopped or the stop is in progress...\n");
-		return;
-	}
+    pthread_mutex_lock(&stopThreadMutex);
+    if (stopThread)//Stop in progress
+    {
+        pthread_mutex_unlock(&stopThreadMutex);
+        log_debug("The thread is already stopped or the stop is in progress...\n");
+        return;
+    }
 
-	stopThread = true;
-	pthread_mutex_unlock(&stopThreadMutex);
+    stopThread = true;
+    pthread_mutex_unlock(&stopThreadMutex);
 
-	pthread_join(threadId,NULL);
-	log_info("The thread is stopped successfully...\n");
+    pthread_join(threadId, NULL);
+    log_info("The thread is stopped successfully...\n");
 
 }
 
 void ClientWorker::addListener
-(
-    const NacosString &dataId,
-    const NacosString &group,
-    const NacosString &tenant,
-    const NacosString &initialContent,
-    Listener *listener
-)
-{
-	NacosString key = GroupKey::getKeyTenant(dataId, group, tenant);
-	log_debug("Adding listener with key: %s\n", key.c_str());
-	pthread_mutex_lock(&watchListMutex);
+        (
+                const NacosString &dataId,
+                const NacosString &group,
+                const NacosString &tenant,
+                const NacosString &initialContent,
+                Listener *listener
+        ) {
+    NacosString key = GroupKey::getKeyTenant(dataId, group, tenant);
+    log_debug("Adding listener with key: %s\n", key.c_str());
+    pthread_mutex_lock(&watchListMutex);
 
-	//Check whether the listener being added to the list already exists
-	if (listeningKeys.find(key) != listeningKeys.end())
-	{
-	    ListeningData *curListeningData = listeningKeys[key];
-	    if (!curListeningData->addListener(listener))
-        {
+    //Check whether the listener being added to the list already exists
+    if (listeningKeys.find(key) != listeningKeys.end()) {
+        ListeningData *curListeningData = listeningKeys[key];
+        if (!curListeningData->addListener(listener)) {
             log_warn("Key %s is already in the watch list, leaving...\n", key.c_str());
         }
-	    listener->incRef();
-		pthread_mutex_unlock(&watchListMutex);
-		return;
-	}
+        listener->incRef();
+        pthread_mutex_unlock(&watchListMutex);
+        return;
+    }
 
-	//if the listener does not exist, just create it
+    //if the listener does not exist, just create it
 
     ListeningData *listeningData = new ListeningData(tenant, dataId, group, initialContent);
 
-	//If no, copy one
-	listeningKeys[key] = listeningData;
+    //If no, copy one
+    listeningKeys[key] = listeningData;
     listeningData->addListener(listener);
     listener->incRef();
-	pthread_mutex_unlock(&watchListMutex);
-	log_debug("Key %s is added successfully!\n", key.c_str());
+    pthread_mutex_unlock(&watchListMutex);
+    log_debug("Key %s is added successfully!\n", key.c_str());
 }
 
 /**
@@ -219,38 +199,32 @@ void ClientWorker::addListener
 * @author Liu, Hanyu
 */
 void ClientWorker::removeListenerActively
-(
-    const NacosString &dataId,
-    const NacosString &group,
-    const NacosString &tenant,
-    Listener *listener
-)
-{
-	NacosString key = GroupKey::getKeyTenant(dataId, group, tenant);
-	pthread_mutex_lock(&watchListMutex);
-	map<NacosString, ListeningData *>::iterator it = listeningKeys.find(key);
-	//Check whether the cachedata being removed exists
-	if (it == listeningKeys.end())
-	{
+        (
+                const NacosString &dataId,
+                const NacosString &group,
+                const NacosString &tenant,
+                Listener *listener
+        ) {
+    NacosString key = GroupKey::getKeyTenant(dataId, group, tenant);
+    pthread_mutex_lock(&watchListMutex);
+    map<NacosString, ListeningData *>::iterator it = listeningKeys.find(key);
+    //Check whether the cachedata being removed exists
+    if (it == listeningKeys.end()) {
         log_warn("Removing a non-existing listener %s, leaving...\n", key.c_str());
-		pthread_mutex_unlock(&watchListMutex);
-		return;
-	}
+        pthread_mutex_unlock(&watchListMutex);
+        return;
+    }
 
-	//If so, remove it and free the resources
+    //If so, remove it and free the resources
     ListeningData *curListeningData = it->second;
     bool succRemoved = curListeningData->removeListener(listener);
-    if (!succRemoved)
-    {
+    if (!succRemoved) {
         log_warn("Removing a non-existing listener %s...\n", key.c_str());
-    }
-    else
-    {
+    } else {
         //remove the listener, it is created by the client but freed by nacos-sdk-cpp
         log_debug("Removing a listener %s...\n", key.c_str());
         int refcount = listener->decRef();
-        if (refcount == 0)
-        {
+        if (refcount == 0) {
             log_debug("Refcount of the listener(Name = %s) is 0 so delete it.\n", listener->getListenerName().c_str());
             delete listener;
             listener = NULL;
@@ -258,13 +232,12 @@ void ClientWorker::removeListenerActively
     }
 
     //no listener on the list, remove the entry
-    if (curListeningData->isEmpty())
-    {
+    if (curListeningData->isEmpty()) {
         listeningKeys.erase(key);
         //free the space for this slot
         delete curListeningData;
     }
-	pthread_mutex_unlock(&watchListMutex);
+    pthread_mutex_unlock(&watchListMutex);
 }
 
 /**
@@ -275,13 +248,12 @@ void ClientWorker::removeListenerActively
 * @author Liu, Hanyu
 */
 void ClientWorker::removeListener
-(
-    const NacosString &dataId,
-    const NacosString &group,
-    const NacosString &tenant,
-    Listener *listener
-)
-{
+        (
+                const NacosString &dataId,
+                const NacosString &group,
+                const NacosString &tenant,
+                Listener *listener
+        ) {
     //set the remove flag and return quickly
     //the background process will remove the listener
     //add this listener to the remove list since it is marked to be removed
@@ -289,108 +261,98 @@ void ClientWorker::removeListener
     addDeleteItem(operateItem);
 }
 
-NacosString ClientWorker::checkListenedKeys()
-{
-	NacosString postData;
-	pthread_mutex_lock(&watchListMutex);
-	for (map<NacosString, ListeningData *>::iterator it = listeningKeys.begin(); it != listeningKeys.end(); it++)
-	{
+NacosString ClientWorker::checkListenedKeys() {
+    NacosString postData;
+    pthread_mutex_lock(&watchListMutex);
+    for (map<NacosString, ListeningData *>::iterator it = listeningKeys.begin(); it != listeningKeys.end(); it++) {
         ListeningData *curListenedKey = it->second;
 
-		postData += curListenedKey->getDataId();
-		postData += Constants::WORD_SEPARATOR;
-		postData += curListenedKey->getGroup();
-		postData += Constants::WORD_SEPARATOR;
-		
-		if (!isNull(curListenedKey->getTenant()))
-		{
-			postData += curListenedKey->getMD5();
-			postData += Constants::WORD_SEPARATOR;
-			postData += curListenedKey->getTenant();
-			postData += Constants::LINE_SEPARATOR;
-		}
-		else
-		{
-			postData += curListenedKey->getMD5();
-			postData += Constants::LINE_SEPARATOR;
-		}
-	}
-	pthread_mutex_unlock(&watchListMutex);
+        postData += curListenedKey->getDataId();
+        postData += Constants::WORD_SEPARATOR;
+        postData += curListenedKey->getGroup();
+        postData += Constants::WORD_SEPARATOR;
 
-	list<NacosString> headers;
-	list<NacosString> paramValues;
+        if (!isNull(curListenedKey->getTenant())) {
+            postData += curListenedKey->getMD5();
+            postData += Constants::WORD_SEPARATOR;
+            postData += curListenedKey->getTenant();
+            postData += Constants::LINE_SEPARATOR;
+        } else {
+            postData += curListenedKey->getMD5();
+            postData += Constants::LINE_SEPARATOR;
+        }
+    }
+    pthread_mutex_unlock(&watchListMutex);
 
-	//TODO:put it into constants list
-	long timeout = 30000;
+    list <NacosString> headers;
+    list <NacosString> paramValues;
 
-	headers.push_back("Long-Pulling-Timeout");
-	headers.push_back("30000");
+    //TODO:put it into constants list
+    long timeout = 30000;
 
-	paramValues.push_back(Constants::PROBE_MODIFY_REQUEST);
-	paramValues.push_back(postData);
-	log_debug("Assembled postData:%s\n", postData.c_str());
+    headers.push_back("Long-Pulling-Timeout");
+    headers.push_back("30000");
 
-	//Get the request url
-	//TODO:move /listener to constant
-	NacosString url = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH + "/listener";
-	HttpResult res;
+    paramValues.push_back(Constants::PROBE_MODIFY_REQUEST);
+    paramValues.push_back(postData);
+    log_debug("Assembled postData:%s\n", postData.c_str());
 
-	//TODO:constant for 30 * 1000
-	try
-	{
-		res = httpAgent->httpPost(url, headers, paramValues, httpAgent->getEncode(), timeout);
-	}
-	catch (NetworkException e)
-	{
-		log_warn("Request failed with: %s\n", e.what());
-		NacosString result = "";
-		return result;
-	}
+    //Get the request url
+    //TODO:move /listener to constant
+    NacosString url = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH + "/listener";
+    HttpResult res;
 
-	log_debug("Received the message below from server:\n%s\n", res.content.c_str());
-	return res.content;
+    //TODO:constant for 30 * 1000
+    try {
+        res = httpAgent->httpPost(url, headers, paramValues, httpAgent->getEncode(), timeout);
+    }
+    catch (NetworkException e) {
+        log_warn("Request failed with: %s\n", e.what());
+        NacosString result = "";
+        return result;
+    }
+
+    log_debug("Received the message below from server:\n%s\n", res.content.c_str());
+    return res.content;
 }
 
-void ClientWorker::performWatch()
-{
-	MD5 md5;
-	NacosString changedData = checkListenedKeys();
-	vector<NacosString> changedList = ClientWorker::parseListenedKeys(changedData);
-	pthread_mutex_lock(&watchListMutex);
-	for (std::vector<NacosString>::iterator it = changedList.begin(); it != changedList.end(); it++)
-	{
-		NacosString dataId, group, tenant;
-		ParamUtils::parseString2KeyGroupTenant(*it, dataId, group, tenant);
-		log_debug("Processing item:%s, dataId = %s, group = %s, tenant = %s\n",
-					it->c_str(), dataId.c_str(), group.c_str(), tenant.c_str());
-		
-		NacosString key = GroupKey::getKeyTenant(dataId, group, tenant);
-		map<NacosString, ListeningData *>::iterator listenedDataIter = listeningKeys.find(key);
-		//check whether the data being watched still exists
-		if (listenedDataIter != listeningKeys.end())
-		{
-			log_debug("Found entry for:%s\n", key.c_str());
+void ClientWorker::performWatch() {
+    MD5 md5;
+    NacosString changedData = checkListenedKeys();
+    vector <NacosString> changedList = ClientWorker::parseListenedKeys(changedData);
+    pthread_mutex_lock(&watchListMutex);
+    for (std::vector<NacosString>::iterator it = changedList.begin(); it != changedList.end(); it++) {
+        NacosString dataId, group, tenant;
+        ParamUtils::parseString2KeyGroupTenant(*it, dataId, group, tenant);
+        log_debug("Processing item:%s, dataId = %s, group = %s, tenant = %s\n",
+                  it->c_str(), dataId.c_str(), group.c_str(), tenant.c_str());
+
+        NacosString key = GroupKey::getKeyTenant(dataId, group, tenant);
+        map<NacosString, ListeningData *>::iterator listenedDataIter = listeningKeys.find(key);
+        //check whether the data being watched still exists
+        if (listenedDataIter != listeningKeys.end()) {
+            log_debug("Found entry for:%s\n", key.c_str());
             ListeningData *listenedList = listenedDataIter->second;
-			//TODO:Constant
-			NacosString updatedcontent = getServerConfig(listenedList->getTenant(), listenedList->getDataId(), listenedList->getGroup(), 3000);
-			log_debug("Data fetched from the server: %s\n", updatedcontent.c_str());
-			md5.reset();
-			md5.update(updatedcontent.c_str());
+            //TODO:Constant
+            NacosString updatedcontent = getServerConfig(listenedList->getTenant(), listenedList->getDataId(),
+                                                         listenedList->getGroup(), 3000);
+            log_debug("Data fetched from the server: %s\n", updatedcontent.c_str());
+            md5.reset();
+            md5.update(updatedcontent.c_str());
             listenedList->setMD5(md5.toString());
-			log_debug("MD5 got for that data: %s\n", listenedList->getMD5().c_str());
-            std::map<Listener*, char> const *listenerList = listenedList->getListenerList();
-            for (std::map< Listener* , char>::const_iterator listenerIt = listenerList->begin();
-                listenerIt != listenerList->end(); listenerIt++)
-            {
+            log_debug("MD5 got for that data: %s\n", listenedList->getMD5().c_str());
+            std::map < Listener * , char > const *listenerList = listenedList->getListenerList();
+            for (std::map<Listener *, char>::const_iterator listenerIt = listenerList->begin();
+                 listenerIt != listenerList->end(); listenerIt++) {
                 Listener *curListener = listenerIt->first;
 
                 NACOS_ASSERT(curListener->refCnt() > 0);
                 curListener->receiveConfigInfo(updatedcontent);
             }
-		}
-	}
-	clearDeleteList(20);//TODO:constant
-	pthread_mutex_unlock(&watchListMutex);
+        }
+    }
+    clearDeleteList(20);//TODO:constant
+    pthread_mutex_unlock(&watchListMutex);
 }
 
 /**
@@ -400,22 +362,18 @@ void ClientWorker::performWatch()
 * @param maxRemoves if < 0, clear all items in the deleteList
 * @author Liu, Hanyu
 */
-void ClientWorker::clearDeleteList(int maxRemoves)
-{
+void ClientWorker::clearDeleteList(int maxRemoves) {
     int removeCount = 0;
-    while (!deleteList.empty())
-    {
+    while (!deleteList.empty()) {
         //remove limited items every time
-        if (maxRemoves > 0 && removeCount >= maxRemoves)
-        {
+        if (maxRemoves > 0 && removeCount >= maxRemoves) {
             break;
         }
         std::list<OperateItem>::iterator it = deleteList.begin();
         OperateItem itm = *it;
         NacosString key = GroupKey::getKeyTenant(itm.getDataId(), itm.getGroup(), itm.getTenant());
 
-        if (listeningKeys.find(key) == listeningKeys.end())
-        {
+        if (listeningKeys.find(key) == listeningKeys.end()) {
             log_warn("Trying to remove non-existent key: %s\n", key.c_str());
             deleteList.erase(it);
             continue;
@@ -426,14 +384,13 @@ void ClientWorker::clearDeleteList(int maxRemoves)
         Listener *theListener = itm.getListener();
         slotOfListener->removeListener(theListener);
         int refcount = theListener->decRef();
-        log_debug("The listener (Name = %s) on deleteList is removed, key = %s.\n", theListener->getListenerName().c_str(), key.c_str());
-        if (refcount == 0)
-        {
+        log_debug("The listener (Name = %s) on deleteList is removed, key = %s.\n",
+                  theListener->getListenerName().c_str(), key.c_str());
+        if (refcount == 0) {
             delete theListener;
         }
         itm.setListener(NULL);
-        if (slotOfListener->isEmpty())
-        {
+        if (slotOfListener->isEmpty()) {
             log_debug("The slot (Name = %s) is empty and removed\n", key.c_str());
             delete slotOfListener;
             slotOfListener = NULL;
@@ -444,12 +401,10 @@ void ClientWorker::clearDeleteList(int maxRemoves)
     }
 }
 
-void ClientWorker::cleanUp()
-{
+void ClientWorker::cleanUp() {
     log_debug("ClientWorker::cleanUp()\n");
     clearDeleteList(0);
-    for (map<NacosString, ListeningData *>::iterator it = listeningKeys.begin(); it != listeningKeys.end(); it++)
-    {
+    for (map<NacosString, ListeningData *>::iterator it = listeningKeys.begin(); it != listeningKeys.end(); it++) {
         ListeningData *listeningData = it->second;
         log_debug("Cleaning %s\n", listeningData->toString().c_str());
         listeningData->clearListeners();
@@ -458,8 +413,7 @@ void ClientWorker::cleanUp()
     }
 }
 
-void ClientWorker::addDeleteItem(const OperateItem &operateItem)
-{
+void ClientWorker::addDeleteItem(const OperateItem &operateItem) {
     log_debug("Adding delete item: %s\n", operateItem.toString().c_str());
     pthread_mutex_lock(&watchListMutex);
     deleteList.push_back(operateItem);

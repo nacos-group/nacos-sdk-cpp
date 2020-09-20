@@ -2,7 +2,6 @@
 #include "naming/beat/BeatInfo.h"
 #include "NacosString.h"
 
-NacosString BeatInfo::toString()
-{
-	return JSON::toJSONString(*this);
+NacosString BeatInfo::toString() {
+    return JSON::toJSONString(*this);
 }

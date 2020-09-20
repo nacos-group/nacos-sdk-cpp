@@ -39,7 +39,6 @@ int UtilAndComs::DEFAULT_POLLING_THREAD_COUNT = Runtime.getRuntime()
 .availableProcessors() > 1 ? Runtime.getRuntime().availableProcessors() / 2
 : 1;*/
 
-void UtilAndComs::Init()
-{
+void UtilAndComs::Init() {
 
 }

@@ -8,13 +8,12 @@
 
 using namespace std;
 
-bool testAppConfigManager()
-{
-	cout << "in function testAppConfigManager" << endl;
+bool testAppConfigManager() {
+    cout << "in function testAppConfigManager" << endl;
 
     NacosString configFile = DirUtils::getCwd() + Constants::FILE_SEPARATOR + PropertyKeyConst::CONFIG_FILE_NAME;
-	AppConfigManager appConfigManager(configFile);
+    AppConfigManager appConfigManager(configFile);
     appConfigManager.loadConfig(configFile);
     Properties configs = appConfigManager.getAllConfig();
-	return true;
+    return true;
 }

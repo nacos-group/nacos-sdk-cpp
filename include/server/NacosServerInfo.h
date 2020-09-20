@@ -8,8 +8,7 @@
 #include <ostream>
 #include "NacosString.h"
 
-class NacosServerInfo
-{
+class NacosServerInfo {
 private:
     NacosString ip;
     int port;
@@ -93,13 +92,10 @@ public:
         NacosServerInfo::key = key;
     }
 
-    NacosString getCompleteAddress() const
-    {
-        if (port != 0)
-        {
+    NacosString getCompleteAddress() const {
+        if (port != 0) {
             return ip + ":" + NacosStringOps::valueOf(port);
-        } else
-        {
+        } else {
             return ip;
         }
     }
@@ -110,13 +106,11 @@ public:
         return res;
     }
 
-    bool operator <(const NacosServerInfo & other) const
-    {
+    bool operator<(const NacosServerInfo &other) const {
         return getCompleteAddress().compare(other.getCompleteAddress());
     }
 
-    bool operator == (const NacosServerInfo & other) const
-    {
+    bool operator==(const NacosServerInfo &other) const {
         return getCompleteAddress().compare(other.getCompleteAddress()) == 0;
     }
 };

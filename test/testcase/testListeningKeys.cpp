@@ -10,17 +10,15 @@
 
 using namespace std;
 
-class MyListener : public Listener
-{
+class MyListener : public Listener {
 private:
     int num;
 public:
-    MyListener(int num)
-    {
+    MyListener(int num) {
         this->num = num;
     }
-    void receiveConfigInfo(const NacosString &configInfo)
-    {
+
+    void receiveConfigInfo(const NacosString &configInfo) {
         cout << "===================================" << endl;
         cout << "Watcher" << num << endl;
         cout << "Watched Key UPDATED:" << configInfo << endl;
@@ -28,21 +26,20 @@ public:
     }
 };
 
-bool testListeningKeys()
-{
-	cout << "in function testPublishConfig" << endl;
-	Properties props;
-	props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
-	NacosServiceFactory *factory = new NacosServiceFactory(props);
-    ResourceGuard<NacosServiceFactory> _guardFactory(factory);
+bool testListeningKeys() {
+    cout << "in function testPublishConfig" << endl;
+    Properties props;
+    props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
+    NacosServiceFactory *factory = new NacosServiceFactory(props);
+    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
-    ResourceGuard<ConfigService> _serviceFactory(n);
-	bool bSucc;
-	char cc;
+    ResourceGuard <ConfigService> _serviceFactory(n);
+    bool bSucc;
+    char cc;
 
-	MyListener *theListener = new MyListener(1);
-	MyListener *theListener2 = new MyListener(2);
-	MyListener *theListener3 = new MyListener(3);
+    MyListener *theListener = new MyListener(1);
+    MyListener *theListener2 = new MyListener(2);
+    MyListener *theListener3 = new MyListener(3);
     n->addListener("dqid", NULLSTR, theListener);
     n->addListener("dqid", NULLSTR, theListener2);
     n->addListener("dqid", NULLSTR, theListener3);
@@ -50,8 +47,7 @@ bool testListeningKeys()
     n->addListener("dqid2", NULLSTR, theListener3);
     n->addListener("dqid3", NULLSTR, theListener3);
 
-    for (int i = 10; i < 60; i++)
-    {
+    for (int i = 10; i < 60; i++) {
         NacosString strKey = "dqid" + NacosStringOps::valueOf(i);
         n->addListener(strKey, NULLSTR, theListener3);
     }
@@ -68,5 +64,5 @@ bool testListeningKeys()
     n->removeListener("dqid", NULLSTR, theListener3);
     cin >> cc;
 
-	return true;
+    return true;
 }

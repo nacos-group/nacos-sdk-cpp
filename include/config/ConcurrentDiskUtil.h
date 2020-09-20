@@ -1,10 +1,10 @@
 #ifndef __CONC_DISK_UTIL_H_
 #define __CONC_DISK_UTIL_H_
+
 #include "NacosString.h"
 #include "NacosExceptions.h"
 
-class ConcurrentDiskUtil
-{
+class ConcurrentDiskUtil {
 public:
     /**
      * get file content
@@ -14,7 +14,7 @@ public:
      * @return content
      * @throws IOException IOException
      */
-	static NacosString getFileContent(const NacosString &file, const NacosString &charsetName) throw(IOException);
+    static NacosString getFileContent(const NacosString &file, const NacosString &charsetName) throw(IOException);
 
     /**
      * write file content
@@ -25,6 +25,8 @@ public:
      * @return whether write ok
      * @throws IOException IOException
      */
-    static bool writeFileContent(const NacosString &path, const NacosString &content,	const NacosString &charsetName) throw (IOException);
+    static bool writeFileContent(const NacosString &path, const NacosString &content,
+                                 const NacosString &charsetName) throw(IOException);
 };
+
 #endif

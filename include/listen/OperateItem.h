@@ -1,5 +1,6 @@
 #ifndef __OPERATE_ITM_H_
 #define __OPERATE_ITM_H_
+
 #include "NacosString.h"
 #include "listen/Listener.h"
 
@@ -9,49 +10,44 @@
  * @author Liu, Hanyu
  * Keeps track of the items to be operated on
  */
-class OperateItem
-{
+class OperateItem {
 private:
-	NacosString tenant;
-	NacosString dataId;
-	NacosString group;
-	Listener* listener;
+    NacosString tenant;
+    NacosString dataId;
+    NacosString group;
+    Listener *listener;
 public:
-    NacosString getDataId() const
-    {
+    NacosString getDataId() const {
         return dataId;
     }
-    NacosString getTenant() const
-    {
+
+    NacosString getTenant() const {
         return tenant;
     }
-    NacosString getGroup() const
-    {
+
+    NacosString getGroup() const {
         return group;
     }
-    Listener *getListener() const
-    {
+
+    Listener *getListener() const {
         return listener;
     }
 
-    void setListener(Listener *listener)
-    {
+    void setListener(Listener *listener) {
         this->listener = listener;
     }
 
     OperateItem(const NacosString &dataId,
-            const NacosString &tenant,
-            const NacosString &group,
-            Listener *listener)
-    {
+                const NacosString &tenant,
+                const NacosString &group,
+                Listener *listener) {
         this->dataId = dataId;
         this->tenant = tenant;
         this->group = group;
         this->listener = listener;
     }
 
-    NacosString toString() const
-    {
+    NacosString toString() const {
         return tenant + ":" + group + ":" + dataId;
     }
 };

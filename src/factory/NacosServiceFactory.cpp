@@ -8,21 +8,17 @@
 #include "config/NacosConfigService.h"
 #include "http/ServerHttpAgent.h"
 
-NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException)
-{
+NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) {
     checkConfig();
     ObjectConfigData objectConfigData;
     objectConfigData.name = "config";
 
     //Create configuration data and load configs
     AppConfigManager *appConfigManager = NULL;
-    if (configIsSet)
-    {
+    if (configIsSet) {
         appConfigManager = new AppConfigManager(configFile);
         appConfigManager->loadConfig(configFile);
-    }
-    else
-    {
+    } else {
         appConfigManager = new AppConfigManager(props);
     }
     objectConfigData.appConfigManager = appConfigManager;
@@ -47,21 +43,17 @@ NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException)
     return instance;
 }
 
-ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException)
-{
+ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException) {
     checkConfig();
     ObjectConfigData objectConfigData;
     objectConfigData.name = "name";
 
     //Create configuration data and load configs
     AppConfigManager *appConfigManager = NULL;
-    if (configIsSet)
-    {
+    if (configIsSet) {
         appConfigManager = new AppConfigManager(configFile);
         appConfigManager->loadConfig(configFile);
-    }
-    else
-    {
+    } else {
         appConfigManager = new AppConfigManager(props);
     }
     objectConfigData.appConfigManager = appConfigManager;
@@ -94,46 +86,39 @@ ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException)
     return instance;
 }
 
-NacosServiceFactory::~NacosServiceFactory()
-{
+NacosServiceFactory::~NacosServiceFactory() {
 
 }
 
 
-void NacosServiceFactory::checkConfig() throw(InvalidFactoryConfigException)
-{
-    if (!configIsSet && !propsIsSet)
-    {
+void NacosServiceFactory::checkConfig() throw(InvalidFactoryConfigException) {
+    if (!configIsSet && !propsIsSet) {
         throw InvalidFactoryConfigException();
     }
 }
 
-void NacosServiceFactory::setConfig(const NacosString &_configFile)
-{
+void NacosServiceFactory::setConfig(const NacosString &_configFile) {
     configIsSet = true;
     configFile = _configFile;
 };
-void NacosServiceFactory::setProps(Properties &_props)
-{
+
+void NacosServiceFactory::setProps(Properties &_props) {
     propsIsSet = true;
     props = _props;
 };
 
-NacosServiceFactory::NacosServiceFactory()
-{
+NacosServiceFactory::NacosServiceFactory() {
     configIsSet = false;
     propsIsSet = false;
 }
 
-NacosServiceFactory::NacosServiceFactory(const NacosString &_configFile)
-{
+NacosServiceFactory::NacosServiceFactory(const NacosString &_configFile) {
     configIsSet = false;
     propsIsSet = false;
     setConfig(_configFile);
 }
 
-NacosServiceFactory::NacosServiceFactory(Properties &_props)
-{
+NacosServiceFactory::NacosServiceFactory(Properties &_props) {
     configIsSet = false;
     propsIsSet = false;
     setProps(_props);

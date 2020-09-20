@@ -1,5 +1,6 @@
 #ifndef __GROUP_KEY_H_
 #define __GROUP_KEY_H_
+
 #include "NacosString.h"
 #include "utils/url.h"
 
@@ -24,32 +25,28 @@
  *
  * @author Nacos
  */
-class GroupKey
-{
+class GroupKey {
 public:
-	static NacosString getKey(const NacosString &dataId, const NacosString &group)
-	{
-		//DataID+GroupId
-		return urlencode(dataId) + "+" + urlencode(group);
-	}
+    static NacosString getKey(const NacosString &dataId, const NacosString &group) {
+        //DataID+GroupId
+        return urlencode(dataId) + "+" + urlencode(group);
+    }
 
-	static NacosString getKeyTenant(const NacosString &dataId, const NacosString &group, const NacosString &tenant)
-	{
-		//DataID+GroupId
-		NacosString key = getKey(dataId, group);
-		
-		if (!isNull(tenant))
-		{
-			key = key + "+" + urlencode(tenant);
-		}
-		return key;
-	}
+    static NacosString getKeyTenant(const NacosString &dataId, const NacosString &group, const NacosString &tenant) {
+        //DataID+GroupId
+        NacosString key = getKey(dataId, group);
 
-	/*static NacosString getKey(const NacosString &dataId, const NacosString &group, const NacosString &datumStr)
-	{
-		//DataID+GroupId+datumStr
-		return urlencode(dataId) + "+" + urlencode(group) + "+" + urlencode(datumStr);
-	}*/
+        if (!isNull(tenant)) {
+            key = key + "+" + urlencode(tenant);
+        }
+        return key;
+    }
+
+    /*static NacosString getKey(const NacosString &dataId, const NacosString &group, const NacosString &datumStr)
+    {
+        //DataID+GroupId+datumStr
+        return urlencode(dataId) + "+" + urlencode(group) + "+" + urlencode(datumStr);
+    }*/
 
     /*static public NacosString[] parseKey(NacosString groupKey) {
         StringBuilder sb = new StringBuilder();

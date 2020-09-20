@@ -4,18 +4,16 @@
 #include <pwd.h>
 #include "utils/DirUtils.h"
 
-NacosString DirUtils::getHome()
-{
+NacosString DirUtils::getHome() {
     struct passwd *pw = getpwuid(getuid());
     NacosString homedir = pw->pw_dir;
     return homedir;
 }
-NacosString DirUtils::getCwd()
-{
+
+NacosString DirUtils::getCwd() {
     char cwd[PATH_MAX];
     NacosString cwds;
-    if (getcwd(cwd, sizeof(cwd)) != NULL)
-    {
+    if (getcwd(cwd, sizeof(cwd)) != NULL) {
         cwds = cwd;
         return cwds;
     }

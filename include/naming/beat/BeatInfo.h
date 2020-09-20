@@ -1,5 +1,6 @@
 #ifndef __BEAT_INFO_H_
 #define __BEAT_INFO_H_
+
 #include <map>
 #include "NacosString.h"
 
@@ -22,16 +23,15 @@
 /**
  * @author nkorange
  */
-class BeatInfo
-{
+class BeatInfo {
 public:
-	int port;
-	NacosString ip;
-	double weight;
-	NacosString serviceName;
-	NacosString cluster;
-	std::map<NacosString, NacosString> metadata;
-	volatile bool scheduled;
+    int port;
+    NacosString ip;
+    double weight;
+    NacosString serviceName;
+    NacosString cluster;
+    std::map <NacosString, NacosString> metadata;
+    volatile bool scheduled;
 
     NacosString toString();
 };

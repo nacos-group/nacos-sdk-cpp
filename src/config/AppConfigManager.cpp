@@ -12,35 +12,29 @@ using namespace std;
 
 NacosString AppConfigManager::LINE_SEPARATOR = "\n";
 NacosString AppConfigManager::KV_SEPARATOR = "=";
-Properties AppConfigManager::parseConfigFile(const NacosString&file)
-{
+
+Properties AppConfigManager::parseConfigFile(const NacosString &file) {
     Properties parsedConfig;
     NacosString confContent = IOUtils::readStringFromFile(file, NULLSTR);//TODO: add encoding support
 
-    vector<NacosString> configList;
+    vector <NacosString> configList;
     ParamUtils::Explode(configList, confContent, LINE_SEPARATOR);
 
     for (vector<NacosString>::iterator it = configList.begin();
-        it != configList.end(); it++)
-    {
-        if (ParamUtils::isBlank(ParamUtils::trim(*it)))
-        {
+         it != configList.end(); it++) {
+        if (ParamUtils::isBlank(ParamUtils::trim(*it))) {
             continue;
         }
         if (it->find(KV_SEPARATOR) == std::string::npos ||
-            it->at(0) == '=')
-        {
+            it->at(0) == '=') {
             throw MalformedConfigException(file);
         }
-        vector<NacosString> configKV;
+        vector <NacosString> configKV;
         ParamUtils::Explode(configKV, *it, KV_SEPARATOR);
         //k = v
-        if (configKV.size() == 1)
-        {
+        if (configKV.size() == 1) {
             parsedConfig[configKV[0]] = NULLSTR;
-        }
-        else
-        {
+        } else {
             parsedConfig[configKV[0]] = configKV[1];
         }
     }
@@ -49,16 +43,13 @@ Properties AppConfigManager::parseConfigFile(const NacosString&file)
 }
 
 
-void AppConfigManager::checkReloadable() throw(NacosException)
-{
-    if (!reloadable)
-    {
+void AppConfigManager::checkReloadable() throw(NacosException) {
+    if (!reloadable) {
         throw NacosException(0, "This object is initialized as a non-reloadable one");
     }
 }
 
-size_t AppConfigManager::loadConfig() throw(NacosException)
-{
+size_t AppConfigManager::loadConfig() throw(NacosException) {
     checkReloadable();
     initDefaults();
     Properties parsedConfig = parseConfigFile(configFile);
@@ -67,64 +58,53 @@ size_t AppConfigManager::loadConfig() throw(NacosException)
     return appConfig.size();
 }
 
-size_t AppConfigManager::loadConfig(const NacosString &_configFile) throw(NacosException)
-{
+size_t AppConfigManager::loadConfig(const NacosString &_configFile) throw(NacosException) {
     checkReloadable();
     configFile = _configFile;
     loadConfig();
     return appConfig.size();
 }
 
-void AppConfigManager::clearConfig()
-{
+void AppConfigManager::clearConfig() {
     appConfig.clear();
 }
 
-NacosString AppConfigManager::get(const NacosString&key) const
-{
-    if (appConfig.count(key) == 0)
-    {
+NacosString AppConfigManager::get(const NacosString &key) const {
+    if (appConfig.count(key) == 0) {
         return NULLSTR;
     }
     Properties copyProps = appConfig;
     return copyProps[key];
 }
 
-void AppConfigManager::set(const NacosString&key, const NacosString&value)
-{
+void AppConfigManager::set(const NacosString &key, const NacosString &value) {
     appConfig[key] = value;
 }
 
-bool AppConfigManager::contains(const std::string &key) const
-{
+bool AppConfigManager::contains(const std::string &key) const {
     return appConfig.contains(key);
 }
 
-AppConfigManager::AppConfigManager(Properties &props)
-{
+AppConfigManager::AppConfigManager(Properties &props) {
     reloadable = false;
     initDefaults();
     applyConfig(props);
 }
 
-AppConfigManager::AppConfigManager(const NacosString &_configFile)
-{
+AppConfigManager::AppConfigManager(const NacosString &_configFile) {
     reloadable = true;
     configFile = _configFile;
 }
 
-void AppConfigManager::initDefaults()
-{
+void AppConfigManager::initDefaults() {
     appConfig.clear();
     appConfig[PropertyKeyConst::NAMESPACE] = "public";
 }
 
 
-void AppConfigManager::applyConfig(Properties &rhs)
-{
+void AppConfigManager::applyConfig(Properties &rhs) {
     for (map<NacosString, NacosString>::iterator it = rhs.begin();
-        it != rhs.end(); it++)
-    {
+         it != rhs.end(); it++) {
         appConfig[it->first] = it->second;
     }
 }

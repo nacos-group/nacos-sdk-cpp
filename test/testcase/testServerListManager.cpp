@@ -13,23 +13,21 @@
 
 using namespace std;
 
-bool testServerListManager()
-{
-	cout << "in function testServerListManager" << endl;
+bool testServerListManager() {
+    cout << "in function testServerListManager" << endl;
     Properties props;
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
     NacosServiceFactory *factory = new NacosServiceFactory(props);
-    ResourceGuard<NacosServiceFactory> _guardFactory(factory);
+    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
-    ResourceGuard<ConfigService> _serviceFactory(n);
+    ResourceGuard <ConfigService> _serviceFactory(n);
 
-    NacosConfigService *nn = (NacosConfigService*)n;
+    NacosConfigService *nn = (NacosConfigService *) n;
     ServerListManager *serverListManager = nn->getServerListManager();
 
-    list<NacosServerInfo> res = serverListManager->__debug();
+    list <NacosServerInfo> res = serverListManager->__debug();
 
-    for (list<NacosServerInfo>::iterator it = res.begin(); it != res.end(); it++)
-    {
+    for (list<NacosServerInfo>::iterator it = res.begin(); it != res.end(); it++) {
         NacosString key = it->getKey();
         NacosString val = it->getCompleteAddress();
 
@@ -38,14 +36,13 @@ bool testServerListManager()
 
     cout << "=====================cornercase========================" << endl;
     NacosString fakeSvr = "{\"servers\":[]}";
-    list<NacosServerInfo> result = JSON::Json2NacosServerInfo(fakeSvr);
+    list <NacosServerInfo> result = JSON::Json2NacosServerInfo(fakeSvr);
     cout << "result.size == " << result.size() << endl;
-    for (list<NacosServerInfo>::iterator it = result.begin(); it != result.end(); it++)
-    {
+    for (list<NacosServerInfo>::iterator it = result.begin(); it != result.end(); it++) {
         NacosString key = it->getCompleteAddress();
         NacosString val = it->toString();
 
         cout << key << ":" << endl << val << endl;
     }
-	return true;
+    return true;
 }

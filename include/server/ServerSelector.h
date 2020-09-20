@@ -12,7 +12,8 @@
 */
 class ServerSelector {
 public:
-    virtual NacosServerInfo select(std::list<NacosServerInfo> &serverList) = 0;
+    virtual NacosServerInfo select(std::list <NacosServerInfo> &serverList) = 0;
+
     virtual ~ServerSelector() {};
 };
 

@@ -1,16 +1,14 @@
 #ifndef __JVMUTIL_H_
 #define __JVMUTIL_H_
 
-class JVMUtil
-{
+class JVMUtil {
 public:
     /**
      * whether is multi instance
      *
      * @return whether multi
      */
-    static bool isMultiInstance()
-	{
+    static bool isMultiInstance() {
         return _isMultiInstance;
     };
 private:

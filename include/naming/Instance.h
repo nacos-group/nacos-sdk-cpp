@@ -1,65 +1,66 @@
 #ifndef __INSTANCE_H_
 #define __INSTANCE_H_
+
 #include <map>
 #include "NacosString.h"
 
-class Instance
-{
+class Instance {
 public:
-	Instance();
-	/**
-	* unique id of this instance.
-	*/
-	NacosString instanceId;
+    Instance();
 
-	/**
-	* instance ip
-	*/
-	NacosString ip;
+    /**
+    * unique id of this instance.
+    */
+    NacosString instanceId;
 
-	/**
-	* instance port
-	*/
-	int port;
+    /**
+    * instance ip
+    */
+    NacosString ip;
 
-	/**
-	* instance weight
-	*/
-	double weight;
+    /**
+    * instance port
+    */
+    int port;
 
-	/**
-	* instance health status
-	*/
-	bool healthy;
+    /**
+    * instance weight
+    */
+    double weight;
 
-	/**
-	* If instance is enabled to accept request
-	*/
-	bool enabled;
+    /**
+    * instance health status
+    */
+    bool healthy;
 
-	/**
-	* If instance is ephemeral
-	*
-	* @since 1.0.0
-	*/
-	bool ephemeral;
+    /**
+    * If instance is enabled to accept request
+    */
+    bool enabled;
 
-	/**
-	* cluster information of instance
-	*/
-	NacosString clusterName;
+    /**
+    * If instance is ephemeral
+    *
+    * @since 1.0.0
+    */
+    bool ephemeral;
 
-	/**
-	* Service information of instance
-	*/
-	NacosString serviceName;
+    /**
+    * cluster information of instance
+    */
+    NacosString clusterName;
 
-	/**
-	* user extended attributes
-	*/
-	std::map<NacosString, NacosString> metadata;
+    /**
+    * Service information of instance
+    */
+    NacosString serviceName;
 
-	NacosString toString();
+    /**
+    * user extended attributes
+    */
+    std::map <NacosString, NacosString> metadata;
+
+    NacosString toString();
 };
 
 #endif
