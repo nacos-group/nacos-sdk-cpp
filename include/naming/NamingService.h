@@ -158,29 +158,6 @@ public:
     getAllInstances(const NacosString &serviceName, const NacosString &groupName) throw(NacosException) = 0;
 
     /**
-     * Get all instances of a service
-     *
-     * @param serviceName name of service
-     * @param subscribe   if subscribe the service
-     * @return A list of instance
-     * @throw (NacosException) = 0
-     */
-    virtual std::list <Instance>
-    getAllInstances(const NacosString &serviceName, bool subscribe) throw(NacosException) = 0;
-
-    /**
-     * Get all instances of a service
-     *
-     * @param serviceName name of service
-     * @param groupName   group of service
-     * @param subscribe   if subscribe the service
-     * @return A list of instance
-     * @throw (NacosException) = 0
-     */
-    virtual std::list <Instance> getAllInstances(const NacosString &serviceName, const NacosString &groupName,
-                                                 bool subscribe) throw(NacosException) = 0;
-
-    /**
      * Get all instances within specified clusters of a service
      *
      * @param serviceName name of service
@@ -202,32 +179,6 @@ public:
      */
     virtual std::list <Instance> getAllInstances(const NacosString &serviceName, const NacosString &groupName,
                                                  std::list <NacosString> clusters) throw(NacosException) = 0;
-
-    /**
-     * Get all instances within specified clusters of a service
-     *
-     * @param serviceName name of service
-     * @param clusters    list of cluster
-     * @param subscribe   if subscribe the service
-     * @return A list of qualified instance
-     * @throw (NacosException) = 0
-     */
-    virtual std::list <Instance> getAllInstances(const NacosString &serviceName, std::list <NacosString> clusters,
-                                                 bool subscribe) throw(NacosException) = 0;
-
-    /**
-     * Get all instances within specified clusters of a service
-     *
-     * @param serviceName name of service
-     * @param groupName   group of service
-     * @param clusters    list of cluster
-     * @param subscribe   if subscribe the service
-     * @return A list of qualified instance
-     * @throw (NacosException) = 0
-     */
-    virtual std::list <Instance>
-    getAllInstances(const NacosString &serviceName, const NacosString &groupName, std::list <NacosString> clusters,
-                    bool subscribe) throw(NacosException) = 0;
 
     /**
      * Get qualified instances of service
