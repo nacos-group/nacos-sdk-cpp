@@ -1,11 +1,11 @@
 #include "utils/ParamUtils.h"
-#include "utils/DirUtils.h"
 #include "config/AppConfigManager.h"
 #include "NacosString.h"
 #include "Properties.h"
 #include "PropertyKeyConst.h"
 #include "config/IOUtils.h"
 #include "NacosExceptions.h"
+#include "Parameters.h"
 #include <vector>
 
 using namespace std;
@@ -98,7 +98,11 @@ AppConfigManager::AppConfigManager(const NacosString &_configFile) {
 
 void AppConfigManager::initDefaults() {
     appConfig.clear();
-    appConfig[PropertyKeyConst::NAMESPACE] = "public";
+    //appConfig[PropertyKeyConst::NAMESPACE] = "public";
+    appConfig[PropertyKeyConst::HTTP_REQ_TIMEOUT] = "50000";
+    appConfig[PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL] = "30000";
+    appConfig[PropertyKeyConst::SRVLISTMGR_READ_TIMEOUT] = "3000";
+    appConfig[PropertyKeyConst::CONTEXT_PATH] = DEFAULT_CONTEXT_PATH;
 }
 
 

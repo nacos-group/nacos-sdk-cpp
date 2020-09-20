@@ -45,6 +45,8 @@ private:
 
     static NacosString serverListToString(const std::list <NacosServerInfo> &serverList);
 
+    long _read_timeout;
+
 public:
     //Cluster info
     inline NacosString getClusterName() const { return appConfigManager->get(PropertyKeyConst::CLUSTER_NAME); };

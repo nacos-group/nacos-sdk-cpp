@@ -22,6 +22,7 @@ NamingProxy::NamingProxy(HTTPCli *httpcli, ServerListManager *_serverListManager
     httpCli = httpcli;
     appConfigManager = _appConfigManager;
     serverPort = "8848";
+    _http_req_timeout = atoi(appConfigManager->get(PropertyKeyConst::HTTP_REQ_TIMEOUT).c_str());
 
     if (serverListManager->getServerCount() == 1) {
         nacosDomain = serverListManager->getServerList().begin()->getCompleteAddress();
@@ -181,19 +182,19 @@ NacosString NamingProxy::callServer
         switch (method) {
             case HTTPCli::GET:
                 requestRes = httpCli->httpGet(requestUrl, headers, params, UtilAndComs::ENCODING,
-                                              50000);//TODO:change 50000 to a constant
+                                              _http_req_timeout);
                 break;
             case HTTPCli::PUT:
                 requestRes = httpCli->httpPut(requestUrl, headers, params, UtilAndComs::ENCODING,
-                                              50000);//TODO:change 50000 to a constant
+                                              _http_req_timeout);
                 break;
             case HTTPCli::POST:
                 requestRes = httpCli->httpPost(requestUrl, headers, params, UtilAndComs::ENCODING,
-                                               50000);//TODO:change 50000 to a constant
+                                               _http_req_timeout);
                 break;
             case HTTPCli::DELETE:
                 requestRes = httpCli->httpDelete(requestUrl, headers, params, UtilAndComs::ENCODING,
-                                                 50000);//TODO:change 50000 to a constant
+                                                 _http_req_timeout);
                 break;
         }
     }

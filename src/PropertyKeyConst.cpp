@@ -29,3 +29,9 @@ const NacosString PropertyKeyConst::NAMING_LOAD_CACHE_AT_START = "namingLoadCach
 const NacosString PropertyKeyConst::NAMING_CLIENT_BEAT_THREAD_COUNT = "namingClientBeatThreadCount";
 
 const NacosString PropertyKeyConst::NAMING_POLLING_THREAD_COUNT = "namingPollingThreadCount";
+
+const NacosString PropertyKeyConst::HTTP_REQ_TIMEOUT = "httpReqTimeout";
+
+const NacosString PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL = "serverListMgr.refreshInterval";
+
+const NacosString PropertyKeyConst::SRVLISTMGR_READ_TIMEOUT = "serverListMgr.readTimeout";

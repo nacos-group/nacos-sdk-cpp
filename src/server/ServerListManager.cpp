@@ -37,8 +37,9 @@ void ServerListManager::addToSrvList(NacosString &address) {
 
 ServerListManager::ServerListManager(list <NacosString> &fixed) {
     started = false;
-    refreshInterval = 30000;
     isFixed = true;
+    refreshInterval = 30000;
+    _read_timeout = 3000;
     for (list<NacosString>::iterator it = fixed.begin(); it != fixed.end(); it++) {
         addToSrvList(*it);
     }
@@ -95,9 +96,10 @@ void ServerListManager::initAll() throw(NacosException) {
 
 ServerListManager::ServerListManager(HTTPCli *_httpCli, AppConfigManager *_appConfigManager) throw(NacosException) {
     started = false;
-    refreshInterval = 30000;
     this->httpCli = _httpCli;
     this->appConfigManager = _appConfigManager;
+    refreshInterval = atoi(appConfigManager->get(PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL).c_str());
+    _read_timeout = atoi(appConfigManager->get(PropertyKeyConst::SRVLISTMGR_READ_TIMEOUT).c_str());
     initAll();
 }
 
@@ -121,7 +123,7 @@ list <NacosServerInfo> ServerListManager::tryPullServerListFromNacosServer() thr
             HttpResult serverRes = httpCli->httpGet(
                     server.getCompleteAddress() + "/" + DEFAULT_CONTEXT_PATH + "/" + PROTOCOL_VERSION + "/" +
                     GET_SERVERS_PATH,
-                    headers, paramValues, NULLSTR, 3000);//TODO:readTimeout to a constant
+                    headers, paramValues, NULLSTR, _read_timeout);
             return JSON::Json2NacosServerInfo(serverRes.content);
         }
         catch (NacosException &e) {
@@ -147,7 +149,7 @@ list <NacosServerInfo> ServerListManager::pullServerList() throw(NacosException)
 
     if (!NacosStringOps::isNullStr(addressServerUrl)) {
         HttpResult serverRes = httpCli->httpGet(addressServerUrl, headers, paramValues, NULLSTR,
-                                                3000);//TODO:readTimeout to a constant
+                                                _read_timeout);
         list <NacosServerInfo> serversPulled = JSON::Json2NacosServerInfo(serverRes.content);
         serversPulled.sort();
 
@@ -239,11 +241,7 @@ void ServerListManager::stop() {
 }
 
 NacosString ServerListManager::getContextPath() const {
-    if (appConfigManager->contains(PropertyKeyConst::CONTEXT_PATH)) {
-        return appConfigManager->get(PropertyKeyConst::CONTEXT_PATH);
-    }
-
-    return DEFAULT_CONTEXT_PATH;
+    return appConfigManager->get(PropertyKeyConst::CONTEXT_PATH);
 }
 
 ServerListManager::~ServerListManager() {
