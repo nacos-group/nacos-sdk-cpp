@@ -7,6 +7,7 @@ Instance::Instance() {
     healthy = true;
     enabled = true;
     ephemeral = true;
+    port = 0;
 }
 
 NacosString Instance::toString() {
@@ -15,4 +16,39 @@ NacosString Instance::toString() {
            " enabled:" + NacosStringOps::valueOf(enabled) + " ephemeral:" + NacosStringOps::valueOf(ephemeral) +
            " clusterName:" + clusterName + " serviceName:" + serviceName + " metadata:{" +
            ParamUtils::Implode(metadata) + "}";
+}
+
+NacosString Instance::toInetAddr() {
+    return  ip + ":" + NacosStringOps::valueOf(port);
+}
+
+Instance & Instance::operator = (const Instance &rhs)
+{
+    this->instanceId = rhs.instanceId;
+    this->ip = rhs.ip;
+    this->port = rhs.port;
+    this->weight = rhs.weight;
+    this->healthy = rhs.healthy;
+    this->enabled = rhs.enabled;
+    this->ephemeral = rhs.ephemeral;
+    this->clusterName = rhs.clusterName;
+    this->metadata = rhs.metadata;
+}
+
+bool Instance::operator != (const Instance &rhs) const
+{
+    return !operator==(rhs);
+}
+bool Instance::operator == (const Instance &rhs) const
+{
+    return
+    this->instanceId == rhs.instanceId &&
+    this->ip == rhs.ip &&
+    this->port == rhs.port &&
+    this->weight == rhs.weight &&
+    this->healthy == rhs.healthy &&
+    this->enabled == rhs.enabled &&
+    this->ephemeral == rhs.ephemeral &&
+    this->clusterName == rhs.clusterName &&
+    this->metadata == rhs.metadata;
 }

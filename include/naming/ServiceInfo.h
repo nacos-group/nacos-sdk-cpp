@@ -44,7 +44,7 @@ public:
         _allIPs = allIPs;
     }
 
-    ServiceInfo(const NacosString &key) : _jsonFromServer(""), _cacheMillis(1000L), _lastRefTime(0L), _checksum(""),
+    explicit ServiceInfo(const NacosString &key)  : _jsonFromServer(""), _cacheMillis(1000L), _lastRefTime(0L), _checksum(""),
                                           _allIPs(false) {
         std::vector <NacosString> segs;
         ParamUtils::Explode(segs, key, Constants::SERVICE_INFO_SPLITER);
@@ -127,6 +127,10 @@ public:
 
     std::list <Instance> getHosts() {
         return _hosts;
+    }
+
+    std::list <Instance> *getHostsNocopy() {
+        return &_hosts;
     }
 
     bool validate() {
