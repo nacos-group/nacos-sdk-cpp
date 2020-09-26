@@ -25,7 +25,7 @@ private:
     std::list <OperateItem> deleteList;
     //dataID||group||tenant -> Cachedata* Mapping
     std::map<NacosString, ListeningData *> listeningKeys;
-    pthread_mutex_t watchListMutex;
+    pthread_mutex_t watchListMutex;//TODO:refactor to Mutex
     HttpAgent *httpAgent = NULL;
     //Listener thread related info
     pthread_t threadId;

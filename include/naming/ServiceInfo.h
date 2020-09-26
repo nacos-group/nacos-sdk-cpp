@@ -167,7 +167,7 @@ public:
     }
 
     //@JSONField(serialize = false)
-    NacosString getKey() {
+    NacosString getKey() const {
         return getKey(_name, _clusters);
     }
 
