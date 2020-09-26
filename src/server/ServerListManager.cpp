@@ -204,7 +204,7 @@ void *ServerListManager::pullWorkerThread(void *param) {
                 thisMgr->serverList = serverList;
             }
         }
-        catch (NacosException e) {
+        catch (NacosException &e) {
             //Error occured during the invocation, sleep for a longer time
             sleep(thisMgr->refreshInterval / 1000);
         }

@@ -306,7 +306,7 @@ NacosString ClientWorker::checkListenedKeys() {
     try {
         res = httpAgent->httpPost(url, headers, paramValues, httpAgent->getEncode(), timeout);
     }
-    catch (NetworkException e) {
+    catch (NetworkException &e) {
         log_warn("Request failed with: %s\n", e.what());
         NacosString result = "";
         return result;
