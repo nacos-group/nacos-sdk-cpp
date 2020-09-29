@@ -3,7 +3,7 @@
 ServiceInfo NamingCache::getServiceInfo(const NacosString &key) throw(NacosException)
 {
     ReadGuard __readGuard(_rwLock);
-    if (namingList.count(key) == 0)
+    if (!contains(key))
     {
         throw NacosException(0, "Key" + key + " doesn't exist");
     }
