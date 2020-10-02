@@ -41,3 +41,5 @@ const NacosString PropertyKeyConst::TCP_NAMING_POLL_INTERVAL = "naming.poller.in
 const NacosString PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT = "config.longpulling.timeout";
 
 const NacosString PropertyKeyConst::CONFIG_GET_TIMEOUT = "config.get.timeout";
+
+const NacosString PropertyKeyConst::HB_FAIL_WAIT_TIME = "naming.heartbeat.failwait";

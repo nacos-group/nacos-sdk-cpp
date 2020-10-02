@@ -106,6 +106,7 @@ void AppConfigManager::initDefaults() {
     appConfig[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "30000";//30 secs by default
     appConfig[PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT] = "30000";//ms
     appConfig[PropertyKeyConst::CONFIG_GET_TIMEOUT] = "3000";//ms
+    appConfig[PropertyKeyConst::HB_FAIL_WAIT_TIME] = "20000";//ms
 }
 
 

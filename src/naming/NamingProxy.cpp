@@ -28,6 +28,8 @@ NamingProxy::NamingProxy(HTTPCli *httpcli, ServerListManager *_serverListManager
         nacosDomain = serverListManager->getServerList().begin()->getCompleteAddress();
     }
     log_debug("The serverlist:%s\n", _serverListManager->toString().c_str());
+
+    _hb_fail_wait = atoi(appConfigManager->get(PropertyKeyConst::HB_FAIL_WAIT_TIME).c_str());
 }
 
 NamingProxy::~NamingProxy() {
@@ -258,6 +260,7 @@ long NamingProxy::sendBeat(BeatInfo &beatInfo) {
     catch (NacosException &e) {
         NacosString jsonBeatInfo = JSON::toJSONString(beatInfo);
         log_error("[CLIENT-BEAT] failed to send beat: %s e:%s\n", jsonBeatInfo.c_str(), e.what());
+        return _hb_fail_wait;
     }
     return 0L;
 }

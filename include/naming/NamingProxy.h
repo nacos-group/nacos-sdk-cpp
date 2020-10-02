@@ -34,6 +34,7 @@ private:
     std::list <NacosString> builderHeaders();
 
     long _http_req_timeout;
+    long _hb_fail_wait;//Time to wait when a heartbeat request fails (in ms)
 public:
     NamingProxy(HTTPCli *httpcli, ServerListManager *serverListManager, AppConfigManager *appConfigManager);
 
