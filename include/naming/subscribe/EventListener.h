@@ -7,7 +7,7 @@
 
 #include "NacosString.h"
 #include "thread/AtomicInt.h"
-#include "cache/ChangeAdvice.h"
+#include "naming/cache/ChangeAdvice.h"
 #include "DebugAssertion.h"
 
 class EventListener {
@@ -29,7 +29,7 @@ public:
 
     NacosString getListenerName() const { return listenerName; };
 
-    virtual void receiveNamingInfo(const ChangeAdvice &changeAdvice) = 0;
+    virtual void receiveNamingInfo(const ServiceInfo &changeAdvice) = 0;
 
     virtual ~EventListener() { NACOS_ASSERT(refCnt() == 0) };
 };

@@ -16,21 +16,21 @@ private:
 	Condition _notFull;
 	std::deque<T> _queue;
 	size_t _maxSize;
-	volatile bool _full = false;
-	volatile bool _empty = true;
+	volatile bool _full;
+	volatile bool _empty;
 public:
 
-    bool full() const {
+    bool full() {
         LockGuard lockguard(_mutex);
         return _full;
     };
-    bool empty() const {
+    bool empty() {
         LockGuard lockguard(_mutex);
         return _empty;
     };
 
-	BlockingQueue() : _mutex(), _notEmpty(_mutex), _notFull(_mutex), _maxSize(64) {};
-	BlockingQueue(size_t queueSize) : _mutex(), _notEmpty(_mutex), _notFull(_mutex), _maxSize(queueSize) {};
+	BlockingQueue() : _mutex(), _notEmpty(_mutex), _notFull(_mutex), _maxSize(64), _full(false), _empty(true) {};
+	BlockingQueue(size_t queueSize) : _mutex(), _notEmpty(_mutex), _notFull(_mutex), _maxSize(queueSize), _full(false), _empty(true) {};
 	void enqueue(const T &data)
 	{
 		LockGuard lockguard(_mutex);

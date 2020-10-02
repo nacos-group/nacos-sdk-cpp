@@ -7,9 +7,9 @@ ChangeAdvice::ChangeAdvice()
     added = false;
     modified = false;
     removed = false;
-    addedInstances.clear();
-    removedInstances.clear();
-    modifiedInstances.clear();
+    //addedInstances.clear();
+    //removedInstances.clear();
+    //modifiedInstances.clear();
 }
 
 ChangeAdvice::~ChangeAdvice()
@@ -26,13 +26,13 @@ void ChangeAdvice::compareChange
     map<NacosString, Instance> oldInstanceList;
     map<NacosString, Instance> newInstanceList;
     for (list<Instance>::iterator it = oldInfo.getHostsNocopy()->begin();
-        it != oldInfo.getHosts().end(); it++)
+        it != oldInfo.getHostsNocopy()->end(); it++)
     {
         oldInstanceList[it->toInetAddr()] = *it;
     }
 
     for (list<Instance>::iterator it = newInfo.getHostsNocopy()->begin();
-         it != newInfo.getHosts().end(); it++)
+         it != newInfo.getHostsNocopy()->end(); it++)
     {
         newInstanceList[it->toInetAddr()] = *it;
     }
@@ -44,7 +44,7 @@ void ChangeAdvice::compareChange
         if (newInstanceList.count(it->first) == 0)
         {
             changeAdvice.removed = true;
-            changeAdvice.removedInstances.push_back(it->second);
+            //changeAdvice.removedInstances.push_back(it->second);
         }
         else//find modified instances
         {
@@ -52,7 +52,7 @@ void ChangeAdvice::compareChange
             if (it->second != newInstanceList[it->first])
             {
                 changeAdvice.modified = true;
-                changeAdvice.modifiedInstances.push_back(newInstanceList[it->first]);
+                //changeAdvice.modifiedInstances.push_back(newInstanceList[it->first]);
             }
 
         }
@@ -65,7 +65,12 @@ void ChangeAdvice::compareChange
         if (oldInstanceList.count(it->first) == 0)
         {
             changeAdvice.added = true;
-            changeAdvice.addedInstances.push_back(it->second);
+            //changeAdvice.addedInstances.push_back(it->second);
         }
     }
+}
+
+NacosString ChangeAdvice::toString()
+{
+    return "Unimplemented";//trivial function
 }

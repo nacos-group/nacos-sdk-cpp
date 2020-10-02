@@ -103,6 +103,7 @@ void AppConfigManager::initDefaults() {
     appConfig[PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL] = "30000";
     appConfig[PropertyKeyConst::SRVLISTMGR_READ_TIMEOUT] = "3000";
     appConfig[PropertyKeyConst::CONTEXT_PATH] = DEFAULT_CONTEXT_PATH;
+    appConfig[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "30000";//30 secs by default
 }
 
 

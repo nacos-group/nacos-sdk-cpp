@@ -64,7 +64,7 @@ public:
     */
     std::map <NacosString, NacosString> metadata;
 
-    NacosString toString();
+    NacosString toString() const;
     NacosString toInetAddr();
 };
 

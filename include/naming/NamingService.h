@@ -3,6 +3,7 @@
 
 #include <list>
 #include "naming/Instance.h"
+#include "naming/subscribe//EventListener.h"
 #include "NacosString.h"
 #include "NacosExceptions.h"
 
@@ -363,7 +364,7 @@ public:
      * @param listener    event listener
      * @throw (NacosException) = 0
      */
-    //virtual void subscribe(const NacosString &serviceName, EventListener listener) throw (NacosException) = 0;
+    virtual void subscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException) = 0;
 
     /**
      * Subscribe service to receive events of instances alteration
@@ -394,7 +395,7 @@ public:
      * @param listener    event listener
      * @throw (NacosException) = 0
      */
-    //virtual void subscribe(const NacosString &serviceName, const NacosString &groupName, std::list<NacosString> clusters, EventListener listener) throw (NacosException) = 0;
+    virtual void subscribe(const NacosString &serviceName, const NacosString &groupName, std::list<NacosString> clusters, EventListener *listener) throw (NacosException) = 0;
 
     /**
      * Unsubscribe event listener of service
@@ -403,7 +404,7 @@ public:
      * @param listener    event listener
      * @throw (NacosException) = 0
      */
-    //virtual void unsubscribe(const NacosString &serviceName, EventListener listener) throw (NacosException) = 0;
+    virtual void unsubscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException) = 0;
 
     /**
      * unsubscribe event listener of service
@@ -434,7 +435,7 @@ public:
      * @param listener    event listener
      * @throw (NacosException) = 0
      */
-    //virtual void unsubscribe(const NacosString &serviceName, const NacosString &groupName, std::list<NacosString> clusters, EventListener listener) throw (NacosException) = 0;
+    virtual void unsubscribe(const NacosString &serviceName, const NacosString &groupName, std::list<NacosString> clusters, EventListener *listener) throw (NacosException) = 0;
 
     /**
      * Get all service names from server

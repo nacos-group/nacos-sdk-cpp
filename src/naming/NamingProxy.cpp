@@ -32,12 +32,8 @@ NamingProxy::NamingProxy(HTTPCli *httpcli, ServerListManager *_serverListManager
 
 NamingProxy::~NamingProxy() {
     httpCli = NULL;
-
-    if (appConfigManager != NULL) {
-        delete appConfigManager;
-        appConfigManager = NULL;
-    }
-
+    appConfigManager = NULL;
+    //TODO:refactor this deconstructing process to a function
     if (serverListManager != NULL) {
         delete serverListManager;
         serverListManager = NULL;

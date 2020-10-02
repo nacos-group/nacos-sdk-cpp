@@ -35,3 +35,5 @@ const NacosString PropertyKeyConst::HTTP_REQ_TIMEOUT = "httpReqTimeout";
 const NacosString PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL = "serverListMgr.refreshInterval";
 
 const NacosString PropertyKeyConst::SRVLISTMGR_READ_TIMEOUT = "serverListMgr.readTimeout";
+
+const NacosString PropertyKeyConst::TCP_NAMING_POLL_INTERVAL = "naming.poller.interval";

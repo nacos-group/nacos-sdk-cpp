@@ -8,11 +8,17 @@
 
 using namespace std;
 
-NacosNamingService::NacosNamingService(HTTPCli *_httpCli, NamingProxy *_serverProxy, BeatReactor *_beatReactor) {
+NacosNamingService::NacosNamingService(HTTPCli *_httpCli, NamingProxy *_serverProxy, BeatReactor *_beatReactor,
+                                       EventDispatcher *eventDispatcher, TcpNamingServicePoller *tcpNamingServicePoller,
+                                       AppConfigManager *appConfigManager) {
+    _appConfigMgr = appConfigManager;
     httpCli = _httpCli;
     serverProxy = _serverProxy;
     beatReactor = _beatReactor;
+    _eventDispatcher = eventDispatcher;
+    _tcpNamingServicePoller = tcpNamingServicePoller;
     beatReactor->start();
+    _tcpNamingServicePoller->start();
 }
 
 NacosNamingService::~NacosNamingService() {
@@ -20,6 +26,18 @@ NacosNamingService::~NacosNamingService() {
         delete beatReactor;
     }
     beatReactor = NULL;
+
+    if (_eventDispatcher != NULL)
+    {
+        delete _eventDispatcher;
+    }
+    _eventDispatcher = NULL;
+
+    if (_tcpNamingServicePoller != NULL)
+    {
+        delete _tcpNamingServicePoller;
+    }
+    _tcpNamingServicePoller = NULL;
 
     if (serverProxy != NULL) {
         delete serverProxy;
@@ -30,6 +48,12 @@ NacosNamingService::~NacosNamingService() {
         delete httpCli;
     }
     httpCli = NULL;
+
+    if (_appConfigMgr != NULL)
+    {
+        delete _appConfigMgr;
+    }
+    _appConfigMgr = NULL;
 }
 
 void NacosNamingService::registerInstance
@@ -196,16 +220,59 @@ list <Instance> NacosNamingService::getAllInstances
                 list <NacosString> clusters
         ) throw(NacosException) {
     ServiceInfo serviceInfo;
-    //TODO:
-    /*if (subscribe) {
-        serviceInfo = hostReactor.getServiceInfo(NamingUtils::getGroupedName(serviceName, groupName), ParamUtils::Implode(clusters));
-    } else {
-        serviceInfo = hostReactor.getServiceInfoDirectlyFromServer(NamingUtils::getGroupedName(serviceName, groupName), ParamUtils::Implode(clusters));
-    }*/
+    //TODO:cache and failover
     NacosString clusterString = ParamUtils::Implode(clusters);
     NacosString result = serverProxy->queryList(serviceName, clusterString, 0/*What should be filled in UDPPort??*/,
                                                 false);
     serviceInfo = JSON::JsonStr2ServiceInfo(result);
     list <Instance> hostlist = serviceInfo.getHosts();
     return hostlist;
+}
+
+void NacosNamingService::subscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException)
+{
+    list<NacosString> clusters;//empty cluster
+    subscribe(serviceName, Constants::DEFAULT_GROUP, clusters, listener);
+}
+
+void NacosNamingService::subscribe
+(
+        const NacosString &serviceName,
+        const NacosString &groupName,
+        std::list<NacosString> clusters,
+        EventListener *listener
+) throw (NacosException)
+{
+    NacosString clusterName = ParamUtils::Implode(clusters);
+    NacosString groupedName = NamingUtils::getGroupedName(serviceName, groupName);
+    if (!_eventDispatcher->addListener(groupedName, clusterName, listener)){
+        return;//The listener is already listening to the service specified, no need to add to the polling list
+    }
+    _tcpNamingServicePoller->addPollItem(serviceName, groupName, clusterName);
+}
+
+
+void NacosNamingService::unsubscribe(
+    const NacosString &serviceName,
+    const NacosString &groupName,
+    std::list<NacosString> clusters,
+    EventListener *listener
+) throw (NacosException)
+{
+    NacosString clusterName = ParamUtils::Implode(clusters);
+    NacosString groupedName = NamingUtils::getGroupedName(serviceName, groupName);
+    int remainingListener;
+    if (!_eventDispatcher->removeListener(groupedName, clusterName, listener, remainingListener)) {
+        return;//The listener is not in the list or it is already removed
+    }
+    if (remainingListener == 0) {
+        //Since there's no more listeners listening to this service, remove it from the polling list
+        _tcpNamingServicePoller->removePollItem(serviceName, groupName, clusterName);
+    }
+}
+
+void NacosNamingService::unsubscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException)
+{
+    list<NacosString> clusters;
+    unsubscribe(serviceName, Constants::DEFAULT_GROUP, clusters, listener);
 }

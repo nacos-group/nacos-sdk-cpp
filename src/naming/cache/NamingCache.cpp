@@ -24,16 +24,14 @@ void NamingCache::setServiceInfo(const NacosString &key, const ServiceInfo &info
         ChangeAdvice changeAdvice;
         if (namingList.count(key) > 0)
         {
-            changeAdvice.changeType = ChangeType::UPDATE;
-            changeAdvice.oldServiceInfo = namingList[key];
-            changeAdvice.newServiceInfo = info;
+            //changeAdvice.oldServiceInfo = namingList[key];
+            //changeAdvice.newServiceInfo = info;
         }
         else
         {
-            changeAdvice.changeType = ChangeType::ADD;
-            changeAdvice.newServiceInfo = info;
+            //changeAdvice.newServiceInfo = info;
         }
-        _eventDispatcher->notify(changeAdvice);
+        //_eventDispatcher->notify(changeAdvice);
     }
     namingList[key] = info;
 }
@@ -48,9 +46,8 @@ void NamingCache::removeServiceInfo(const NacosString &key)
     if (_eventDispatcher != NULL)
     {
         ChangeAdvice changeAdvice;
-        changeAdvice.changeType = ChangeType::REMOVE;
-        changeAdvice.oldServiceInfo = namingList[key];
-        _eventDispatcher->notify(changeAdvice);
+        //changeAdvice.oldServiceInfo = namingList[key];
+        //_eventDispatcher->notify(changeAdvice);
     }
     namingList.erase(key);
 }

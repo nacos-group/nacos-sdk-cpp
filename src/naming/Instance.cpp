@@ -7,10 +7,14 @@ Instance::Instance() {
     healthy = true;
     enabled = true;
     ephemeral = true;
+    instanceId = "";
+    ip = "";
+    clusterName = "";
+    serviceName = "";
     port = 0;
 }
 
-NacosString Instance::toString() {
+NacosString Instance::toString() const{
     return "instanceId:" + instanceId + " ip:" + ip + " port:" + NacosStringOps::valueOf(port) +
            " weight:" + NacosStringOps::valueOf(weight) + " healthy:" + NacosStringOps::valueOf(healthy) +
            " enabled:" + NacosStringOps::valueOf(enabled) + " ephemeral:" + NacosStringOps::valueOf(ephemeral) +
@@ -33,6 +37,7 @@ Instance & Instance::operator = (const Instance &rhs)
     this->ephemeral = rhs.ephemeral;
     this->clusterName = rhs.clusterName;
     this->metadata = rhs.metadata;
+    return *this;
 }
 
 bool Instance::operator != (const Instance &rhs) const
