@@ -208,7 +208,7 @@ list <Instance> NacosNamingService::getAllInstances
 list <Instance> NacosNamingService::getAllInstances
         (
                 const NacosString &serviceName,
-                list <NacosString> clusters
+                const list <NacosString> &clusters
         ) throw(NacosException) {
     return getAllInstances(serviceName, Constants::DEFAULT_GROUP, clusters);
 }
@@ -217,7 +217,7 @@ list <Instance> NacosNamingService::getAllInstances
         (
                 const NacosString &serviceName,
                 const NacosString &groupName,
-                list <NacosString> clusters
+                const list <NacosString> &clusters
         ) throw(NacosException) {
     ServiceInfo serviceInfo;
     //TODO:cache and failover
@@ -235,11 +235,32 @@ void NacosNamingService::subscribe(const NacosString &serviceName, EventListener
     subscribe(serviceName, Constants::DEFAULT_GROUP, clusters, listener);
 }
 
+
+void NacosNamingService::subscribe
+(
+    const NacosString &serviceName,
+    const NacosString &groupName,
+    EventListener *listener
+) throw (NacosException)
+{
+    list<NacosString> clusters;//empty cluster
+    subscribe(serviceName, groupName, clusters, listener);
+}
+
+void NacosNamingService::subscribe(
+    const NacosString &serviceName,
+    const std::list<NacosString> &clusters,
+    EventListener *listener
+) throw (NacosException)
+{
+    subscribe(serviceName, Constants::DEFAULT_GROUP, clusters, listener);
+}
+
 void NacosNamingService::subscribe
 (
         const NacosString &serviceName,
         const NacosString &groupName,
-        std::list<NacosString> clusters,
+        const std::list<NacosString> &clusters,
         EventListener *listener
 ) throw (NacosException)
 {
@@ -255,7 +276,7 @@ void NacosNamingService::subscribe
 void NacosNamingService::unsubscribe(
     const NacosString &serviceName,
     const NacosString &groupName,
-    std::list<NacosString> clusters,
+    const std::list<NacosString> &clusters,
     EventListener *listener
 ) throw (NacosException)
 {
@@ -269,6 +290,27 @@ void NacosNamingService::unsubscribe(
         //Since there's no more listeners listening to this service, remove it from the polling list
         _tcpNamingServicePoller->removePollItem(serviceName, groupName, clusterName);
     }
+}
+
+void NacosNamingService::unsubscribe
+(
+    const NacosString &serviceName,
+    const std::list<NacosString> &clusters,
+    EventListener *listener
+) throw (NacosException)
+{
+    unsubscribe(serviceName, Constants::DEFAULT_GROUP, clusters, listener);
+}
+
+void NacosNamingService::unsubscribe
+(
+    const NacosString &serviceName,
+    const NacosString &groupName,
+    EventListener *listener
+) throw (NacosException)
+{
+    list<NacosString> clusters;
+    unsubscribe(serviceName, groupName, clusters, listener);
 }
 
 void NacosNamingService::unsubscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException)

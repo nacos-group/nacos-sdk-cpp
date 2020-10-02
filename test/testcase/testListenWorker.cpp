@@ -28,7 +28,6 @@ bool testAddListener() {
     cout << "in function testAddListener" << endl;
     Properties props;
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
-    ConfigService *n = NULL;
     KeyChangeListener *thelistener = new KeyChangeListener();
     thelistener->setKey("k");
     bool bSucc;

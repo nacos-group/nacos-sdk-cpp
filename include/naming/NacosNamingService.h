@@ -68,18 +68,26 @@ public:
     getAllInstances(const NacosString &serviceName, const NacosString &groupName) throw(NacosException);
 
     std::list <Instance>
-    getAllInstances(const NacosString &serviceName, std::list <NacosString> clusters) throw(NacosException);
+    getAllInstances(const NacosString &serviceName, const std::list <NacosString> &clusters) throw(NacosException);
 
     std::list <Instance> getAllInstances(const NacosString &serviceName, const NacosString &groupName,
-                                         std::list <NacosString> clusters) throw(NacosException);
+                                         const std::list <NacosString> &clusters) throw(NacosException);
 
     void subscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException);
 
-    void subscribe(const NacosString &serviceName, const NacosString &groupName, std::list<NacosString> clusters, EventListener *listener) throw (NacosException);
+    void subscribe(const NacosString &serviceName, const NacosString &groupName, const std::list<NacosString> &clusters, EventListener *listener) throw (NacosException);
+
+    void subscribe(const NacosString &serviceName, const NacosString &groupName, EventListener *listener) throw (NacosException);
+
+    void subscribe(const NacosString &serviceName, const std::list<NacosString> &clusters, EventListener *listener) throw (NacosException);
 
     void unsubscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException);
 
-    void unsubscribe(const NacosString &serviceName, const NacosString &groupName, std::list<NacosString> clusters, EventListener *listener) throw (NacosException);
+    void unsubscribe(const NacosString &serviceName, const NacosString &groupName, EventListener *listener) throw (NacosException);
+
+    void unsubscribe(const NacosString &serviceName, const std::list<NacosString> &clusters, EventListener *listener) throw (NacosException);
+
+    void unsubscribe(const NacosString &serviceName, const NacosString &groupName, const std::list<NacosString> &clusters, EventListener *listener) throw (NacosException);
 
     HTTPCli *getHttpCli() const { return httpCli; };
 

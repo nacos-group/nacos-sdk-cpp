@@ -34,8 +34,6 @@ bool testListeningKeys() {
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
     ResourceGuard <ConfigService> _serviceFactory(n);
-    bool bSucc;
-    char cc;
 
     MyListener *theListener = new MyListener(1);
     MyListener *theListener2 = new MyListener(2);
@@ -53,16 +51,16 @@ bool testListeningKeys() {
     }
 
     cout << "Input a character to continue" << endl;
-    cin >> cc;
+    getchar();
     cout << "remove listener" << endl;
     n->removeListener("dqid", NULLSTR, theListener);
 
     cout << "Input a character to continue" << endl;
-    cin >> cc;
+    getchar();
     cout << "remove listener2" << endl;
     n->removeListener("dqid", NULLSTR, theListener2);
     n->removeListener("dqid", NULLSTR, theListener3);
-    cin >> cc;
+    getchar();
 
     return true;
 }
