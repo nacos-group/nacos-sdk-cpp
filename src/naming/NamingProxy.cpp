@@ -96,7 +96,7 @@ NamingProxy::reqAPI(const NacosString &api, map <NacosString, NacosString> &para
     list <NacosServerInfo> servers = serverListManager->getServerList();
 
     if (serverListManager->getServerCount() == 0) {
-        throw NacosException(0, "no server available");
+        throw NacosException(NacosException::NO_SERVER_AVAILABLE, "no server available");
     }
 
     NacosString errmsg;
@@ -125,7 +125,7 @@ NamingProxy::reqAPI(const NacosString &api, map <NacosString, NacosString> &para
             selectedServer = (selectedServer + 1) % servers.size();
         }
 
-        throw NacosException(0, "failed to req API:" + api + " after all servers(" + serverListManager->toString() +
+        throw NacosException(NacosException::ALL_SERVERS_TRIED_AND_FAILED, "failed to req API:" + api + " after all servers(" + serverListManager->toString() +
                                 ") tried: "
                                 + errmsg);
     }
@@ -140,7 +140,7 @@ NamingProxy::reqAPI(const NacosString &api, map <NacosString, NacosString> &para
         }
     }
 
-    throw NacosException(0, "failed to req API:/api/" + api + " after all servers(" + serverListManager->toString() +
+    throw NacosException(NacosException::ALL_SERVERS_TRIED_AND_FAILED, "failed to req API:/api/" + api + " after all servers(" + serverListManager->toString() +
                             ") tried: " + errmsg);
 }
 
@@ -209,7 +209,7 @@ NacosString NamingProxy::callServer
     }
     //TODO:Metrics & Monitoring
 
-    throw NacosException(NacosException::SERVER_ERROR,
+    throw NacosException(requestRes.code,
                          "failed to req API:" + requestUrl + " code:" + NacosStringOps::valueOf(requestRes.code) +
                          " errormsg:" + requestRes.content);
 }
