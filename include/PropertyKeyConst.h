@@ -43,6 +43,10 @@ public:
 
     static const NacosString TCP_NAMING_POLL_INTERVAL;
 
+    static const NacosString CONFIG_LONGPULLLING_TIMEOUT;
+
+    static const NacosString CONFIG_GET_TIMEOUT;
+
     /*public static class SystemEnv {
 
         static const NacosString ALIBABA_ALIWARE_ENDPOINT_PORT = "ALIBABA_ALIWARE_ENDPOINT_PORT";

@@ -104,6 +104,8 @@ void AppConfigManager::initDefaults() {
     appConfig[PropertyKeyConst::SRVLISTMGR_READ_TIMEOUT] = "3000";
     appConfig[PropertyKeyConst::CONTEXT_PATH] = DEFAULT_CONTEXT_PATH;
     appConfig[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "30000";//30 secs by default
+    appConfig[PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT] = "30000";//ms
+    appConfig[PropertyKeyConst::CONFIG_GET_TIMEOUT] = "3000";//ms
 }
 
 

@@ -81,7 +81,7 @@ ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException) 
     httpcli = new HTTPCli();
     NacosString encoding = "UTF-8";
     HttpAgent *httpAgent = new ServerHttpAgent(appConfigManager, httpcli, encoding, serverListManager);
-    ClientWorker *clientWorker = new ClientWorker(httpAgent);
+    ClientWorker *clientWorker = new ClientWorker(httpAgent, appConfigManager);
     ConfigService *instance = new NacosConfigService(appConfigManager,
                                                      httpcli,
                                                      serverListManager,
