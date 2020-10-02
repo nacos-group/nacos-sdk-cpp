@@ -106,8 +106,25 @@ void *TcpNamingServicePoller::pollingThreadFunc(void *parm)
             NacosString name = NamingUtils::getGroupedName(it->second.serviceName, it->second.groupName);
             NacosString key = ServiceInfo::getKey(name, it->second.clusters);
             log_debug("Polling data: name=%s, key=%s\n", name.c_str(), key.c_str());
-            NacosString result = thisObj->_namingProxy->queryList(it->second.serviceName, it->second.clusters, 0,
-                                                                  false);
+
+            NacosString result;
+            try {
+                result = thisObj->_namingProxy->queryList(it->second.serviceName, it->second.clusters, 0,
+                                                          false);
+            }
+            catch (NacosException &e) {
+                //no server available or all servers tried but failed
+                //just ignore and wait the network restore or manual restore
+                //the reason why we choose to ignore the exception is that:
+                //1. the network is down, we don't know the current status of the server, so we don't know whether it changed or not
+                //for that reason we can't make any notifications
+                //2. when the network restored, we can get the latest status of the server and send notifications
+                //3. if the network is down for a rather long time, manual restore is needed,
+                //and the server will be restarted, this listener thread will be restarted, too
+                //4. when the server returns a 404 error, we still need to poll the service's information, since it may become available sometime later
+                continue;
+            }
+
             log_debug("Server info got from server:%s\n=======>\n", result.c_str());
             ServiceInfo serviceInfo = JSON::JsonStr2ServiceInfo(result);
             if (thisObj->serviceInfoList.count(key) == 0) {
