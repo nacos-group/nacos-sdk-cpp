@@ -11,7 +11,7 @@ TcpNamingServicePoller::TcpNamingServicePoller(EventDispatcher *eventDispatcher,
     _namingProxy = namingProxy;
     _appConfigMgr = appConfigManager;
     _pollingThread = new Thread("NamingServicePoller", pollingThreadFunc, (void*)this);
-    _pollingInterval = atoi(appConfigManager->get(PropertyKeyConst::TCP_NAMING_POLL_INTERVAL).c_str());
+    _pollingInterval = atoi(_appConfigMgr->get(PropertyKeyConst::TCP_NAMING_POLL_INTERVAL).c_str());
     _started = false;
 }
 
