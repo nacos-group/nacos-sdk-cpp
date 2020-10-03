@@ -299,7 +299,6 @@ int main() {
 using namespace std;
 
 int main() {
-    cout << "in function testGetAllInstances" << endl;
     Properties configProps;
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
