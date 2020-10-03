@@ -36,7 +36,7 @@ int main() {
         cout <<
              "Request failed with curl code:" << e.errorcode() << endl <<
              "Reason:" << e.what() << endl;
-        return false;
+        return -1;
     }
     cout << ss << endl;
 
@@ -85,13 +85,65 @@ int main() {
              "Request failed with curl code:" << e.errorcode() << endl <<
              "Reason:" << e.what() << endl;
 
-        return false;
+        return -1;
     }
     cout << "Publishing Key:Cfg_key with value:Cfg_val result:" << bSucc << endl;
 
     return 0;
 }
 ``` 
+
+## Listen to key change & Cancel listening
+
+```C++
+#include <iostream>
+#include <stdlib.h>
+#include <unistd.h>
+#include "factory/NacosServiceFactory.h"
+#include "ResourceGuard.h"
+#include "listen/Listener.h"
+#include "PropertyKeyConst.h"
+#include "DebugAssertion.h"
+#include "Debug.h"
+
+using namespace std;
+
+class MyListener : public Listener {
+private:
+    int num;
+public:
+    MyListener(int num) {
+        this->num = num;
+    }
+
+    void receiveConfigInfo(const NacosString &configInfo) {
+        cout << "===================================" << endl;
+        cout << "Watcher" << num << endl;
+        cout << "Watched Key UPDATED:" << configInfo << endl;
+        cout << "===================================" << endl;
+    }
+};
+
+int main() {
+    Properties props;
+    props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
+    NacosServiceFactory *factory = new NacosServiceFactory(props);
+    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    ConfigService *n = factory->CreateConfigService();
+    ResourceGuard <ConfigService> _serviceFactory(n);
+
+    MyListener *theListener = new MyListener(1);//You don't need to free it, since it will be deleted by the function removeListener
+    n->addListener("dqid", NULLSTR, theListener);//All changes on the key dqid will be received by MyListener
+
+    cout << "Input a character to continue" << endl;
+    getchar();
+    cout << "remove listener" << endl;
+    n->removeListener("dqid", NULLSTR, theListener);//Cancel listening
+    getchar();
+
+    return 0;
+}
+```
 
 # About Nacos
 
