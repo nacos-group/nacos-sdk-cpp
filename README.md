@@ -276,7 +276,7 @@ int main() {
 }
 ```
 
-### getAllInstances of a service
+### Get all instances of a service
 
 ```C++
 #include <iostream>
