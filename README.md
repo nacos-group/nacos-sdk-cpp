@@ -8,6 +8,42 @@ Nacos-sdk-cpp for c++ clients allow users to access Nacos service,it's support s
 [![Gitter](https://badges.gitter.im/alibaba/nacos.svg)](https://gitter.im/alibaba/nacos?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)   [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![Gitter](https://travis-ci.org/alibaba/nacos.svg?branch=master)](https://travis-ci.org/alibaba/nacos)
 
+# Quick Examples
+* Get Config
+
+```C++
+#include <iostream>
+#include "factory/NacosServiceFactory.h"
+#include "PropertyKeyConst.h"
+#include "DebugAssertion.h"
+#include "ResourceGuard.h"
+#include "Debug.h"
+
+using namespace std;
+
+int main() {
+    Properties props;
+    props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";//Server address
+    NacosServiceFactory *factory = new NacosServiceFactory(props);
+    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    ConfigService *n = factory->CreateConfigService();
+    ResourceGuard <ConfigService> _serviceFactory(n);
+    NacosString ss = "";
+    try {
+        ss = n->getConfig("k", NULLSTR, 1000);
+    }
+    catch (NacosException e) {
+        cout <<
+             "Request failed with curl code:" << e.errorcode() << endl <<
+             "Reason:" << e.what() << endl;
+        return false;
+    }
+    cout << ss << endl;
+
+    return true;
+}
+``` 
+
 # About Nacos
 
 Nacos (official site: [http://nacos.io](http://nacos.io)) is an easy-to-use platform designed for dynamic service discovery and configuration and service management. It helps you to build cloud native applications and microservices platform easily.
