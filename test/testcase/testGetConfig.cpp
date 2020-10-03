@@ -47,7 +47,6 @@ bool testGetConfigwithDefaultPort() {
 bool testInvalidConfig() {
     cout << "in function testInvalidConfig" << endl;
     Properties props;
-    ConfigService *n = NULL;
 
     NacosString ss;
     try {

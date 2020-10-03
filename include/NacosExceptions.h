@@ -39,6 +39,9 @@ public:
     * no right（鉴权失败）
     */
     static const int NO_RIGHT = 403;
+
+    static const int HTTP_NOT_FOUND = 404;
+
     /**
     * conflict（写并发冲突）
     */
@@ -69,6 +72,8 @@ public:
     static const int MALFORMED_CONFIG_FILE = 1001;
     static const int FILE_NOT_FOUND = 1002;
     static const int INVALID_FACTORY_CONFIG = 1003;
+    static const int ALL_SERVERS_TRIED_AND_FAILED = 1004;
+    static const int NO_SERVER_AVAILABLE = 1005;
 };
 
 class NetworkException : public std::exception {

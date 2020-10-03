@@ -4,6 +4,8 @@
 #include "naming/NamingService.h"
 #include "naming/Instance.h"
 #include "naming/NamingProxy.h"
+#include "naming/subscribe/EventDispatcher.h"
+#include "naming/subscribe/TcpNamingServicePoller.h"
 #include "naming/beat/BeatReactor.h"
 #include "config/ObjectConfigData.h"
 #include "http/HTTPCli.h"
@@ -12,21 +14,20 @@
 
 class NacosNamingService : public NamingService {
 private:
-    HTTPCli *httpCli;
-    NamingProxy *serverProxy;
-    BeatReactor *beatReactor;
+    HTTPCli *httpCli = NULL;
+    NamingProxy *serverProxy = NULL;
+    BeatReactor *beatReactor = NULL;
+    EventDispatcher *_eventDispatcher = NULL;
+    TcpNamingServicePoller *_tcpNamingServicePoller = NULL;
+    AppConfigManager *_appConfigMgr = NULL;
 
     NacosNamingService();
 
     NacosString cacheDir;
 
     NacosString logName;
-
-    //HostReactor hostReactor;
-
-    //EventDispatcher eventDispatcher;
 public:
-    NacosNamingService(HTTPCli *httpCli, NamingProxy *serverProxy, BeatReactor *beatReactor);
+    NacosNamingService(HTTPCli *httpCli, NamingProxy *serverProxy, BeatReactor *beatReactor, EventDispatcher *eventDispatcher, TcpNamingServicePoller *tcpNamingServicePoller, AppConfigManager *appConfigManager);
 
     ~NacosNamingService();
 
@@ -67,10 +68,26 @@ public:
     getAllInstances(const NacosString &serviceName, const NacosString &groupName) throw(NacosException);
 
     std::list <Instance>
-    getAllInstances(const NacosString &serviceName, std::list <NacosString> clusters) throw(NacosException);
+    getAllInstances(const NacosString &serviceName, const std::list <NacosString> &clusters) throw(NacosException);
 
     std::list <Instance> getAllInstances(const NacosString &serviceName, const NacosString &groupName,
-                                         std::list <NacosString> clusters) throw(NacosException);
+                                         const std::list <NacosString> &clusters) throw(NacosException);
+
+    void subscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException);
+
+    void subscribe(const NacosString &serviceName, const NacosString &groupName, const std::list<NacosString> &clusters, EventListener *listener) throw (NacosException);
+
+    void subscribe(const NacosString &serviceName, const NacosString &groupName, EventListener *listener) throw (NacosException);
+
+    void subscribe(const NacosString &serviceName, const std::list<NacosString> &clusters, EventListener *listener) throw (NacosException);
+
+    void unsubscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException);
+
+    void unsubscribe(const NacosString &serviceName, const NacosString &groupName, EventListener *listener) throw (NacosException);
+
+    void unsubscribe(const NacosString &serviceName, const std::list<NacosString> &clusters, EventListener *listener) throw (NacosException);
+
+    void unsubscribe(const NacosString &serviceName, const NacosString &groupName, const std::list<NacosString> &clusters, EventListener *listener) throw (NacosException);
 
     HTTPCli *getHttpCli() const { return httpCli; };
 

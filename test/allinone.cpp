@@ -88,6 +88,8 @@ bool testUUID();
 
 bool testUUIDMT();
 
+bool testListenService();
+
 TestData testList1[] =
 TEST_ITEM_START
 
@@ -139,13 +141,13 @@ TEST_ITEM_START
         TEST_ITEM("Test UUID generation", testUUID)
         TEST_ITEM("Test UUID generation(Multi-thread)", testUUIDMT)
         TEST_ITEM("Register many services and get one", testGetAllInstances)
+        TEST_ITEM("Subscribe & unsubscribe services", testListenService)
 TEST_ITEM_END
 
 int main() {
-    std::string hold;
     cout << "Please start a nacos server listening on port 8848 in this machine first." << endl;
     cout << "And when the server is ready, press any key to start the test." << endl;
-    cin >> hold;
+    getchar();
     Init::doInit();
     for (size_t i = 0; i < sizeof(testList) / sizeof(TestData); i++) {
         cout << "===========================" << endl;

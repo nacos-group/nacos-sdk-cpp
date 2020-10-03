@@ -9,6 +9,7 @@
 #include "listen/Listener.h"
 #include "listen/ListeningData.h"
 #include "listen/OperateItem.h"
+#include "config/AppConfigManager.h"
 #include "NacosExceptions.h"
 
 /**
@@ -25,13 +26,18 @@ private:
     std::list <OperateItem> deleteList;
     //dataID||group||tenant -> Cachedata* Mapping
     std::map<NacosString, ListeningData *> listeningKeys;
-    pthread_mutex_t watchListMutex;
+    pthread_mutex_t watchListMutex;//TODO:refactor to Mutex
     HttpAgent *httpAgent = NULL;
+    AppConfigManager *appConfigManager = NULL;
     //Listener thread related info
     pthread_t threadId;
 
     volatile bool stopThread;
     pthread_mutex_t stopThreadMutex;
+
+    int _readTimeout;
+    int _longPullingTimeout;
+    NacosString _longPullingTimeoutStr;
 
     static void *listenerThread(void *watcher);
 
@@ -49,7 +55,7 @@ private:
     void addDeleteItem(const OperateItem &item);
 
 public:
-    ClientWorker(HttpAgent *_httpAgent);
+    ClientWorker(HttpAgent *_httpAgent, AppConfigManager *_appConfigManager);
 
     ~ClientWorker();
 

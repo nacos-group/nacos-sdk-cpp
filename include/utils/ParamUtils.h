@@ -136,13 +136,13 @@ public:
     }
 
     //use ',' as separator by default
-    static NacosString Implode(std::list <NacosString> &toImplode) {
+    static NacosString Implode(const std::list <NacosString> &toImplode) {
         return Implode(toImplode, ',');
     }
 
-    static NacosString Implode(std::list <NacosString> &toImplode, char separator) {
+    static NacosString Implode(const std::list <NacosString> &toImplode, char separator) {
         NacosString implodedString;
-        for (std::list<NacosString>::iterator it = toImplode.begin();
+        for (std::list<NacosString>::const_iterator it = toImplode.begin();
              it != toImplode.end(); /*it++ is within the for ... loop*/) {
             implodedString += *it;
             it++;
@@ -155,13 +155,13 @@ public:
     }
 
     //use ',' as default separator to serialize a map
-    static NacosString Implode(std::map <NacosString, NacosString> &toImplode) {
+    static NacosString Implode(const std::map <NacosString, NacosString> &toImplode) {
         return Implode(toImplode, ',');
     }
 
-    static NacosString Implode(std::map <NacosString, NacosString> &toImplode, char separator) {
+    static NacosString Implode(const std::map <NacosString, NacosString> &toImplode, char separator) {
         NacosString implodedString;
-        for (std::map<NacosString, NacosString>::iterator it = toImplode.begin(); it != toImplode.end(); it++) {
+        for (std::map<NacosString, NacosString>::const_iterator it = toImplode.begin(); it != toImplode.end(); it++) {
             implodedString += it->first + "=" + it->second;
             if (it != toImplode.end()) {
                 implodedString += ",";

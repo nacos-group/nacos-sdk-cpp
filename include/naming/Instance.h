@@ -6,6 +6,10 @@
 
 class Instance {
 public:
+    Instance & operator = (const Instance &rhs);
+    bool operator == (const Instance &rhs) const;
+    bool operator != (const Instance &rhs) const;
+
     Instance();
 
     /**
@@ -60,7 +64,8 @@ public:
     */
     std::map <NacosString, NacosString> metadata;
 
-    NacosString toString();
+    NacosString toString() const;
+    NacosString toInetAddr();
 };
 
 #endif

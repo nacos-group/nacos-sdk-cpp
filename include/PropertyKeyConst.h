@@ -41,6 +41,14 @@ public:
 
     static const NacosString SRVLISTMGR_READ_TIMEOUT;
 
+    static const NacosString TCP_NAMING_POLL_INTERVAL;
+
+    static const NacosString CONFIG_LONGPULLLING_TIMEOUT;
+
+    static const NacosString CONFIG_GET_TIMEOUT;
+
+    static const NacosString HB_FAIL_WAIT_TIME;
+
     /*public static class SystemEnv {
 
         static const NacosString ALIBABA_ALIWARE_ENDPOINT_PORT = "ALIBABA_ALIWARE_ENDPOINT_PORT";

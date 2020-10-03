@@ -7,6 +7,8 @@
 #include "config/ObjectConfigData.h"
 #include "config/NacosConfigService.h"
 #include "http/ServerHttpAgent.h"
+#include "naming/subscribe/EventDispatcher.h"
+#include "naming/subscribe/TcpNamingServicePoller.h"
 
 NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) {
     checkConfig();
@@ -37,7 +39,11 @@ NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) 
     BeatReactor *beatReactor = new BeatReactor(namingProxy);
     objectConfigData.beatReactor = beatReactor;
 
-    NamingService *instance = new NacosNamingService(httpcli, namingProxy, beatReactor);
+    EventDispatcher *eventDispatcher = new EventDispatcher();
+
+    TcpNamingServicePoller *tcpNamingServicePoller = new TcpNamingServicePoller(eventDispatcher, namingProxy, appConfigManager);
+
+    NamingService *instance = new NacosNamingService(httpcli, namingProxy, beatReactor, eventDispatcher, tcpNamingServicePoller, appConfigManager);
 
     log_debug("Created config data: %s", objectConfigData.name.c_str());
     return instance;
@@ -75,7 +81,7 @@ ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException) 
     httpcli = new HTTPCli();
     NacosString encoding = "UTF-8";
     HttpAgent *httpAgent = new ServerHttpAgent(appConfigManager, httpcli, encoding, serverListManager);
-    ClientWorker *clientWorker = new ClientWorker(httpAgent);
+    ClientWorker *clientWorker = new ClientWorker(httpAgent, appConfigManager);
     ConfigService *instance = new NacosConfigService(appConfigManager,
                                                      httpcli,
                                                      serverListManager,

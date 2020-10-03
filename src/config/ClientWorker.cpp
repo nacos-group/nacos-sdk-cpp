@@ -12,15 +12,21 @@
 #include "DebugAssertion.h"
 #include "Constants.h"
 #include "Parameters.h"
+#include "PropertyKeyConst.h"
 
 using namespace std;
 
-ClientWorker::ClientWorker(HttpAgent *_httpAgent) {
+ClientWorker::ClientWorker(HttpAgent *_httpAgent, AppConfigManager *_appConfigManager) {
     threadId = 0;
     stopThread = true;
     pthread_mutex_init(&watchListMutex, NULL);
     pthread_mutex_init(&stopThreadMutex, NULL);
     httpAgent = _httpAgent;
+    appConfigManager = _appConfigManager;
+
+    _longPullingTimeoutStr = appConfigManager->get(PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT);
+    _longPullingTimeout = atoi(_longPullingTimeoutStr.c_str());
+    _readTimeout = atoi(appConfigManager->get(PropertyKeyConst::CONFIG_GET_TIMEOUT).c_str());
 }
 
 ClientWorker::~ClientWorker() {
@@ -68,7 +74,7 @@ NacosString ClientWorker::getServerConfig
     try {
         res = httpAgent->httpGet(url, headers, paramValues, httpAgent->getEncode(), timeoutMs);
     }
-    catch (NetworkException e) {
+    catch (NetworkException &e) {
         throw NacosException(NacosException::SERVER_ERROR, e.what());
     }
 
@@ -287,11 +293,8 @@ NacosString ClientWorker::checkListenedKeys() {
     list <NacosString> headers;
     list <NacosString> paramValues;
 
-    //TODO:put it into constants list
-    long timeout = 30000;
-
     headers.push_back("Long-Pulling-Timeout");
-    headers.push_back("30000");
+    headers.push_back(_longPullingTimeoutStr);
 
     paramValues.push_back(Constants::PROBE_MODIFY_REQUEST);
     paramValues.push_back(postData);
@@ -302,11 +305,10 @@ NacosString ClientWorker::checkListenedKeys() {
     NacosString url = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH + "/listener";
     HttpResult res;
 
-    //TODO:constant for 30 * 1000
     try {
-        res = httpAgent->httpPost(url, headers, paramValues, httpAgent->getEncode(), timeout);
+        res = httpAgent->httpPost(url, headers, paramValues, httpAgent->getEncode(), _readTimeout);
     }
-    catch (NetworkException e) {
+    catch (NetworkException &e) {
         log_warn("Request failed with: %s\n", e.what());
         NacosString result = "";
         return result;
@@ -333,9 +335,21 @@ void ClientWorker::performWatch() {
         if (listenedDataIter != listeningKeys.end()) {
             log_debug("Found entry for:%s\n", key.c_str());
             ListeningData *listenedList = listenedDataIter->second;
-            //TODO:Constant
-            NacosString updatedcontent = getServerConfig(listenedList->getTenant(), listenedList->getDataId(),
-                                                         listenedList->getGroup(), 3000);
+            NacosString updatedcontent = "";
+
+            try {
+                updatedcontent = getServerConfig(listenedList->getTenant(), listenedList->getDataId(),
+                                                 listenedList->getGroup(), _readTimeout);
+            }
+            catch (NacosException &e) {
+                //Same design as TcpNamingServicePoller
+                log_warn("Encountered exception when getting config from server:%s:%s:%s\n",
+                         listenedList->getTenant().c_str(),
+                         listenedList->getGroup().c_str(),
+                         listenedList->getDataId().c_str());
+                sleep(_longPullingTimeout / 1000);
+                break;
+            }
             log_debug("Data fetched from the server: %s\n", updatedcontent.c_str());
             md5.reset();
             md5.update(updatedcontent.c_str());

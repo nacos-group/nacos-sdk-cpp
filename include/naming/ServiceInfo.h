@@ -36,7 +36,7 @@ public:
     ServiceInfo() : _jsonFromServer(""), _cacheMillis(1000L), _lastRefTime(0L), _checksum(""), _allIPs(false) {
     }
 
-    bool isAllIPs() {
+    bool isAllIPs() const{
         return _allIPs;
     }
 
@@ -44,7 +44,7 @@ public:
         _allIPs = allIPs;
     }
 
-    ServiceInfo(const NacosString &key) : _jsonFromServer(""), _cacheMillis(1000L), _lastRefTime(0L), _checksum(""),
+    explicit ServiceInfo(const NacosString &key)  : _jsonFromServer(""), _cacheMillis(1000L), _lastRefTime(0L), _checksum(""),
                                           _allIPs(false) {
         std::vector <NacosString> segs;
         ParamUtils::Explode(segs, key, Constants::SERVICE_INFO_SPLITER);
@@ -68,7 +68,7 @@ public:
         return _hosts.size();
     }
 
-    bool expired() {
+    bool expired() const{
         //TODO:extract this snippet to a common util
         struct timeval tp;
         gettimeofday(&tp, NULL);
@@ -129,7 +129,11 @@ public:
         return _hosts;
     }
 
-    bool validate() {
+    std::list <Instance> *getHostsNocopy() {
+        return &_hosts;
+    }
+
+    bool validate() const{
         if (isAllIPs()) {
             return true;
         }
@@ -154,7 +158,7 @@ public:
     }
 
     //@JSONField(serialize = false)
-    NacosString getJsonFromServer() {
+    NacosString getJsonFromServer() const{
         return _jsonFromServer;
     }
 
@@ -163,12 +167,12 @@ public:
     }
 
     //@JSONField(serialize = false)
-    NacosString getKey() {
+    NacosString getKey() const{
         return getKey(_name, _clusters);
     }
 
     //@JSONField(serialize = false)
-    NacosString getKeyEncoded() {
+    NacosString getKeyEncoded() const{
         return getKey(urlencode(_name), _clusters);
     }
 
@@ -200,11 +204,26 @@ public:
     }
 
     //@Override
-    NacosString toString() {
+    NacosString toString() const{
         return getKey();
     }
 
-    NacosString getChecksum() {
+    //!!BE CAREFUL!!
+    //This function is very expensive!! call it with care!
+    NacosString toInstanceString() const{
+        NacosString res = "[\n";
+        for (std::list<Instance>::const_iterator it = _hosts.begin();
+            it != _hosts.end(); it++)
+        {
+            res += it->toString() + "\n";
+        }
+
+        res += "\n]";
+
+        return res;
+    }
+
+    NacosString getChecksum() const{
         return _checksum;
     }
 
