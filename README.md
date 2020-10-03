@@ -148,9 +148,175 @@ int main() {
 
 ## Naming
 
-### Register Instance
+### Register Instance & Unregister Instance
 
-### Unregister Instance
+```C++
+#include <iostream>
+#include <stdlib.h>
+#include <unistd.h>
+#include "naming/NamingProxy.h"
+#include "naming/NacosNamingService.h"
+#include "factory/NacosServiceFactory.h"
+#include "ResourceGuard.h"
+#include "naming/Instance.h"
+#include "Constants.h"
+#include "utils/UtilAndComs.h"
+#include "http/HTTPCli.h"
+#include "DebugAssertion.h"
+#include "Debug.h"
+#include "NacosString.h"
+#include "Properties.h"
+#include "PropertyKeyConst.h"
+
+using namespace std;
+
+int main() {
+    Properties configProps;
+    configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
+    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
+    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    NamingService *namingSvc = factory->CreateNamingService();
+    ResourceGuard <NamingService> _serviceFactory(namingSvc);
+    Instance instance;
+    instance.clusterName = "DefaultCluster";
+    instance.ip = "127.0.0.1";
+    instance.port = 2333;
+    instance.instanceId = "1";
+    instance.ephemeral = true;
+
+    //Registers 5 services named TestNamingService1...5
+    try {
+        for (int i = 0; i < 5; i++) {
+            NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
+            instance.port = 2000 + i;
+            namingSvc->registerInstance(serviceName, instance);
+        }
+    }
+    catch (NacosException e) {
+        cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
+        return -1;
+    }
+    sleep(30);
+    try {
+        for (int i = 0; i < 5; i++) {
+            NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
+
+            namingSvc->deregisterInstance(serviceName, "127.0.0.1", 2000 + i);
+            sleep(1);
+        }
+    }
+    catch (NacosException e) {
+        cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
+        return -1;
+    }
+    sleep(30);
+
+    return 0;
+}
+```
+
+### Subscribe & Unsubscribe
+
+```C++
+#include <iostream>
+#include <stdlib.h>
+#include <unistd.h>
+#include "factory/NacosServiceFactory.h"
+#include "ResourceGuard.h"
+#include "naming/subscribe/EventListener.h"
+#include "PropertyKeyConst.h"
+#include "DebugAssertion.h"
+#include "Debug.h"
+
+using namespace std;
+
+class MyServiceListener : public EventListener {
+private:
+    int num;
+public:
+    MyServiceListener(int num) {
+        this->num = num;
+    }
+
+    void receiveNamingInfo(const ServiceInfo &serviceInfo){
+        cout << "===================================" << endl;
+        cout << "Watcher: " << num << endl;
+        cout << "Watched service UPDATED: " << serviceInfo.toInstanceString() << endl;
+        cout << "===================================" << endl;
+
+    }
+};
+
+int main() {
+    Properties props;
+    props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
+    //Interval for poller to check the status of subscribed services(unit:Ms), 30000 by default
+    //Here we set it to 5000 to see the output more quick
+    props[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "5000";
+    NacosServiceFactory *factory = new NacosServiceFactory(props);
+    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    NamingService *n = factory->CreateNamingService();
+    ResourceGuard <NamingService> _serviceFactory(n);
+
+    n->subscribe("ss", new MyServiceListener(1));
+    cout << "Press any key to register services" << endl;
+    getchar();
+
+    n->registerInstance("ss", "127.0.0.1", 33);
+    n->registerInstance("ss", "127.0.0.1", 34);
+    cout << "Press any key to deregister services" << endl;
+    getchar();
+
+    n->deregisterInstance("ss", "127.0.0.1", 33);
+    n->deregisterInstance("ss", "127.0.0.1", 34);
+    cout << "All instances Unregistered, press any key to finish testing" << endl;
+    getchar();
+
+    return 0;
+}
+```
+
+### getAllInstances of a service
+
+```C++
+#include <iostream>
+#include <stdlib.h>
+#include <unistd.h>
+#include <list>
+#include "naming/NamingProxy.h"
+#include "factory/NacosServiceFactory.h"
+#include "naming/Instance.h"
+#include "Constants.h"
+#include "utils/UtilAndComs.h"
+#include "http/HTTPCli.h"
+#include "DebugAssertion.h"
+#include "Debug.h"
+#include "NacosString.h"
+#include "Properties.h"
+#include "PropertyKeyConst.h"
+#include "ResourceGuard.h"
+
+using namespace std;
+
+int main() {
+    cout << "in function testGetAllInstances" << endl;
+    Properties configProps;
+    configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
+    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
+    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    NamingService *namingSvc = factory->CreateNamingService();
+    ResourceGuard <NamingService> _guardService(namingSvc);
+
+    list <Instance> instances = namingSvc->getAllInstances("TestNamingService1");
+    cout << "getAllInstances from server:" << endl;
+    for (list<Instance>::iterator it = instances.begin();
+         it != instances.end(); it++) {
+        cout << "Instance:" << it->toString() << endl;
+    }
+
+    return 0;
+}
+```
 
 # About Nacos
 
