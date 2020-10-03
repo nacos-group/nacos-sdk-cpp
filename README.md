@@ -33,7 +33,7 @@ int main() {
     try {
         ss = n->getConfig("k", NULLSTR, 1000);
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout <<
              "Request failed with curl code:" << e.errorcode() << endl <<
              "Reason:" << e.what() << endl;
@@ -81,7 +81,7 @@ int main() {
             throw NacosException(0, "getConfig() failed.");
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout <<
              "Request failed with curl code:" << e.errorcode() << endl <<
              "Reason:" << e.what() << endl;
@@ -192,7 +192,7 @@ int main() {
             namingSvc->registerInstance(serviceName, instance);
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
         return -1;
     }
@@ -205,7 +205,7 @@ int main() {
             sleep(1);
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
         return -1;
     }
