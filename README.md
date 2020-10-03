@@ -9,8 +9,9 @@ Nacos-sdk-cpp for c++ clients allow users to access Nacos service,it's support s
 [![Gitter](https://travis-ci.org/alibaba/nacos.svg?branch=master)](https://travis-ci.org/alibaba/nacos)
 
 # Quick Examples
-## Get Config
+## Configuration
 
+### Get Config
 ```C++
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
@@ -44,7 +45,7 @@ int main() {
 }
 ``` 
 
-## Set Config
+### Set Config
 
 ```C++
 #include <iostream>
@@ -93,7 +94,7 @@ int main() {
 }
 ``` 
 
-## Listen to key change & Cancel listening
+### Listen to key change & Cancel listening
 
 ```C++
 #include <iostream>
@@ -144,6 +145,12 @@ int main() {
     return 0;
 }
 ```
+
+## Naming
+
+### Register Instance
+
+### Unregister Instance
 
 # About Nacos
 
