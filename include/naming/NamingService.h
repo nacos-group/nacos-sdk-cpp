@@ -6,6 +6,7 @@
 #include "naming/subscribe//EventListener.h"
 #include "NacosString.h"
 #include "NacosExceptions.h"
+#include "ListView.h"
 
 class NamingService {
 public:
@@ -445,7 +446,7 @@ public:
      * @return list of service names
      * @throw (NacosException) = 0
      */
-    //virtual ListView<NacosString> getServicesOfServer(int pageNo, int pageSize) throw (NacosException) = 0;
+    virtual ListView<NacosString> getServiceList(int pageNo, int pageSize) throw (NacosException) = 0;
 
     /**
      * Get all service names from server
@@ -456,7 +457,7 @@ public:
      * @return list of service names
      * @throw (NacosException) = 0
      */
-    //virtual ListView<NacosString> getServicesOfServer(int pageNo, int pageSize, const NacosString &groupName) throw (NacosException) = 0;
+    virtual ListView<NacosString> getServiceList(int pageNo, int pageSize, const NacosString &groupName) throw (NacosException) = 0;
 
     /**
      * Get all service names from server with selector

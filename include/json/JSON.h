@@ -10,6 +10,7 @@
 #include "rapidjson/stringbuffer.h"
 #include "naming/Instance.h"
 #include "server/NacosServerInfo.h"
+#include "naming/ListView.h"
 
 /**
  * JSON
@@ -38,6 +39,8 @@ public:
     static void markRequired(const rapidjson::Value &d, const NacosString &requiredField) throw(NacosException);
 
     static std::list <NacosServerInfo> Json2NacosServerInfo(const NacosString &nacosString) throw(NacosException);
+
+    static ListView<NacosString> Json2ServiceList(const NacosString &nacosString) throw(NacosException);
 };
 
 

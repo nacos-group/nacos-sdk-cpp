@@ -20,6 +20,9 @@ public:
     static const NacosString ALL_IPS;
 
     static const NacosString BEAT;
+
+    static const NacosString PAGE_SIZE;
+    static const NacosString PAGE_NO;
 };
 
 #endif

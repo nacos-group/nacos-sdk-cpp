@@ -318,3 +318,11 @@ void NacosNamingService::unsubscribe(const NacosString &serviceName, EventListen
     list<NacosString> clusters;
     unsubscribe(serviceName, Constants::DEFAULT_GROUP, clusters, listener);
 }
+
+ListView<NacosString> NacosNamingService::getServiceList(int pageNo, int pageSize) throw (NacosException) {
+    return serverProxy->getServiceList(pageNo, pageSize, Constants::DEFAULT_GROUP);
+}
+
+ListView<NacosString> NacosNamingService::getServiceList(int pageNo, int pageSize, const NacosString &groupName) throw (NacosException){
+    return serverProxy->getServiceList(pageNo, pageSize, groupName);
+}

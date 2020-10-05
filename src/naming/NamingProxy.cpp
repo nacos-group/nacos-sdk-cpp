@@ -264,3 +264,22 @@ long NamingProxy::sendBeat(BeatInfo &beatInfo) {
     }
     return 0L;
 }
+
+ListView<NacosString> NamingProxy::getServiceList(int page, int pageSize, const NacosString &groupName) throw(NacosException)
+{
+    log_debug("[NAMEPRXY] request:group=%s page=%d pageSize=%d\n", groupName.c_str(), page, pageSize);
+    map <NacosString, NacosString> params;
+    params[NamingCommonParams::PAGE_NO] = NacosStringOps::valueOf(page);
+    params[NamingCommonParams::PAGE_SIZE] = NacosStringOps::valueOf(pageSize);
+    params[NamingCommonParams::GROUP_NAME] = groupName;
+    params[NamingCommonParams::NAMESPACE_ID] = getNamespaceId();
+    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service/list", params, HTTPCli::GET);
+
+    if (!isNull(result)) {
+        return JSON::Json2ServiceList(result);
+    }
+
+    ListView<NacosString> nullResult;
+    nullResult.setCount(0);
+    return nullResult;
+}

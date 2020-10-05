@@ -89,6 +89,10 @@ public:
 
     void unsubscribe(const NacosString &serviceName, const NacosString &groupName, const std::list<NacosString> &clusters, EventListener *listener) throw (NacosException);
 
+    ListView<NacosString> getServiceList(int pageNo, int pageSize) throw (NacosException);
+
+    ListView<NacosString> getServiceList(int pageNo, int pageSize, const NacosString &groupName) throw (NacosException);
+
     HTTPCli *getHttpCli() const { return httpCli; };
 
     NamingProxy *getServerProxy() const { return serverProxy; };

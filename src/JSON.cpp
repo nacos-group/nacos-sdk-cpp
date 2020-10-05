@@ -235,3 +235,39 @@ list <NacosServerInfo> JSON::Json2NacosServerInfo(const NacosString &nacosString
 
     return nacosServerList;
 }
+
+ListView<NacosString> JSON::Json2ServiceList(const NacosString &nacosString) throw(NacosException) {
+    ListView<NacosString> serviceList;
+    ServiceInfo si;
+    Document d;
+    d.Parse(nacosString.c_str());
+
+    if (d.HasParseError()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT,
+                             "Error while parsing the JSON String for ServiceList!");
+    }
+
+    markRequired(d, "count");
+    markRequired(d, "doms");
+    const Value &count = d["count"];
+    if (!count.IsInt()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing servers for ServiceList.count!");
+    }
+
+    serviceList.setCount(count.GetInt());
+
+    const Value &doms = d["doms"];
+    if (!doms.IsArray()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing servers for ServiceList.doms!");
+    }
+
+    list<NacosString> names;
+
+    for (SizeType i = 0; i < doms.Size(); i++) {
+        const Value &curName = doms[i];
+        names.push_back(curName.GetString());
+    }
+    serviceList.setData(names);
+
+    return serviceList;
+}

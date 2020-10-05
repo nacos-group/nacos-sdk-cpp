@@ -88,7 +88,7 @@ void *TcpNamingServicePoller::pollingThreadFunc(void *parm)
 {
     TcpNamingServicePoller *thisObj = (TcpNamingServicePoller*)parm;
     while (thisObj->_started) {
-        log_debug("TcpNamingServicePoller::pollingThreadFunc start polling\n");
+        log_debug("TcpNamingServicePoller::pollingThreadFunc start polling, interval = %d\n", thisObj->_pollingInterval);
         map<NacosString, PollingData> copiedList;
         {
             ReadGuard __readGuard(thisObj->rwLock);
