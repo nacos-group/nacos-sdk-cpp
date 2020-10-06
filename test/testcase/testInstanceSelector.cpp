@@ -5,6 +5,7 @@
 #include "factory/NacosServiceFactory.h"
 #include "naming/Instance.h"
 #include "naming/selectors/HealthInstanceSelector.h"
+#include "naming/selectors/RandomSelector.h"
 #include "Constants.h"
 #include "utils/UtilAndComs.h"
 #include "http/HTTPCli.h"
@@ -21,6 +22,8 @@ bool testInstanceSelectors() {
     cout << "in function testInstanceSelectors" << endl;
     Properties configProps;
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
+    configProps[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "3000";
+
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     NamingService *namingSvc = factory->CreateNamingService();
@@ -28,8 +31,9 @@ bool testInstanceSelectors() {
 
     list<Instance> res;
     HealthInstanceSelector healthInstanceSelector;
+    RandomSelector randomSelector;
     try {
-        res = namingSvc->getInstanceWithPredicate("ss", &healthInstanceSelector);
+        res = namingSvc->getInstanceWithPredicate("TestNamingService0", &randomSelector);
     }
     catch (NacosException e) {
         cout << "encounter exception while getting service names, raison:" << e.what() << endl;
