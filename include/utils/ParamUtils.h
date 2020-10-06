@@ -13,9 +13,9 @@
 class ParamUtils {
 public:
     template<typename T>
-    static T getNthElem(std::list <T> &parm, size_t i) {
+    static T getNthElem(const std::list <T> &parm, size_t i) {
         assert(parm.size() > i);
-        typename std::list<T>::iterator it = parm.begin();
+        typename std::list<T>::const_iterator it = parm.begin();
         for (size_t skipper = 0; skipper < i; skipper++) {
             it++;
         }
