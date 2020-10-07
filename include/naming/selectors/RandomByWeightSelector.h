@@ -5,6 +5,7 @@
 #include "naming/selectors/Selector.h"
 #include "Debug.h"
 #include "utils/ParamUtils.h"
+#include "utils/RandomUtils.h"
 
 #define BASIC_WEIGHT 65536
 
@@ -31,8 +32,7 @@ public:
             return result;
         }
         log_debug("RandomByWeightSelector::select:total_weight:%d\n", total_weight);
-        srand(time(NULL));//TODO:optimize random generator
-        size_t selectedWeight = rand() % total_weight;
+        size_t selectedWeight = RandomUtils::random(0, total_weight - 1);
         log_debug("RandomByWeightSelector::select selected weight:%d\n", selectedWeight);
 
         std::vector<std::pair<int, std::list<Instance>::const_iterator> >::const_iterator it = weightedList.begin();
