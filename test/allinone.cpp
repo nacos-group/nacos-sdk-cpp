@@ -94,6 +94,8 @@ bool testGetServiceNames();
 
 bool testInstanceSelectors();
 
+bool testRandomByWeightSelector();
+
 TestData testList1[] =
 TEST_ITEM_START
 
@@ -148,6 +150,7 @@ TEST_ITEM_START
         TEST_ITEM("Subscribe & unsubscribe services", testListenService)
         TEST_ITEM("Test get all service names", testGetServiceNames)
         TEST_ITEM("Test get instances with predicate", testInstanceSelectors)
+        TEST_ITEM("Test get instances with predicate", testRandomByWeightSelector)
 TEST_ITEM_END
 
 int main() {
