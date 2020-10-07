@@ -14,7 +14,6 @@
 
 class UuidUtils {
 private:
-    static int fd;
 public:
     static NacosString generateUuid();
 
