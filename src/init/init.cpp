@@ -29,5 +29,6 @@ void Init::doInit() {
 
 void Init::doDeinit() {
     UuidUtils::DeInit();
+    RandomUtils::DeInit();
     HTTPCli::HTTP_GLOBAL_DEINIT();
 }
