@@ -96,6 +96,8 @@ bool testInstanceSelectors();
 
 bool testRandomByWeightSelector();
 
+bool testThreadLocal();
+
 TestData testList1[] =
 TEST_ITEM_START
 
@@ -149,8 +151,9 @@ TEST_ITEM_START
         TEST_ITEM("Register many services and get one", testGetAllInstances)
         TEST_ITEM("Subscribe & unsubscribe services", testListenService)
         TEST_ITEM("Test get all service names", testGetServiceNames)
-        TEST_ITEM("Test get instances with predicate", testInstanceSelectors)
-        TEST_ITEM("Test get instances with predicate", testRandomByWeightSelector)
+        TEST_ITEM("Test get instances with predicate(Randomly)", testInstanceSelectors)
+        TEST_ITEM("Test get instances with predicate(testRandomByWeightSelector)", testRandomByWeightSelector)
+        TEST_ITEM("Test get instances with predicate", testThreadLocal)
 TEST_ITEM_END
 
 int main() {
