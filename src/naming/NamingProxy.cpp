@@ -1,11 +1,11 @@
 #include <map>
-#include <stdlib.h>
 #include "naming/NamingProxy.h"
 #include "naming/NamingCommonParams.h"
 #include "utils/ParamUtils.h"
 #include "utils/UtilAndComs.h"
 #include "utils/UuidUtils.h"
 #include "utils/NetUtils.h"
+#include "utils/RandomUtils.h"
 #include "json/JSON.h"
 #include "http/httpStatCode.h"
 #include "Debug.h"
@@ -105,8 +105,7 @@ NamingProxy::reqAPI(const NacosString &api, map <NacosString, NacosString> &para
     if (!servers.empty()) {
         size_t maxSvrSlot = servers.size();
         log_debug("nr_servers:%d\n", maxSvrSlot);
-        srand(time(NULL));
-        size_t selectedServer = rand() % maxSvrSlot;
+        size_t selectedServer = RandomUtils::random(0, maxSvrSlot) % maxSvrSlot;
         log_debug("selected_server:%d\n", selectedServer);
 
         for (size_t i = 0; i < servers.size(); i++) {
