@@ -101,7 +101,7 @@ TEST_ITEM_START
 
 TEST_ITEM_END
 
-        TestData
+TestData
 testList[] =
 TEST_ITEM_START
         TEST_ITEM("Normal http test", testNormalHttpRequest)
