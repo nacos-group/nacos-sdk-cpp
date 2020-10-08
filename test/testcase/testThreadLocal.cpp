@@ -8,8 +8,8 @@
 using namespace std;
 
 ThreadLocal<NacosString> threadLocal;
-ThreadLocal<int*> threadLocalPtr;
-ThreadLocal<int*> threadLocalPtrWithInitializer;
+ThreadLocal<int*> threadLocalPtr(NULL);
+ThreadLocal<int*> threadLocalPtrWithInitializer(NULL);
 
 class ThreadLocalWithInit : public ThreadLocal<int*> {
 public:
@@ -18,12 +18,12 @@ public:
     }
 
     void onDestroy(int **value) {
-        log_debug("ThreadLocalWithInit::onDestroy is called, ptr value: %p", *value);
+        log_debug("ThreadLocalWithInit::onDestroy is called, ptr value: %p\n", *value);
     }
 };
 
 void *ThreadLocalFuncs4Ptr(void *param) {
-    log_debug("threadLocalPtr.get() : %p, should be null", threadLocalPtr.get());
+    log_debug("threadLocalPtr.get() : %p, should be null\n", threadLocalPtr.get());
     NACOS_ASSERT(threadLocalPtr.get() == NULL);
 
     for (int i = 0; i < 100; i++) {
@@ -37,7 +37,7 @@ void *ThreadLocalFuncs4Ptr(void *param) {
 }
 
 void *ThreadLocalFuncs4PtrWithInitializer(void *param) {
-    log_debug("threadLocalPtr.get() : %p, should be null", threadLocalPtr.get());
+    log_debug("threadLocalPtr.get() : %p, should be null\n", threadLocalPtr.get());
     NACOS_ASSERT(threadLocalPtrWithInitializer.get() == (int*)0xFFFF);
 
     for (int i = 0; i < 100; i++) {
