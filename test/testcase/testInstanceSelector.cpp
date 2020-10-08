@@ -54,6 +54,7 @@ bool testInstanceSelectors() {
         return false;
     }
 
+    cout << "Selected instance(s):" << endl;
     for (list<Instance>::const_iterator it = res.begin();
          it != res.end(); it++) {
         cout << "service:" << it->toString() << endl;
