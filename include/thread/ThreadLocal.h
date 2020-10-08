@@ -25,6 +25,15 @@ private:
         ObjectWrapper<T> *wrapper = reinterpret_cast< ObjectWrapper<T> *>(pthread_getspecific(pthreadKey));
         return wrapper;
     }
+
+    ObjectWrapper<T> *createWrapper() {
+        ObjectWrapper<T> *wrapper = new ObjectWrapper<T>;
+        wrapper->threadLocalObj = this;
+        onCreate(wrapper->wrappedObject);
+        pthread_setspecific(pthreadKey, reinterpret_cast<void *>(wrapper));
+
+        return wrapper;
+    }
 public:
     ThreadLocal() {
         /* init the curl session */
@@ -34,16 +43,16 @@ public:
     void set(T value) {
         ObjectWrapper<T> *wrapper = getWrapper();
         if (wrapper == NULL) {
-            wrapper = new ObjectWrapper<T>;
-            wrapper->threadLocalObj = this;
-            onCreate(wrapper->wrappedObject);
-            pthread_setspecific(pthreadKey, reinterpret_cast<void *>(wrapper));
+            wrapper = createWrapper();
         }
         wrapper->wrappedObject = value;
     }
 
-    T get() const {
+    T get() {
         ObjectWrapper<T> *wrapper = getWrapper();
+        if (wrapper == NULL) {
+            wrapper = createWrapper();
+        }
         return wrapper->wrappedObject;
     }
 
