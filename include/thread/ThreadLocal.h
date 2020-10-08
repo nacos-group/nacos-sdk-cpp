@@ -16,8 +16,10 @@ template <typename T>
 class ThreadLocal{
 private:
     pthread_key_t pthreadKey;
+    T _defaultValue;
     static void destroyer(void *param) {
         ObjectWrapper<T> *wrapper = reinterpret_cast< ObjectWrapper<T> *>(param);
+        log_debug("Calling destroyer...\n");
         wrapper->threadLocalObj->onDestroy(&wrapper->wrappedObject);
         delete wrapper;
     }
@@ -37,6 +39,14 @@ private:
     }
 public:
     ThreadLocal() {
+        log_debug("ThreadLocal::ThreadLocal() is called\n");
+        /* init the curl session */
+        pthread_key_create(&pthreadKey, destroyer);
+    }
+
+    ThreadLocal(T defaultValue) {
+        log_debug("ThreadLocal::ThreadLocal(defaultValue) is called\n");
+        _defaultValue = defaultValue;
         /* init the curl session */
         pthread_key_create(&pthreadKey, destroyer);
     }
@@ -65,6 +75,7 @@ public:
     virtual void onCreate(T *value) {
         //do nothing by default;
         //!!!!!shall NOT access anything other than VALUE!!!!!
+        *value = _defaultValue;
     }
 
     virtual void onDestroy(T *value) {
