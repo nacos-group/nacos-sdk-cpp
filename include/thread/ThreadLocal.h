@@ -76,6 +76,7 @@ public:
         //do nothing by default;
         //!!!!!shall NOT access anything other than VALUE!!!!!
         *value = _defaultValue;
+        log_debug("ThreadLocal::onCreate is called\n");
     }
 
     virtual void onDestroy(T *value) {
