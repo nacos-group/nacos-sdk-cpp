@@ -2,6 +2,7 @@
 #define __THREAD_LOCAL_H_
 
 #include <pthread.h>
+#include "Debug.h"
 
 template <typename T>
 class ThreadLocal;
@@ -17,7 +18,7 @@ private:
     pthread_key_t pthreadKey;
     static void destroyer(void *param) {
         ObjectWrapper<T> *wrapper = reinterpret_cast< ObjectWrapper<T> *>(param);
-        wrapper->threadLocalObj->onDestroy(wrapper->wrappedObject);
+        wrapper->threadLocalObj->onDestroy(&wrapper->wrappedObject);
         delete wrapper;
     }
 
@@ -29,7 +30,7 @@ private:
     ObjectWrapper<T> *createWrapper() {
         ObjectWrapper<T> *wrapper = new ObjectWrapper<T>;
         wrapper->threadLocalObj = this;
-        onCreate(wrapper->wrappedObject);
+        onCreate(&wrapper->wrappedObject);
         pthread_setspecific(pthreadKey, reinterpret_cast<void *>(wrapper));
 
         return wrapper;
@@ -57,15 +58,16 @@ public:
     }
 
     virtual ~ThreadLocal() {
+        log_debug("ThreadLocal::~ThreadLocal is called\n");
         pthread_key_delete(pthreadKey);
     }
 
-    virtual void onCreate(T value) {
+    virtual void onCreate(T *value) {
         //do nothing by default;
         //!!!!!shall NOT access anything other than VALUE!!!!!
     }
 
-    virtual void onDestroy(T value) {
+    virtual void onDestroy(T *value) {
         //do nothing by default;
         //!!!!!shall NOT access anything other than VALUE!!!!!
     }
