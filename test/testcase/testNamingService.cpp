@@ -113,30 +113,24 @@ bool testNamingServiceRegister() {
     instance.ephemeral = true;
 
     try {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 2; i++) {
             NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
-            instance.port = 2000 + i;
-            namingSvc->registerInstance(serviceName, instance);
+            for (int j = 0; j < 3; j++) {
+                instance.clusterName = "DefaultCluster";
+                instance.ip = "127.0.0.1";
+                instance.port = 20000 + i*10+j;
+                instance.instanceId = "1";
+                instance.ephemeral = true;
+                namingSvc->registerInstance(serviceName, instance);
+            }
         }
     }
     catch (NacosException e) {
         cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
         return false;
     }
-    sleep(30);
-    try {
-        for (int i = 0; i < 5; i++) {
-            NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
 
-            namingSvc->deregisterInstance(serviceName, "127.0.0.1", 2000 + i);
-            sleep(1);
-        }
-    }
-    catch (NacosException e) {
-        cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
-        return false;
-    }
-    sleep(30);
+    getchar();
 
     return true;
 }

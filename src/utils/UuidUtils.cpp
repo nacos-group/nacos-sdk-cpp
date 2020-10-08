@@ -4,30 +4,20 @@
 #include <stdio.h>
 
 #include "utils/UuidUtils.h"
-
-int UuidUtils::fd;
+#include "utils/RandomUtils.h"
 
 void UuidUtils::Init() {
-    fd = open("/dev/urandom", O_RDONLY);
 }
 
 void UuidUtils::DeInit() {
-    if (fd != 0) {
-        close(fd);
-        fd = 0;
-    }
 }
 
 NacosString UuidUtils::generateUuid() {
     char random_num[UUID_LEN_BYTES];
     char str_buffer[33];
 
-
-    size_t bytes_read = 0;
-    while (bytes_read < UUID_LEN_BYTES)//an UUID has 128 bits(16 bytes), so we need to 16 bytes from the urandom
-    {
-        bytes_read += read(fd, &random_num[bytes_read], UUID_LEN_BYTES - bytes_read);
-    }
+    //an UUID has 128 bits(16 bytes), so we need to get 16 bytes from the urandom
+    RandomUtils::getRandomBuffer(random_num, UUID_LEN_BYTES);
 
     int32_t *val_ptr = (int32_t *) random_num;
     sprintf(str_buffer, "%08X%08X%08X%08X", val_ptr[0], val_ptr[1], val_ptr[2], val_ptr[3]);

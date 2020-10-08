@@ -15,3 +15,6 @@ const NacosString NamingCommonParams::EMPTY = "";
 const NacosString NamingCommonParams::ALL_IPS = "000--00-ALL_IPS--00--000";
 
 const NacosString NamingCommonParams::BEAT = "beat";
+
+const NacosString NamingCommonParams::PAGE_SIZE = "pageSize";
+const NacosString NamingCommonParams::PAGE_NO = "pageNo";

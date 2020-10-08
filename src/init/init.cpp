@@ -7,6 +7,7 @@
 #include "utils/UtilAndComs.h"
 #include "utils/NetUtils.h"
 #include "utils/UuidUtils.h"
+#include "utils/RandomUtils.h"
 //static Init initobj;//Implicitly call the constructors
 
 bool SnapShotSwitch::isSnapShot = true;
@@ -20,6 +21,7 @@ void Init::doInit() {
     LocalConfigInfoProcessor::init();
     UtilAndComs::Init();
     NetUtils::Init();
+    RandomUtils::Init();
     UuidUtils::Init();
     log_debug("LOCAL_FILEROOT_PATH = %s\n", LocalConfigInfoProcessor::LOCAL_FILEROOT_PATH.c_str());
     log_debug("LOCAL_SNAPSHOT_PATH = %s\n", LocalConfigInfoProcessor::LOCAL_SNAPSHOT_PATH.c_str());
@@ -27,5 +29,6 @@ void Init::doInit() {
 
 void Init::doDeinit() {
     UuidUtils::DeInit();
+    RandomUtils::DeInit();
     HTTPCli::HTTP_GLOBAL_DEINIT();
 }

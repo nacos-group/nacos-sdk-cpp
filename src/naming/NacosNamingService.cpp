@@ -318,3 +318,58 @@ void NacosNamingService::unsubscribe(const NacosString &serviceName, EventListen
     list<NacosString> clusters;
     unsubscribe(serviceName, Constants::DEFAULT_GROUP, clusters, listener);
 }
+
+ListView<NacosString> NacosNamingService::getServiceList(int pageNo, int pageSize) throw (NacosException) {
+    return serverProxy->getServiceList(pageNo, pageSize, Constants::DEFAULT_GROUP);
+}
+
+ListView<NacosString> NacosNamingService::getServiceList(int pageNo, int pageSize, const NacosString &groupName) throw (NacosException){
+    return serverProxy->getServiceList(pageNo, pageSize, groupName);
+}
+
+list<Instance> NacosNamingService::getInstanceWithPredicate
+(
+    const NacosString &serviceName,
+    const NacosString &groupName,
+    const std::list <NacosString> &clusters,
+    Selector<Instance> *predicate
+) throw(NacosException)
+{
+    list<Instance> allInstances = getAllInstances(serviceName, groupName, clusters);
+    return predicate->select(allInstances);
+}
+
+list<Instance> NacosNamingService::getInstanceWithPredicate
+(
+    const NacosString &serviceName,
+    const std::list <NacosString> &clusters,
+    Selector<Instance> *predicate
+) throw(NacosException)
+{
+    list<Instance> allInstances = getAllInstances(serviceName, Constants::DEFAULT_GROUP, clusters);
+    return predicate->select(allInstances);
+}
+
+list<Instance> NacosNamingService::getInstanceWithPredicate
+(
+    const NacosString &serviceName,
+    const NacosString &groupName,
+    Selector<Instance> *predicate
+) throw(NacosException)
+{
+    list<NacosString> clusters;
+    list<Instance> allInstances = getAllInstances(serviceName, groupName, clusters);
+    return predicate->select(allInstances);
+}
+
+list<Instance> NacosNamingService::getInstanceWithPredicate
+(
+    const NacosString &serviceName,
+    Selector<Instance> *predicate
+) throw(NacosException)
+{
+    list<NacosString> clusters;
+    list<Instance> allInstances = getAllInstances(serviceName, Constants::DEFAULT_GROUP, clusters);
+    return predicate->select(allInstances);
+}
+

@@ -9,6 +9,7 @@
 #include "naming/Instance.h"
 #include "naming/beat/BeatInfo.h"
 #include "server/ServerListManager.h"
+#include "naming/ListView.h"
 
 class NamingProxy {
 private:
@@ -47,6 +48,8 @@ public:
 
     NacosString queryList(const NacosString &serviceName, const NacosString &clusters, int udpPort,
                           bool healthyOnly) throw(NacosException);
+
+    ListView<NacosString> getServiceList(int page, int pageSize, const NacosString &groupName) throw(NacosException);
 
     inline NacosString getNamespaceId();
 

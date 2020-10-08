@@ -3,9 +3,11 @@
 
 #include <list>
 #include "naming/Instance.h"
+#include "naming/selectors/Selector.h"
 #include "naming/subscribe//EventListener.h"
 #include "NacosString.h"
 #include "NacosExceptions.h"
+#include "ListView.h"
 
 class NamingService {
 public:
@@ -180,6 +182,55 @@ public:
      */
     virtual std::list <Instance> getAllInstances(const NacosString &serviceName, const NacosString &groupName,
                                                  const std::list <NacosString> &clusters) throw(NacosException) = 0;
+
+    /**
+    * Get instances with the predicate specified
+    *
+    * @param serviceName name of service
+    * @param groupName   group of service
+    * @param clusters    list of cluster
+    * @param predicate   predicate to filter instances
+    * @return A list of qualified instance
+    * @throw (NacosException) = 0
+    */
+    virtual std::list<Instance> getInstanceWithPredicate(const NacosString &serviceName, const NacosString &groupName,
+                                                         const std::list <NacosString> &clusters,
+                                                         Selector<Instance> *predicate) throw(NacosException) = 0;
+
+    /**
+     * Get instances with the predicate specified
+     *
+     * @param serviceName name of service
+     * @param clusters    list of cluster
+     * @param predicate   predicate to filter instances
+     * @return A list of qualified instance
+     * @throw (NacosException) = 0
+     */
+    virtual std::list<Instance> getInstanceWithPredicate(const NacosString &serviceName,
+                                                         const std::list <NacosString> &clusters,
+                                                         Selector<Instance> *predicate) throw(NacosException) = 0;
+
+    /**
+    * Get instances with the predicate specified
+    *
+    * @param serviceName name of service
+    * @param groupName   group of service
+    * @param predicate   predicate to filter instances
+    * @return A list of qualified instance
+    * @throw (NacosException) = 0
+    */
+    virtual std::list<Instance> getInstanceWithPredicate(const NacosString &serviceName, const NacosString &groupName,
+                                                         Selector<Instance> *predicate) throw(NacosException) = 0;
+
+    /**
+    * Get instances with the predicate specified
+    *
+    * @param serviceName name of service
+    * @param predicate   predicate to filter instances
+    * @return A list of qualified instance
+    * @throw (NacosException) = 0
+    */
+    virtual std::list<Instance> getInstanceWithPredicate(const NacosString &serviceName, Selector<Instance> *predicate) throw(NacosException) = 0;
 
     /**
      * Get qualified instances of service
@@ -445,7 +496,7 @@ public:
      * @return list of service names
      * @throw (NacosException) = 0
      */
-    //virtual ListView<NacosString> getServicesOfServer(int pageNo, int pageSize) throw (NacosException) = 0;
+    virtual ListView<NacosString> getServiceList(int pageNo, int pageSize) throw (NacosException) = 0;
 
     /**
      * Get all service names from server
@@ -456,7 +507,7 @@ public:
      * @return list of service names
      * @throw (NacosException) = 0
      */
-    //virtual ListView<NacosString> getServicesOfServer(int pageNo, int pageSize, const NacosString &groupName) throw (NacosException) = 0;
+    virtual ListView<NacosString> getServiceList(int pageNo, int pageSize, const NacosString &groupName) throw (NacosException) = 0;
 
     /**
      * Get all service names from server with selector
