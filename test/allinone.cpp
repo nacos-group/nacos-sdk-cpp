@@ -153,7 +153,7 @@ TEST_ITEM_START
         TEST_ITEM("Test get all service names", testGetServiceNames)
         TEST_ITEM("Test get instances with predicate(Randomly)", testInstanceSelectors)
         TEST_ITEM("Test get instances with predicate(testRandomByWeightSelector)", testRandomByWeightSelector)
-        TEST_ITEM("Test get instances with predicate", testThreadLocal)
+        TEST_ITEM("Smoking test of ThreadLocal", testThreadLocal)
 TEST_ITEM_END
 
 int main() {
