@@ -9,7 +9,7 @@
 
 int RandomUtils::fd;
 
-ThreadLocal<bool> RandomUtils::initedForThisThread;
+ThreadLocal<bool> RandomUtils::initedForThisThread(false);
 
 void RandomUtils::Init() {
     fd = open("/dev/urandom", O_RDONLY);
