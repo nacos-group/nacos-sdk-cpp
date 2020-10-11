@@ -73,7 +73,13 @@ NacosString AppConfigManager::get(const NacosString &key) const {
     if (appConfig.count(key) == 0) {
         return NULLSTR;
     }
+
     Properties copyProps = appConfig;
+    if (key.compare(PropertyKeyConst::NAMESPACE) == 0
+        && copyProps[PropertyKeyConst::NAMESPACE].compare("Public") == 0)
+    {
+        return NULLSTR;
+    }
     return copyProps[key];
 }
 
