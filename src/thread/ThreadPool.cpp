@@ -1,6 +1,6 @@
 #include <exception>
-#include "thread/ThreadPool.h"
-#include "thread/Thread.h"
+#include "ThreadPool.h"
+#include "Thread.h"
 
 using namespace std;
 
