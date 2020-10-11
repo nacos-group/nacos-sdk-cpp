@@ -1,14 +1,14 @@
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
-#include "naming/NamingProxy.h"
-#include "naming/NacosNamingService.h"
+#include "src/naming/NamingProxy.h"
+#include "src/naming/NacosNamingService.h"
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
 #include "naming/Instance.h"
 #include "Constants.h"
 #include "utils/UtilAndComs.h"
-#include "http/HTTPCli.h"
+#include "src/http/HTTPCli.h"
 #include "DebugAssertion.h"
 #include "Debug.h"
 #include "NacosString.h"

@@ -6,11 +6,11 @@
 #include "Properties.h"
 #include "NacosExceptions.h"
 #include "NacosServerInfo.h"
-#include "http/HTTPCli.h"
-#include "thread/Thread.h"
-#include "config/AppConfigManager.h"
+#include "src/http/HTTPCli.h"
+#include "src/thread/Thread.h"
+#include "src/config/AppConfigManager.h"
 #include "PropertyKeyConst.h"
-#include "thread/RWLock.h"
+#include "src/thread/RWLock.h"
 
 class ServerListManager {
 private:

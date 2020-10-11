@@ -1,7 +1,7 @@
-#include "naming/subscribe/TcpNamingServicePoller.h"
+#include "TcpNamingServicePoller.h"
 #include "Constants.h"
 #include "utils/NamingUtils.h"
-#include "json/JSON.h"
+#include "src/json/JSON.h"
 
 using namespace std;
 

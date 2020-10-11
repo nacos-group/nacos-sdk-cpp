@@ -3,10 +3,10 @@
 
 #include <map>
 #include "NacosString.h"
-#include "naming/subscribe/EventDispatcher.h"
+#include "src/naming/subscribe/EventDispatcher.h"
 #include "naming/ServiceInfo.h"
-#include "thread/RWLock.h"
-#include "ChangeAdvice.h"
+#include "src/thread/RWLock.h"
+#include "naming/ChangeAdvice.h"
 
 class NamingCache {
 private:

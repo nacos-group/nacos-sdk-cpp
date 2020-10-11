@@ -2,7 +2,7 @@
 // Created by liuhanyu on 2020/9/25.
 //
 
-#include "naming/subscribe/EventDispatcher.h"
+#include "EventDispatcher.h"
 #include "DebugAssertion.h"
 
 using namespace std;

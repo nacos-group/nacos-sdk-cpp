@@ -1,10 +1,10 @@
 #ifndef __EVT_DISPTCH_H_
 #define __EVT_DISPTCH_H_
 
-#include "thread/Thread.h"
-#include "thread/RWLock.h"
-#include "thread/BlockingQueue.h"
-#include "EventListener.h"
+#include "src/thread/Thread.h"
+#include "src/thread/RWLock.h"
+#include "src/thread/BlockingQueue.h"
+#include "naming/subscribe/EventListener.h"
 #include <map>
 
 struct NotifyData

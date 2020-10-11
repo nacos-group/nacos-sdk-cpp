@@ -1,10 +1,10 @@
 #ifndef __BEAT_TASK_H_
 #define __BEAT_TASK_H_
 
-#include "naming/beat/BeatInfo.h"
-#include "naming/NamingProxy.h"
-#include "naming/beat/BeatReactor.h"
-#include "thread/ThreadPool.h"
+#include "BeatInfo.h"
+#include "src/naming/NamingProxy.h"
+#include "BeatReactor.h"
+#include "src/thread/ThreadPool.h"
 #include "thread/AtomicInt.h"
 #include "Debug.h"
 

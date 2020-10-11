@@ -2,7 +2,6 @@
 #define _ALL_IN_ONE_H_
 
 #include <stdlib.h>
-#include "http/HTTPCli.h"
 #include "NacosString.h"
 #include "Debug.h"
 

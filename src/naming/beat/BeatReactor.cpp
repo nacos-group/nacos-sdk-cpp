@@ -1,6 +1,6 @@
 #include <map>
-#include "naming/beat/BeatReactor.h"
-#include "naming/beat/BeatTask.h"
+#include "BeatReactor.h"
+#include "BeatTask.h"
 #include "NacosString.h"
 #include "DebugAssertion.h"
 

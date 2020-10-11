@@ -3,9 +3,9 @@
 
 #include "NacosExceptions.h"
 #include "NacosString.h"
-#include "http/HTTPCli.h"
-#include "http/HttpAgent.h"
-#include "server/ServerListManager.h"
+#include "HTTPCli.h"
+#include "HttpAgent.h"
+#include "src/server/ServerListManager.h"
 
 /**
  * ServerHttpAgent

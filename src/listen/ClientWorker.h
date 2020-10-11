@@ -5,11 +5,11 @@
 #include <vector>
 #include <pthread.h>
 #include "NacosString.h"
-#include "http/HttpAgent.h"
+#include "src/http/HttpAgent.h"
 #include "listen/Listener.h"
-#include "listen/ListeningData.h"
-#include "listen/OperateItem.h"
-#include "config/AppConfigManager.h"
+#include "ListeningData.h"
+#include "OperateItem.h"
+#include "src/config/AppConfigManager.h"
 #include "NacosExceptions.h"
 
 /**

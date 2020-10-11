@@ -9,7 +9,7 @@
 #include "naming/selectors/RandomSelector.h"
 #include "Constants.h"
 #include "utils/UtilAndComs.h"
-#include "http/HTTPCli.h"
+#include "src/http/HTTPCli.h"
 #include "DebugAssertion.h"
 #include "Debug.h"
 #include "NacosString.h"

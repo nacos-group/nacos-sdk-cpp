@@ -6,8 +6,8 @@
 #define NACOS_SDK_CPP_TCPNAMINGSERVICEPOLLER_H
 
 #include <map>
-#include "thread/Thread.h"
-#include "naming/NamingProxy.h"
+#include "src/thread/Thread.h"
+#include "src/naming/NamingProxy.h"
 #include "EventDispatcher.h"
 
 struct PollingData

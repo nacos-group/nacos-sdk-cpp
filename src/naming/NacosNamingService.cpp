@@ -1,10 +1,10 @@
-#include "naming/NacosNamingService.h"
-#include "naming/beat/BeatReactor.h"
+#include "src/naming/NacosNamingService.h"
+#include "src/naming/beat/BeatReactor.h"
 #include "utils/NamingUtils.h"
 #include "utils/UtilAndComs.h"
 #include "utils/ParamUtils.h"
 #include "PropertyKeyConst.h"
-#include "json/JSON.h"
+#include "src/json/JSON.h"
 
 using namespace std;
 

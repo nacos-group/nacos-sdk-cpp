@@ -1,6 +1,6 @@
 #include <iostream>
-#include "json/JSON.h"
-#include "naming/beat/BeatInfo.h"
+#include "src/json/JSON.h"
+#include "src/naming/beat/BeatInfo.h"
 #include "NacosString.h"
 
 /**

@@ -1,4 +1,4 @@
-#include "naming/cache/NamingCache.h"
+#include "NamingCache.h"
 
 ServiceInfo NamingCache::getServiceInfo(const NacosString &key) throw(NacosException)
 {

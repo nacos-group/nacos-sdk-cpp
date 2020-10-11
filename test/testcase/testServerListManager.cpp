@@ -1,14 +1,14 @@
 #include <iostream>
 #include <map>
-#include "server/ServerListManager.h"
-#include "config/NacosConfigService.h"
+#include "src/server/ServerListManager.h"
+#include "src/config/NacosConfigService.h"
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
-#include "http/HTTPCli.h"
+#include "src/http/HTTPCli.h"
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
 #include "Debug.h"
-#include "json/JSON.h"
+#include "src/json/JSON.h"
 #include "Constants.h"
 
 using namespace std;

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
-#include "config/LocalConfigInfoProcessor.h"
+#include "src/config/LocalConfigInfoProcessor.h"
 #include "DebugAssertion.h"
 #include "Debug.h"
 #include "NacosString.h"

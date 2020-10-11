@@ -1,11 +1,11 @@
 #include <stdlib.h>
 #include <unistd.h>
-#include "server/ServerListManager.h"
+#include "ServerListManager.h"
 #include "PropertyKeyConst.h"
 #include "Parameters.h"
 #include "utils/ParamUtils.h"
 #include "Debug.h"
-#include "json/JSON.h"
+#include "src/json/JSON.h"
 
 using namespace std;
 

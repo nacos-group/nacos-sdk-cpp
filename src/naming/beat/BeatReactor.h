@@ -2,14 +2,14 @@
 #define __BEAT_REACTOR_H_
 
 #include <map>
-#include "naming/NamingProxy.h"
+#include "src/naming/NamingProxy.h"
 #include "naming/Instance.h"
 #include "NacosString.h"
 #include "NacosExceptions.h"
-#include "thread/ThreadPool.h"
-#include "thread/Thread.h"
-#include "thread/Mutex.h"
-#include "naming/beat/BeatTask.h"
+#include "src/thread/ThreadPool.h"
+#include "src/thread/Thread.h"
+#include "src/thread/Mutex.h"
+#include "BeatTask.h"
 #include "Constants.h"
 #include "utils/UtilAndComs.h"
 

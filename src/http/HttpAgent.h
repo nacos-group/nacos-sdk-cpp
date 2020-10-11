@@ -3,7 +3,7 @@
 
 #include "NacosExceptions.h"
 #include "NacosString.h"
-#include "http/HTTPCli.h"
+#include "HTTPCli.h"
 
 /**
  * HttpAgent

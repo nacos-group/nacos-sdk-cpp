@@ -1,9 +1,9 @@
 #include "utils/ParamUtils.h"
-#include "config/AppConfigManager.h"
+#include "AppConfigManager.h"
 #include "NacosString.h"
 #include "Properties.h"
 #include "PropertyKeyConst.h"
-#include "config/IOUtils.h"
+#include "IOUtils.h"
 #include "NacosExceptions.h"
 #include "Parameters.h"
 #include <vector>

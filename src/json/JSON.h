@@ -3,13 +3,13 @@
 
 #include <map>
 #include "NacosString.h"
-#include "naming/beat/BeatInfo.h"
+#include "src/naming/beat/BeatInfo.h"
 #include "naming/ServiceInfo.h"
-#include "rapidjson/document.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
+#include "src/rapidjson/document.h"
+#include "src/rapidjson/writer.h"
+#include "src/rapidjson/stringbuffer.h"
 #include "naming/Instance.h"
-#include "server/NacosServerInfo.h"
+#include "src/server/NacosServerInfo.h"
 #include "naming/ListView.h"
 
 /**

@@ -1,5 +1,5 @@
-#include "config/LocalConfigInfoProcessor.h"
-#include "config/SnapShotSwitch.h"
+#include "LocalConfigInfoProcessor.h"
+#include "SnapShotSwitch.h"
 
 bool SnapShotSwitch::getIsSnapShot() {
     return isSnapShot;

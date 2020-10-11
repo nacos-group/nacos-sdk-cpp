@@ -1,13 +1,13 @@
 #include <map>
-#include "naming/NamingProxy.h"
+#include "NamingProxy.h"
 #include "naming/NamingCommonParams.h"
 #include "utils/ParamUtils.h"
 #include "utils/UtilAndComs.h"
 #include "utils/UuidUtils.h"
 #include "utils/NetUtils.h"
 #include "utils/RandomUtils.h"
-#include "json/JSON.h"
-#include "http/httpStatCode.h"
+#include "src/json/JSON.h"
+#include "src/http/httpStatCode.h"
 #include "Debug.h"
 #include "NacosExceptions.h"
 

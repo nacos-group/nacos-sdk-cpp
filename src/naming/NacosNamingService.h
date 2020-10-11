@@ -3,12 +3,12 @@
 
 #include "naming/NamingService.h"
 #include "naming/Instance.h"
-#include "naming/NamingProxy.h"
-#include "naming/subscribe/EventDispatcher.h"
-#include "naming/subscribe/TcpNamingServicePoller.h"
-#include "naming/beat/BeatReactor.h"
-#include "config/ObjectConfigData.h"
-#include "http/HTTPCli.h"
+#include "src/naming/NamingProxy.h"
+#include "src/naming/subscribe/EventDispatcher.h"
+#include "src/naming/subscribe/TcpNamingServicePoller.h"
+#include "src/naming/beat/BeatReactor.h"
+#include "factory/ObjectConfigData.h"
+#include "src/http/HTTPCli.h"
 #include "NacosString.h"
 #include "Properties.h"
 

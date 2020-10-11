@@ -1,10 +1,10 @@
 #include <iostream>
 #include "DebugAssertion.h"
-#include "rapidjson/document.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
-#include "naming/beat/BeatInfo.h"
-#include "json/JSON.h"
+#include "src/rapidjson/document.h"
+#include "src/rapidjson/writer.h"
+#include "src/rapidjson/stringbuffer.h"
+#include "src/naming/beat/BeatInfo.h"
+#include "src/json/JSON.h"
 
 using namespace std;
 using namespace rapidjson;

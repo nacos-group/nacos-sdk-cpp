@@ -1,8 +1,8 @@
 #include <iostream>
 #include "DebugAssertion.h"
 #include "Debug.h"
-#include "thread/Thread.h"
-#include "thread/ThreadPool.h"
+#include "src/thread/Thread.h"
+#include "src/thread/ThreadPool.h"
 #include "NacosString.h"
 
 using namespace std;

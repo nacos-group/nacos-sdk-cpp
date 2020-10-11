@@ -2,10 +2,10 @@
 #define __NACOS_CFG_SVC_H_
 
 #include "config/ConfigService.h"
-#include "http/HttpAgent.h"
-#include "listen/ClientWorker.h"
+#include "src/http/HttpAgent.h"
+#include "src/listen/ClientWorker.h"
 #include "NacosString.h"
-#include "server/ServerListManager.h"
+#include "src/server/ServerListManager.h"
 #include "Properties.h"
 
 class NacosConfigService : public ConfigService {

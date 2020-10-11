@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/file.h>
-#include "config/ConcurrentDiskUtil.h"
-#include "config/IOUtils.h"
+#include "ConcurrentDiskUtil.h"
+#include "IOUtils.h"
 
 /**
  * get file content

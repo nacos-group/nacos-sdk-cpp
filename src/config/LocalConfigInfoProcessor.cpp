@@ -1,4 +1,4 @@
-#include "config/LocalConfigInfoProcessor.h"
+#include "LocalConfigInfoProcessor.h"
 #include <stdio.h>
 #include <list>
 #include <unistd.h>
@@ -8,10 +8,10 @@
 #include "NacosString.h"
 #include "utils/ParamUtils.h"
 #include "utils/DirUtils.h"
-#include "config/SnapShotSwitch.h"
-#include "config/JVMUtil.h"
-#include "config/ConcurrentDiskUtil.h"
-#include "config/IOUtils.h"
+#include "SnapShotSwitch.h"
+#include "JVMUtil.h"
+#include "ConcurrentDiskUtil.h"
+#include "IOUtils.h"
 #include "Constants.h"
 #include "Debug.h"
 

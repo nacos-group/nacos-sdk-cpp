@@ -3,7 +3,7 @@
 
 #include <list>
 #include <deque>
-#include "thread/Thread.h"
+#include "Thread.h"
 #include "NacosString.h"
 #include "Mutex.h"
 
