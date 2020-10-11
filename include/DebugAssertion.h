@@ -5,6 +5,7 @@
 #include "NacosString.h"
 #include "Debug.h"
 
+namespace nacos{
 #define TEST_ITEM_START {
 #define TEST_ITEM(testName, testfn) {(testName), (testfn)},
 #define TEST_ITEM_END };
@@ -42,5 +43,6 @@ do { \
         delete (x); \
     x = NULL; \
 } while (0)
+}//namespace nacos
 
 #endif

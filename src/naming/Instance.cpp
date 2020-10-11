@@ -2,6 +2,7 @@
 #include "utils/ParamUtils.h"
 #include "Debug.h"
 
+namespace nacos{
 Instance::Instance() {
     weight = 1.0D;
     healthy = true;
@@ -57,3 +58,4 @@ bool Instance::operator == (const Instance &rhs) const
     this->clusterName == rhs.clusterName &&
     this->metadata == rhs.metadata;
 }
+}//namespace nacos

@@ -6,6 +6,7 @@
 #include "NacosString.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testSaveSnapshot() {
     cout << "in function testSaveSnapshot" << endl;

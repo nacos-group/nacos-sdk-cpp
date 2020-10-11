@@ -10,6 +10,7 @@
 #include "utils/RandomUtils.h"
 //static Init initobj;//Implicitly call the constructors
 
+namespace nacos{
 bool SnapShotSwitch::isSnapShot = true;
 bool JVMUtil::_isMultiInstance = false;
 NacosString LocalConfigInfoProcessor::LOCAL_FILEROOT_PATH = "";
@@ -32,3 +33,5 @@ void Init::doDeinit() {
     RandomUtils::DeInit();
     HTTPCli::HTTP_GLOBAL_DEINIT();
 }
+
+}//namespace nacos

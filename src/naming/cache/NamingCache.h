@@ -8,6 +8,7 @@
 #include "src/thread/RWLock.h"
 #include "naming/ChangeAdvice.h"
 
+namespace nacos{
 class NamingCache {
 private:
     std::map<NacosString, ServiceInfo> namingList;
@@ -21,5 +22,6 @@ public:
     void setServiceInfo(const NacosString &key, const ServiceInfo &info);
     void removeServiceInfo(const NacosString &key);
 };
+}//namespace nacos
 
 #endif

@@ -10,6 +10,7 @@
 #include "src/naming/NamingProxy.h"
 #include "EventDispatcher.h"
 
+namespace nacos{
 struct PollingData
 {
     NacosString serviceName;
@@ -43,5 +44,6 @@ public:
     ~TcpNamingServicePoller();
 
 };
+}//namespace nacos
 
 #endif //NACOS_SDK_CPP_TCPNAMINGSERVICEPOLLER_H

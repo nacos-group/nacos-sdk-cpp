@@ -10,6 +10,7 @@
  *
  * @author Liu, Hanyu
  */
+namespace nacos{
 class HttpAgent {
 public:
     /**
@@ -88,5 +89,6 @@ public:
 
     virtual ~HttpAgent() {};
 };
+}//namespace nacos
 
 #endif

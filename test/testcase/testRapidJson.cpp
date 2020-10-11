@@ -8,6 +8,7 @@
 
 using namespace std;
 using namespace rapidjson;
+using namespace nacos;
 
 bool testRapidJsonIntroduce() {
     // 1. 把 JSON 解析至 DOM。

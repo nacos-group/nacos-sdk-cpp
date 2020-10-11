@@ -6,6 +6,7 @@
 #include "NacosString.h"
 
 using namespace std;
+using namespace nacos;
 
 class SmokingTestThreadTask : public Task {
 public:

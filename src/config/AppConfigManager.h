@@ -5,6 +5,7 @@
 #include "NacosString.h"
 #include "Properties.h"
 
+namespace nacos{
 class AppConfigManager {
 private:
     bool reloadable;
@@ -45,5 +46,6 @@ public:
 
     void set(const NacosString &key, const NacosString &value);
 };
+}//namespace nacos
 
 #endif

@@ -6,7 +6,7 @@
 #define NACOS_SDK_CPP_NACOSSERVICEFACTORY_H
 
 #include "INacosServiceFactory.h"
-
+namespace nacos{
 class NacosServiceFactory : public INacosServiceFactory {
 private:
     NacosString configFile;
@@ -34,5 +34,6 @@ public:
     virtual ~NacosServiceFactory();
 };
 
+}//namespace nacos
 
 #endif //NACOS_SDK_CPP_NACOSSERVICEFACTORY_H

@@ -9,6 +9,7 @@
 
 using namespace std;
 
+namespace nacos{
 void ServerListManager::addToSrvList(NacosString &address) {
     //If the address doesn't contain port, add 8848 as the default port for it
     if (address.find(':') == std::string::npos) {
@@ -269,3 +270,4 @@ list <NacosServerInfo> ServerListManager::getServerList() {
     }
     return res;
 };
+}//namespace nacos

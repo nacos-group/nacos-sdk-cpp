@@ -6,6 +6,7 @@
 #include "utils/RandomUtils.h"
 
 using namespace std;
+using namespace nacos;
 
 ThreadLocal<NacosString> threadLocal;
 ThreadLocal<int*> threadLocalPtr(NULL);

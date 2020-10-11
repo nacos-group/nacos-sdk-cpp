@@ -3,8 +3,10 @@
 
 #include "NacosString.h"
 
+namespace nacos{
 NacosString urlencode(const NacosString &content);
 
 NacosString urldecode(const NacosString &content);
+}//namespace nacos
 
 #endif

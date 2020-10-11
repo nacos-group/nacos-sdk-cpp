@@ -7,6 +7,7 @@
 
 #include "utils/RandomUtils.h"
 
+namespace nacos{
 int RandomUtils::fd;
 
 ThreadLocal<bool> RandomUtils::initedForThisThread(false);
@@ -48,3 +49,4 @@ int RandomUtils::random(int begin, int end) throw (NacosException) {
     long offset = random_inner() % (end - begin + 1);
     return begin + offset;
 }
+}//namespace nacos

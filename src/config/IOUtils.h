@@ -5,6 +5,7 @@
 #include "NacosString.h"
 #include "NacosExceptions.h"
 
+namespace nacos{
 class IOUtils {
 private:
 public:
@@ -38,5 +39,6 @@ public:
 
     static std::list <NacosString> listFiles(const NacosString &path);
 };
+}//namespace nacos
 
 #endif

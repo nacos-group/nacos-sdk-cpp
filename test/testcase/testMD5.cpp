@@ -4,6 +4,7 @@
 #include "DebugAssertion.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testMD5() {
     cout << "in function testMD5" << endl;

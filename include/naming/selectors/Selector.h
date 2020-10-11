@@ -4,6 +4,7 @@
 #include <list>
 #include "naming/Instance.h"
 
+namespace nacos{
 //Selector interface definition
 //All Selectors shall be THREAD-SAFE!
 template <typename T>
@@ -13,5 +14,6 @@ public:
     virtual std::list<T> select(const std::list<T> &itemsToSelect) = 0;
     virtual ~Selector() {};
 };
+}//namespace nacos
 
 #endif

@@ -7,6 +7,7 @@
 #include "src/config/AppConfigManager.h"
 #include "src/naming/beat/BeatReactor.h"
 
+namespace nacos{
 class ObjectConfigData {
 public:
     NacosString name;
@@ -16,5 +17,6 @@ public:
     AppConfigManager *appConfigManager;
     ServerListManager *serverListManager;
 };
+}//namespace nacos
 
 #endif

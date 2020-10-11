@@ -6,6 +6,7 @@
  * @author Nacos
  */
 
+namespace nacos{
 const NacosString Constants::CLIENT_VERSION = "3.0.0";
 
 const int Constants::DATA_IN_BODY_VERSION = 204;
@@ -114,3 +115,4 @@ const NacosString Constants::SERVICE_INFO_SPLITER = "@@";
 const NacosString Constants::NULL_STRING = "null";
 
 const NacosString Constants::FILE_SEPARATOR = "/";
+}//namespace nacos

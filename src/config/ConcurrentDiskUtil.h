@@ -4,6 +4,7 @@
 #include "NacosString.h"
 #include "NacosExceptions.h"
 
+namespace nacos{
 class ConcurrentDiskUtil {
 public:
     /**
@@ -28,5 +29,6 @@ public:
     static bool writeFileContent(const NacosString &path, const NacosString &content,
                                  const NacosString &charsetName) throw(IOException);
 };
+}//namespace nacos
 
 #endif

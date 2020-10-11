@@ -16,6 +16,7 @@
 #include "ResourceGuard.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testGetServiceNames() {
     cout << "in function testGetServiceNames" << endl;

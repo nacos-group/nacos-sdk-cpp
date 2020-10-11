@@ -7,6 +7,7 @@
 #include "NacosString.h"
 #include "Mutex.h"
 
+namespace nacos{
 class Task {
 private:
     NacosString _taskName;
@@ -61,5 +62,6 @@ public:
     void stop();
 };
 
+}//namespace nacos
 
 #endif

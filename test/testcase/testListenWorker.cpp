@@ -10,6 +10,7 @@
 #include "PropertyKeyConst.h"
 
 using namespace std;
+using namespace nacos;
 
 class KeyChangeListener : public Listener {
 private:

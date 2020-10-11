@@ -5,6 +5,7 @@
 #include "naming/selectors/Selector.h"
 #include "Debug.h"
 
+namespace nacos{
 class HealthInstanceSelector : public Selector<Instance>{
 private:
 public:
@@ -20,5 +21,6 @@ public:
         return result;
     }
 };
+}//namespace nacos
 
 #endif

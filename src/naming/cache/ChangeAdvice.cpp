@@ -2,6 +2,7 @@
 
 using namespace std;
 
+namespace nacos{
 ChangeAdvice::ChangeAdvice()
 {
     added = false;
@@ -74,3 +75,4 @@ NacosString ChangeAdvice::toString()
 {
     return "Unimplemented";//trivial function
 }
+}//namespace nacos

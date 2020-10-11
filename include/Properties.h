@@ -4,6 +4,7 @@
 #include <map>
 #include "NacosString.h"
 
+namespace nacos{
 class Properties : public std::map<NacosString, NacosString> {
 public:
     NacosString toString() const {
@@ -22,5 +23,6 @@ public:
         return false;
     }
 };
+}//namespace nacos
 
 #endif

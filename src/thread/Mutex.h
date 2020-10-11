@@ -10,6 +10,8 @@
 * Thanks to Shuo, Chen's muduo:
 * https://github.com/chenshuo/muduo/blob/master/muduo/base/Mutex.h
 */
+
+namespace nacos{
 class Mutex {
     friend class Condition;
 
@@ -68,5 +70,6 @@ public:
 
     ~LockGuard() { _mutex.unlock(); };
 };
+}//namespace nacos
 
 #endif

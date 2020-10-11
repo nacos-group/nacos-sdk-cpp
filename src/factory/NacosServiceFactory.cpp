@@ -10,6 +10,7 @@
 #include "src/naming/subscribe/EventDispatcher.h"
 #include "src/naming/subscribe/TcpNamingServicePoller.h"
 
+namespace nacos{
 NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) {
     checkConfig();
     ObjectConfigData objectConfigData;
@@ -129,3 +130,4 @@ NacosServiceFactory::NacosServiceFactory(Properties &_props) {
     propsIsSet = false;
     setProps(_props);
 }
+}//namespace nacos

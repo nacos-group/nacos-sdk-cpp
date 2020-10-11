@@ -1,5 +1,6 @@
 #include "utils/UtilAndComs.h"
 
+namespace nacos{
 NacosString UtilAndComs::VERSION = "Nacos-Java-Client:v1.0.0";
 
 NacosString UtilAndComs::WEB_CONTEXT = "/nacos";
@@ -42,3 +43,5 @@ int UtilAndComs::DEFAULT_POLLING_THREAD_COUNT = Runtime.getRuntime()
 void UtilAndComs::Init() {
 
 }
+
+}//namespace nacos

@@ -1,6 +1,7 @@
 #ifndef __JVMUTIL_H_
 #define __JVMUTIL_H_
 
+namespace nacos{
 class JVMUtil {
 public:
     /**
@@ -22,5 +23,6 @@ private:
         LOGGER.info("isMultiInstance:{}", isMultiInstance);
     }*/
 };
+}//namespace nacos
 
 #endif

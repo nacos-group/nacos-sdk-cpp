@@ -9,12 +9,15 @@
  *
  * @author Nacos
  */
+
+namespace nacos{
 class LocalConfigInfoProcessor {
 public:
     static NacosString getFailover(const NacosString &serverName, const NacosString &dataId, const NacosString &group,
                                    const NacosString &tenant);
 
     /**
+     * Accuire local cache content, returns NULLSTR when the file does not exist or an exception is thrown
      * 获取本地缓存文件内容。NULL表示没有本地文件或抛出异常。
      */
     static NacosString getSnapshot(const NacosString &name, const NacosString &dataId, const NacosString &group,
@@ -26,6 +29,7 @@ public:
                              const NacosString &tenant, const NacosString &config);
 
     /**
+     * Purge all cached files in snapshot directory
      * 清除snapshot目录下所有缓存文件。
      */
     static void cleanAllSnapshot();
@@ -44,5 +48,6 @@ public:
 
     static void init();
 };
+}//namespace nacos
 
 #endif

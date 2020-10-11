@@ -3,6 +3,7 @@
 
 #include "NacosString.h"
 
+namespace nacos{
 class NetUtils {
 private:
     static NacosString LOCAL_IP;
@@ -11,5 +12,6 @@ public:
 
     static void Init();
 };
+}//namespace nacos
 
 #endif

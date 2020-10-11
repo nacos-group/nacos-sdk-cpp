@@ -8,6 +8,7 @@
 #include "src/md5/md5.h"
 #include "Debug.h"
 
+namespace nacos{
 class ListeningData {
 private:
     NacosString tenant;
@@ -116,5 +117,6 @@ public:
         return &this->listenerList;
     }
 };
+}//namespace nacos
 
 #endif

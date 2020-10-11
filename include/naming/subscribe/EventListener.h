@@ -10,6 +10,7 @@
 #include "naming/ChangeAdvice.h"
 #include "DebugAssertion.h"
 
+namespace nacos{
 class EventListener {
 private:
     NacosString listenerName;
@@ -33,6 +34,7 @@ public:
 
     virtual ~EventListener() { NACOS_ASSERT(refCnt() == 0) };
 };
+}//namespace nacos
 
 
 #endif //NACOS_SDK_CPP_EVENTLISTENER_H

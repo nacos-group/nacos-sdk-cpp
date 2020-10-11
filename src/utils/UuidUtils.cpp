@@ -6,6 +6,7 @@
 #include "utils/UuidUtils.h"
 #include "utils/RandomUtils.h"
 
+namespace nacos{
 void UuidUtils::Init() {
 }
 
@@ -25,3 +26,5 @@ NacosString UuidUtils::generateUuid() {
     NacosString uuid = str_buffer;
     return uuid;
 }
+
+}//namespace nacos

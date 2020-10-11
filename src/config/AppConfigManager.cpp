@@ -10,6 +10,7 @@
 
 using namespace std;
 
+namespace nacos{
 NacosString AppConfigManager::LINE_SEPARATOR = "\n";
 NacosString AppConfigManager::KV_SEPARATOR = "=";
 
@@ -116,3 +117,4 @@ void AppConfigManager::applyConfig(Properties &rhs) {
         appConfig[it->first] = it->second;
     }
 }
+}//namespace nacos

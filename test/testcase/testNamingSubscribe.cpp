@@ -10,6 +10,7 @@
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 class MyServiceListener : public EventListener {
 private:

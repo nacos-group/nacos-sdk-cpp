@@ -7,6 +7,7 @@
 #include "naming/subscribe/EventListener.h"
 #include <map>
 
+namespace nacos{
 struct NotifyData
 {
     NotifyData() { exit = false; };
@@ -41,5 +42,6 @@ public:
     EventDispatcher();
     ~EventDispatcher();
 };
+}//namespace nacos
 
 #endif

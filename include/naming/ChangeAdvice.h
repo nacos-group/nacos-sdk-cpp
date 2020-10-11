@@ -5,6 +5,7 @@
 #include "naming/ServiceInfo.h"
 
 //The wrapper class for service change information
+namespace nacos{
 class ChangeAdvice {
 public:
     bool added;//indicates Instance is added
@@ -22,5 +23,6 @@ public:
     static void compareChange(ServiceInfo &oldInfo, ServiceInfo &newInfo, ChangeAdvice &changeAdvice);
     NacosString toString();
 };
+}//namespace nacos
 
 #endif

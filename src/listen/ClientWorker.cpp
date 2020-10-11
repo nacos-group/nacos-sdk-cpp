@@ -16,6 +16,7 @@
 
 using namespace std;
 
+namespace nacos{
 ClientWorker::ClientWorker(HttpAgent *_httpAgent, AppConfigManager *_appConfigManager) {
     threadId = 0;
     stopThread = true;
@@ -433,3 +434,4 @@ void ClientWorker::addDeleteItem(const OperateItem &operateItem) {
     deleteList.push_back(operateItem);
     pthread_mutex_unlock(&watchListMutex);
 }
+}//namespace nacos

@@ -12,6 +12,7 @@
 using namespace std;
 using namespace rapidjson;
 
+namespace nacos{
 NacosString documentToString(Document &d) {
     StringBuffer buffer;
     Writer <StringBuffer> writer(buffer);
@@ -271,3 +272,4 @@ ListView<NacosString> JSON::Json2ServiceList(const NacosString &nacosString) thr
 
     return serviceList;
 }
+}//namespace nacos

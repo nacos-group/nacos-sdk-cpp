@@ -7,6 +7,7 @@
 #include "ResourceGuard.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testDeleteConfig() {
     cout << "in function testDeleteConfig" << endl;

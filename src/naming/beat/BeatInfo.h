@@ -23,6 +23,7 @@
 /**
  * @author nkorange
  */
+namespace nacos{
 class BeatInfo {
 public:
     int port;
@@ -35,5 +36,6 @@ public:
 
     NacosString toString();
 };
+}//namespace nacos
 
 #endif

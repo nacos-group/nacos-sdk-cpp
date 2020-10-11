@@ -12,6 +12,7 @@
  * Generates UUID from /dev/urandom
  */
 
+namespace nacos{
 class UuidUtils {
 private:
 public:
@@ -21,5 +22,6 @@ public:
 
     static void DeInit();
 };
+}//namespace nacos
 
 #endif

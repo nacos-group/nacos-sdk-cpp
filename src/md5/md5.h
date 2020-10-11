@@ -6,6 +6,7 @@
 #include <fstream>
 #include "NacosString.h"
 
+namespace nacos{
 /* Type define */
 typedef unsigned char byte;
 typedef unsigned int uint32;
@@ -67,5 +68,6 @@ private:
         BUFFER_SIZE = 1024
     };
 };
+}//namespace nacos
 
 #endif

@@ -8,6 +8,7 @@
 #include <ostream>
 #include "NacosString.h"
 
+namespace nacos{
 class NacosServerInfo {
 private:
     NacosString ip;
@@ -114,5 +115,6 @@ public:
         return getCompleteAddress().compare(other.getCompleteAddress()) == 0;
     }
 };
+}//namespace nacos
 
 #endif //NACOS_SDK_CPP_NACOSSERVERINFO_H

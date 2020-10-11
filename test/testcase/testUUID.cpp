@@ -3,6 +3,7 @@
 #include "src/thread/Thread.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testUUID() {
     cout << "in function testUUID" << endl;

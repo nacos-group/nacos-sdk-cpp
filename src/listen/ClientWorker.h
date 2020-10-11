@@ -18,6 +18,7 @@
  * @author Liu, Hanyu
  * Directly migrated from Java, but with significant work of rewrite/redesign
  */
+namespace nacos{
 class ClientWorker {
 private:
     //This list holds the listeners to be removed after a performWatch() event
@@ -84,5 +85,6 @@ public:
     NacosString getServerConfig(const NacosString &tenant, const NacosString &dataId, const NacosString &group,
                                 long timeoutMs) throw(NacosException);
 };
+}//namespace nacos
 
 #endif

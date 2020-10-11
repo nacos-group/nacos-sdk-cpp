@@ -7,6 +7,8 @@
 * BlockingQueue.h
 * Thanks to Shuo, Chen's muduo: https://github.com/chenshuo/muduo/blob/master/muduo/base/BlockingQueue.h
 */
+
+namespace nacos{
 template<typename T>
 class BlockingQueue
 {
@@ -59,4 +61,6 @@ public:
 		return front;
 	}
 };
+}//namespace nacos
+
 #endif

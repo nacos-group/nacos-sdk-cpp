@@ -4,6 +4,7 @@
 #include "DebugAssertion.h"
 
 using namespace std;
+using namespace nacos;
 
 //Use a special variable NULLSTR as null in Java to pass null parameter
 //But "" (zero-length string) will still be regarded as null

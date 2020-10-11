@@ -1,6 +1,7 @@
 #include "utils/url.h"
 #include <curl/curl.h>
 
+namespace nacos{
 NacosString urlencode(const NacosString &content) {
     NacosString result;
     CURL *curl = curl_easy_init();
@@ -34,3 +35,4 @@ NacosString urldecode(const NacosString &content) {
     curl_easy_cleanup(curl);
     return result;
 }
+}//namespace nacos

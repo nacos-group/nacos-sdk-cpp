@@ -16,6 +16,7 @@
 #include "PropertyKeyConst.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testEndpointWithNamingProxy() {
     cout << "in function testNamingServiceRegister" << endl;

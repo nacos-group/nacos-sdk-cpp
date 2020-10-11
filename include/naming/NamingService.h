@@ -9,6 +9,7 @@
 #include "NacosExceptions.h"
 #include "ListView.h"
 
+namespace nacos{
 class NamingService {
 public:
     /**
@@ -550,5 +551,6 @@ public:
 
     virtual ~NamingService() {};
 };
+}//namespace nacos
 
 #endif

@@ -18,6 +18,7 @@
 #include "ResourceGuard.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testInstanceSelectors() {
     cout << "in function testInstanceSelectors" << endl;

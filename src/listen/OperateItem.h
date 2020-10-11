@@ -10,6 +10,7 @@
  * @author Liu, Hanyu
  * Keeps track of the items to be operated on
  */
+namespace nacos{
 class OperateItem {
 private:
     NacosString tenant;
@@ -51,5 +52,6 @@ public:
         return tenant + ":" + group + ":" + dataId;
     }
 };
+}//namespace nacos
 
 #endif

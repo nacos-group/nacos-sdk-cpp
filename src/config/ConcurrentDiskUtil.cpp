@@ -13,6 +13,8 @@
  * @return content
  * @throws IOException IOException
  */
+
+namespace nacos{
 NacosString
 ConcurrentDiskUtil::getFileContent(const NacosString &file, const NacosString &charsetName) throw(IOException) {
     if (IOUtils::checkNotExistOrNotFile(file)) {
@@ -64,3 +66,4 @@ bool ConcurrentDiskUtil::writeFileContent
     fclose(fp);
     return true;
 }
+}//namespace nacos

@@ -11,6 +11,7 @@
 #include "src/server/ServerListManager.h"
 #include "naming/ListView.h"
 
+namespace nacos{
 class NamingProxy {
 private:
     NacosString serverPort;
@@ -55,5 +56,6 @@ public:
 
     long sendBeat(BeatInfo &beatInfo);
 };
+}//namespace nacos
 
 #endif

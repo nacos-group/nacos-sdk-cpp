@@ -9,6 +9,8 @@
 * Author: Liu, Hanyu
 * An encapsulation of pthread_rwlock
 */
+
+namespace nacos{
 class RWLock {
 private:
     pthread_rwlock_t _pthread_rwlock;
@@ -45,5 +47,6 @@ public:
 
     ~WriteGuard() { _rwLock.unlock(); }
 };
+}//namespace nacos
 
 #endif

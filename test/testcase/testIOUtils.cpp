@@ -7,6 +7,7 @@
 #define ENCODING "UTF-8"
 
 using namespace std;
+using namespace nacos;
 
 bool testReadWriteFile() {
     cout << "in function testReadWriteFile" << endl;

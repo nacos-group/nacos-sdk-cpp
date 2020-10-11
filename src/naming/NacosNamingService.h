@@ -11,6 +11,7 @@
 #include "NacosString.h"
 #include "Properties.h"
 
+namespace nacos{
 class NacosNamingService : public NamingService {
 private:
     HTTPCli *httpCli = NULL;
@@ -118,5 +119,6 @@ public:
 
     void setBeatReactor(BeatReactor *_beatReactor) { this->beatReactor = beatReactor; };
 };
+}//namespace nacos
 
 #endif

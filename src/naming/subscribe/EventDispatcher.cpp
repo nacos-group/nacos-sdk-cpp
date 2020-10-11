@@ -7,6 +7,7 @@
 
 using namespace std;
 
+namespace nacos{
 bool EventDispatcher::addListener(const NacosString &serviceName, const NacosString &clusters, EventListener *eventListener)
 {
     NACOS_ASSERT(eventListener != NULL);
@@ -236,3 +237,4 @@ EventDispatcher::~EventDispatcher()
     eventNotifier = NULL;
     purgeAllListeners();
 }
+}//namespace nacos

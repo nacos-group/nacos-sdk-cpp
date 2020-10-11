@@ -10,6 +10,7 @@
 
 #define gettidv1() ::syscall(__NR_gettid)
 
+namespace nacos{
 typedef void *(*ThreadFn)(void *);
 
 /*
@@ -86,6 +87,6 @@ public:
         pthread_join(_thread, NULL);
     }
 };
-
+}//namespace nacos
 
 #endif

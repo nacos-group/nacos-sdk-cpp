@@ -16,8 +16,9 @@
  * JSON
  *
  * @author Liu, Hanyu
- * Adapter from nacos-cpp-cli to a json parser
+ * Adapter from nacos-sdk-cpp to a json parser
  */
+namespace nacos{
 class JSON {
 public:
     static NacosString toJSONString(BeatInfo &beatInfo);
@@ -42,6 +43,6 @@ public:
 
     static ListView<NacosString> Json2ServiceList(const NacosString &nacosString) throw(NacosException);
 };
-
+}//namespace nacos
 
 #endif

@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include "Debug.h"
 
+namespace nacos{
 template <typename T>
 class ThreadLocal;
 template <typename T>
@@ -84,5 +85,6 @@ public:
         //!!!!!shall NOT access anything other than VALUE!!!!!
     }
 };
+}//namespace nacos
 
 #endif

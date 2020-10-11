@@ -8,6 +8,7 @@
 #include "src/server/ServerListManager.h"
 #include "Properties.h"
 
+namespace nacos{
 class NacosConfigService : public ConfigService {
 private:
     HttpAgent *httpAgent = NULL;
@@ -76,5 +77,6 @@ public:
 
     virtual ~NacosConfigService();
 };
+}//namespace nacos
 
 #endif

@@ -12,6 +12,7 @@
  *
  * @author Liu, Hanyu
  */
+namespace nacos{
 class ServerHttpAgent : public HttpAgent {
 private:
     //Variables
@@ -41,5 +42,6 @@ public:
         svrListMgr = NULL;
     };
 };
+}//namespace nacos
 
 #endif

@@ -13,6 +13,7 @@
 #include "Constants.h"
 #include "utils/UtilAndComs.h"
 
+namespace nacos{
 class BeatReactor {
 private:
     NamingProxy *_namingProxy;
@@ -67,5 +68,6 @@ public:
 
     NacosString buildKey(const NacosString &serviceName, const NacosString &ip, int port);
 };
+}//namespace nacos
 
 #endif

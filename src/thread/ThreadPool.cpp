@@ -4,6 +4,7 @@
 
 using namespace std;
 
+namespace nacos{
 DummyTask ThreadPool::_dummyTask;
 
 void *ThreadPool::runInThread(void *param) {
@@ -102,3 +103,4 @@ void ThreadPool::stop() {
 
     _threads.clear();
 };
+}//namespace nacos

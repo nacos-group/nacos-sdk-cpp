@@ -2,6 +2,7 @@
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testDebug() {
     log_print(DEBUG, "print\n");

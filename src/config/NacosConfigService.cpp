@@ -9,6 +9,7 @@
 
 using namespace std;
 
+namespace nacos{
 NacosConfigService::NacosConfigService
         (
                 AppConfigManager *_appConfigManager,
@@ -232,3 +233,4 @@ void NacosConfigService::removeListener
     clientWorker->removeListener(dataId, parmgroup, getNamespace(), listener);
 }
 
+}//namespace nacos

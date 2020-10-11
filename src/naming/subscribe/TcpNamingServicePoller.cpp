@@ -5,6 +5,7 @@
 
 using namespace std;
 
+namespace nacos{
 TcpNamingServicePoller::TcpNamingServicePoller(EventDispatcher *eventDispatcher, NamingProxy *namingProxy, AppConfigManager *appConfigManager)
 {
     _eventDispatcher = eventDispatcher;
@@ -151,3 +152,4 @@ void *TcpNamingServicePoller::pollingThreadFunc(void *parm)
     log_debug("Polling thread for NamingService exited normally.\n");
     return NULL;
 }
+}//namespace nacos

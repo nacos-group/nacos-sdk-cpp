@@ -8,6 +8,7 @@
 
 using namespace std;
 
+namespace nacos{
 NacosNamingService::NacosNamingService(HTTPCli *_httpCli, NamingProxy *_serverProxy, BeatReactor *_beatReactor,
                                        EventDispatcher *eventDispatcher, TcpNamingServicePoller *tcpNamingServicePoller,
                                        AppConfigManager *appConfigManager) {
@@ -372,4 +373,4 @@ list<Instance> NacosNamingService::getInstanceWithPredicate
     list<Instance> allInstances = getAllInstances(serviceName, Constants::DEFAULT_GROUP, clusters);
     return predicate->select(allInstances);
 }
-
+}//namespace nacos

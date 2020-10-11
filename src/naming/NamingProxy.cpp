@@ -13,6 +13,7 @@
 
 using namespace std;
 
+namespace nacos{
 NamingProxy::NamingProxy(HTTPCli *httpcli, ServerListManager *_serverListManager, AppConfigManager *_appConfigManager) {
     log_debug("NamingProxy Constructor:\n"
               "namespace:%s, endpoint:%s, Servers:%s\n",
@@ -282,3 +283,4 @@ ListView<NacosString> NamingProxy::getServiceList(int page, int pageSize, const 
     nullResult.setCount(0);
     return nullResult;
 }
+}//namespace nacos

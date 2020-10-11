@@ -15,6 +15,7 @@
 #include "Constants.h"
 #include "Debug.h"
 
+namespace nacos{
 NacosString LocalConfigInfoProcessor::getFailover(const NacosString &serverName, const NacosString &dataId,
                                                   const NacosString &group, const NacosString &tenant) {
     NacosString localPath = getFailoverFile(serverName, dataId, group, tenant);
@@ -166,3 +167,4 @@ void LocalConfigInfoProcessor::init() {
     LOCAL_SNAPSHOT_PATH = homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "config";
     log_info("LOCAL_SNAPSHOT_PATH:%s\n", LOCAL_SNAPSHOT_PATH.c_str());
 };
+}//namespace nacos

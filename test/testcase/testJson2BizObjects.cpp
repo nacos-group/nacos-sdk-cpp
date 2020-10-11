@@ -7,6 +7,7 @@
 #include "src/json/JSON.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testString2ServiceInfo() {
     cout << "in function testString2ServiceInfo" << endl;

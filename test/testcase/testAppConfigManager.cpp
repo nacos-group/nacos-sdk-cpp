@@ -7,6 +7,7 @@
 #include "Constants.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testAppConfigManager() {
     cout << "in function testAppConfigManager" << endl;

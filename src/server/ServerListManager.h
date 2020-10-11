@@ -12,6 +12,7 @@
 #include "PropertyKeyConst.h"
 #include "src/thread/RWLock.h"
 
+namespace nacos{
 class ServerListManager {
 private:
     //status info
@@ -87,5 +88,6 @@ public:
 
     ~ServerListManager();
 };
+}//namespace nacos
 
 #endif

@@ -16,6 +16,7 @@
 #include "PropertyKeyConst.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testNamingProxySmokeTest() {
     cout << "in function testNamingProxySmokeTest" << endl;

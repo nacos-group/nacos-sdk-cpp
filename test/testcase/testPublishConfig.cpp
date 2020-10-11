@@ -9,6 +9,7 @@
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testPublishConfig() {
     cout << "in function testPublishConfig" << endl;

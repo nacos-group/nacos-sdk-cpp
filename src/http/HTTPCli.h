@@ -8,6 +8,7 @@
 #include "NacosString.h"
 #include "NacosExceptions.h"
 
+namespace nacos{
 class HttpResult {
 public:
     long code;
@@ -172,5 +173,6 @@ public:
     static const int POST = 3;
     static const int DELETE = 4;
 };
+}//namespace nacos
 
 #endif

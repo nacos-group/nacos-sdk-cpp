@@ -16,6 +16,7 @@
 #include "ResourceGuard.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testGetAllInstances() {
     cout << "in function testGetAllInstances" << endl;

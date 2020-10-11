@@ -1,6 +1,7 @@
 #ifndef __SS_SWITCH_H_
 #define __SS_SWITCH_H_
 
+namespace nacos{
 class SnapShotSwitch {
 private:
     /**
@@ -12,5 +13,6 @@ public:
 
     static void setIsSnapShot(bool isSnapShot);
 };
+}//namespace nacos
 
 #endif

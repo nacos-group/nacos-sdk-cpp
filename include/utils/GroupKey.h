@@ -25,6 +25,7 @@
  *
  * @author Nacos
  */
+namespace nacos{
 class GroupKey {
 public:
     static NacosString getKey(const NacosString &dataId, const NacosString &group) {
@@ -113,5 +114,6 @@ public:
     }*/
 
 };
+}//namespace nacos
 
 #endif

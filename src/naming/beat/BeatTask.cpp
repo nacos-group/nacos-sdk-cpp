@@ -6,6 +6,7 @@
 
 using namespace std;
 
+namespace nacos{
 BeatTask::BeatTask(BeatInfo &beatInfo, NamingProxy *namingProxy, BeatReactor *beatReactor)
         : _beatInfo(beatInfo), _namingProxy(namingProxy), _beatReactor(beatReactor), _scheduled(false) {
     incRef();
@@ -26,3 +27,4 @@ BeatTask::~BeatTask() {
     NacosString taskName = getTaskName();
     log_debug("[BeatTask]Removing taskObject:%s\n", taskName.c_str());
 }
+}//namespace nacos

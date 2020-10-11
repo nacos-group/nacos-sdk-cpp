@@ -8,6 +8,7 @@
 #include "thread/AtomicInt.h"
 #include "Debug.h"
 
+namespace nacos{
 class BeatReactor;
 
 class BeatTask : public Task {
@@ -34,5 +35,6 @@ public:
 
     bool getScheduled() { return _scheduled; };
 };
+}//namespace nacos
 
 #endif

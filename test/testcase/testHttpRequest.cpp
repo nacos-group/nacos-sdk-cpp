@@ -4,6 +4,7 @@
 #include <iostream>
 
 using namespace std;
+using namespace nacos;
 #define DEFAULT_ENCODING "UTF-8"
 
 bool testNormalHttpRequest() {

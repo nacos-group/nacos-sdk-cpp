@@ -12,6 +12,7 @@
 #include "Constants.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testServerListManager() {
     cout << "in function testServerListManager" << endl;
