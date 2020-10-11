@@ -1,4 +1,4 @@
-#include "naming/cache/ChangeAdvice.h"
+#include "naming/ChangeAdvice.h"
 
 using namespace std;
 

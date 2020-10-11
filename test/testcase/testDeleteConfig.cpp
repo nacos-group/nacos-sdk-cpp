@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdio.h>
 #include "factory/NacosServiceFactory.h"
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"

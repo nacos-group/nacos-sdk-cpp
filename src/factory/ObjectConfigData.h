@@ -1,11 +1,11 @@
 #ifndef __OBJ_CFG_DATA_H_
 #define __OBJ_CFG_DATA_H_
 
-#include "naming/NamingProxy.h"
+#include "src/naming/NamingProxy.h"
 #include "naming/NamingService.h"
 #include "config/ConfigService.h"
-#include "config/AppConfigManager.h"
-#include "naming/beat/BeatReactor.h"
+#include "src/config/AppConfigManager.h"
+#include "src/naming/beat/BeatReactor.h"
 
 class ObjectConfigData {
 public:

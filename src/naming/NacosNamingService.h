@@ -7,7 +7,6 @@
 #include "src/naming/subscribe/EventDispatcher.h"
 #include "src/naming/subscribe/TcpNamingServicePoller.h"
 #include "src/naming/beat/BeatReactor.h"
-#include "factory/ObjectConfigData.h"
 #include "src/http/HTTPCli.h"
 #include "NacosString.h"
 #include "Properties.h"

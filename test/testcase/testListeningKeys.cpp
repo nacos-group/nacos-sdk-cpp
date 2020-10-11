@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"

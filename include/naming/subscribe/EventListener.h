@@ -7,7 +7,7 @@
 
 #include "NacosString.h"
 #include "thread/AtomicInt.h"
-#include "naming/cache/ChangeAdvice.h"
+#include "naming/ChangeAdvice.h"
 #include "DebugAssertion.h"
 
 class EventListener {

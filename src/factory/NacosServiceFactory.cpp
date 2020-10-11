@@ -4,8 +4,8 @@
 
 #include "factory/NacosServiceFactory.h"
 #include "src/naming/NacosNamingService.h"
-#include "config/ObjectConfigData.h"
-#include "config/NacosConfigService.h"
+#include "ObjectConfigData.h"
+#include "src/config/NacosConfigService.h"
 #include "src/http/ServerHttpAgent.h"
 #include "src/naming/subscribe/EventDispatcher.h"
 #include "src/naming/subscribe/TcpNamingServicePoller.h"
