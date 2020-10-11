@@ -9,6 +9,13 @@ Nacos-sdk-cpp for c++ clients allow users to access Nacos service,it's support s
 [![Gitter](https://travis-ci.org/alibaba/nacos.svg?branch=master)](https://travis-ci.org/alibaba/nacos)
 
 # Quick Examples
+## Setup project
+Download the source
+cd nacos-sdk-cpp
+make
+
+a libnacos-cli.so and a nacos-cli.out will be generated
+
 ## Configuration
 
 ### Get Config
