@@ -18,6 +18,8 @@ Download the source and run the following command in bash:
 
 a libnacos-cli.so and a nacos-cli.out will be generated
 
+run `./nacos-cli.out` to perform test on the library
+
 ## Configuration
 
 ### Get Config
