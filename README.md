@@ -21,6 +21,7 @@ Nacos-sdk-cpp for c++ clients allow users to access Nacos service,it's support s
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 int main() {
     Properties props;
@@ -58,6 +59,7 @@ int main() {
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 int main() {
     Properties props;
@@ -108,6 +110,7 @@ int main() {
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 class MyListener : public Listener {
 private:
@@ -169,6 +172,7 @@ int main() {
 #include "PropertyKeyConst.h"
 
 using namespace std;
+using namespace nacos;
 
 int main() {
     Properties configProps;
@@ -229,6 +233,7 @@ int main() {
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 class MyServiceListener : public EventListener {
 private:
@@ -297,6 +302,7 @@ int main() {
 #include "ResourceGuard.h"
 
 using namespace std;
+using namespace nacos;
 
 int main() {
     Properties configProps;
