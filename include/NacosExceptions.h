@@ -4,6 +4,7 @@
 #include <exception>
 #include "NacosString.h"
 
+namespace nacos{
 class NacosException : public std::exception {
 private:
     int _errcode;
@@ -119,5 +120,6 @@ public:
     InvalidFactoryConfigException() : NacosException(NacosException::INVALID_FACTORY_CONFIG,
                                                      "Either config file or property should be configed.") {};
 };
+}//namespace nacos
 
 #endif

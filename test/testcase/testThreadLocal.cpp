@@ -1,11 +1,12 @@
 #include <iostream>
 #include "utils//UuidUtils.h"
-#include "thread/Thread.h"
-#include "thread/ThreadLocal.h"
+#include "src/thread/Thread.h"
+#include "src/thread/ThreadLocal.h"
 #include "DebugAssertion.h"
 #include "utils/RandomUtils.h"
 
 using namespace std;
+using namespace nacos;
 
 ThreadLocal<NacosString> threadLocal;
 ThreadLocal<int*> threadLocalPtr(NULL);

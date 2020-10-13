@@ -1,12 +1,13 @@
 #include <iostream>
 #include "DebugAssertion.h"
-#include "config/IOUtils.h"
+#include "src/config/IOUtils.h"
 #include "utils/DirUtils.h"
 #include "Debug.h"
 
 #define ENCODING "UTF-8"
 
 using namespace std;
+using namespace nacos;
 
 bool testReadWriteFile() {
     cout << "in function testReadWriteFile" << endl;

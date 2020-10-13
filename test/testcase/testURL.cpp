@@ -5,6 +5,7 @@
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testURLEncodeAndDecode() {
     cout << "in function testURLEncode" << endl;

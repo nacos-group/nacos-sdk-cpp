@@ -4,7 +4,7 @@
 #include "NacosExceptions.h"
 #include "NacosString.h"
 #include "listen/Listener.h"
-
+namespace nacos{
 class ConfigService {
 public:
     /**
@@ -73,5 +73,5 @@ public:
 
     virtual ~ConfigService() {};
 };
-
+}//namespace nacos
 #endif

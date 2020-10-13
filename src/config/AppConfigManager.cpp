@@ -1,15 +1,16 @@
 #include "utils/ParamUtils.h"
-#include "config/AppConfigManager.h"
+#include "AppConfigManager.h"
 #include "NacosString.h"
 #include "Properties.h"
 #include "PropertyKeyConst.h"
-#include "config/IOUtils.h"
+#include "IOUtils.h"
 #include "NacosExceptions.h"
 #include "Parameters.h"
 #include <vector>
 
 using namespace std;
 
+namespace nacos{
 NacosString AppConfigManager::LINE_SEPARATOR = "\n";
 NacosString AppConfigManager::KV_SEPARATOR = "=";
 
@@ -122,3 +123,4 @@ void AppConfigManager::applyConfig(Properties &rhs) {
         appConfig[it->first] = it->second;
     }
 }
+}//namespace nacos

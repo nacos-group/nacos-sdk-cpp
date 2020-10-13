@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
@@ -8,6 +9,7 @@
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testPublishConfig() {
     cout << "in function testPublishConfig" << endl;

@@ -1,8 +1,9 @@
 #include <iostream>
 #include "utils//UuidUtils.h"
-#include "thread/Thread.h"
+#include "src/thread/Thread.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testUUID() {
     cout << "in function testUUID" << endl;

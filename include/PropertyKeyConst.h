@@ -3,6 +3,7 @@
 
 #include "NacosString.h"
 
+namespace nacos{
 class PropertyKeyConst {
 public:
     static const NacosString CONFIG_FILE_NAME;
@@ -58,5 +59,6 @@ public:
         static const NacosString ALIBABA_ALIWARE_ENDPOINT_URL = "ALIBABA_ALIWARE_ENDPOINT_URL";
     }*/
 };
+}//namespace nacos
 
 #endif

@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <list>
-#include "naming/NamingProxy.h"
+#include "src/naming/NamingProxy.h"
 #include "factory/NacosServiceFactory.h"
 #include "naming/Instance.h"
 #include "Constants.h"
 #include "utils/UtilAndComs.h"
-#include "http/HTTPCli.h"
+#include "src/http/HTTPCli.h"
 #include "DebugAssertion.h"
 #include "Debug.h"
 #include "NacosString.h"
@@ -16,6 +16,7 @@
 #include "ResourceGuard.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testGetAllInstances() {
     cout << "in function testGetAllInstances" << endl;

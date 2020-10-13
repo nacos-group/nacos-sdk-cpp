@@ -1,4 +1,4 @@
-#include "config/LocalConfigInfoProcessor.h"
+#include "LocalConfigInfoProcessor.h"
 #include <stdio.h>
 #include <list>
 #include <unistd.h>
@@ -8,13 +8,14 @@
 #include "NacosString.h"
 #include "utils/ParamUtils.h"
 #include "utils/DirUtils.h"
-#include "config/SnapShotSwitch.h"
-#include "config/JVMUtil.h"
-#include "config/ConcurrentDiskUtil.h"
-#include "config/IOUtils.h"
+#include "SnapShotSwitch.h"
+#include "JVMUtil.h"
+#include "ConcurrentDiskUtil.h"
+#include "IOUtils.h"
 #include "Constants.h"
 #include "Debug.h"
 
+namespace nacos{
 NacosString LocalConfigInfoProcessor::getFailover(const NacosString &serverName, const NacosString &dataId,
                                                   const NacosString &group, const NacosString &tenant) {
     NacosString localPath = getFailoverFile(serverName, dataId, group, tenant);
@@ -166,3 +167,4 @@ void LocalConfigInfoProcessor::init() {
     LOCAL_SNAPSHOT_PATH = homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "config";
     log_info("LOCAL_SNAPSHOT_PATH:%s\n", LOCAL_SNAPSHOT_PATH.c_str());
 };
+}//namespace nacos

@@ -4,6 +4,7 @@
 #include <map>
 #include "NacosString.h"
 
+namespace nacos{
 class Instance {
 public:
     Instance & operator = (const Instance &rhs);
@@ -67,5 +68,6 @@ public:
     NacosString toString() const;
     NacosString toInetAddr();
 };
+}//namespace nacos
 
 #endif

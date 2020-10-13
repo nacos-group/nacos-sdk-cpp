@@ -1,14 +1,15 @@
-#include "config/NacosConfigService.h"
-#include "http/HTTPCli.h"
-#include "http/ServerHttpAgent.h"
+#include "src/config/NacosConfigService.h"
+#include "src/http/HTTPCli.h"
+#include "src/http/ServerHttpAgent.h"
 #include "Constants.h"
 #include "Parameters.h"
 #include "utils/ParamUtils.h"
 #include "Debug.h"
-#include "md5/md5.h"
+#include "src/md5/md5.h"
 
 using namespace std;
 
+namespace nacos{
 NacosConfigService::NacosConfigService
         (
                 AppConfigManager *_appConfigManager,
@@ -232,3 +233,4 @@ void NacosConfigService::removeListener
     clientWorker->removeListener(dataId, parmgroup, getNamespace(), listener);
 }
 
+}//namespace nacos

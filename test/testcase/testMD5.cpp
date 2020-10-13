@@ -1,9 +1,10 @@
 #include <iostream>
 #include <stdlib.h>
-#include "md5/md5.h"
+#include "src/md5/md5.h"
 #include "DebugAssertion.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testMD5() {
     cout << "in function testMD5" << endl;
