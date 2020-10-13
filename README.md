@@ -69,6 +69,16 @@ Then you'll see:
 
 `SuccessfullyIntegrated`
 
+You may come across the following problem:
+
+`error while loading shared libraries: libnacos-cli.so: cannot open shared object file: No such file or directory`
+
+**solution:**
+
+`export LD_LIBRARY_PATH=/path/to/libnacos-cli.so`
+
+or you can use ldconfig to add libnacos-cli.so to your lib path.
+
 ## Configuration
 
 ### Get Config
