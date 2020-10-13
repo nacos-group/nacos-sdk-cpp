@@ -39,7 +39,7 @@ using namespace nacos;
 
 int main() {
     Properties props;
-    props["serverAddr"] = "127.0.0.1:8848";//Server address
+    props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";//Server address
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
