@@ -20,6 +20,55 @@ a libnacos-cli.so and a nacos-cli.out will be generated
 
 run `./nacos-cli.out` to perform test on the library
 
+## Integrate the library into your project
+
+Here is the example showing how to integrate the library(.so) into your project:
+
+Create a file named IntegratingIntoYourProject.cpp:
+```C++
+#include <iostream>
+#include "factory/NacosServiceFactory.h"
+#include "PropertyKeyConst.h"
+#include "DebugAssertion.h"
+#include "ResourceGuard.h"
+#include "Debug.h"
+#include "NacosString.h"
+
+using namespace std;
+using namespace nacos;
+
+int main() {
+    Properties props;
+    props["serverAddr"] = "127.0.0.1:8848";//Server address
+    NacosServiceFactory *factory = new NacosServiceFactory(props);
+    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    ConfigService *n = factory->CreateConfigService();
+    ResourceGuard <ConfigService> _serviceFactory(n);
+    NacosString ss = "";
+    try {
+        ss = n->getConfig("k", NULLSTR, 1000);
+    }
+    catch (NacosException &e) {
+        cout <<
+             "Request failed with curl code:" << e.errorcode() << endl <<
+             "Reason:" << e.what() << endl;
+        return -1;
+    }
+    cout << ss << endl;
+
+    return 0;
+}
+
+```
+
+`g++ IntegratingIntoYourProject.cpp -L. -lnacos-cli -Iinclude -o integrated.out`
+
+Start a nacos on your localmachine listening on port 8848, and run `./integrated.out`
+
+Then you'll see:
+
+`SuccessfullyIntegrated`
+
 ## Configuration
 
 ### Get Config
