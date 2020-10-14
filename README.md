@@ -22,7 +22,7 @@ run `./nacos-cli.out` to perform test on the library
 
 ## Integrate the library into your project
 
-Here is the example showing how to integrate the library(.so) into your project:
+Here is an example showing how to integrate the library(.so) into your project:
 
 Create a file named IntegratingIntoYourProject.cpp:
 ```C++
