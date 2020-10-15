@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/file.h>
-#include "config/ConcurrentDiskUtil.h"
-#include "config/IOUtils.h"
+#include "ConcurrentDiskUtil.h"
+#include "IOUtils.h"
 
 /**
  * get file content
@@ -13,6 +13,8 @@
  * @return content
  * @throws IOException IOException
  */
+
+namespace nacos{
 NacosString
 ConcurrentDiskUtil::getFileContent(const NacosString &file, const NacosString &charsetName) throw(IOException) {
     if (IOUtils::checkNotExistOrNotFile(file)) {
@@ -64,3 +66,4 @@ bool ConcurrentDiskUtil::writeFileContent
     fclose(fp);
     return true;
 }
+}//namespace nacos

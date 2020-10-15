@@ -9,6 +9,76 @@ Nacos-sdk-cpp for c++ clients allow users to access Nacos service,it's support s
 [![Gitter](https://travis-ci.org/alibaba/nacos.svg?branch=master)](https://travis-ci.org/alibaba/nacos)
 
 # Quick Examples
+## Setup project
+Download the source and run the following command in bash:
+
+`cd nacos-sdk-cpp`
+
+`make`
+
+a libnacos-cli.so and a nacos-cli.out will be generated
+
+run `./nacos-cli.out` to perform test on the library
+
+## Integrate the library into your project
+
+Here is an example showing how to integrate the library(.so) into your project:
+
+Create a file named IntegratingIntoYourProject.cpp:
+```C++
+#include <iostream>
+#include "factory/NacosServiceFactory.h"
+#include "PropertyKeyConst.h"
+#include "DebugAssertion.h"
+#include "ResourceGuard.h"
+#include "Debug.h"
+#include "NacosString.h"
+
+using namespace std;
+using namespace nacos;
+
+int main() {
+    Properties props;
+    props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";//Server address
+    NacosServiceFactory *factory = new NacosServiceFactory(props);
+    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    ConfigService *n = factory->CreateConfigService();
+    ResourceGuard <ConfigService> _serviceFactory(n);
+    NacosString ss = "";
+    try {
+        ss = n->getConfig("k", NULLSTR, 1000);
+    }
+    catch (NacosException &e) {
+        cout <<
+             "Request failed with curl code:" << e.errorcode() << endl <<
+             "Reason:" << e.what() << endl;
+        return -1;
+    }
+    cout << ss << endl;
+
+    return 0;
+}
+
+```
+
+`g++ IntegratingIntoYourProject.cpp -L. -lnacos-cli -Iinclude -o integrated.out`
+
+Start a nacos on your localmachine listening on port 8848, and run `./integrated.out`
+
+Then you'll see:
+
+`SuccessfullyIntegrated`
+
+You may come across the following problem:
+
+`error while loading shared libraries: libnacos-cli.so: cannot open shared object file: No such file or directory`
+
+**solution:**
+
+`export LD_LIBRARY_PATH=/path/to/libnacos-cli.so`
+
+or you can use ldconfig to add libnacos-cli.so to your lib path.
+
 ## Configuration
 
 ### Get Config
@@ -21,6 +91,7 @@ Nacos-sdk-cpp for c++ clients allow users to access Nacos service,it's support s
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 int main() {
     Properties props;
@@ -58,6 +129,7 @@ int main() {
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 int main() {
     Properties props;
@@ -108,6 +180,7 @@ int main() {
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 class MyListener : public Listener {
 private:
@@ -169,6 +242,7 @@ int main() {
 #include "PropertyKeyConst.h"
 
 using namespace std;
+using namespace nacos;
 
 int main() {
     Properties configProps;
@@ -229,6 +303,7 @@ int main() {
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 class MyServiceListener : public EventListener {
 private:
@@ -297,6 +372,7 @@ int main() {
 #include "ResourceGuard.h"
 
 using namespace std;
+using namespace nacos;
 
 int main() {
     Properties configProps;

@@ -4,6 +4,7 @@
 #include "NacosString.h"
 #include "thread/AtomicInt.h"
 
+namespace nacos{
 class Listener {
 private:
     NacosString listenerName;
@@ -27,5 +28,6 @@ public:
 
     virtual ~Listener() {};
 };
+}//namespace nacos
 
 #endif

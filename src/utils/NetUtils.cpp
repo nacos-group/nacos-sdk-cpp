@@ -1,5 +1,6 @@
 #include "utils/NetUtils.h"
 
+namespace nacos{
 NacosString NetUtils::LOCAL_IP;
 
 void NetUtils::Init() {
@@ -9,3 +10,4 @@ void NetUtils::Init() {
 NacosString NetUtils::localIP() {
     return LOCAL_IP;
 }
+}//namespace nacos

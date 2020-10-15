@@ -6,6 +6,7 @@
 #include "Constants.h"
 #include "utils/ParamUtils.h"
 
+namespace nacos{
 class NamingUtils {
 public:
     static NacosString getGroupedName(const NacosString &serviceName, const NacosString &groupName) {
@@ -30,5 +31,6 @@ public:
         return splittedNameNGroup[0];
     }
 };
+}//namespace nacos
 
 #endif

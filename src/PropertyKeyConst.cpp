@@ -1,5 +1,6 @@
 #include "PropertyKeyConst.h"
 
+namespace nacos{
 const NacosString PropertyKeyConst::CONFIG_FILE_NAME = "nacos-cpp-cli.properties";
 
 const NacosString PropertyKeyConst::IS_USE_ENDPOINT_PARSING_RULE = "isUseEndpointParsingRule";
@@ -43,3 +44,5 @@ const NacosString PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT = "config.longpu
 const NacosString PropertyKeyConst::CONFIG_GET_TIMEOUT = "config.get.timeout";
 
 const NacosString PropertyKeyConst::HB_FAIL_WAIT_TIME = "naming.heartbeat.failwait";
+
+}//namespace nacos

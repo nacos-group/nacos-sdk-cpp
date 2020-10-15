@@ -1,4 +1,4 @@
-#include "md5/md5.h"
+#include "md5.h"
 
 using namespace std;
 
@@ -57,6 +57,7 @@ Rotation is separate from addition to prevent recomputation.
 }
 
 
+namespace nacos{
 const byte MD5::PADDING[64] = {0x80};
 const char MD5::HEX[16] = {
         '0', '1', '2', '3',
@@ -337,3 +338,4 @@ NacosString MD5::bytesToHexString(const byte *input, size_t length) {
 NacosString MD5::toString() {
     return bytesToHexString(digest(), 16);
 }
+}//namespace nacos

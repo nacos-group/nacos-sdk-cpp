@@ -3,6 +3,7 @@
 #include <sstream>
 #include "NacosString.h"
 
+namespace nacos{
 const NacosString NacosStringOps::nullstr = "";
 const NacosString NacosStringOps::TRUE = "true";
 const NacosString NacosStringOps::FALSE = "false";
@@ -17,3 +18,4 @@ NacosString NacosStringOps::valueOf<bool>(bool val) {
     if (val) { return TRUE; }
     else { return FALSE; }
 }
+}//namespace nacos

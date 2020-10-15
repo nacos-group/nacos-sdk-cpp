@@ -1,13 +1,14 @@
-#include "naming/NacosNamingService.h"
-#include "naming/beat/BeatReactor.h"
+#include "src/naming/NacosNamingService.h"
+#include "src/naming/beat/BeatReactor.h"
 #include "utils/NamingUtils.h"
 #include "utils/UtilAndComs.h"
 #include "utils/ParamUtils.h"
 #include "PropertyKeyConst.h"
-#include "json/JSON.h"
+#include "src/json/JSON.h"
 
 using namespace std;
 
+namespace nacos{
 NacosNamingService::NacosNamingService(HTTPCli *_httpCli, NamingProxy *_serverProxy, BeatReactor *_beatReactor,
                                        EventDispatcher *eventDispatcher, TcpNamingServicePoller *tcpNamingServicePoller,
                                        AppConfigManager *appConfigManager) {
@@ -372,4 +373,4 @@ list<Instance> NacosNamingService::getInstanceWithPredicate
     list<Instance> allInstances = getAllInstances(serviceName, Constants::DEFAULT_GROUP, clusters);
     return predicate->select(allInstances);
 }
-
+}//namespace nacos

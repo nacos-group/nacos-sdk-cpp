@@ -1,9 +1,10 @@
 #include <string.h>
-#include "http/ServerHttpAgent.h"
+#include "ServerHttpAgent.h"
 #include "Debug.h"
 
 using namespace std;
 
+namespace nacos{
 NacosString ServerHttpAgent::getEncode() const {
     return encoding;
 }
@@ -74,3 +75,4 @@ HttpResult ServerHttpAgent::httpPost
     res = httpCli->httpPost(url, headers, paramValues, _encoding, readTimeoutMs);
     return res;
 }
+}//namespace nacos

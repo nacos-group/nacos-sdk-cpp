@@ -2,7 +2,7 @@
 #define __RND_UTILS_H_
 
 #include "NacosExceptions.h"
-#include "thread/ThreadLocal.h"
+#include "src/thread/ThreadLocal.h"
 
 /**
  * RandomUtils
@@ -12,6 +12,7 @@
  * and helper functions to get random random number
  */
 
+namespace nacos{
 class RandomUtils {
 private:
     static int fd;
@@ -37,5 +38,6 @@ public:
      */
     static int random(int begin, int end) throw (NacosException);
 };
+}//namespace nacos
 
 #endif

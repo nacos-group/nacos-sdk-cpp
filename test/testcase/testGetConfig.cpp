@@ -6,6 +6,7 @@
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testGetConfig() {
     cout << "in function testGetConfig" << endl;

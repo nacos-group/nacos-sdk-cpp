@@ -4,6 +4,7 @@
 #include <pwd.h>
 #include "utils/DirUtils.h"
 
+namespace nacos{
 NacosString DirUtils::getHome() {
     struct passwd *pw = getpwuid(getuid());
     NacosString homedir = pw->pw_dir;
@@ -20,3 +21,4 @@ NacosString DirUtils::getCwd() {
 
     return NULLSTR;
 }
+}//namespace nacos

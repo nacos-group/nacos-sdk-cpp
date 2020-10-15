@@ -3,6 +3,7 @@
 
 #include "NacosString.h"
 
+namespace nacos{
 class UtilAndComs {
 public:
     static NacosString VERSION;
@@ -37,5 +38,6 @@ public:
 
     static void Init();
 };
+}//namespace nacos
 
 #endif

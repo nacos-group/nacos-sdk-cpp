@@ -8,6 +8,7 @@
 #define NULLSTR NacosStringOps::nullstr
 #define isNull NacosStringOps::isNullStr
 
+namespace nacos{
 class NacosStringOps {
 public:
     static const NacosString nullstr;
@@ -30,5 +31,6 @@ NacosString NacosStringOps::valueOf(T val) {
 
     return NULLSTR;
 }
+}//namespace nacos
 
 #endif

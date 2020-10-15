@@ -1,11 +1,12 @@
 #include <map>
-#include "naming/beat/BeatReactor.h"
-#include "naming/beat/BeatTask.h"
+#include "BeatReactor.h"
+#include "BeatTask.h"
 #include "NacosString.h"
 #include "DebugAssertion.h"
 
 using namespace std;
 
+namespace nacos{
 void BeatReactor::start() {
     _stop = false;
     _beatMaster->start();
@@ -102,3 +103,4 @@ NacosString BeatReactor::buildKey(const NacosString &serviceName, const NacosStr
     return serviceName + Constants::NAMING_INSTANCE_ID_SPLITTER
            + ip + Constants::NAMING_INSTANCE_ID_SPLITTER + NacosStringOps::valueOf(port);
 }
+}//namespace nacos

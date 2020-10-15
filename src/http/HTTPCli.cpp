@@ -1,10 +1,11 @@
 #include <string.h>
-#include "http/HTTPCli.h"
+#include "HTTPCli.h"
 #include "utils/url.h"
 #include "Debug.h"
 
 using namespace std;
 
+namespace nacos{
 static size_t
 receiveResponseCallback(
         void *contents,
@@ -597,3 +598,4 @@ void HTTPCli::HTTP_GLOBAL_INIT() {
 void HTTPCli::HTTP_GLOBAL_DEINIT() {
     curl_global_cleanup();
 }
+}//namespace nacos

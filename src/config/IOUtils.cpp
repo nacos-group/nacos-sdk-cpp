@@ -1,4 +1,4 @@
-#include "config/IOUtils.h"
+#include "IOUtils.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include "Debug.h"
 
+namespace nacos{
 size_t IOUtils::getFileSize(const NacosString &file) {
     struct stat statbuf;
 
@@ -226,3 +227,4 @@ std::list <NacosString> IOUtils::listFiles(const NacosString &path) {
 
     return filelist;
 }
+}//namespace nacos

@@ -6,6 +6,7 @@
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testStringExplode() {
     cout << "in function testStringExplode" << endl;

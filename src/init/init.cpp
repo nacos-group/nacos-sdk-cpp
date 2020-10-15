@@ -1,15 +1,16 @@
-#include "init/init.h"
+#include "init.h"
 #include "Debug.h"
-#include "http/HTTPCli.h"
-#include "config/LocalConfigInfoProcessor.h"
-#include "config/SnapShotSwitch.h"
-#include "config/JVMUtil.h"
+#include "src/http/HTTPCli.h"
+#include "src/config/LocalConfigInfoProcessor.h"
+#include "src/config/SnapShotSwitch.h"
+#include "src/config/JVMUtil.h"
 #include "utils/UtilAndComs.h"
 #include "utils/NetUtils.h"
 #include "utils/UuidUtils.h"
 #include "utils/RandomUtils.h"
 //static Init initobj;//Implicitly call the constructors
 
+namespace nacos{
 bool SnapShotSwitch::isSnapShot = true;
 bool JVMUtil::_isMultiInstance = false;
 NacosString LocalConfigInfoProcessor::LOCAL_FILEROOT_PATH = "";
@@ -32,3 +33,5 @@ void Init::doDeinit() {
     RandomUtils::DeInit();
     HTTPCli::HTTP_GLOBAL_DEINIT();
 }
+
+}//namespace nacos
