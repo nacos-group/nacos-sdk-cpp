@@ -92,6 +92,39 @@ bool testNamingProxySmokeTest() {
     return true;
 }
 
+bool testNamingProxyServerHealthy() {
+    cout << "in function testNamingProxyServerHealthy" << endl;
+    NacosString servers = "127.0.0.1:8848";
+    Properties props;
+    props[PropertyKeyConst::SERVER_ADDR] = servers;
+    NacosServiceFactory *factory = new NacosServiceFactory(props);
+    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    NamingService *n = factory->CreateNamingService();
+    ResourceGuard <NamingService> _serviceFactory(n);
+    NacosNamingService *nn = (NacosNamingService *) n;
+    NamingProxy *namingProxy = nn->getServerProxy();
+
+    //Create a clean environment
+    bool healthy;
+    try {
+        healthy = namingProxy->serverHealthy();
+    }
+    catch (NacosException e) {
+        cout << "Exception caught during deregistering service, raison:" << e.what() << endl;
+
+        return false;
+    }
+
+    if (healthy) {
+        cout << "server healthy" << endl;
+    } else {
+
+        cout << "server down" << endl;
+    }
+
+    return true;
+}
+
 bool testNamingProxyFailOver() {
     cout << "in function testNamingProxyFailOver" << endl;
     return true;
