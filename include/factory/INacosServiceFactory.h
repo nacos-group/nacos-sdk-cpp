@@ -9,6 +9,7 @@
 #include "config/ConfigService.h"
 #include "Properties.h"
 
+namespace nacos{
 class INacosServiceFactory {
 public:
     virtual void setConfig(const NacosString &_configFile) = 0;
@@ -22,5 +23,6 @@ public:
     ~INacosServiceFactory() {};
 };
 
+}//namespace nacos
 
 #endif //NACOS_SDK_CPP_INACOSSERVICEFACTORY_H

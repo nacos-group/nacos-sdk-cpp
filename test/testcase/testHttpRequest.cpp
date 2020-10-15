@@ -1,9 +1,10 @@
-#include "http/HTTPCli.h"
+#include "src/http/HTTPCli.h"
 #include "Debug.h"
 #include "DebugAssertion.h"
 #include <iostream>
 
 using namespace std;
+using namespace nacos;
 #define DEFAULT_ENCODING "UTF-8"
 
 bool testNormalHttpRequest() {

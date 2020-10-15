@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdio.h>
 #include "factory/NacosServiceFactory.h"
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
@@ -6,6 +7,7 @@
 #include "ResourceGuard.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testDeleteConfig() {
     cout << "in function testDeleteConfig" << endl;

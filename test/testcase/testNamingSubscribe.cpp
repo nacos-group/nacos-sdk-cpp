@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
@@ -9,6 +10,7 @@
 #include "Debug.h"
 
 using namespace std;
+using namespace nacos;
 
 class MyServiceListener : public EventListener {
 private:

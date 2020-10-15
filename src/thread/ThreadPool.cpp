@@ -1,9 +1,10 @@
 #include <exception>
-#include "thread/ThreadPool.h"
-#include "thread/Thread.h"
+#include "ThreadPool.h"
+#include "Thread.h"
 
 using namespace std;
 
+namespace nacos{
 DummyTask ThreadPool::_dummyTask;
 
 void *ThreadPool::runInThread(void *param) {
@@ -102,3 +103,4 @@ void ThreadPool::stop() {
 
     _threads.clear();
 };
+}//namespace nacos

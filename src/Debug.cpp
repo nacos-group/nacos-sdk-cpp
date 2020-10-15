@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "Debug.h"
 
+namespace nacos{
 //The current debugging level for the system
 LOG_LEVEL Debug::_CUR_SYS_DEBUG_LEVEL = ERROR;
 
@@ -63,3 +64,4 @@ int Debug::debug_error(const char *format, ...) {
     va_end(argList);
     return retval;
 }
+}//namespace nacos

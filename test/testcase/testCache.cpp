@@ -1,11 +1,12 @@
 #include <iostream>
 #include <stdlib.h>
-#include "config/LocalConfigInfoProcessor.h"
+#include "src/config/LocalConfigInfoProcessor.h"
 #include "DebugAssertion.h"
 #include "Debug.h"
 #include "NacosString.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testSaveSnapshot() {
     cout << "in function testSaveSnapshot" << endl;

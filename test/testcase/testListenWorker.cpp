@@ -4,12 +4,13 @@
 #include "Debug.h"
 #include "DebugAssertion.h"
 #include "listen/Listener.h"
-#include "http/ServerHttpAgent.h"
+#include "src/http/ServerHttpAgent.h"
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
 #include "PropertyKeyConst.h"
 
 using namespace std;
+using namespace nacos;
 
 class KeyChangeListener : public Listener {
 private:

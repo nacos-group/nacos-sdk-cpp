@@ -1,5 +1,6 @@
-#include "naming/cache/NamingCache.h"
+#include "NamingCache.h"
 
+namespace nacos{
 ServiceInfo NamingCache::getServiceInfo(const NacosString &key) throw(NacosException)
 {
     ReadGuard __readGuard(_rwLock);
@@ -51,3 +52,4 @@ void NamingCache::removeServiceInfo(const NacosString &key)
     }
     namingList.erase(key);
 }
+}//namespace nacos

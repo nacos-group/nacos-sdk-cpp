@@ -7,6 +7,7 @@
 
 #include "Debug.h"
 
+namespace nacos{
 template<typename T>
 class ResourceGuard {
 private:
@@ -24,6 +25,7 @@ public:
         }
     };
 };
+}//namespace nacos
 
 
 #endif //NACOS_SDK_CPP_RESOURCEGUARD_H

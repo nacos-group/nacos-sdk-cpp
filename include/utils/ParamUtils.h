@@ -10,6 +10,7 @@
 #include "Constants.h"
 #include "Debug.h"
 
+namespace nacos{
 class ParamUtils {
 public:
     template<typename T>
@@ -187,5 +188,6 @@ public:
         return false;
     }
 };
+}//namespace nacos
 
 #endif

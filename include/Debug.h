@@ -21,6 +21,7 @@
 #define log_error(format, args...) Debug::debug_error(format, ##args)
 #endif
 
+namespace nacos{
 enum LOG_LEVEL {
     DEBUG = 0,
     INFO,
@@ -49,5 +50,6 @@ public:
 
     static void set_debug_level(LOG_LEVEL level) { _CUR_SYS_DEBUG_LEVEL = level; };
 };
+}//namespace nacos
 
 #endif

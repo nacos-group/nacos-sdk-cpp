@@ -8,6 +8,8 @@
  *
  * @author Nacos
  */
+
+namespace nacos{
 class Constants {
 public:
     const static NacosString CLIENT_VERSION;
@@ -119,5 +121,6 @@ public:
 
     const static NacosString FILE_SEPARATOR;
 };
+}//namespace nacos
 
 #endif

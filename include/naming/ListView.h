@@ -4,6 +4,7 @@
 #include <list>
 #include "NacosString.h"
 
+namespace nacos{
 template <typename T>
 class ListView{
 private:
@@ -15,5 +16,6 @@ public:
     void setCount(int _count) { count = _count; };
     void setData(const std::list<T> &_data) { data = _data; };
 };
+}//namespace nacos
 
 #endif

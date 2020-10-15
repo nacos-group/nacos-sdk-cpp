@@ -3,13 +3,14 @@
 //
 
 #include "factory/NacosServiceFactory.h"
-#include "naming/NacosNamingService.h"
-#include "config/ObjectConfigData.h"
-#include "config/NacosConfigService.h"
-#include "http/ServerHttpAgent.h"
-#include "naming/subscribe/EventDispatcher.h"
-#include "naming/subscribe/TcpNamingServicePoller.h"
+#include "src/naming/NacosNamingService.h"
+#include "ObjectConfigData.h"
+#include "src/config/NacosConfigService.h"
+#include "src/http/ServerHttpAgent.h"
+#include "src/naming/subscribe/EventDispatcher.h"
+#include "src/naming/subscribe/TcpNamingServicePoller.h"
 
+namespace nacos{
 NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) {
     checkConfig();
     ObjectConfigData objectConfigData;
@@ -129,3 +130,4 @@ NacosServiceFactory::NacosServiceFactory(Properties &_props) {
     propsIsSet = false;
     setProps(_props);
 }
+}//namespace nacos

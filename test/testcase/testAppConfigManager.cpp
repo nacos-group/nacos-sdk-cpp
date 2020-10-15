@@ -1,5 +1,5 @@
 #include <iostream>
-#include "config/AppConfigManager.h"
+#include "src/config/AppConfigManager.h"
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
 #include "Debug.h"
@@ -7,6 +7,7 @@
 #include "Constants.h"
 
 using namespace std;
+using namespace nacos;
 
 bool testAppConfigManager() {
     cout << "in function testAppConfigManager" << endl;

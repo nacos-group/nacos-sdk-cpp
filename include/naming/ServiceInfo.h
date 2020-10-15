@@ -10,6 +10,7 @@
 #include "utils/ParamUtils.h"
 #include "naming/Instance.h"
 
+namespace nacos{
 class ServiceInfo {
 private:
     //@JSONField(serialize = false)
@@ -231,5 +232,6 @@ public:
         _checksum = checksum;
     }
 };
+}//namespace nacos
 
 #endif

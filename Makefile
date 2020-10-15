@@ -24,7 +24,7 @@ INCLUDES = -Iinclude \
 LIBS = -lcurl -lpthread
 CCFLAGS = -g -Wall -O0 -fPIC
 OUTPUT = nacos-cli.out
-OUTLIB = nacos-cli.so
+OUTLIB = libnacos-cli.so
 
 vpath %.cpp $(ALL_SRCS_DIRS)
 
