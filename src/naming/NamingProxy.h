@@ -55,6 +55,8 @@ public:
     inline NacosString getNamespaceId();
 
     long sendBeat(BeatInfo &beatInfo);
+
+    bool serverHealthy();
 };
 }//namespace nacos
 

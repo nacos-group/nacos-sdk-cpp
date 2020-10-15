@@ -283,4 +283,18 @@ ListView<NacosString> NamingProxy::getServiceList(int page, int pageSize, const 
     nullResult.setCount(0);
     return nullResult;
 }
+
+
+bool NamingProxy::serverHealthy() {
+    map <NacosString, NacosString> params;
+    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/operator/metrics", params, HTTPCli::GET);
+    NacosString healthyTag = "status\":\"";
+    size_t pos = result.find(healthyTag);
+    if (pos == std::string::npos) {
+        return false;
+    }
+
+    NacosString healthy = result.substr(pos + healthyTag.length(), 2);
+    return healthy == "UP";
+}
 }//namespace nacos
