@@ -6,10 +6,7 @@
 #include "ResourceGuard.h"
 #include "src/http/HTTPCli.h"
 #include "PropertyKeyConst.h"
-#include "DebugAssertion.h"
-#include "Debug.h"
 #include "src/json/JSON.h"
-#include "Constants.h"
 
 using namespace std;
 using namespace nacos;
@@ -26,7 +23,7 @@ bool testServerListManager() {
     NacosConfigService *nn = (NacosConfigService *) n;
     ServerListManager *serverListManager = nn->getServerListManager();
 
-    list <NacosServerInfo> res = serverListManager->__debug();
+    list <NacosServerInfo> res;// = serverListManager->__debug();
 
     for (list<NacosServerInfo>::iterator it = res.begin(); it != res.end(); it++) {
         NacosString key = it->getKey();
