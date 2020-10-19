@@ -187,6 +187,11 @@ public:
 
         return false;
     }
+
+    static void addKV(std::list<NacosString> &list, const NacosString &key, const NacosString &value) {
+        list.push_back(key);
+        list.push_back(value);
+    }
 };
 }//namespace nacos
 
