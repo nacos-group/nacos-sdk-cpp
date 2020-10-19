@@ -164,7 +164,7 @@ bool testNamingServiceRegister() {
         return false;
     }
 
-    getchar();
+    cout << "testNamingServiceRegister successful" << endl;
 
     return true;
 }
