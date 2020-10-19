@@ -8,6 +8,9 @@ class UtilAndComs {
 public:
     static NacosString VERSION;
 
+    //for libcurl
+    static NacosString UA_VERSION;
+
     static NacosString WEB_CONTEXT;
 
     static NacosString NACOS_URL_BASE;
