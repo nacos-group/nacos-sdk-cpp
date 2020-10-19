@@ -2,7 +2,7 @@
 #define __NACOS_CFG_SVC_H_
 
 #include "config/ConfigService.h"
-#include "src/http/HttpAgent.h"
+#include "src/http/HttpDelegate.h"
 #include "src/listen/ClientWorker.h"
 #include "NacosString.h"
 #include "src/server/ServerListManager.h"
@@ -11,8 +11,8 @@
 namespace nacos{
 class NacosConfigService : public ConfigService {
 private:
-    HttpAgent *httpAgent = NULL;
-    HTTPCli *httpcli = NULL;
+    HttpDelegate *_httpDelegate = NULL;
+    IHttpCli *_httpCli = NULL;
     ServerListManager *svrListMgr = NULL;
     ClientWorker *clientWorker = NULL;
     AppConfigManager *appConfigManager = NULL;
@@ -48,9 +48,9 @@ public:
 
     void removeListener(const NacosString &dataId, const NacosString &group, Listener *listener);
 
-    HttpAgent *getHttpAgent() const { return httpAgent; };
+    HttpDelegate *getHttpDelegate() const { return _httpDelegate; };
 
-    HTTPCli *getHttpCli() const { return httpcli; };
+    IHttpCli *getHttpCli() const { return _httpCli; };
 
     ServerListManager *getServerListManager() const { return svrListMgr; };
 
@@ -58,9 +58,9 @@ public:
 
     AppConfigManager *getAppConfigManager() const { return appConfigManager; };
 
-    void setHttpAgent(HttpAgent *_httpAgent) { httpAgent = _httpAgent; };
+    void setHttpDelegate(HttpDelegate *httpDelegate) { _httpDelegate = httpDelegate; };
 
-    void setHttpCli(HTTPCli *_httpCli) { httpcli = _httpCli; };
+    void setHttpCli(IHttpCli *httpCli) { _httpCli = httpCli; };
 
     void setServerListManager(ServerListManager *_svrListMgr) { svrListMgr = _svrListMgr; };
 
@@ -70,9 +70,9 @@ public:
 
     //ctors/dtor
     NacosConfigService(AppConfigManager *_appConfigManager,
-                       HTTPCli *_httpCli,
+                       IHttpCli *httpCli,
+                       HttpDelegate *httpDelegate,
                        ServerListManager *_serverListManager,
-                       HttpAgent *_httpAgent,
                        ClientWorker *_clientWorker) throw(NacosException);
 
     virtual ~NacosConfigService();

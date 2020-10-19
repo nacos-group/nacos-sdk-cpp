@@ -17,13 +17,14 @@
 using namespace std;
 
 namespace nacos{
-ClientWorker::ClientWorker(HttpAgent *_httpAgent, AppConfigManager *_appConfigManager) {
+ClientWorker::ClientWorker(HttpDelegate *httpDelegate, AppConfigManager *_appConfigManager, ServerListManager *svrListMgr) {
     threadId = 0;
     stopThread = true;
     pthread_mutex_init(&watchListMutex, NULL);
     pthread_mutex_init(&stopThreadMutex, NULL);
-    httpAgent = _httpAgent;
+    _httpDelegate = httpDelegate;
     appConfigManager = _appConfigManager;
+    _svrListMgr = svrListMgr;
 
     _longPullingTimeoutStr = appConfigManager->get(PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT);
     _longPullingTimeout = atoi(_longPullingTimeoutStr.c_str());
@@ -52,28 +53,28 @@ NacosString ClientWorker::getServerConfig
         ) throw(NacosException) {
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
-    //Get the request url
-    NacosString url = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
 
-    HttpResult res;
+    ParamUtils::addKV(paramValues, "dataId", dataId);
 
-    paramValues.push_back("dataId");
-    paramValues.push_back(dataId);
     if (!isNull(group)) {
-        paramValues.push_back("group");
-        paramValues.push_back(group);
+        ParamUtils::addKV(paramValues, "group", group);
     } else {
-        paramValues.push_back("group");
-        paramValues.push_back(Constants::DEFAULT_GROUP);
+        ParamUtils::addKV(paramValues, "group", Constants::DEFAULT_GROUP);
     }
 
     if (!isNull(tenant)) {
-        paramValues.push_back("tenant");
-        paramValues.push_back(tenant);
+        ParamUtils::addKV(paramValues, "tenant", tenant);
     }
 
+    //Get the request url
+    NacosString path = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
+    NacosString serverAddr = _svrListMgr->getCurrentServerAddr();
+    NacosString url = serverAddr + "/" + path;
+    log_debug("httpGet Assembled URL:%s\n", url.c_str());
+
+    HttpResult res;
     try {
-        res = httpAgent->httpGet(url, headers, paramValues, httpAgent->getEncode(), timeoutMs);
+        res = _httpDelegate->httpGet(url, headers, paramValues, _httpDelegate->getEncode(), timeoutMs);
     }
     catch (NetworkException &e) {
         throw NacosException(NacosException::SERVER_ERROR, e.what());
@@ -303,11 +304,15 @@ NacosString ClientWorker::checkListenedKeys() {
 
     //Get the request url
     //TODO:move /listener to constant
-    NacosString url = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH + "/listener";
+    NacosString path = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH + "/listener";
     HttpResult res;
 
+    NacosString serverAddr = _svrListMgr->getCurrentServerAddr();
+    NacosString url = serverAddr + "/" + path;
+    log_debug("httpPost Assembled URL:%s\n", url.c_str());
+
     try {
-        res = httpAgent->httpPost(url, headers, paramValues, httpAgent->getEncode(), _longPullingTimeout);
+        res = _httpDelegate->httpPost(url, headers, paramValues, _httpDelegate->getEncode(), _longPullingTimeout);
     }
     catch (NetworkException &e) {
         log_warn("Request failed with: %s\n", e.what());

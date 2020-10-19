@@ -9,11 +9,12 @@
 using namespace std;
 
 namespace nacos{
-NacosNamingService::NacosNamingService(HTTPCli *_httpCli, NamingProxy *_serverProxy, BeatReactor *_beatReactor,
+NacosNamingService::NacosNamingService(HttpDelegate *httpDelegate, IHttpCli *httpCli, NamingProxy *_serverProxy, BeatReactor *_beatReactor,
                                        EventDispatcher *eventDispatcher, TcpNamingServicePoller *tcpNamingServicePoller,
                                        AppConfigManager *appConfigManager) {
     _appConfigMgr = appConfigManager;
-    httpCli = _httpCli;
+    _httpCli = httpCli;
+    _httpDelegate = httpDelegate;
     serverProxy = _serverProxy;
     beatReactor = _beatReactor;
     _eventDispatcher = eventDispatcher;
@@ -28,27 +29,32 @@ NacosNamingService::~NacosNamingService() {
     }
     beatReactor = NULL;
 
-    if (_eventDispatcher != NULL)
-    {
-        delete _eventDispatcher;
-    }
-    _eventDispatcher = NULL;
-
     if (_tcpNamingServicePoller != NULL)
     {
         delete _tcpNamingServicePoller;
     }
     _tcpNamingServicePoller = NULL;
 
+    if (_eventDispatcher != NULL)
+    {
+        delete _eventDispatcher;
+    }
+    _eventDispatcher = NULL;
+
     if (serverProxy != NULL) {
         delete serverProxy;
     }
     serverProxy = NULL;
 
-    if (httpCli != NULL) {
-        delete httpCli;
+    if (_httpDelegate != NULL) {
+        delete _httpDelegate;
     }
-    httpCli = NULL;
+    _httpDelegate = NULL;
+
+    if (_httpCli != NULL) {
+        delete _httpCli;
+    }
+    _httpCli = NULL;
 
     if (_appConfigMgr != NULL)
     {

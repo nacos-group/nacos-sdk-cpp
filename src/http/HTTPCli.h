@@ -1,47 +1,16 @@
 #ifndef __HTTP_CLI_H_
 #define __HTTP_CLI_H_
 
-#include <list>
-#include <map>
+
 #include <pthread.h>
 #include <curl/curl.h>
 #include "NacosString.h"
 #include "NacosExceptions.h"
+#include "IHttpCli.h"
 
 namespace nacos{
-class HttpResult {
-public:
-    long code;
-    NacosString content;
-    std::map <NacosString, NacosString> headers;
-    CURLcode curlcode;
 
-    HttpResult(long _code, const NacosString &_content, std::map <NacosString, NacosString> &_headers)
-            : code(_code), content(_content) {
-        headers.insert(_headers.begin(), _headers.end());
-    }
-
-    HttpResult(long _code, const NacosString &_content) : code(_code), content(_content) {}
-
-    HttpResult() {
-        code = -1;
-        content = "";
-        headers.clear();
-    }
-
-    HttpResult operator=(HttpResult asignee) {
-        if (this != &asignee) {
-            headers.insert(asignee.headers.begin(), asignee.headers.end());
-            code = asignee.code;
-            content = asignee.content;
-            curlcode = asignee.curlcode;
-        }
-
-        return *this;
-    }
-};
-
-class HTTPCli {
+class HTTPCli : public IHttpCli {
 private:
     //CURL *curlHandle;
     pthread_key_t pthreadKey;
@@ -167,11 +136,6 @@ public:
             long readTimeoutMs
     ) throw(NetworkException);
 
-    static NacosString getPrefix() { return "http://"; };//TODO:changeable according to env variable
-    static const int GET = 0;
-    static const int PUT = 1;
-    static const int POST = 3;
-    static const int DELETE = 4;
 };
 }//namespace nacos
 

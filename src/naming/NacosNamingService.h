@@ -7,19 +7,20 @@
 #include "src/naming/subscribe/EventDispatcher.h"
 #include "src/naming/subscribe/TcpNamingServicePoller.h"
 #include "src/naming/beat/BeatReactor.h"
-#include "src/http/HTTPCli.h"
+#include "src/http/IHttpCli.h"
 #include "NacosString.h"
 #include "Properties.h"
 
 namespace nacos{
 class NacosNamingService : public NamingService {
 private:
-    HTTPCli *httpCli = NULL;
+    HttpDelegate *_httpDelegate = NULL;
     NamingProxy *serverProxy = NULL;
     BeatReactor *beatReactor = NULL;
     EventDispatcher *_eventDispatcher = NULL;
     TcpNamingServicePoller *_tcpNamingServicePoller = NULL;
     AppConfigManager *_appConfigMgr = NULL;
+    IHttpCli *_httpCli = NULL;
 
     NacosNamingService();
 
@@ -27,7 +28,7 @@ private:
 
     NacosString logName;
 public:
-    NacosNamingService(HTTPCli *httpCli, NamingProxy *serverProxy, BeatReactor *beatReactor, EventDispatcher *eventDispatcher, TcpNamingServicePoller *tcpNamingServicePoller, AppConfigManager *appConfigManager);
+    NacosNamingService(HttpDelegate *httpDelegate, IHttpCli *httpCli, NamingProxy *serverProxy, BeatReactor *beatReactor, EventDispatcher *eventDispatcher, TcpNamingServicePoller *tcpNamingServicePoller, AppConfigManager *appConfigManager);
 
     ~NacosNamingService();
 
@@ -107,13 +108,13 @@ public:
     std::list<Instance> getInstanceWithPredicate(const NacosString &serviceName,
                                                  Selector<Instance> *predicate) throw(NacosException);
 
-    HTTPCli *getHttpCli() const { return httpCli; };
+    IHttpCli *getHttpCli() const { return _httpCli; };
 
     NamingProxy *getServerProxy() const { return serverProxy; };
 
     BeatReactor *getBeatReactor() const { return beatReactor; };
 
-    void setHttpCli(HTTPCli *_httpCli) { this->httpCli = _httpCli; };
+    void setHttpCli(IHttpCli *httpCli) { this->_httpCli = httpCli; };
 
     void setServerProxy(NamingProxy *_namingProxy) { this->serverProxy = _namingProxy; };
 

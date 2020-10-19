@@ -6,7 +6,9 @@
 #include "src/naming/NacosNamingService.h"
 #include "ObjectConfigData.h"
 #include "src/config/NacosConfigService.h"
-#include "src/http/ServerHttpAgent.h"
+#include "src/http/HttpDelegate.h"
+#include "src/http/delegate/NoOpHttpDelegate.h"
+#include "src/http/HTTPCli.h"
 #include "src/naming/subscribe/EventDispatcher.h"
 #include "src/naming/subscribe/TcpNamingServicePoller.h"
 
@@ -15,6 +17,7 @@ NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) 
     checkConfig();
     ObjectConfigData objectConfigData;
     objectConfigData.name = "config";
+    NacosString encoding = "UTF-8";
 
     //Create configuration data and load configs
     AppConfigManager *appConfigManager = NULL;
@@ -27,15 +30,17 @@ NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) 
     objectConfigData.appConfigManager = appConfigManager;
 
     //Create http client
-    HTTPCli *httpcli = new HTTPCli();
-    objectConfigData.httpCli = httpcli;
+    IHttpCli *httpCli= new HTTPCli();
+    objectConfigData.httpCli = httpCli;
+
+    HttpDelegate *httpDelegate = new NoOpHttpDelegate(httpCli, encoding);
 
     //Create server manager
-    ServerListManager *serverListManager = new ServerListManager(httpcli, appConfigManager);
+    ServerListManager *serverListManager = new ServerListManager(httpDelegate, appConfigManager);
     objectConfigData.serverListManager = serverListManager;
 
     //Create naming service & heartbeat sender
-    NamingProxy *namingProxy = new NamingProxy(httpcli, serverListManager, appConfigManager);
+    NamingProxy *namingProxy = new NamingProxy(httpDelegate, serverListManager, appConfigManager);
     objectConfigData.namingProxy = namingProxy;
     BeatReactor *beatReactor = new BeatReactor(namingProxy);
     objectConfigData.beatReactor = beatReactor;
@@ -44,7 +49,7 @@ NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) 
 
     TcpNamingServicePoller *tcpNamingServicePoller = new TcpNamingServicePoller(eventDispatcher, namingProxy, appConfigManager);
 
-    NamingService *instance = new NacosNamingService(httpcli, namingProxy, beatReactor, eventDispatcher, tcpNamingServicePoller, appConfigManager);
+    NamingService *instance = new NacosNamingService(httpDelegate, httpCli, namingProxy, beatReactor, eventDispatcher, tcpNamingServicePoller, appConfigManager);
 
     log_debug("Created config data: %s", objectConfigData.name.c_str());
     return instance;
@@ -66,27 +71,28 @@ ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException) 
     objectConfigData.appConfigManager = appConfigManager;
 
     //Create http client
-    HTTPCli *httpcli = new HTTPCli();
-    objectConfigData.httpCli = httpcli;
+    IHttpCli *httpCli = NULL;
+    httpCli = new HTTPCli();
+    NacosString encoding = "UTF-8";
+    HttpDelegate *httpDelegate = new NoOpHttpDelegate(httpCli, encoding);
+    objectConfigData.httpCli = httpCli;
 
     //Create server manager
-    ServerListManager *serverListManager = new ServerListManager(httpcli, appConfigManager);
+    ServerListManager *serverListManager = new ServerListManager(httpDelegate, appConfigManager);
     objectConfigData.serverListManager = serverListManager;
 
     //Create naming service & heartbeat sender
-    NamingProxy *namingProxy = new NamingProxy(httpcli, serverListManager, appConfigManager);
+    NamingProxy *namingProxy = new NamingProxy(httpDelegate, serverListManager, appConfigManager);
     objectConfigData.namingProxy = namingProxy;
     BeatReactor *beatReactor = new BeatReactor(namingProxy);
     objectConfigData.beatReactor = beatReactor;
 
-    httpcli = new HTTPCli();
-    NacosString encoding = "UTF-8";
-    HttpAgent *httpAgent = new ServerHttpAgent(appConfigManager, httpcli, encoding, serverListManager);
-    ClientWorker *clientWorker = new ClientWorker(httpAgent, appConfigManager);
+
+    ClientWorker *clientWorker = new ClientWorker(httpDelegate, appConfigManager, serverListManager);
     ConfigService *instance = new NacosConfigService(appConfigManager,
-                                                     httpcli,
+                                                     httpCli,
+                                                     httpDelegate,
                                                      serverListManager,
-                                                     httpAgent,
                                                      clientWorker);
 
     log_debug("Created config data: %s", objectConfigData.name.c_str());
