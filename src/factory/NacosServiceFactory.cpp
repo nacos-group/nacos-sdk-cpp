@@ -3,6 +3,7 @@
 //
 
 #include "factory/NacosServiceFactory.h"
+#include "src/init/Init.h"
 #include "src/naming/NacosNamingService.h"
 #include "ObjectConfigData.h"
 #include "src/config/NacosConfigService.h"
@@ -13,6 +14,7 @@
 #include "src/naming/subscribe/TcpNamingServicePoller.h"
 
 namespace nacos{
+
 NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) {
     checkConfig();
     ObjectConfigData objectConfigData;

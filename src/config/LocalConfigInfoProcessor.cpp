@@ -16,6 +16,9 @@
 #include "Debug.h"
 
 namespace nacos{
+
+NacosString LocalConfigInfoProcessor::LOCAL_FILEROOT_PATH = "";
+NacosString LocalConfigInfoProcessor::LOCAL_SNAPSHOT_PATH = "";
 NacosString LocalConfigInfoProcessor::getFailover(const NacosString &serverName, const NacosString &dataId,
                                                   const NacosString &group, const NacosString &tenant) {
     NacosString localPath = getFailoverFile(serverName, dataId, group, tenant);

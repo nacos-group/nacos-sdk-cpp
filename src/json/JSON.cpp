@@ -159,6 +159,20 @@ ServiceInfo JSON::JsonStr2ServiceInfo(const NacosString &jsonString) throw(Nacos
                              "Error while parsing the JSON String for ServiceInfo!");
     }
 
+    markRequired(d, "hosts");
+    const Value &hosts = d["hosts"];
+    if (hosts.Size() == 0) {
+        return si;
+    }
+    std::list <Instance> hostlist;
+    for (SizeType i = 0; i < hosts.Size(); i++) {
+        const Value &curhost = hosts[i];
+        Instance curinstance = Json2Instance(curhost);
+        hostlist.push_back(curinstance);
+    }
+
+    si.setHosts(hostlist);
+
     markRequired(d, "cacheMillis");
     const Value &cacheMillis = d["cacheMillis"];
     if (!cacheMillis.IsInt64()) {
@@ -180,17 +194,6 @@ ServiceInfo JSON::JsonStr2ServiceInfo(const NacosString &jsonString) throw(Nacos
     markRequired(d, "clusters");
     const Value &clusters = d["clusters"];
     si.setClusters(clusters.GetString());
-
-    markRequired(d, "hosts");
-    const Value &hosts = d["hosts"];
-    std::list <Instance> hostlist;
-    for (SizeType i = 0; i < hosts.Size(); i++) {
-        const Value &curhost = hosts[i];
-        Instance curinstance = Json2Instance(curhost);
-        hostlist.push_back(curinstance);
-    }
-
-    si.setHosts(hostlist);
 
     return si;
 }
