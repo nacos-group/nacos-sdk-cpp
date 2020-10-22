@@ -20,7 +20,7 @@ void Init::doInit() {
     }
 
     inited = true;
-    Debug::set_debug_level(DEBUG);
+    Debug::set_debug_level(ERROR);
     HTTPCli::HTTP_GLOBAL_INIT();
     UtilAndComs::Init();
     RandomUtils::Init();
