@@ -83,13 +83,6 @@ ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException) 
     ServerListManager *serverListManager = new ServerListManager(httpDelegate, appConfigManager);
     objectConfigData.serverListManager = serverListManager;
 
-    //Create naming service & heartbeat sender
-    NamingProxy *namingProxy = new NamingProxy(httpDelegate, serverListManager, appConfigManager);
-    objectConfigData.namingProxy = namingProxy;
-    BeatReactor *beatReactor = new BeatReactor(namingProxy);
-    objectConfigData.beatReactor = beatReactor;
-
-
     ClientWorker *clientWorker = new ClientWorker(httpDelegate, appConfigManager, serverListManager);
     ConfigService *instance = new NacosConfigService(appConfigManager,
                                                      httpCli,
