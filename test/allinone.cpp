@@ -166,7 +166,7 @@ int main() {
     cout << "Please start a nacos server listening on port 8848 in this machine first." << endl;
     cout << "And when the server is ready, press any key to start the test." << endl;
     getchar();
-    Init::doInit();
+    //Debug::set_debug_level(DEBUG);
     for (size_t i = 0; i < sizeof(testList) / sizeof(TestData); i++) {
         cout << "===========================" << endl;
         TestData * curtest = &testList[i];
@@ -180,7 +180,5 @@ int main() {
         }
     }
     cout << "===========================" << endl;
-
-    Init::doDeinit();
     return 0;
 }
