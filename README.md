@@ -75,7 +75,8 @@ You may come across the following problem:
 
 **solution:**
 
-`export LD_LIBRARY_PATH=/path/to/libnacos-cli.so`
+assume that your libnacos-cli.so resides in /usr/local/libnacos/
+`export LD_LIBRARY_PATH=/usr/local/libnacos/` (DON'T include the so file's name)
 
 or you can use ldconfig to add libnacos-cli.so to your lib path.
 
