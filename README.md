@@ -20,6 +20,13 @@ a libnacos-cli.so and a nacos-cli.out will be generated
 
 run `./nacos-cli.out` to perform test on the library
 
+**Note: You need to run a nacos server on your local machine listening on port 8848 to go through the whole test
+One of the testcases will test endpoint functionality, so you also need to run a simple http server on port 80 which provides the following content:
+
+`127.0.0.1:8848`
+
+**on path /endpoints/endpoint0
+
 ## Integrate the library into your project
 
 Here is an example showing how to integrate the library(.so) into your project:
