@@ -3,10 +3,12 @@
 
 namespace nacos{
 class Init {
+private:
+    static bool inited;
 public:
-    Init() {};
+    Init() { doInit(); };
 
-    ~Init() {};
+    ~Init() { doDeinit(); };
 
     static void doInit();
 

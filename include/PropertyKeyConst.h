@@ -50,6 +50,10 @@ public:
 
     static const NacosString HB_FAIL_WAIT_TIME;
 
+    static const NacosString NACOS_SNAPSHOT_PATH;
+
+    static const NacosString NACOS_LOG_PATH;
+
     /*public static class SystemEnv {
 
         static const NacosString ALIBABA_ALIWARE_ENDPOINT_PORT = "ALIBABA_ALIWARE_ENDPOINT_PORT";

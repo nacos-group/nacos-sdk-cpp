@@ -159,6 +159,20 @@ ServiceInfo JSON::JsonStr2ServiceInfo(const NacosString &jsonString) throw(Nacos
                              "Error while parsing the JSON String for ServiceInfo!");
     }
 
+    markRequired(d, "hosts");
+    const Value &hosts = d["hosts"];
+    if (hosts.Size() == 0) {
+        return si;
+    }
+    std::list <Instance> hostlist;
+    for (SizeType i = 0; i < hosts.Size(); i++) {
+        const Value &curhost = hosts[i];
+        Instance curinstance = Json2Instance(curhost);
+        hostlist.push_back(curinstance);
+    }
+
+    si.setHosts(hostlist);
+
     markRequired(d, "cacheMillis");
     const Value &cacheMillis = d["cacheMillis"];
     if (!cacheMillis.IsInt64()) {
@@ -180,17 +194,6 @@ ServiceInfo JSON::JsonStr2ServiceInfo(const NacosString &jsonString) throw(Nacos
     markRequired(d, "clusters");
     const Value &clusters = d["clusters"];
     si.setClusters(clusters.GetString());
-
-    markRequired(d, "hosts");
-    const Value &hosts = d["hosts"];
-    std::list <Instance> hostlist;
-    for (SizeType i = 0; i < hosts.Size(); i++) {
-        const Value &curhost = hosts[i];
-        Instance curinstance = Json2Instance(curhost);
-        hostlist.push_back(curinstance);
-    }
-
-    si.setHosts(hostlist);
 
     return si;
 }
@@ -271,5 +274,41 @@ ListView<NacosString> JSON::Json2ServiceList(const NacosString &nacosString) thr
     serviceList.setData(names);
 
     return serviceList;
+}
+
+NacosInstance parseOneNacosInstance(const Value &curSvr) {
+    NacosInstance res;
+    res.setIp(curSvr["ip"].GetString());
+    res.setPort(curSvr["port"].GetInt());
+    res.setState(curSvr["state"].GetString());
+
+    const Value &extendInfo = curSvr["extendInfo"];
+    res.setAdWeight(extendInfo["adWeight"].GetFloat());
+    res.setRaftPort(curSvr["raftPort"].GetInt());
+    res.setSite(extendInfo["site"].GetString());
+    res.setWeight(extendInfo["weight"].GetFloat());
+
+    res.setAddress(curSvr["address"].GetString());
+    res.setFailAccessCnt(curSvr["failAccessCnt"].GetInt());
+    return res;
+}
+
+list<NacosInstance> JSON::Json2NacosInstanceList(const NacosString &nacosString) throw(NacosException){
+    list<NacosInstance> nacosInstanceList;
+    Document d;
+    d.Parse(nacosString.c_str());
+    markRequired(d, "servers");
+    const Value &servers = d["servers"];
+    if (!servers.IsArray()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing servers for NacosInstance!");
+    }
+
+    for (SizeType i = 0; i < servers.Size(); i++) {
+        const Value &curSvr = servers[i];
+        NacosInstance curNacosInstance = parseOneNacosInstance(curSvr);
+        nacosInstanceList.push_back(curNacosInstance);
+    }
+
+    return nacosInstanceList;
 }
 }//namespace nacos

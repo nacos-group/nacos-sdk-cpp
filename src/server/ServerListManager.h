@@ -5,8 +5,8 @@
 #include "NacosString.h"
 #include "Properties.h"
 #include "NacosExceptions.h"
-#include "NacosServerInfo.h"
-#include "src/http/HTTPCli.h"
+#include "src/server/NacosServerInfo.h"
+#include "src/http/HttpDelegate.h"
 #include "src/thread/Thread.h"
 #include "src/config/AppConfigManager.h"
 #include "PropertyKeyConst.h"
@@ -41,7 +41,7 @@ private:
 
     std::list <NacosServerInfo> pullServerList() throw(NacosException);
 
-    HTTPCli *httpCli = NULL;
+    HttpDelegate *_httpDelegate = NULL;
     AppConfigManager *appConfigManager = NULL;
 
     static NacosString serverListToString(const std::list <NacosServerInfo> &serverList);
@@ -62,9 +62,9 @@ public:
 
     std::list <NacosServerInfo> __debug();//DO NOT use, may be changed without prior notification
 
-    HTTPCli *getHttpCli() const { return httpCli; };
+    HttpDelegate *getHttpDelegate() const { return _httpDelegate; };
 
-    void setHttpCli(HTTPCli *_httpCli) { this->httpCli = _httpCli; };
+    void setHttpDelegate(HttpDelegate *httpDelegate) { this->_httpDelegate = httpDelegate; };
 
     AppConfigManager *getAppConfigManager() const { return appConfigManager; };
 
@@ -72,7 +72,7 @@ public:
 
     ServerListManager(std::list <NacosString> &fixed);
 
-    ServerListManager(HTTPCli *_httpCli, AppConfigManager *_appConfigManager) throw(NacosException);
+    ServerListManager(HttpDelegate *httpDelegate, AppConfigManager *_appConfigManager) throw(NacosException);
 
     NacosString getCurrentServerAddr();
 

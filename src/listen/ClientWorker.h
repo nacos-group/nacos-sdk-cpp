@@ -5,11 +5,12 @@
 #include <vector>
 #include <pthread.h>
 #include "NacosString.h"
-#include "src/http/HttpAgent.h"
+#include "src/http/HttpDelegate.h"
 #include "listen/Listener.h"
 #include "ListeningData.h"
 #include "OperateItem.h"
 #include "src/config/AppConfigManager.h"
+#include "src/server/ServerListManager.h"
 #include "NacosExceptions.h"
 
 /**
@@ -28,8 +29,9 @@ private:
     //dataID||group||tenant -> Cachedata* Mapping
     std::map<NacosString, ListeningData *> listeningKeys;
     pthread_mutex_t watchListMutex;//TODO:refactor to Mutex
-    HttpAgent *httpAgent = NULL;
+    HttpDelegate *_httpDelegate = NULL;
     AppConfigManager *appConfigManager = NULL;
+    ServerListManager *_svrListMgr;
     //Listener thread related info
     pthread_t threadId;
 
@@ -56,7 +58,7 @@ private:
     void addDeleteItem(const OperateItem &item);
 
 public:
-    ClientWorker(HttpAgent *_httpAgent, AppConfigManager *_appConfigManager);
+    ClientWorker(HttpDelegate *httpDelegate, AppConfigManager *_appConfigManager, ServerListManager *svrListMgr);
 
     ~ClientWorker();
 

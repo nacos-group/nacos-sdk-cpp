@@ -8,6 +8,6 @@ bool SnapShotSwitch::getIsSnapShot() {
 
 void SnapShotSwitch::setIsSnapShot(bool isSnapShot) {
     SnapShotSwitch::isSnapShot = isSnapShot;
-    LocalConfigInfoProcessor::cleanAllSnapshot();
+    //LocalConfigInfoProcessor::cleanAllSnapshot();
 };
 }//namespace nacos

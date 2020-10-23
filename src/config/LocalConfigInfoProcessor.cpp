@@ -13,9 +13,10 @@
 #include "ConcurrentDiskUtil.h"
 #include "IOUtils.h"
 #include "Constants.h"
-#include "Debug.h"
+#include "PropertyKeyConst.h"
 
 namespace nacos{
+
 NacosString LocalConfigInfoProcessor::getFailover(const NacosString &serverName, const NacosString &dataId,
                                                   const NacosString &group, const NacosString &tenant) {
     NacosString localPath = getFailoverFile(serverName, dataId, group, tenant);
@@ -154,17 +155,10 @@ NacosString LocalConfigInfoProcessor::getSnapshotFile(const NacosString &envName
     return filename;
 };
 
-void LocalConfigInfoProcessor::init() {
-    //TODO:Read settings from JM.LOG.PATH/JM.SNAPSHOT.PATH
+LocalConfigInfoProcessor::LocalConfigInfoProcessor(AppConfigManager *appConfigManager) {
+    this->_appCfgMgr = appConfigManager;
+    LOCAL_SNAPSHOT_PATH = _appCfgMgr->get(PropertyKeyConst::NACOS_SNAPSHOT_PATH);
 
-    /*LOCAL_FILEROOT_PATH = System.getProperty("JM.LOG.PATH", System.getProperty("user.home")) + File.separator
-        + "nacos" + File.separator + "config";
-    LOCAL_SNAPSHOT_PATH = System.getProperty("JM.SNAPSHOT.PATH", System.getProperty("user.home")) + File.separator
-        + "nacos" + File.separator + "config";*/
-
-    NacosString homedir = DirUtils::getHome();
-    LOCAL_FILEROOT_PATH = homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "config";
-    LOCAL_SNAPSHOT_PATH = homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "config";
-    log_info("LOCAL_SNAPSHOT_PATH:%s\n", LOCAL_SNAPSHOT_PATH.c_str());
-};
+    log_debug("LocalConfigInfoProcessor::LocalConfigInfoProcessor() LOCAL_SNAPSHOT_PATH = %s\n", LocalConfigInfoProcessor::LOCAL_SNAPSHOT_PATH.c_str());
+}
 }//namespace nacos

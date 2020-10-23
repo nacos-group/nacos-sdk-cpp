@@ -13,7 +13,7 @@ public:
     NacosString name;
     NamingProxy *namingProxy;
     BeatReactor *beatReactor;
-    HTTPCli *httpCli;
+    IHttpCli *httpCli;
     AppConfigManager *appConfigManager;
     ServerListManager *serverListManager;
 };

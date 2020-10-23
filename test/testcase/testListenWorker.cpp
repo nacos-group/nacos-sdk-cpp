@@ -4,7 +4,7 @@
 #include "Debug.h"
 #include "DebugAssertion.h"
 #include "listen/Listener.h"
-#include "src/http/ServerHttpAgent.h"
+#include "src/http/HttpDelegate.h"
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
 #include "PropertyKeyConst.h"
@@ -49,8 +49,7 @@ bool testAddListener() {
         return false;
     }
 
-    cout << "Input a character to continue" << endl;
-    getchar();
     SHOULD_BE_TRUE(bSucc, "Publish should succeed");
+    cout << "test successful" << endl;
     return true;
 }

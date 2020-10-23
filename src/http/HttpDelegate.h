@@ -3,23 +3,16 @@
 
 #include "NacosExceptions.h"
 #include "NacosString.h"
-#include "HTTPCli.h"
+#include "IHttpCli.h"
 
 /**
- * HttpAgent
+ * HttpDelegate
  *
  * @author Liu, Hanyu
  */
 namespace nacos{
-class HttpAgent {
+class HttpDelegate {
 public:
-    /**
-    * start to get nacos ip list
-    * @return Nothing.
-    * @throws NacosException on get ip list error.
-    */
-    //virtual void start() throw (NacosException) = 0;
-
     /**
     * invoke http get method
     * @param path http path
@@ -33,6 +26,20 @@ public:
 
     virtual HttpResult
     httpGet(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
+            const NacosString &encoding, long readTimeoutMs) throw(NetworkException) = 0;
+
+    /**
+    * invoke http put method
+    * @param path http path
+    * @param headers http headers
+    * @param paramValues http paramValues http
+    * @param encoding http encode
+    * @param readTimeoutMs http timeout
+    * @return HttpResult http response
+    * @throws NetworkException If an input or output exception occurred
+    */
+    virtual HttpResult
+    httpPut(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
             const NacosString &encoding, long readTimeoutMs) throw(NetworkException) = 0;
 
     /**
@@ -64,30 +71,12 @@ public:
                const NacosString &encoding, long readTimeoutMs) throw(NetworkException) = 0;
 
     /**
-    * get name
-    * @return NacosString
-    */
-    //virtual NacosString getName() const;
-
-    /**
-    * get namespace
-    * @return NacosString
-    */
-    //virtual NacosString getNamespace() const;
-
-    /**
-    * get tenant
-    * @return NacosString
-    */
-    //virtual NacosString getTenant() const;
-
-    /**
     * get encode
     * @return NacosString
     */
     virtual NacosString getEncode() const = 0;
 
-    virtual ~HttpAgent() {};
+    virtual ~HttpDelegate() {};
 };
 }//namespace nacos
 

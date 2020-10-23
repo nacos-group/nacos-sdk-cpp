@@ -5,7 +5,7 @@
 #include <list>
 #include "NacosString.h"
 #include "NacosExceptions.h"
-#include "src/http/HTTPCli.h"
+#include "src/http/HttpDelegate.h"
 #include "naming/Instance.h"
 #include "src/naming/beat/BeatInfo.h"
 #include "src/server/ServerListManager.h"
@@ -15,7 +15,7 @@ namespace nacos{
 class NamingProxy {
 private:
     NacosString serverPort;
-    HTTPCli *httpCli = NULL;
+    HttpDelegate *_httpDelegate = NULL;
     ServerListManager *serverListManager;
     AppConfigManager *appConfigManager;
 
@@ -24,13 +24,13 @@ private:
     NamingProxy();
 
     NacosString
-    reqAPI(const NacosString &api, std::map <NacosString, NacosString> &params, int method) throw(NacosException);
+    reqAPI(const NacosString &api, std::list <NacosString> &params, int method) throw(NacosException);
 
     NacosString
-    callServer(const NacosString &api, std::map <NacosString, NacosString> &params, const NacosString &curServer,
+    callServer(const NacosString &api, std::list <NacosString> &params, const NacosString &curServer,
                int method) throw(NacosException);
 
-    NacosString callServer(const NacosString &api, std::map <NacosString, NacosString> &params,
+    NacosString callServer(const NacosString &api, std::list <NacosString> &params,
                            const NacosString &curServer) throw(NacosException);
 
     std::list <NacosString> builderHeaders();
@@ -38,7 +38,7 @@ private:
     long _http_req_timeout;
     long _hb_fail_wait;//Time to wait when a heartbeat request fails (in ms)
 public:
-    NamingProxy(HTTPCli *httpcli, ServerListManager *serverListManager, AppConfigManager *appConfigManager);
+    NamingProxy(HttpDelegate *httpDelegate, ServerListManager *serverListManager, AppConfigManager *appConfigManager);
 
     ~NamingProxy();
 
@@ -55,6 +55,8 @@ public:
     inline NacosString getNamespaceId();
 
     long sendBeat(BeatInfo &beatInfo);
+
+    bool serverHealthy();
 };
 }//namespace nacos
 

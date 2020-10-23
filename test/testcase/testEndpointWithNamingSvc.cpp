@@ -20,11 +20,14 @@ using namespace nacos;
 
 bool testEndpointWithNamingProxy() {
     cout << "in function testNamingServiceRegister" << endl;
+    cout << "For this test, please create an endpoint on your 80 port with a file in the following path:" << endl;
+    cout << "yourip:80/endpoints/endpoint0" << endl;
+    cout << "And the content should be a list of ip:port separated with \\n the ip:port group points at a nacos server" << endl;
     Properties configProps;
     configProps[PropertyKeyConst::ENDPOINT] = "127.0.0.1";
-    configProps[PropertyKeyConst::ENDPOINT_PORT] = "8848";
-    configProps[PropertyKeyConst::CONTEXT_PATH] = "nacos/v1/ns/operator";
-    configProps[PropertyKeyConst::CLUSTER_NAME] = "servers";
+    configProps[PropertyKeyConst::ENDPOINT_PORT] = "80";
+    configProps[PropertyKeyConst::CONTEXT_PATH] = "endpoints";
+    configProps[PropertyKeyConst::CLUSTER_NAME] = "endpoint0";
 
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
@@ -48,7 +51,9 @@ bool testEndpointWithNamingProxy() {
         cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
         return false;
     }
+    cout << "Keep the services for 30 secs..." << endl;
     sleep(30);
+    cout << "Deregister the services" << endl;
     try {
         for (int i = 0; i < 5; i++) {
             NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
@@ -61,7 +66,8 @@ bool testEndpointWithNamingProxy() {
         cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
         return false;
     }
-    sleep(30);
+
+    cout << "testNamingServiceRegister finished" << endl;
 
     return true;
 }

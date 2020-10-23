@@ -1,6 +1,4 @@
 #include "src/config/NacosConfigService.h"
-#include "src/http/HTTPCli.h"
-#include "src/http/ServerHttpAgent.h"
 #include "Constants.h"
 #include "Parameters.h"
 #include "utils/ParamUtils.h"
@@ -13,15 +11,15 @@ namespace nacos{
 NacosConfigService::NacosConfigService
         (
                 AppConfigManager *_appConfigManager,
-                HTTPCli *_httpCli,
+                IHttpCli *httpCli,
+                HttpDelegate *httpDelegate,
                 ServerListManager *_serverListManager,
-                HttpAgent *_httpAgent,
                 ClientWorker *_clientWorker
         ) throw(NacosException) {
     appConfigManager = _appConfigManager;
-    httpcli = _httpCli;
+    _httpCli = httpCli;
     svrListMgr = _serverListManager;
-    httpAgent = _httpAgent;
+    _httpDelegate = httpDelegate;
     clientWorker = _clientWorker;
 }
 
@@ -33,9 +31,9 @@ NacosConfigService::~NacosConfigService() {
         clientWorker = NULL;
     }
 
-    if (httpAgent != NULL) {
-        delete httpAgent;
-        httpAgent = NULL;
+    if (_httpDelegate != NULL) {
+        delete _httpDelegate;
+        _httpDelegate = NULL;
     }
 
     if (svrListMgr != NULL) {
@@ -43,9 +41,9 @@ NacosConfigService::~NacosConfigService() {
         svrListMgr = NULL;
     }
 
-    if (httpcli != NULL) {
-        delete httpcli;
-        httpcli = NULL;
+    if (_httpCli != NULL) {
+        delete _httpCli;
+        _httpCli = NULL;
     }
 
     if (appConfigManager != NULL) {
@@ -100,7 +98,7 @@ bool NacosConfigService::removeConfigInner
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
     //Get the request url
-    NacosString url = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
+    NacosString path = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
 
     HttpResult res;
 
@@ -116,8 +114,12 @@ bool NacosConfigService::removeConfigInner
         paramValues.push_back(tenant);
     }
 
+    NacosString serverAddr = svrListMgr->getCurrentServerAddr();
+    NacosString url = serverAddr + "/" + path;
+    log_debug("httpDelete Assembled URL:%s\n", url.c_str());
+
     try {
-        res = httpAgent->httpDelete(url, headers, paramValues, httpAgent->getEncode(), POST_TIMEOUT);
+        res = _httpDelegate->httpDelete(url, headers, paramValues, _httpDelegate->getEncode(), POST_TIMEOUT);
     }
     catch (NetworkException e) {
         log_warn("[remove] error, %s, %s, %s, msg: %s\n", dataId.c_str(), group.c_str(), tenant.c_str(), e.what());
@@ -149,42 +151,39 @@ bool NacosConfigService::publishConfigInner
     std::list <NacosString> paramValues;
     NacosString parmGroupid;
     //Get the request url
-    NacosString url = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
+    NacosString path = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
 
     HttpResult res;
 
     parmGroupid = ParamUtils::null2defaultGroup(group);
-    paramValues.push_back("group");
-    paramValues.push_back(parmGroupid);
+    ParamUtils::addKV(paramValues, "group", parmGroupid);
 
-    paramValues.push_back("dataId");
-    paramValues.push_back(dataId);
+    ParamUtils::addKV(paramValues, "dataId", dataId);
 
-    paramValues.push_back("content");
-    paramValues.push_back(content);
+    ParamUtils::addKV(paramValues, "content", content);
 
     if (!isNull(tenant)) {
-        paramValues.push_back("tenant");
-        paramValues.push_back(tenant);
+        ParamUtils::addKV(paramValues, "tenant", tenant);
     }
 
     if (!isNull(appName)) {
-        paramValues.push_back("appName");
-        paramValues.push_back(appName);
+        ParamUtils::addKV(paramValues, "appName", appName);
     }
 
     if (!isNull(tag)) {
-        paramValues.push_back("tag");
-        paramValues.push_back(tag);
+        ParamUtils::addKV(paramValues, "tag", tag);
     }
 
     if (!isNull(betaIps)) {
-        headers.push_back("betaIps");
-        headers.push_back(betaIps);
+        ParamUtils::addKV(paramValues, "betaIps", betaIps);
     }
 
+    NacosString serverAddr = svrListMgr->getCurrentServerAddr();
+    NacosString url = serverAddr + "/" + path;
+    log_debug("httpPost Assembled URL:%s\n", url.c_str());
+
     try {
-        res = httpAgent->httpPost(url, headers, paramValues, httpAgent->getEncode(), POST_TIMEOUT);
+        res = _httpDelegate->httpPost(url, headers, paramValues, _httpDelegate->getEncode(), POST_TIMEOUT);
     }
     catch (NetworkException e) {
         //

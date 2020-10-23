@@ -3,27 +3,23 @@
 
 #include "NacosExceptions.h"
 #include "NacosString.h"
-#include "HTTPCli.h"
-#include "HttpAgent.h"
+#include "src/http/HTTPCli.h"
+#include "src/http/HttpDelegate.h"
 #include "src/server/ServerListManager.h"
 
 /**
- * ServerHttpAgent
+ * ServerHttpDelegate
  *
  * @author Liu, Hanyu
  */
 namespace nacos{
-class ServerHttpAgent : public HttpAgent {
+class NoOpHttpDelegate : public HttpDelegate {
 private:
     //Variables
-    NacosString namesp;
     NacosString encoding;
-    HTTPCli *httpCli = NULL;
-    ServerListManager *svrListMgr = NULL;
-    AppConfigManager *appConfigManager = NULL;
+    IHttpCli *httpCli = NULL;
 public:
-    ServerHttpAgent(AppConfigManager *appConfigManager, HTTPCli *httpcli, const NacosString &encoding,
-                    ServerListManager *_svrListMgr);
+    NoOpHttpDelegate(IHttpCli *httpcli, const NacosString &encoding);
 
     HttpResult httpGet(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
                        const NacosString &encoding, long readTimeoutMs) throw(NetworkException);
@@ -31,15 +27,18 @@ public:
     HttpResult httpPost(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
                         const NacosString &encoding, long readTimeoutMs) throw(NetworkException);
 
+    virtual HttpResult
+    httpPut(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
+            const NacosString &encoding, long readTimeoutMs) throw(NetworkException);
+
     HttpResult
     httpDelete(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
                const NacosString &encoding, long readTimeoutMs) throw(NetworkException);
 
     NacosString getEncode() const;
 
-    virtual ~ServerHttpAgent() {
+    virtual ~NoOpHttpDelegate() {
         httpCli = NULL;
-        svrListMgr = NULL;
     };
 };
 }//namespace nacos

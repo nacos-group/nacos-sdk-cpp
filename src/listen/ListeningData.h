@@ -77,7 +77,7 @@ public:
             std::map<Listener *, char>::iterator it = listenerList.begin();
             Listener *theListener = it->first;
             int ref = theListener->decRef();
-            log_debug("ListeningData::clearListeners():Removing %s, refcnd = %d\n",
+            log_debug("ListeningData::clearListeners():Removing %s, refcnt = %d\n",
                       theListener->getListenerName().c_str(), theListener->refCnt());
             if (ref == 0) {
                 delete theListener;
