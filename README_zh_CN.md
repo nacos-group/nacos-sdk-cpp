@@ -1,39 +1,34 @@
-<img src="https://github.com/alibaba/nacos/blob/develop/doc/Nacos_Logo.png" width="50%" height="50%" /> 
-
-[中文版本说明点这里](https://github.com/nacos-group/nacos-sdk-cpp/blob/master/README_zh_CN.md)
+<img src="https://github.com/alibaba/nacos/blob/develop/doc/Nacos_Logo.png" width="50%" height="50%" />
 
 # Nacos-sdk-cpp
 
-Nacos-sdk-cpp for c++ clients allow users to access Nacos service, it supports service discovery and dynamic configuration.
-
+Nacos-sdk-cpp是nacos客戶端的C++版本，它支持服务发现和动态配置
 
 [![Gitter](https://badges.gitter.im/alibaba/nacos.svg)](https://gitter.im/alibaba/nacos?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)   [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![Gitter](https://travis-ci.org/alibaba/nacos.svg?branch=master)](https://travis-ci.org/alibaba/nacos)
 
-# Quick Examples
-## Setup project
-Download the source and run the following command in bash:
+# 快速开始
+## 设置工程
+下载工程源代码并且执行下述命令:
 
 `cd nacos-sdk-cpp`
 
 `make`
 
-a libnacos-cli.so and a nacos-cli.out will be generated
+将会产生一个libnacos-cli.so 和一个 nacos-cli.out
 
-run `./nacos-cli.out` to perform test on the library
+运行 `./nacos-cli.out` 以执行客户端的所有testcase
 
-**Note: You need to run a nacos server on your local machine listening on port 8848 to go through the whole test
-One of the testcases will test endpoint functionality, so you also need to run a simple http server on port 80 which provides the following content:
+**注意: 你需要在本机运行一个nacos server，监听8848端口以完成所有测试
+其中有个测试将会测试端点（endpoint）功能，所以你需要在本机运行一个http服务器，在路径/endpoints/endpoint0提供下述内容：
 
 `127.0.0.1:8848`
 
-**on path /endpoints/endpoint0
+## 将libnacos-cli集成到你的工程
 
-## Integrate the library into your project
+下面的例子说明了如何将库文件(.so) 集成到你的工程:
 
-Here is an example showing how to integrate the library(.so) into your project:
-
-Create a file named IntegratingIntoYourProject.cpp:
+创建一个C++文件命名为 IntegratingIntoYourProject.cpp:
 ```C++
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
@@ -72,26 +67,26 @@ int main() {
 
 `g++ IntegratingIntoYourProject.cpp -L. -lnacos-cli -Iinclude -o integrated.out`
 
-Start a nacos on your localmachine listening on port 8848, and run `./integrated.out`
+在本机的8848端口启动一个nacos server, 并且运行 `./integrated.out`
 
-Then you'll see:
+你将会看到:
 
 `SuccessfullyIntegrated`
 
-You may come across the following problem:
+你可能会遇到下述问题:
 
 `error while loading shared libraries: libnacos-cli.so: cannot open shared object file: No such file or directory`
 
-**solution:**
+**解决方法:**
 
-assume that your libnacos-cli.so resides in /usr/local/libnacos/
-`export LD_LIBRARY_PATH=/usr/local/libnacos/` (DON'T include the so file's name)
+假设你的 libnacos-cli.so 在如下目录 /usr/local/libnacos/
+`export LD_LIBRARY_PATH=/usr/local/libnacos/` (请勿包含lib文件的名字)
 
-or you can use ldconfig to add libnacos-cli.so to your lib path.
+你也可以通过ldconfig将库配置到libpath当中
 
-## Configuration
+## 配置
 
-### Get Config
+### 获取配置
 ```C++
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
@@ -126,7 +121,7 @@ int main() {
 }
 ``` 
 
-### Set Config
+### 发布配置
 
 ```C++
 #include <iostream>
@@ -176,7 +171,7 @@ int main() {
 }
 ``` 
 
-### Listen to key change & Cancel listening
+### 监听配置变化和取消监听
 
 ```C++
 #include <iostream>
@@ -229,9 +224,9 @@ int main() {
 }
 ```
 
-## Naming
+## 命名服务
 
-### Register Instance & Unregister Instance
+### 注册和反注册实例
 
 ```C++
 #include <iostream>
@@ -299,7 +294,7 @@ int main() {
 }
 ```
 
-### Subscribe & Unsubscribe
+### 订阅和取消订阅服务
 
 ```C++
 #include <iostream>
@@ -361,7 +356,7 @@ int main() {
 }
 ```
 
-### Get all instances of a service
+### 获取某个服务的全部实例
 
 ```C++
 #include <iostream>
@@ -403,8 +398,14 @@ int main() {
 }
 ```
 
-# About Nacos
+# 关于Nacos
 
-Nacos (official site: [http://nacos.io](http://nacos.io)) is an easy-to-use platform designed for dynamic service discovery and configuration and service management. It helps you to build cloud native applications and microservices platform easily.
+Nacos (官方网站: [http://nacos.io](http://nacos.io)) 是一个易用的动态服务发现、配置管理以及服务管理平台。它将助力您轻松建立云上原生应用和微服务。
 
-Service is a first-class citizen in Nacos. Nacos supports almost all type of services, for example: [Dubbo/gRPC service](https://nacos.io/en-us/docs/use-nacos-with-dubbo.html), [Spring Cloud RESTFul service](https://nacos.io/en-us/docs/use-nacos-with-springcloud.html) and [Kubernetes service](https://nacos.io/en-us/docs/use-nacos-with-kubernetes.html).
+在Nacos中，服务是一级公民. Nacos 支持几乎所有种类的服务，例如：
+
+[Dubbo/gRPC service](https://nacos.io/en-us/docs/use-nacos-with-dubbo.html)
+
+[Spring Cloud RESTFul service](https://nacos.io/en-us/docs/use-nacos-with-springcloud.html)
+
+[Kubernetes service](https://nacos.io/en-us/docs/use-nacos-with-kubernetes.html).
