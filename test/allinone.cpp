@@ -1,7 +1,6 @@
 #include <iostream>
 #include <stdio.h>
 #include "DebugAssertion.h"
-#include "src/init/init.h"
 
 using namespace std;
 using namespace nacos;
