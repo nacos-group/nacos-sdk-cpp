@@ -52,6 +52,8 @@ public:
 
     ListView<NacosString> getServiceList(int page, int pageSize, const NacosString &groupName) throw(NacosException);
 
+    ServiceInfo getServiceInfo(const NacosString &serviceName, const NacosString &groupName) throw(NacosException);
+
     inline NacosString getNamespaceId();
 
     long sendBeat(BeatInfo &beatInfo);

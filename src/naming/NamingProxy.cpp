@@ -227,7 +227,7 @@ list <NacosString> NamingProxy::builderHeaders() {
     headers.push_back(UtilAndComs::VERSION);
 
     headers.push_back("User-Agent");
-    headers.push_back(UtilAndComs::VERSION);
+    headers.push_back(UtilAndComs::UA_VERSION);
 
     headers.push_back("Accept-Encoding");
     headers.push_back("gzip,deflate,sdch");
@@ -285,6 +285,26 @@ ListView<NacosString> NamingProxy::getServiceList(int page, int pageSize, const 
     return nullResult;
 }
 
+ServiceInfo2 NamingProxy::getServiceInfo(const NacosString &serviceName, const NacosString &groupName) throw(NacosException)
+{
+    log_debug("[NAMEPRXY] getServiceInfo request:serviceName=%s groupName=%s\n",
+              serviceName.c_str(), groupName.c_str());
+    list <NacosString> params;
+    ParamUtils::addKV(params, NamingCommonParams::SERVICE_NAME, serviceName);
+    if (!NacosStringOps::isNullStr(groupName)) {
+        ParamUtils::addKV(params, NamingCommonParams::GROUP_NAME, groupName);
+    }
+    ParamUtils::addKV(params, NamingCommonParams::NAMESPACE_ID, getNamespaceId());
+    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::GET);
+
+    if (!isNull(result)) {
+        return JSON::Json2ServiceInfo2(result);
+    }
+
+    ServiceInfo2 serviceInfo2;
+    serviceInfo2.setNull(true);
+    return serviceInfo2;
+}
 
 bool NamingProxy::serverHealthy() {
     list<NacosString> params;

@@ -5,6 +5,8 @@
 #include "NacosString.h"
 
 namespace nacos{
+
+//a service instance
 class Instance {
 public:
     Instance & operator = (const Instance &rhs);
