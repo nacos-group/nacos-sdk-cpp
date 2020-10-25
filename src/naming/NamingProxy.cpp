@@ -1,7 +1,6 @@
 #include <map>
 #include "NamingProxy.h"
 #include "naming/NamingCommonParams.h"
-#include "utils/ParamUtils.h"
 #include "utils/UtilAndComs.h"
 #include "utils/UuidUtils.h"
 #include "src/utils/NetUtils.h"
@@ -304,6 +303,69 @@ ServiceInfo2 NamingProxy::getServiceInfo(const NacosString &serviceName, const N
     ServiceInfo2 serviceInfo2;
     serviceInfo2.setNull(true);
     return serviceInfo2;
+}
+
+bool areYouOk(const NacosString &imVeryOk) {
+    if (imVeryOk.compare("ok") == 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * removes a service info from nacos server
+ * please note that the operation will succeed ONLY WHEN there's NO instance of the service specified
+ *
+ * @param serviceName service name
+ * @param groupName   group name
+ * @return true if operation succeeds
+ *         otherwise return false
+ * @throws IOException IOException
+ */
+bool NamingProxy::deleteServiceInfo(const NacosString &serviceName, const NacosString &groupName) throw(NacosException) {
+    list<NacosString> params;
+    ParamUtils::addKV(params, NamingCommonParams::SERVICE_NAME, serviceName);
+    ParamUtils::addKV(params, NamingCommonParams::GROUP_NAME, groupName);
+    ParamUtils::addKV(params, NamingCommonParams::NAMESPACE_ID, getNamespaceId());
+    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::DELETE);
+
+    return areYouOk(result);
+}
+
+void assembleServiceInfoRequest(list<NacosString> &target, const NacosString &serviceName, const ServiceInfo2 &serviceInfo2) {
+    ParamUtils::addKV(target, NamingCommonParams::SERVICE_NAME, serviceName);
+    if (serviceInfo2.isGroupNameSet()) {
+        ParamUtils::addKV(target, NamingCommonParams::GROUP_NAME, serviceInfo2.getGroupName());
+    }
+    if (serviceInfo2.isNamespaceIdSet()) {
+        ParamUtils::addKV(target, NamingCommonParams::NAMESPACE_ID, serviceInfo2.getNamespaceId());
+    }
+    if (serviceInfo2.isProtectThresholdSet()) {
+        ParamUtils::addKV(target, "protectThreshold", NacosStringOps::valueOf(serviceInfo2.getProtectThreshold()));
+    }
+    if (serviceInfo2.isSelectorSet()) {
+        ParamUtils::addKV(target, "selector", "");//TODO
+    }
+    if (serviceInfo2.isMetadataSet()) {
+        ParamUtils::addKV(target, "metadata", "");//TODO
+    }
+}
+
+bool NamingProxy::createServiceInfo(const NacosString &serviceName, const ServiceInfo2 &serviceInfo2) throw(NacosException) {
+    list<NacosString> params;
+    assembleServiceInfoRequest(params, serviceName, serviceInfo2);
+    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::POST);
+
+    return areYouOk(result);
+}
+
+bool NamingProxy::updateServiceInfo(const NacosString &serviceName, const ServiceInfo2 &serviceInfo2) throw(NacosException) {
+    list<NacosString> params;
+    assembleServiceInfoRequest(params, serviceName, serviceInfo2);
+    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::PUT);
+
+    return areYouOk(result);
 }
 
 bool NamingProxy::serverHealthy() {

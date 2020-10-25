@@ -5,7 +5,7 @@
 #include "NacosString.h"
 #include "naming/Cluster.h"
 
-namespace nacos{
+namespace nacos{ namespace naming {
 
 class Selector {
 private:
@@ -16,6 +16,7 @@ public:
 
     void setType(const NacosString &_type) { type = _type; };
 };
+} /*naming*/
 
 //Actually this should be exactly the same as ServiceInfo but I designed this for compatibility
 //If you check the API reference in detail you'll find that:
@@ -27,20 +28,38 @@ class ServiceInfo2 {
 private:
     bool nullObj;
 
+    bool namespaceIdIsSet;
     NacosString namespaceId;
 
+    bool groupNameIsSet;
     NacosString groupName;
 
+    bool nameIsSet;
     NacosString name;
 
-    Selector selector;
+    bool selectorIsSet;
+    naming::Selector selector;
 
-    int protectThreshold;
+    bool protectThresholdIsSet;
+    double protectThreshold;
 
+    bool clustersIsSet;
     std::list<Cluster> clusters;
 
+    bool metadataIsSet;
     std::map<NacosString, NacosString> metadata;
 public:
+
+    ServiceInfo2() {
+        nullObj = true;
+        namespaceIdIsSet = false;
+        groupNameIsSet = false;
+        nameIsSet = false;
+        selectorIsSet = false;
+        protectThresholdIsSet = false;
+        clustersIsSet = false;
+        metadataIsSet = false;
+    }
 
     void setNull(bool _isNull) { nullObj = _isNull; };
     bool isNullObject() const { return nullObj; };
@@ -50,6 +69,7 @@ public:
     }
 
     void setNamespaceId(const NacosString &namespaceId) {
+        namespaceIdIsSet = true;
         ServiceInfo2::namespaceId = namespaceId;
     }
 
@@ -58,6 +78,7 @@ public:
     }
 
     void setGroupName(const NacosString &groupName) {
+        groupNameIsSet = true;
         ServiceInfo2::groupName = groupName;
     }
 
@@ -66,14 +87,16 @@ public:
     }
 
     void setName(const NacosString &name) {
+        nameIsSet = true;
         ServiceInfo2::name = name;
     }
 
-    Selector getSelector() const {
+    naming::Selector getSelector() const {
         return selector;
     }
 
-    void setSelector(const Selector &aSelector) {
+    void setSelector(const naming::Selector &aSelector) {
+        selectorIsSet = true;
         selector = aSelector;
     }
 
@@ -81,7 +104,8 @@ public:
         return protectThreshold;
     }
 
-    void setProtectThreshold(int protectThreshold) {
+    void setProtectThreshold(double protectThreshold) {
+        protectThresholdIsSet = true;
         ServiceInfo2::protectThreshold = protectThreshold;
     }
 
@@ -90,6 +114,7 @@ public:
     }
 
     void setClusters(const std::list<Cluster> &clusters) {
+        clustersIsSet = true;
         ServiceInfo2::clusters = clusters;
     }
 
@@ -98,9 +123,38 @@ public:
     }
 
     void setMetadata(const std::map<std::string, std::string> &metadata) {
+        metadataIsSet = true;
         ServiceInfo2::metadata = metadata;
     }
+
+    bool isNamespaceIdSet() const {
+        return namespaceIdIsSet;
+    }
+
+    bool isGroupNameSet() const {
+        return groupNameIsSet;
+    }
+
+    bool isNameSet() const {
+        return nameIsSet;
+    }
+
+    bool isSelectorSet() const {
+        return selectorIsSet;
+    }
+
+    bool isProtectThresholdSet() const {
+        return protectThresholdIsSet;
+    }
+
+    bool isClustersSet() const {
+        return clustersIsSet;
+    }
+
+    bool isMetadataSet() const {
+        return metadataIsSet;
+    }
 };
-}//namespace nacos
+}/*namespace nacos*/
 
 #endif

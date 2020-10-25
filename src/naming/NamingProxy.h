@@ -10,6 +10,7 @@
 #include "src/naming/beat/BeatInfo.h"
 #include "src/server/ServerListManager.h"
 #include "naming/ListView.h"
+#include "naming/ServiceInfo2.h"
 
 namespace nacos{
 class NamingProxy {
@@ -42,17 +43,28 @@ public:
 
     ~NamingProxy();
 
+    //instance CRUD
     void registerService(const NacosString &serviceName, const NacosString &groupName,
                          Instance &instance) throw(NacosException);
+
+    bool updateServiceInstance();
+    bool getServiceInstance();
 
     void deregisterService(const NacosString &serviceName, Instance &instance) throw(NacosException);
 
     NacosString queryList(const NacosString &serviceName, const NacosString &clusters, int udpPort,
                           bool healthyOnly) throw(NacosException);
 
+    //service CRUD
     ListView<NacosString> getServiceList(int page, int pageSize, const NacosString &groupName) throw(NacosException);
 
-    ServiceInfo getServiceInfo(const NacosString &serviceName, const NacosString &groupName) throw(NacosException);
+    ServiceInfo2 getServiceInfo(const NacosString &serviceName, const NacosString &groupName) throw(NacosException);
+
+    bool deleteServiceInfo(const NacosString &serviceName, const NacosString &groupName) throw(NacosException);
+
+    bool createServiceInfo(const NacosString &serviceName, const ServiceInfo2 &serviceInfo2) throw(NacosException);
+
+    bool updateServiceInfo(const NacosString &serviceName, const ServiceInfo2 &serviceInfo2) throw(NacosException);
 
     inline NacosString getNamespaceId();
 

@@ -11,6 +11,7 @@
  */
 using namespace std;
 using namespace rapidjson;
+using nacos::naming::Selector;
 
 namespace nacos{
 NacosString documentToString(Document &d) {
@@ -320,8 +321,8 @@ ServiceInfo2 JSON::Json2ServiceInfo2(const NacosString &nacosString) throw(Nacos
     for (SizeType i = 0; i < clusterlist.Size(); i++) {
         const Value &curClusterJson = clusterlist[i];
         Cluster curCluster;
-        curCluster.setName(curCluster["name"].GetString());
-        curCluster.setMetadata(parseMetadata(curCluster["metadata"]));
+        curCluster.setName(curClusterJson["name"].GetString());
+        curCluster.setMetadata(parseMetadata(curClusterJson["metadata"]));
         HealthChecker healthChecker;
         curCluster.setHealthChecker(healthChecker);
     }

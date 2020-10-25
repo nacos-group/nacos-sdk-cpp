@@ -4,16 +4,17 @@
 #include <list>
 #include "naming/Instance.h"
 
-namespace nacos{
+namespace nacos { namespace naming { namespace selectors {
 //Selector interface definition
 //All Selectors shall be THREAD-SAFE!
-template <typename T>
-class Selector{
-private:
-public:
-    virtual std::list<T> select(const std::list<T> &itemsToSelect) = 0;
-    virtual ~Selector() {};
-};
-}//namespace nacos
+            template<typename T>
+            class Selector {
+            private:
+            public:
+                virtual std::list<T> select(const std::list<T> &itemsToSelect) = 0;
+
+                virtual ~Selector() {};
+            };
+} /*selectors*/ } /*naming*/ }/*nacos*/
 
 #endif

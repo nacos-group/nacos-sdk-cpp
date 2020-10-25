@@ -20,8 +20,8 @@ bool testServerListManager() {
     ConfigService *n = factory->CreateConfigService();
     ResourceGuard <ConfigService> _serviceFactory(n);
 
-    NacosConfigService *nn = (NacosConfigService *) n;
-    ServerListManager *serverListManager = nn->getServerListManager();
+    //NacosConfigService *nn = (NacosConfigService *) n;
+    //ServerListManager *serverListManager = nn->getServerListManager();
 
     list <NacosServerInfo> res;// = serverListManager->__debug();
 

@@ -96,17 +96,17 @@ public:
 
     std::list<Instance> getInstanceWithPredicate(const NacosString &serviceName, const NacosString &groupName,
                                                  const std::list <NacosString> &clusters,
-                                                 Selector<Instance> *predicate) throw(NacosException);
+                                                 nacos::naming::selectors::Selector<Instance> *predicate) throw(NacosException);
 
     std::list<Instance> getInstanceWithPredicate(const NacosString &serviceName,
                                                  const std::list <NacosString> &clusters,
-                                                 Selector<Instance> *predicate) throw(NacosException);
+                                                 nacos::naming::selectors::Selector<Instance> *predicate) throw(NacosException);
 
     std::list<Instance> getInstanceWithPredicate(const NacosString &serviceName, const NacosString &groupName,
-                                                 Selector<Instance> *predicate) throw(NacosException);
+                                                 nacos::naming::selectors::Selector<Instance> *predicate) throw(NacosException);
 
     std::list<Instance> getInstanceWithPredicate(const NacosString &serviceName,
-                                                 Selector<Instance> *predicate) throw(NacosException);
+                                                 nacos::naming::selectors::Selector<Instance> *predicate) throw(NacosException);
 
     IHttpCli *getHttpCli() const { return _httpCli; };
 

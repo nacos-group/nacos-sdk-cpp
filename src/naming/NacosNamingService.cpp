@@ -7,6 +7,7 @@
 #include "src/json/JSON.h"
 
 using namespace std;
+using nacos::naming::selectors::Selector;
 
 namespace nacos{
 NacosNamingService::NacosNamingService(HttpDelegate *httpDelegate, IHttpCli *httpCli, NamingProxy *_serverProxy, BeatReactor *_beatReactor,
