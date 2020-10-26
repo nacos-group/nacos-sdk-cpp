@@ -120,6 +120,7 @@ bool testThreadLocalPtrWithInitializer() {
 
     for (int i = 0; i < 10; i++) {
         threads[i]->join();
+        delete threads[i];
     }
 
     cout << "test end..." << endl;
