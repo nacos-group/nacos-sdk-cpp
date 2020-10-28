@@ -15,6 +15,9 @@
 
 namespace nacos{
 
+//FIXME:Memory leak at initializing stage, e.g.:
+//when a HttpDelegate is allocated in CreateConfigService, after that an EXCEPTION is thrown during the initialization of ServerListManager
+//the resource for HttpDelegate is never released
 NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) {
     checkConfig();
     ObjectConfigData objectConfigData;
