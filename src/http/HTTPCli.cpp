@@ -588,6 +588,10 @@ HttpResult HTTPCli::httpDeleteInternal
 }
 
 HTTPCli::~HTTPCli() {
+    CURL *curlHandle = pthread_getspecific(pthreadKey);
+    if (curlHandle != NULL) {
+        curl_easy_cleanup(curlHandle);
+    }
     pthread_key_delete(pthreadKey);
 }
 
