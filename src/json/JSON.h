@@ -36,6 +36,8 @@ public:
 
     static Instance Json2Instance(const rapidjson::Value &jsonString) throw(NacosException);
 
+    static Instance Json2Instance(const NacosString &jsonString) throw(NacosException);
+
     static void markRequired(const rapidjson::Document &d, const NacosString &requiredField) throw(NacosException);
 
     static void markRequired(const rapidjson::Value &d, const NacosString &requiredField) throw(NacosException);

@@ -62,6 +62,10 @@ public:
     */
     NacosString serviceName;
 
+    NacosString groupName;
+
+    NacosString namespaceId;
+
     /**
     * user extended attributes
     */

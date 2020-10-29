@@ -47,8 +47,11 @@ public:
     void registerService(const NacosString &serviceName, const NacosString &groupName,
                          Instance &instance) throw(NacosException);
 
-    bool updateServiceInstance();
-    bool getServiceInstance();
+    Instance getServiceInstance(const NacosString &serviceName,
+                                const NacosString &ip, int port,
+                                const std::map<NacosString, NacosString> &params) throw(NacosException);
+
+    bool updateServiceInstance(const Instance &instance) throw(NacosException);
 
     void deregisterService(const NacosString &serviceName, Instance &instance) throw(NacosException);
 

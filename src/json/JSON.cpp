@@ -138,6 +138,59 @@ Instance JSON::Json2Instance(const Value &host) throw(NacosException) {
     return theinstance;
 }
 
+Instance JSON::Json2Instance(const NacosString &jsonString) throw(NacosException) {
+    Document d;
+    d.Parse(jsonString.c_str());
+
+    Instance theinstance;
+
+    markRequired(d, "instanceId");
+    const Value &instanceId = d["instanceId"];
+    theinstance.instanceId = instanceId.GetString();
+
+    markRequired(d, "port");
+    const Value &port = d["port"];
+    if (!port.IsInt()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing port for Instance!");
+    }
+    theinstance.port = port.GetInt();
+
+    markRequired(d, "ip");
+    const Value &ip = d["ip"];
+    theinstance.ip = ip.GetString();
+
+    markRequired(d, "weight");
+    const Value &weight = d["weight"];
+    if (!weight.IsDouble()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing weight for Instance!");
+    }
+    theinstance.weight = weight.GetDouble();
+
+    markRequired(d, "metadata");
+    const Value &metadata = d["metadata"];
+
+    std::map <NacosString, NacosString> mtdata;
+    JSONObject2Map(mtdata, metadata);
+    theinstance.metadata = mtdata;
+
+    markRequired(d, "healthy");
+    const Value &healthy = d["healthy"];
+    if (!healthy.IsBool()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing healthy for Instance!");
+    }
+    theinstance.healthy = healthy.GetBool();
+
+    markRequired(d, "service");
+    const Value &service = d["service"];
+    theinstance.serviceName = service.GetString();
+
+    markRequired(d, "clusterName");
+    const Value &clusterName = d["clusterName"];
+    theinstance.clusterName = clusterName.GetString();
+
+    return theinstance;
+}
+
 void JSON::markRequired(const Document &d, const NacosString &requiredField) throw(NacosException) {
     if (!d.HasMember(requiredField.c_str())) {
         throw NacosException(NacosException::LACK_JSON_FIELD, "Missing required field:" + requiredField);

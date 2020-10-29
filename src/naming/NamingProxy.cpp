@@ -380,4 +380,84 @@ bool NamingProxy::serverHealthy() {
     NacosString healthy = result.substr(pos + healthyTag.length(), 2);
     return healthy == "UP";
 }
+
+/**
+ * gets one service instance info from nacos server
+ *
+ * @param serviceName service name
+ * @param ip          ip address
+ * @param port        port
+ * @param params      optional parameters, options are:
+ * groupName
+ * namespaceId
+ * cluster
+ * healthyOnly
+ * ephemeral
+ * @return Instance info if succeed, nullObj if fails
+ * @throws NacosException NacosException
+ */
+Instance NamingProxy::getServiceInstance
+(
+    const NacosString &serviceName,
+    const NacosString &ip,
+    int port,
+    const std::map<NacosString, NacosString> &params
+)
+throw(NacosException) {
+    list<NacosString> paramsList;
+    ParamUtils::addKV(paramsList, NamingCommonParams::SERVICE_NAME, serviceName);
+    ParamUtils::addKV(paramsList, "ip", ip);
+    ParamUtils::addKV(paramsList, "port", NacosStringOps::valueOf(port));
+
+    for (map<NacosString, NacosString>::const_iterator it = params.begin();
+        it != params.end(); it++) {
+        ParamUtils::addKV(paramsList, it->first, it->second);
+    }
+
+    if (params.count(NamingCommonParams::NAMESPACE_ID) == 0) {
+        ParamUtils::addKV(paramsList, NamingCommonParams::NAMESPACE_ID, getNamespaceId());
+    }
+
+    if (params.count(NamingCommonParams::GROUP_NAME) == 0) {
+        ParamUtils::addKV(paramsList, NamingCommonParams::GROUP_NAME, Constants::DEFAULT_GROUP);
+    }
+
+    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/instance", paramsList, IHttpCli::GET);
+
+    return JSON::Json2Instance(result);
+}
+
+bool NamingProxy::updateServiceInstance(const Instance &instance) throw(NacosException) {
+    list<NacosString> params;
+    ParamUtils::addKV(params, NamingCommonParams::SERVICE_NAME, instance.serviceName);
+    ParamUtils::addKV(params, "ip", instance.ip);
+    ParamUtils::addKV(params, "port", NacosStringOps::valueOf(instance.port));
+
+    if (NacosStringOps::isNullStr(instance.groupName)) {
+        ParamUtils::addKV(params, NamingCommonParams::GROUP_NAME, Constants::DEFAULT_GROUP);
+    } else {
+        ParamUtils::addKV(params, NamingCommonParams::GROUP_NAME, instance.groupName);
+    }
+
+    if (NacosStringOps::isNullStr(instance.namespaceId)) {
+        ParamUtils::addKV(params, NamingCommonParams::NAMESPACE_ID, getNamespaceId());
+    } else {
+        ParamUtils::addKV(params, NamingCommonParams::NAMESPACE_ID, instance.namespaceId);
+    }
+
+    if (!NacosStringOps::isNullStr(instance.clusterName)) {
+        ParamUtils::addKV(params, NamingCommonParams::CLUSTER_NAME, instance.clusterName);
+    }
+
+    if (instance.metadata.size() > 0) {
+        ParamUtils::addKV(params, "metadata", "");//TODO
+    }
+    //TODO
+    //weight
+    //ephemeral
+
+    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/instance", params, IHttpCli::PUT);
+
+    return areYouOk(result);
+}
 }//namespace nacos
