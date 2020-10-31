@@ -58,7 +58,6 @@ void NamingProxy::registerService(const NacosString &serviceName, const NacosStr
     ParamUtils::addKV(params, "enable", NacosStringOps::valueOf(instance.enabled));
     ParamUtils::addKV(params, "healthy", NacosStringOps::valueOf(instance.healthy));
     ParamUtils::addKV(params, "ephemeral", NacosStringOps::valueOf(instance.ephemeral));
-    //TODO:transfer metadata in JSON form
     ParamUtils::addKV(params, "metadata", JSON::toJSONString(instance.metadata));
 
     reqAPI(UtilAndComs::NACOS_URL_INSTANCE, params, IHttpCli::POST);
@@ -455,9 +454,9 @@ bool NamingProxy::updateServiceInstance(const Instance &instance) throw(NacosExc
     if (instance.metadata.size() > 0) {
         ParamUtils::addKV(params, "metadata", JSON::toJSONString(instance.metadata));
     }
-    //TODO
-    //weight
-    //ephemeral
+    ParamUtils::addKV(params, "ephemeral", NacosStringOps::valueOf(instance.ephemeral));
+    //TODO:weight is optional
+    ParamUtils::addKV(params, "weight", NacosStringOps::valueOf(instance.weight));
 
     NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/instance", params, IHttpCli::PUT);
 
