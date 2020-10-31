@@ -21,6 +21,7 @@ private:
     TcpNamingServicePoller *_tcpNamingServicePoller = NULL;
     AppConfigManager *_appConfigMgr = NULL;
     IHttpCli *_httpCli = NULL;
+    ServerListManager *_serverListManager = NULL;
 
     NacosNamingService();
 
@@ -28,7 +29,14 @@ private:
 
     NacosString logName;
 public:
-    NacosNamingService(HttpDelegate *httpDelegate, IHttpCli *httpCli, NamingProxy *serverProxy, BeatReactor *beatReactor, EventDispatcher *eventDispatcher, TcpNamingServicePoller *tcpNamingServicePoller, AppConfigManager *appConfigManager);
+    NacosNamingService(HttpDelegate *httpDelegate,
+                       IHttpCli *httpCli,
+                       NamingProxy *serverProxy,
+                       BeatReactor *beatReactor,
+                       EventDispatcher *eventDispatcher,
+                       TcpNamingServicePoller *tcpNamingServicePoller,
+                       AppConfigManager *appConfigManager,
+                       ServerListManager *serverListManager);
 
     ~NacosNamingService();
 

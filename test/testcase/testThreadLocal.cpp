@@ -56,7 +56,7 @@ void *ThreadLocalFuncs4PtrWithInitializer(void *param) {
 void *ThreadLocalFuncs(void *param) {
     Thread *thisThread = *((Thread **) param);
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 100; i++) {
         threadLocal.set(UuidUtils::generateUuid().c_str());
         log_debug("Thread %s UUID: %s\n", thisThread->getThreadName().c_str(), threadLocal.get().c_str());
     }

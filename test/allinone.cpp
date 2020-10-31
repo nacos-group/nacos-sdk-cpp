@@ -100,6 +100,7 @@ bool testRandomByWeightSelector();
 bool testThreadLocal();
 bool testThreadLocalPtr();
 bool testThreadLocalPtrWithInitializer();
+bool testMaintainGetService();
 
 TestData testList1[] =
 TEST_ITEM_START
@@ -159,25 +160,35 @@ TEST_ITEM_START
     TEST_ITEM("Smoking test of ThreadLocal", testThreadLocal)
     TEST_ITEM("Smoking test of ThreadLocal(pointer)", testThreadLocalPtr)
     TEST_ITEM("Smoking test of ThreadLocal(pointer with initializer)", testThreadLocalPtrWithInitializer)
+    TEST_ITEM("MaintainService: getService", testMaintainGetService)
 TEST_ITEM_END
 
 int main() {
     cout << "Please start a nacos server listening on port 8848 in this machine first." << endl;
     cout << "And when the server is ready, press any key to start the test." << endl;
     getchar();
+    int nr_succ = 0, nr_fail = 0;
     //Debug::set_debug_level(DEBUG);
+    cout << "BEGIN OF TESTS" << endl;
+    cout << "===========================" << endl;
     for (size_t i = 0; i < sizeof(testList) / sizeof(TestData); i++) {
-        cout << "===========================" << endl;
         TestData * curtest = &testList[i];
         TESTFN testfunction = curtest->testFn;
         cout << "Testing " << curtest->testName << " ..." << endl;
         bool pass = testfunction();
         if (!pass) {
             cout << "FAILED" << endl;
+            nr_fail++;
         } else {
             cout << "PASSED!" << endl;
+            nr_succ++;
         }
+        cout << "===========================" << endl;
     }
+    cout << "SUMMARY" << endl;
+    cout << "Total:" << nr_succ + nr_fail << endl;
+    cout << "Succ:" << nr_succ << endl;
+    cout << "Fail:" << nr_fail << endl;
     cout << "===========================" << endl;
     return 0;
 }

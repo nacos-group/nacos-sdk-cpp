@@ -12,7 +12,7 @@ using nacos::naming::selectors::Selector;
 namespace nacos{
 NacosNamingService::NacosNamingService(HttpDelegate *httpDelegate, IHttpCli *httpCli, NamingProxy *_serverProxy, BeatReactor *_beatReactor,
                                        EventDispatcher *eventDispatcher, TcpNamingServicePoller *tcpNamingServicePoller,
-                                       AppConfigManager *appConfigManager) {
+                                       AppConfigManager *appConfigManager, ServerListManager *serverListManager) {
     _appConfigMgr = appConfigManager;
     _httpCli = httpCli;
     _httpDelegate = httpDelegate;
@@ -20,6 +20,7 @@ NacosNamingService::NacosNamingService(HttpDelegate *httpDelegate, IHttpCli *htt
     beatReactor = _beatReactor;
     _eventDispatcher = eventDispatcher;
     _tcpNamingServicePoller = tcpNamingServicePoller;
+    _serverListManager = serverListManager;
     beatReactor->start();
     _tcpNamingServicePoller->start();
 }
@@ -46,6 +47,11 @@ NacosNamingService::~NacosNamingService() {
         delete serverProxy;
     }
     serverProxy = NULL;
+
+    if (_serverListManager != NULL) {
+        delete _serverListManager;
+    }
+    _serverListManager = NULL;
 
     if (_httpDelegate != NULL) {
         delete _httpDelegate;

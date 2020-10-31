@@ -54,19 +54,24 @@ bool NacosNamingMaintainService::updateService(const ServiceInfo2 &service, nami
 NacosNamingMaintainService::~NacosNamingMaintainService() {
     if (_namingProxy != NULL) {
         delete _namingProxy;
+        _namingProxy = NULL;
     }
     if (_serverListManager != NULL) {
         _serverListManager->stop();
         delete _serverListManager;
+        _serverListManager = NULL;
     }
     if (_appConfigManager != NULL) {
         delete _appConfigManager;
+        _appConfigManager = NULL;
     }
     if (_httpDelegate != NULL) {
         delete _httpDelegate;
+        _httpDelegate = NULL;
     }
     if (_httpCli != NULL) {
         delete _httpCli;
+        _httpCli = NULL;
     }
 }
 

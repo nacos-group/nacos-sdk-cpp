@@ -14,7 +14,15 @@ using namespace rapidjson;
 using nacos::naming::Selector;
 
 namespace nacos{
-NacosString documentToString(Document &d) {
+NacosString documentToString(const Document &d) {
+    StringBuffer buffer;
+    Writer <StringBuffer> writer(buffer);
+    d.Accept(writer);
+    NacosString result = buffer.GetString();
+    return result;
+}
+
+NacosString valueToString(const Value &d) {
     StringBuffer buffer;
     Writer <StringBuffer> writer(buffer);
     d.Accept(writer);
@@ -357,11 +365,12 @@ ServiceInfo2 JSON::Json2ServiceInfo2(const NacosString &nacosString) throw(Nacos
     serviceInfo2.setName(name.GetString());
 
     const Value &selector = d["selector"];
-    serviceInfo2.setSelector(selector.GetString());
+
+    serviceInfo2.setSelector(valueToString(selector));
 
     markRequired(d, "protectThreshold");
     const Value &protectThreshold = d["protectThreshold"];
-    serviceInfo2.setProtectThreshold(protectThreshold.GetInt());
+    serviceInfo2.setProtectThreshold(protectThreshold.GetDouble());
 
     const Value &clusterlist = d["clusters"];
     if (!clusterlist.IsArray()) {

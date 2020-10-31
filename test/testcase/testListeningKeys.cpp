@@ -29,7 +29,7 @@ public:
 };
 
 bool testListeningKeys() {
-    cout << "in function testPublishConfig" << endl;
+    cout << "in function testListeningKeys" << endl;
     Properties props;
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
     NacosServiceFactory *factory = new NacosServiceFactory(props);

@@ -43,6 +43,7 @@ public:
     static void markRequired(const rapidjson::Value &d, const NacosString &requiredField) throw(NacosException);
 
     static std::list<NacosServerInfo> Json2NacosServerInfo(const NacosString &nacosString) throw(NacosException);
+
     static ServiceInfo2 Json2ServiceInfo2(const NacosString &nacosString) throw(NacosException);
 
     static ListView<NacosString> Json2ServiceList(const NacosString &nacosString) throw(NacosException);

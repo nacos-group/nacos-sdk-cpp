@@ -14,6 +14,7 @@
 #include "src/naming/subscribe/EventDispatcher.h"
 #include "src/naming/subscribe/TcpNamingServicePoller.h"
 
+//Unlike Java, in cpp, there's no container, no spring to do the ORM job, so I have to handle it myself
 namespace nacos{
 
 //FIXME:Memory leak at initializing stage, e.g.:
@@ -55,7 +56,14 @@ NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) 
 
     TcpNamingServicePoller *tcpNamingServicePoller = new TcpNamingServicePoller(eventDispatcher, namingProxy, appConfigManager);
 
-    NamingService *instance = new NacosNamingService(httpDelegate, httpCli, namingProxy, beatReactor, eventDispatcher, tcpNamingServicePoller, appConfigManager);
+    NamingService *instance = new NacosNamingService(httpDelegate,
+                                                     httpCli,
+                                                     namingProxy,
+                                                     beatReactor,
+                                                     eventDispatcher,
+                                                     tcpNamingServicePoller,
+                                                     appConfigManager,
+                                                     serverListManager);
 
     log_debug("Created config data: %s", objectConfigData.name.c_str());
     return instance;
@@ -128,7 +136,11 @@ NamingMaintainService *NacosServiceFactory::CreateNamingMaintainService() throw(
     NamingProxy *namingProxy = new NamingProxy(httpDelegate, serverListManager, appConfigManager);
     objectConfigData.namingProxy = namingProxy;
 
-    NacosNamingMaintainService *instance = new NacosNamingMaintainService(namingProxy, httpDelegate, httpCli, appConfigManager, serverListManager);
+    NacosNamingMaintainService *instance = new NacosNamingMaintainService(namingProxy,
+                                                                          httpDelegate,
+                                                                          httpCli,
+                                                                          appConfigManager,
+                                                                          serverListManager);
 
     log_debug("Created config data: %s", objectConfigData.name.c_str());
     return instance;

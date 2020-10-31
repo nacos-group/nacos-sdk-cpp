@@ -35,11 +35,7 @@ NamingProxy::NamingProxy(HttpDelegate *httpDelegate, ServerListManager *_serverL
 NamingProxy::~NamingProxy() {
     _httpDelegate = NULL;
     appConfigManager = NULL;
-    //TODO:refactor this deconstructing process to a function
-    if (serverListManager != NULL) {
-        delete serverListManager;
-        serverListManager = NULL;
-    }
+    serverListManager = NULL;
 }
 
 void NamingProxy::registerService(const NacosString &serviceName, const NacosString &groupName,
@@ -292,6 +288,8 @@ ServiceInfo2 NamingProxy::getServiceInfo(const NacosString &serviceName, const N
     ParamUtils::addKV(params, NamingCommonParams::SERVICE_NAME, serviceName);
     if (!NacosStringOps::isNullStr(groupName)) {
         ParamUtils::addKV(params, NamingCommonParams::GROUP_NAME, groupName);
+    } else {
+        ParamUtils::addKV(params, NamingCommonParams::GROUP_NAME, Constants::DEFAULT_GROUP);
     }
     ParamUtils::addKV(params, NamingCommonParams::NAMESPACE_ID, getNamespaceId());
     NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::GET);

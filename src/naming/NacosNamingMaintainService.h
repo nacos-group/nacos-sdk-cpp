@@ -9,6 +9,16 @@
 #include "Properties.h"
 
 namespace nacos{
+
+/**
+ * NacosNamingMaintainService
+ * Maintain functions for Nacos
+ *
+ * @author liaochuntao
+ * @author Liu, Hanyu
+ * Maintain service
+ * Special thanks to @liaochuntao
+ */
 class NacosNamingMaintainService : public NamingMaintainService {
 private:
     NacosNamingMaintainService();
