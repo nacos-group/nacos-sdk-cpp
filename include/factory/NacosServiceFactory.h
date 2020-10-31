@@ -25,6 +25,8 @@ public:
 
     virtual ConfigService *CreateConfigService() throw(NacosException);
 
+    virtual NamingMaintainService *CreateNamingMaintainService() throw(NacosException);
+
     NacosServiceFactory();
 
     NacosServiceFactory(const NacosString &_configFile);

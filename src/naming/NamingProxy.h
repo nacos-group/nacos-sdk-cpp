@@ -65,9 +65,9 @@ public:
 
     bool deleteServiceInfo(const NacosString &serviceName, const NacosString &groupName) throw(NacosException);
 
-    bool createServiceInfo(const NacosString &serviceName, const ServiceInfo2 &serviceInfo2) throw(NacosException);
+    bool createServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Selector *selector) throw(NacosException);
 
-    bool updateServiceInfo(const NacosString &serviceName, const ServiceInfo2 &serviceInfo2) throw(NacosException);
+    bool updateServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Selector *selector) throw(NacosException);
 
     inline NacosString getNamespaceId();
 

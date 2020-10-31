@@ -333,8 +333,10 @@ bool NamingProxy::deleteServiceInfo(const NacosString &serviceName, const NacosS
     return areYouOk(result);
 }
 
-void assembleServiceInfoRequest(list<NacosString> &target, const NacosString &serviceName, const ServiceInfo2 &serviceInfo2) {
-    ParamUtils::addKV(target, NamingCommonParams::SERVICE_NAME, serviceName);
+void assembleServiceInfoRequest(list<NacosString> &target, const ServiceInfo2 &serviceInfo2) {
+    if (serviceInfo2.isNameSet()) {
+        ParamUtils::addKV(target, NamingCommonParams::SERVICE_NAME, serviceInfo2.getName());
+    }
     if (serviceInfo2.isGroupNameSet()) {
         ParamUtils::addKV(target, NamingCommonParams::GROUP_NAME, serviceInfo2.getGroupName());
     }
@@ -344,27 +346,28 @@ void assembleServiceInfoRequest(list<NacosString> &target, const NacosString &se
     if (serviceInfo2.isProtectThresholdSet()) {
         ParamUtils::addKV(target, "protectThreshold", NacosStringOps::valueOf(serviceInfo2.getProtectThreshold()));
     }
-    if (serviceInfo2.isSelectorSet()) {
-        ParamUtils::addKV(target, "selector", "");//TODO
-    }
     if (serviceInfo2.isMetadataSet()) {
-        ParamUtils::addKV(target, "metadata", "");//TODO
+        ParamUtils::addKV(target, "metadata", JSON::toJSONString(serviceInfo2.getMetadata()));
     }
 }
 
-bool NamingProxy::createServiceInfo(const NacosString &serviceName, const ServiceInfo2 &serviceInfo2) throw(NacosException) {
+bool NamingProxy::createServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Selector *selector) throw(NacosException) {
     list<NacosString> params;
-    assembleServiceInfoRequest(params, serviceName, serviceInfo2);
+    assembleServiceInfoRequest(params, serviceInfo2);
+    if (selector) {
+        ParamUtils::addKV(params, "selector", selector->getSelectorString());
+    }
     NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::POST);
-
     return areYouOk(result);
 }
 
-bool NamingProxy::updateServiceInfo(const NacosString &serviceName, const ServiceInfo2 &serviceInfo2) throw(NacosException) {
+bool NamingProxy::updateServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Selector *selector) throw(NacosException) {
     list<NacosString> params;
-    assembleServiceInfoRequest(params, serviceName, serviceInfo2);
+    assembleServiceInfoRequest(params, serviceInfo2);
+    if (selector) {
+        ParamUtils::addKV(params, "selector", selector->getSelectorString());
+    }
     NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::PUT);
-
     return areYouOk(result);
 }
 
@@ -450,7 +453,7 @@ bool NamingProxy::updateServiceInstance(const Instance &instance) throw(NacosExc
     }
 
     if (instance.metadata.size() > 0) {
-        ParamUtils::addKV(params, "metadata", "");//TODO
+        ParamUtils::addKV(params, "metadata", JSON::toJSONString(instance.metadata));
     }
     //TODO
     //weight

@@ -2,6 +2,7 @@
 #include "src/http/HTTPCli.h"
 #include "src/config/SnapShotSwitch.h"
 #include "src/config/JVMUtil.h"
+#include "naming/ServiceInfo2.h"
 #include "utils/UtilAndComs.h"
 #include "utils/UuidUtils.h"
 #include "utils/RandomUtils.h"
@@ -11,6 +12,7 @@ namespace nacos{
 bool Init::inited = false;
 bool SnapShotSwitch::isSnapShot = true;
 bool JVMUtil::_isMultiInstance = false;
+ServiceInfo2 ServiceInfo2::nullServiceInfo2;
 
 void Init::doInit() {
     if (inited) {
@@ -23,6 +25,7 @@ void Init::doInit() {
     UtilAndComs::Init();
     RandomUtils::Init();
     UuidUtils::Init();
+    ServiceInfo2::nullServiceInfo2.setNull(true);
 }
 
 void Init::doDeinit() {

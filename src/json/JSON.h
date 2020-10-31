@@ -24,7 +24,7 @@ class JSON {
 public:
     static NacosString toJSONString(BeatInfo &beatInfo);
 
-    static NacosString toJSONString(std::map <NacosString, NacosString> &mapinfo);
+    static NacosString toJSONString(const std::map <NacosString, NacosString> &mapinfo);
 
     static void Map2JSONObject(rapidjson::Value &jsonOb, std::map <NacosString, NacosString> &mapinfo);
 

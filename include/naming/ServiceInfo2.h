@@ -15,6 +15,8 @@ public:
     NacosString getType() const { return type; };
 
     void setType(const NacosString &_type) { type = _type; };
+
+    virtual NacosString getSelectorString() = 0;
 };
 } /*naming*/
 
@@ -38,7 +40,7 @@ private:
     NacosString name;
 
     bool selectorIsSet;
-    naming::Selector selector;
+    NacosString selector;
 
     bool protectThresholdIsSet;
     double protectThreshold;
@@ -49,7 +51,7 @@ private:
     bool metadataIsSet;
     std::map<NacosString, NacosString> metadata;
 public:
-
+    static ServiceInfo2 nullServiceInfo2;
     ServiceInfo2() {
         nullObj = true;
         namespaceIdIsSet = false;
@@ -64,7 +66,7 @@ public:
     void setNull(bool _isNull) { nullObj = _isNull; };
     bool isNullObject() const { return nullObj; };
 
-    NacosString getNamespaceId() const {
+    const NacosString &getNamespaceId() const {
         return namespaceId;
     }
 
@@ -73,7 +75,7 @@ public:
         ServiceInfo2::namespaceId = namespaceId;
     }
 
-    NacosString getGroupName() const {
+    const NacosString &getGroupName() const {
         return groupName;
     }
 
@@ -82,7 +84,7 @@ public:
         ServiceInfo2::groupName = groupName;
     }
 
-    NacosString getName() const {
+    const NacosString &getName() const {
         return name;
     }
 
@@ -91,11 +93,11 @@ public:
         ServiceInfo2::name = name;
     }
 
-    naming::Selector getSelector() const {
+    const NacosString &getSelector() const {
         return selector;
     }
 
-    void setSelector(const naming::Selector &aSelector) {
+    void setSelector(const NacosString &aSelector) {
         selectorIsSet = true;
         selector = aSelector;
     }
@@ -109,7 +111,7 @@ public:
         ServiceInfo2::protectThreshold = protectThreshold;
     }
 
-    std::list<Cluster> getClusters() const {
+    const std::list<Cluster> &getClusters() const {
         return clusters;
     }
 
@@ -118,7 +120,7 @@ public:
         ServiceInfo2::clusters = clusters;
     }
 
-    std::map<std::string, std::string> getMetadata() const {
+    const std::map<std::string, std::string> &getMetadata() const {
         return metadata;
     }
 

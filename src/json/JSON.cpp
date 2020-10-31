@@ -22,10 +22,10 @@ NacosString documentToString(Document &d) {
     return result;
 }
 
-NacosString JSON::toJSONString(map <NacosString, NacosString> &mapinfo) {
+NacosString JSON::toJSONString(const map <NacosString, NacosString> &mapinfo) {
     Document d;
     d.SetObject();
-    for (map<NacosString, NacosString>::iterator it = mapinfo.begin(); it != mapinfo.end(); it++) {
+    for (map<NacosString, NacosString>::const_iterator it = mapinfo.begin(); it != mapinfo.end(); it++) {
         Value k;
         k.SetString(it->first.c_str(), d.GetAllocator());
         Value v;
@@ -357,10 +357,7 @@ ServiceInfo2 JSON::Json2ServiceInfo2(const NacosString &nacosString) throw(Nacos
     serviceInfo2.setName(name.GetString());
 
     const Value &selector = d["selector"];
-    markRequired(selector, "type");
-    Selector aselector;
-    aselector.setType(selector["type"].GetString());
-    serviceInfo2.setSelector(aselector);
+    serviceInfo2.setSelector(selector.GetString());
 
     markRequired(d, "protectThreshold");
     const Value &protectThreshold = d["protectThreshold"];
