@@ -40,7 +40,11 @@ ServiceInfo2 NacosNamingMaintainService::queryService
 }
 
 bool NacosNamingMaintainService::createService(const ServiceInfo2 &service, naming::Selector *selector) throw(NacosException) {
-    return _namingProxy->createServiceInfo(service, selector);
+    ServiceInfo2 parmServiceInfo = service;
+    if (!parmServiceInfo.isGroupNameSet()) {
+        parmServiceInfo.setGroupName(Constants::DEFAULT_GROUP);
+    }
+    return _namingProxy->createServiceInfo(parmServiceInfo, selector);
 }
 
 bool NacosNamingMaintainService::deleteService(const NacosString &serviceName, const NacosString &groupName) throw(NacosException) {

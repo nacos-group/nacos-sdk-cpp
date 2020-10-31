@@ -372,11 +372,20 @@ ServiceInfo2 JSON::Json2ServiceInfo2(const NacosString &nacosString) throw(Nacos
     const Value &protectThreshold = d["protectThreshold"];
     serviceInfo2.setProtectThreshold(protectThreshold.GetDouble());
 
+    //service info metadata
+    const Value &serviceMetadata = d["metadata"];
+    if (!serviceMetadata.IsObject()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing metadata for ServiceInfo2!");
+    }
+
+    serviceInfo2.setMetadata(parseMetadata(serviceMetadata));
+
     const Value &clusterlist = d["clusters"];
     if (!clusterlist.IsArray()) {
         throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing clusters for ServiceInfo2.clusters!");
     }
 
+    //cluster metadata
     for (SizeType i = 0; i < clusterlist.Size(); i++) {
         const Value &curClusterJson = clusterlist[i];
         Cluster curCluster;

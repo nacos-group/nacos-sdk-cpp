@@ -38,6 +38,8 @@ private:
 
     long _http_req_timeout;
     long _hb_fail_wait;//Time to wait when a heartbeat request fails (in ms)
+
+    static ListView<NacosString> nullResult;
 public:
     NamingProxy(HttpDelegate *httpDelegate, ServerListManager *serverListManager, AppConfigManager *appConfigManager);
 

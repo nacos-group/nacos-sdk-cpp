@@ -350,7 +350,11 @@ list<Instance> NacosNamingService::getInstanceWithPredicate
 ) throw(NacosException)
 {
     list<Instance> allInstances = getAllInstances(serviceName, groupName, clusters);
-    return predicate->select(allInstances);
+    if (predicate) {
+        return predicate->select(allInstances);
+    } else {
+        return allInstances;
+    }
 }
 
 list<Instance> NacosNamingService::getInstanceWithPredicate
@@ -361,7 +365,11 @@ list<Instance> NacosNamingService::getInstanceWithPredicate
 ) throw(NacosException)
 {
     list<Instance> allInstances = getAllInstances(serviceName, Constants::DEFAULT_GROUP, clusters);
-    return predicate->select(allInstances);
+    if (predicate) {
+        return predicate->select(allInstances);
+    } else {
+        return allInstances;
+    }
 }
 
 list<Instance> NacosNamingService::getInstanceWithPredicate
@@ -373,7 +381,11 @@ list<Instance> NacosNamingService::getInstanceWithPredicate
 {
     list<NacosString> clusters;
     list<Instance> allInstances = getAllInstances(serviceName, groupName, clusters);
-    return predicate->select(allInstances);
+    if (predicate) {
+        return predicate->select(allInstances);
+    } else {
+        return allInstances;
+    }
 }
 
 list<Instance> NacosNamingService::getInstanceWithPredicate
@@ -384,6 +396,10 @@ list<Instance> NacosNamingService::getInstanceWithPredicate
 {
     list<NacosString> clusters;
     list<Instance> allInstances = getAllInstances(serviceName, Constants::DEFAULT_GROUP, clusters);
-    return predicate->select(allInstances);
+    if (predicate) {
+        return predicate->select(allInstances);
+    } else {
+        return allInstances;
+    }
 }
 }//namespace nacos

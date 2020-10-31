@@ -98,9 +98,18 @@ bool testInstanceSelectors();
 bool testRandomByWeightSelector();
 
 bool testThreadLocal();
+
 bool testThreadLocalPtr();
+
 bool testThreadLocalPtrWithInitializer();
+
 bool testMaintainGetService();
+
+bool testMaintainUpdateService();
+
+bool testMaintainCreateService();
+
+bool testMaintainUpdateInstance();
 
 TestData testList1[] =
 TEST_ITEM_START
@@ -160,7 +169,10 @@ TEST_ITEM_START
     TEST_ITEM("Smoking test of ThreadLocal", testThreadLocal)
     TEST_ITEM("Smoking test of ThreadLocal(pointer)", testThreadLocalPtr)
     TEST_ITEM("Smoking test of ThreadLocal(pointer with initializer)", testThreadLocalPtrWithInitializer)
-    TEST_ITEM("MaintainService: getService", testMaintainGetService)
+    TEST_ITEM("MaintainService: testMaintainGetService", testMaintainGetService)
+    TEST_ITEM("MaintainService: testMaintainUpdateService", testMaintainUpdateService)
+    TEST_ITEM("MaintainService: testMaintainCreateService", testMaintainCreateService)
+    TEST_ITEM("MaintainService: testMaintainUpdateInstance", testMaintainUpdateInstance)
 TEST_ITEM_END
 
 int main() {

@@ -5,6 +5,8 @@ const NacosString NamingCommonParams::SERVICE_NAME = "serviceName";
 
 const NacosString NamingCommonParams::CLUSTER_NAME = "clusterName";
 
+const NacosString NamingCommonParams::HEALTHY = "healthy";
+
 const NacosString NamingCommonParams::NAMESPACE_ID = "namespaceId";
 
 const NacosString NamingCommonParams::GROUP_NAME = "groupName";

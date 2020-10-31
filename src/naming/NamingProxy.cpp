@@ -13,6 +13,9 @@
 using namespace std;
 
 namespace nacos{
+
+ListView<NacosString> NamingProxy::nullResult;
+
 NamingProxy::NamingProxy(HttpDelegate *httpDelegate, ServerListManager *_serverListManager, AppConfigManager *_appConfigManager) {
     log_debug("NamingProxy Constructor:\n"
               "namespace:%s, endpoint:%s, Servers:%s\n",
@@ -29,6 +32,7 @@ NamingProxy::NamingProxy(HttpDelegate *httpDelegate, ServerListManager *_serverL
     }
     log_debug("The serverlist:%s\n", _serverListManager->toString().c_str());
 
+    nullResult.setCount(0);
     _hb_fail_wait = atoi(appConfigManager->get(PropertyKeyConst::HB_FAIL_WAIT_TIME).c_str());
 }
 
@@ -90,7 +94,6 @@ NacosString NamingProxy::queryList(const NacosString &serviceName, const NacosSt
 
 NacosString
 NamingProxy::reqAPI(const NacosString &api, list <NacosString> &params, int method) throw(NacosException) {
-    ParamUtils::addKV(params, NamingCommonParams::NAMESPACE_ID, getNamespaceId());
     list <NacosServerInfo> servers = serverListManager->getServerList();
 
     if (serverListManager->getServerCount() == 0) {
@@ -275,8 +278,6 @@ ListView<NacosString> NamingProxy::getServiceList(int page, int pageSize, const 
         return JSON::Json2ServiceList(result);
     }
 
-    ListView<NacosString> nullResult;
-    nullResult.setCount(0);
     return nullResult;
 }
 
@@ -293,14 +294,13 @@ ServiceInfo2 NamingProxy::getServiceInfo(const NacosString &serviceName, const N
     }
     ParamUtils::addKV(params, NamingCommonParams::NAMESPACE_ID, getNamespaceId());
     NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::GET);
+    log_debug("NamingProxy::getServiceInfo: service info from server:%s\n", result.c_str());
 
     if (!isNull(result)) {
         return JSON::Json2ServiceInfo2(result);
     }
 
-    ServiceInfo2 serviceInfo2;
-    serviceInfo2.setNull(true);
-    return serviceInfo2;
+    return ServiceInfo2::nullServiceInfo2;
 }
 
 bool areYouOk(const NacosString &imVeryOk) {
@@ -355,6 +355,7 @@ bool NamingProxy::createServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Se
     if (selector) {
         ParamUtils::addKV(params, "selector", selector->getSelectorString());
     }
+
     NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::POST);
     return areYouOk(result);
 }
@@ -365,6 +366,7 @@ bool NamingProxy::updateServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Se
     if (selector) {
         ParamUtils::addKV(params, "selector", selector->getSelectorString());
     }
+
     NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::PUT);
     return areYouOk(result);
 }
