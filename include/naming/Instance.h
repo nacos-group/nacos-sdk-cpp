@@ -5,6 +5,8 @@
 #include "NacosString.h"
 
 namespace nacos{
+
+//a service instance
 class Instance {
 public:
     Instance & operator = (const Instance &rhs);
@@ -59,6 +61,10 @@ public:
     * Service information of instance
     */
     NacosString serviceName;
+
+    NacosString groupName;
+
+    NacosString namespaceId;
 
     /**
     * user extended attributes

@@ -10,6 +10,8 @@ public:
 
     static const NacosString CLUSTER_NAME;
 
+    static const NacosString HEALTHY;
+
     static const NacosString NAMESPACE_ID;
 
     static const NacosString GROUP_NAME;

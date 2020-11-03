@@ -12,6 +12,14 @@ BeatTask::BeatTask(BeatInfo &beatInfo, NamingProxy *namingProxy, BeatReactor *be
     incRef();
 };
 
+BeatInfo BeatTask::getBeatInfo() const {
+    return _beatInfo;
+}
+
+void BeatTask::setBeatInfo(const BeatInfo &beatInfo) {
+    _beatInfo = beatInfo;
+}
+
 void BeatTask::run() {
     long newInterval = _namingProxy->sendBeat(_beatInfo);
     _beatReactor->setClientBeatInterval(newInterval);

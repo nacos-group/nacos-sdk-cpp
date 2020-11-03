@@ -6,7 +6,7 @@
 #include "Debug.h"
 #include "utils/ParamUtils.h"
 
-namespace nacos{
+namespace nacos { namespace naming { namespace selectors {
 class RandomSelector : public Selector<Instance>{
 private:
 public:
@@ -24,6 +24,6 @@ public:
         return result;
     }
 };
-}//namespace nacos
+} /*selectors*/ } /*naming*/ }/*nacos*/
 
 #endif

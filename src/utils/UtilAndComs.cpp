@@ -1,7 +1,7 @@
 #include "utils/UtilAndComs.h"
 
 namespace nacos{
-NacosString UtilAndComs::VERSION = "Nacos-CPP-Client:v1.0.0";
+NacosString UtilAndComs::VERSION = "Nacos-CPP-Client:v1.0.1";
 
 NacosString UtilAndComs::UA_VERSION = "Nacos-CPP-Client:v1.0.0";
 

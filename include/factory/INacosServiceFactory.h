@@ -6,6 +6,7 @@
 #define NACOS_SDK_CPP_INACOSSERVICEFACTORY_H
 
 #include "naming/NamingService.h"
+#include "naming/NamingMaintainService.h"
 #include "config/ConfigService.h"
 #include "Properties.h"
 
@@ -19,6 +20,8 @@ public:
     virtual NamingService *CreateNamingService() = 0;
 
     virtual ConfigService *CreateConfigService() = 0;
+
+    virtual NamingMaintainService *CreateNamingMaintainService() = 0;
 
     ~INacosServiceFactory() {};
 };

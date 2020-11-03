@@ -70,6 +70,11 @@ public:
 
     virtual ~ThreadLocal() {
         log_debug("ThreadLocal::~ThreadLocal is called\n");
+        ObjectWrapper<T> *wrapper = getWrapper();
+        if (wrapper != NULL) {
+            wrapper->threadLocalObj->onDestroy(&wrapper->wrappedObject);
+            delete wrapper;
+        }
         pthread_key_delete(pthreadKey);
     }
 

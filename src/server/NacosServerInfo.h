@@ -9,6 +9,7 @@
 #include "NacosString.h"
 
 namespace nacos{
+//a instance of nacos naming service
 class NacosServerInfo {
 private:
     NacosString ip;

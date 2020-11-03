@@ -23,6 +23,9 @@ public:
 
     ~BeatTask();
 
+    void setBeatInfo(const BeatInfo &beatInfo);
+    BeatInfo getBeatInfo() const;
+
     int incRef() { return _refCount.inc(); };
 
     int decRef() { return _refCount.dec(); };

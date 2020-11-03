@@ -9,7 +9,7 @@
 
 #define BASIC_WEIGHT 65536
 
-namespace nacos{
+namespace nacos { namespace naming { namespace selectors {
 class RandomByWeightSelector : public Selector<Instance>{
 private:
 public:
@@ -46,6 +46,6 @@ public:
         return result;
     }
 };
-}//namespace nacos
+} /*selectors*/ } /*naming*/ }/*nacos*/
 
 #endif

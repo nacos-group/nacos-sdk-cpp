@@ -10,8 +10,8 @@
 #include "src/rapidjson/stringbuffer.h"
 #include "naming/Instance.h"
 #include "src/server/NacosServerInfo.h"
-#include "naming/NacosInstance.h"
 #include "naming/ListView.h"
+#include "naming/ServiceInfo2.h"
 
 /**
  * JSON
@@ -24,7 +24,7 @@ class JSON {
 public:
     static NacosString toJSONString(BeatInfo &beatInfo);
 
-    static NacosString toJSONString(std::map <NacosString, NacosString> &mapinfo);
+    static NacosString toJSONString(const std::map <NacosString, NacosString> &mapinfo);
 
     static void Map2JSONObject(rapidjson::Value &jsonOb, std::map <NacosString, NacosString> &mapinfo);
 
@@ -36,15 +36,18 @@ public:
 
     static Instance Json2Instance(const rapidjson::Value &jsonString) throw(NacosException);
 
+    static Instance Json2Instance(const NacosString &jsonString) throw(NacosException);
+
     static void markRequired(const rapidjson::Document &d, const NacosString &requiredField) throw(NacosException);
 
     static void markRequired(const rapidjson::Value &d, const NacosString &requiredField) throw(NacosException);
 
     static std::list<NacosServerInfo> Json2NacosServerInfo(const NacosString &nacosString) throw(NacosException);
 
+    static ServiceInfo2 Json2ServiceInfo2(const NacosString &nacosString) throw(NacosException);
+
     static ListView<NacosString> Json2ServiceList(const NacosString &nacosString) throw(NacosException);
 
-    static std::list<NacosInstance> Json2NacosInstanceList(const NacosString &nacosString) throw(NacosException);
 };
 }//namespace nacos
 

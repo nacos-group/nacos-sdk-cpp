@@ -259,6 +259,7 @@ void ServerListManager::stop() {
     started = false;
     if (_pullThread != NULL) {
         _pullThread->join();
+        _pullThread = NULL;
     }
 }
 

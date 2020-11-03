@@ -1,7 +1,6 @@
 #include <map>
 #include "NamingProxy.h"
 #include "naming/NamingCommonParams.h"
-#include "utils/ParamUtils.h"
 #include "utils/UtilAndComs.h"
 #include "utils/UuidUtils.h"
 #include "src/utils/NetUtils.h"
@@ -14,6 +13,9 @@
 using namespace std;
 
 namespace nacos{
+
+ListView<NacosString> NamingProxy::nullResult;
+
 NamingProxy::NamingProxy(HttpDelegate *httpDelegate, ServerListManager *_serverListManager, AppConfigManager *_appConfigManager) {
     log_debug("NamingProxy Constructor:\n"
               "namespace:%s, endpoint:%s, Servers:%s\n",
@@ -30,17 +32,14 @@ NamingProxy::NamingProxy(HttpDelegate *httpDelegate, ServerListManager *_serverL
     }
     log_debug("The serverlist:%s\n", _serverListManager->toString().c_str());
 
+    nullResult.setCount(0);
     _hb_fail_wait = atoi(appConfigManager->get(PropertyKeyConst::HB_FAIL_WAIT_TIME).c_str());
 }
 
 NamingProxy::~NamingProxy() {
     _httpDelegate = NULL;
     appConfigManager = NULL;
-    //TODO:refactor this deconstructing process to a function
-    if (serverListManager != NULL) {
-        delete serverListManager;
-        serverListManager = NULL;
-    }
+    serverListManager = NULL;
 }
 
 void NamingProxy::registerService(const NacosString &serviceName, const NacosString &groupName,
@@ -59,7 +58,6 @@ void NamingProxy::registerService(const NacosString &serviceName, const NacosStr
     ParamUtils::addKV(params, "enable", NacosStringOps::valueOf(instance.enabled));
     ParamUtils::addKV(params, "healthy", NacosStringOps::valueOf(instance.healthy));
     ParamUtils::addKV(params, "ephemeral", NacosStringOps::valueOf(instance.ephemeral));
-    //TODO:transfer metadata in JSON form
     ParamUtils::addKV(params, "metadata", JSON::toJSONString(instance.metadata));
 
     reqAPI(UtilAndComs::NACOS_URL_INSTANCE, params, IHttpCli::POST);
@@ -95,7 +93,6 @@ NacosString NamingProxy::queryList(const NacosString &serviceName, const NacosSt
 
 NacosString
 NamingProxy::reqAPI(const NacosString &api, list <NacosString> &params, int method) throw(NacosException) {
-    ParamUtils::addKV(params, NamingCommonParams::NAMESPACE_ID, getNamespaceId());
     list <NacosServerInfo> servers = serverListManager->getServerList();
 
     if (serverListManager->getServerCount() == 0) {
@@ -227,7 +224,7 @@ list <NacosString> NamingProxy::builderHeaders() {
     headers.push_back(UtilAndComs::VERSION);
 
     headers.push_back("User-Agent");
-    headers.push_back(UtilAndComs::VERSION);
+    headers.push_back(UtilAndComs::UA_VERSION);
 
     headers.push_back("Accept-Encoding");
     headers.push_back("gzip,deflate,sdch");
@@ -280,11 +277,98 @@ ListView<NacosString> NamingProxy::getServiceList(int page, int pageSize, const 
         return JSON::Json2ServiceList(result);
     }
 
-    ListView<NacosString> nullResult;
-    nullResult.setCount(0);
     return nullResult;
 }
 
+ServiceInfo2 NamingProxy::getServiceInfo(const NacosString &serviceName, const NacosString &groupName) throw(NacosException)
+{
+    log_debug("[NAMEPRXY] getServiceInfo request:serviceName=%s groupName=%s\n",
+              serviceName.c_str(), groupName.c_str());
+    list <NacosString> params;
+    ParamUtils::addKV(params, NamingCommonParams::SERVICE_NAME, serviceName);
+    if (!NacosStringOps::isNullStr(groupName)) {
+        ParamUtils::addKV(params, NamingCommonParams::GROUP_NAME, groupName);
+    } else {
+        ParamUtils::addKV(params, NamingCommonParams::GROUP_NAME, Constants::DEFAULT_GROUP);
+    }
+    ParamUtils::addKV(params, NamingCommonParams::NAMESPACE_ID, getNamespaceId());
+    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::GET);
+    log_debug("NamingProxy::getServiceInfo: service info from server:%s\n", result.c_str());
+
+    if (!isNull(result)) {
+        return JSON::Json2ServiceInfo2(result);
+    }
+
+    return ServiceInfo2::nullServiceInfo2;
+}
+
+bool areYouOk(const NacosString &imVeryOk) {
+    if (imVeryOk.compare("ok") == 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * removes a service info from nacos server
+ * please note that the operation will succeed ONLY WHEN there's NO instance of the service specified
+ *
+ * @param serviceName service name
+ * @param groupName   group name
+ * @return true if operation succeeds
+ *         otherwise return false
+ * @throws IOException IOException
+ */
+bool NamingProxy::deleteServiceInfo(const NacosString &serviceName, const NacosString &groupName) throw(NacosException) {
+    list<NacosString> params;
+    ParamUtils::addKV(params, NamingCommonParams::SERVICE_NAME, serviceName);
+    ParamUtils::addKV(params, NamingCommonParams::GROUP_NAME, groupName);
+    ParamUtils::addKV(params, NamingCommonParams::NAMESPACE_ID, getNamespaceId());
+    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::DELETE);
+
+    return areYouOk(result);
+}
+
+void assembleServiceInfoRequest(list<NacosString> &target, const ServiceInfo2 &serviceInfo2) {
+    if (serviceInfo2.isNameSet()) {
+        ParamUtils::addKV(target, NamingCommonParams::SERVICE_NAME, serviceInfo2.getName());
+    }
+    if (serviceInfo2.isGroupNameSet()) {
+        ParamUtils::addKV(target, NamingCommonParams::GROUP_NAME, serviceInfo2.getGroupName());
+    }
+    if (serviceInfo2.isNamespaceIdSet()) {
+        ParamUtils::addKV(target, NamingCommonParams::NAMESPACE_ID, serviceInfo2.getNamespaceId());
+    }
+    if (serviceInfo2.isProtectThresholdSet()) {
+        ParamUtils::addKV(target, "protectThreshold", NacosStringOps::valueOf(serviceInfo2.getProtectThreshold()));
+    }
+    if (serviceInfo2.isMetadataSet()) {
+        ParamUtils::addKV(target, "metadata", JSON::toJSONString(serviceInfo2.getMetadata()));
+    }
+}
+
+bool NamingProxy::createServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Selector *selector) throw(NacosException) {
+    list<NacosString> params;
+    assembleServiceInfoRequest(params, serviceInfo2);
+    if (selector) {
+        ParamUtils::addKV(params, "selector", selector->getSelectorString());
+    }
+
+    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::POST);
+    return areYouOk(result);
+}
+
+bool NamingProxy::updateServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Selector *selector) throw(NacosException) {
+    list<NacosString> params;
+    assembleServiceInfoRequest(params, serviceInfo2);
+    if (selector) {
+        ParamUtils::addKV(params, "selector", selector->getSelectorString());
+    }
+
+    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::PUT);
+    return areYouOk(result);
+}
 
 bool NamingProxy::serverHealthy() {
     list<NacosString> params;
@@ -297,5 +381,85 @@ bool NamingProxy::serverHealthy() {
 
     NacosString healthy = result.substr(pos + healthyTag.length(), 2);
     return healthy == "UP";
+}
+
+/**
+ * gets one service instance info from nacos server
+ *
+ * @param serviceName service name
+ * @param ip          ip address
+ * @param port        port
+ * @param params      optional parameters, options are:
+ * groupName
+ * namespaceId
+ * cluster
+ * healthyOnly
+ * ephemeral
+ * @return Instance info if succeed, nullObj if fails
+ * @throws NacosException NacosException
+ */
+Instance NamingProxy::getServiceInstance
+(
+    const NacosString &serviceName,
+    const NacosString &ip,
+    int port,
+    const std::map<NacosString, NacosString> &params
+)
+throw(NacosException) {
+    list<NacosString> paramsList;
+    ParamUtils::addKV(paramsList, NamingCommonParams::SERVICE_NAME, serviceName);
+    ParamUtils::addKV(paramsList, "ip", ip);
+    ParamUtils::addKV(paramsList, "port", NacosStringOps::valueOf(port));
+
+    for (map<NacosString, NacosString>::const_iterator it = params.begin();
+        it != params.end(); it++) {
+        ParamUtils::addKV(paramsList, it->first, it->second);
+    }
+
+    if (params.count(NamingCommonParams::NAMESPACE_ID) == 0) {
+        ParamUtils::addKV(paramsList, NamingCommonParams::NAMESPACE_ID, getNamespaceId());
+    }
+
+    if (params.count(NamingCommonParams::GROUP_NAME) == 0) {
+        ParamUtils::addKV(paramsList, NamingCommonParams::GROUP_NAME, Constants::DEFAULT_GROUP);
+    }
+
+    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/instance", paramsList, IHttpCli::GET);
+
+    return JSON::Json2Instance(result);
+}
+
+bool NamingProxy::updateServiceInstance(const Instance &instance) throw(NacosException) {
+    list<NacosString> params;
+    ParamUtils::addKV(params, NamingCommonParams::SERVICE_NAME, instance.serviceName);
+    ParamUtils::addKV(params, "ip", instance.ip);
+    ParamUtils::addKV(params, "port", NacosStringOps::valueOf(instance.port));
+
+    if (NacosStringOps::isNullStr(instance.groupName)) {
+        ParamUtils::addKV(params, NamingCommonParams::GROUP_NAME, Constants::DEFAULT_GROUP);
+    } else {
+        ParamUtils::addKV(params, NamingCommonParams::GROUP_NAME, instance.groupName);
+    }
+
+    if (NacosStringOps::isNullStr(instance.namespaceId)) {
+        ParamUtils::addKV(params, NamingCommonParams::NAMESPACE_ID, getNamespaceId());
+    } else {
+        ParamUtils::addKV(params, NamingCommonParams::NAMESPACE_ID, instance.namespaceId);
+    }
+
+    if (!NacosStringOps::isNullStr(instance.clusterName)) {
+        ParamUtils::addKV(params, NamingCommonParams::CLUSTER_NAME, instance.clusterName);
+    }
+
+    if (instance.metadata.size() > 0) {
+        ParamUtils::addKV(params, "metadata", JSON::toJSONString(instance.metadata));
+    }
+    ParamUtils::addKV(params, "ephemeral", NacosStringOps::valueOf(instance.ephemeral));
+    //TODO:weight is optional
+    ParamUtils::addKV(params, "weight", NacosStringOps::valueOf(instance.weight));
+
+    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/instance", params, IHttpCli::PUT);
+
+    return areYouOk(result);
 }
 }//namespace nacos

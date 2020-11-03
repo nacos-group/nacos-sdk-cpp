@@ -11,6 +11,7 @@ private:
     int count;
     std::list<T> data;
 public:
+    ListView() { count = 0; };
     int getCount() const { return count; };
     std::list<T> getData() const { return data; };
     void setCount(int _count) { count = _count; };

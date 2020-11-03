@@ -20,7 +20,7 @@ private:
     int _threadCount;
     ThreadPool *_threadPool;
     Thread *_beatMaster;
-    Mutex _beatInfoLock;
+    Mutex _beatInfoLock;//TODO:rwlock
     std::map<NacosString, BeatTask *> _beatInfoList;
     volatile bool _stop;
     volatile long _clientBeatInterval;
@@ -61,7 +61,12 @@ public:
 
     void addBeatInfo(const NacosString &serviceName, BeatInfo &beatInfo);
 
-    void removeBeatInfo(const NacosString &serviceName, const NacosString &ip, int port);
+
+    bool modifyBeatInfo(const NacosString &serviceName, BeatInfo &beatInfo);
+
+    bool getBeatInfo(const NacosString &serviceName, const NacosString &ip, int port, BeatInfo &beatInfo);
+
+    bool removeBeatInfo(const NacosString &serviceName, const NacosString &ip, int port);
 
     //NOTICE:Should be invoked ONLY when the working threads are ALL STOPPED
     void removeAllBeatInfo();

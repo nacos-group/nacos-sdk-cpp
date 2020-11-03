@@ -11,9 +11,10 @@
  */
 using namespace std;
 using namespace rapidjson;
+using nacos::naming::Selector;
 
 namespace nacos{
-NacosString documentToString(Document &d) {
+NacosString documentToString(const Document &d) {
     StringBuffer buffer;
     Writer <StringBuffer> writer(buffer);
     d.Accept(writer);
@@ -21,10 +22,18 @@ NacosString documentToString(Document &d) {
     return result;
 }
 
-NacosString JSON::toJSONString(map <NacosString, NacosString> &mapinfo) {
+NacosString valueToString(const Value &d) {
+    StringBuffer buffer;
+    Writer <StringBuffer> writer(buffer);
+    d.Accept(writer);
+    NacosString result = buffer.GetString();
+    return result;
+}
+
+NacosString JSON::toJSONString(const map <NacosString, NacosString> &mapinfo) {
     Document d;
     d.SetObject();
-    for (map<NacosString, NacosString>::iterator it = mapinfo.begin(); it != mapinfo.end(); it++) {
+    for (map<NacosString, NacosString>::const_iterator it = mapinfo.begin(); it != mapinfo.end(); it++) {
         Value k;
         k.SetString(it->first.c_str(), d.GetAllocator());
         Value v;
@@ -133,6 +142,59 @@ Instance JSON::Json2Instance(const Value &host) throw(NacosException) {
     JSONObject2Map(mtdata, metadata);
 
     theinstance.metadata = mtdata;
+
+    return theinstance;
+}
+
+Instance JSON::Json2Instance(const NacosString &jsonString) throw(NacosException) {
+    Document d;
+    d.Parse(jsonString.c_str());
+
+    Instance theinstance;
+
+    markRequired(d, "instanceId");
+    const Value &instanceId = d["instanceId"];
+    theinstance.instanceId = instanceId.GetString();
+
+    markRequired(d, "port");
+    const Value &port = d["port"];
+    if (!port.IsInt()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing port for Instance!");
+    }
+    theinstance.port = port.GetInt();
+
+    markRequired(d, "ip");
+    const Value &ip = d["ip"];
+    theinstance.ip = ip.GetString();
+
+    markRequired(d, "weight");
+    const Value &weight = d["weight"];
+    if (!weight.IsDouble()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing weight for Instance!");
+    }
+    theinstance.weight = weight.GetDouble();
+
+    markRequired(d, "metadata");
+    const Value &metadata = d["metadata"];
+
+    std::map <NacosString, NacosString> mtdata;
+    JSONObject2Map(mtdata, metadata);
+    theinstance.metadata = mtdata;
+
+    markRequired(d, "healthy");
+    const Value &healthy = d["healthy"];
+    if (!healthy.IsBool()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing healthy for Instance!");
+    }
+    theinstance.healthy = healthy.GetBool();
+
+    markRequired(d, "service");
+    const Value &service = d["service"];
+    theinstance.serviceName = service.GetString();
+
+    markRequired(d, "clusterName");
+    const Value &clusterName = d["clusterName"];
+    theinstance.clusterName = clusterName.GetString();
 
     return theinstance;
 }
@@ -276,39 +338,64 @@ ListView<NacosString> JSON::Json2ServiceList(const NacosString &nacosString) thr
     return serviceList;
 }
 
-NacosInstance parseOneNacosInstance(const Value &curSvr) {
-    NacosInstance res;
-    res.setIp(curSvr["ip"].GetString());
-    res.setPort(curSvr["port"].GetInt());
-    res.setState(curSvr["state"].GetString());
+map<NacosString, NacosString> parseMetadata(const Value &value) {
+    map<NacosString, NacosString> metadata;
 
-    const Value &extendInfo = curSvr["extendInfo"];
-    res.setAdWeight(extendInfo["adWeight"].GetFloat());
-    res.setRaftPort(curSvr["raftPort"].GetInt());
-    res.setSite(extendInfo["site"].GetString());
-    res.setWeight(extendInfo["weight"].GetFloat());
+    for (Value::ConstMemberIterator iter = value.MemberBegin();
+        iter != value.MemberEnd(); ++iter){
+        metadata[iter->name.GetString()] = iter->value.GetString();
+    }
 
-    res.setAddress(curSvr["address"].GetString());
-    res.setFailAccessCnt(curSvr["failAccessCnt"].GetInt());
-    return res;
+    return metadata;
 }
 
-list<NacosInstance> JSON::Json2NacosInstanceList(const NacosString &nacosString) throw(NacosException){
-    list<NacosInstance> nacosInstanceList;
+ServiceInfo2 JSON::Json2ServiceInfo2(const NacosString &nacosString) throw(NacosException) {
+    ServiceInfo2 serviceInfo2;
     Document d;
     d.Parse(nacosString.c_str());
-    markRequired(d, "servers");
-    const Value &servers = d["servers"];
-    if (!servers.IsArray()) {
-        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing servers for NacosInstance!");
+
+    markRequired(d, "groupName");
+    markRequired(d, "namespaceId");
+    markRequired(d, "name");
+    const Value &groupName = d["groupName"];
+    const Value &namespaceId = d["namespaceId"];
+    const Value &name = d["name"];
+    serviceInfo2.setGroupName(groupName.GetString());
+    serviceInfo2.setNamespaceId(namespaceId.GetString());
+    serviceInfo2.setName(name.GetString());
+
+    const Value &selector = d["selector"];
+
+    serviceInfo2.setSelector(valueToString(selector));
+
+    markRequired(d, "protectThreshold");
+    const Value &protectThreshold = d["protectThreshold"];
+    serviceInfo2.setProtectThreshold(protectThreshold.GetDouble());
+
+    //service info metadata
+    const Value &serviceMetadata = d["metadata"];
+    if (!serviceMetadata.IsObject()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing metadata for ServiceInfo2!");
     }
 
-    for (SizeType i = 0; i < servers.Size(); i++) {
-        const Value &curSvr = servers[i];
-        NacosInstance curNacosInstance = parseOneNacosInstance(curSvr);
-        nacosInstanceList.push_back(curNacosInstance);
+    serviceInfo2.setMetadata(parseMetadata(serviceMetadata));
+
+    const Value &clusterlist = d["clusters"];
+    if (!clusterlist.IsArray()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing clusters for ServiceInfo2.clusters!");
     }
 
-    return nacosInstanceList;
+    //cluster metadata
+    for (SizeType i = 0; i < clusterlist.Size(); i++) {
+        const Value &curClusterJson = clusterlist[i];
+        Cluster curCluster;
+        curCluster.setName(curClusterJson["name"].GetString());
+        curCluster.setMetadata(parseMetadata(curClusterJson["metadata"]));
+        HealthChecker healthChecker;
+        curCluster.setHealthChecker(healthChecker);
+    }
+
+    return serviceInfo2;
 }
+
 }//namespace nacos

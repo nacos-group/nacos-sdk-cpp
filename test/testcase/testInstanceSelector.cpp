@@ -19,6 +19,7 @@
 
 using namespace std;
 using namespace nacos;
+using namespace nacos::naming::selectors;
 
 bool testInstanceSelectors() {
     cout << "in function testInstanceSelectors" << endl;
