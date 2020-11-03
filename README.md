@@ -1,6 +1,6 @@
 <img src="https://github.com/alibaba/nacos/blob/develop/doc/Nacos_Logo.png" width="50%" height="50%" /> 
 
-[中文版本说明点这里](https://github.com/nacos-group/nacos-sdk-cpp/blob/master/README_zh_CN.md)
+[中文版本说明请点这里](https://github.com/nacos-group/nacos-sdk-cpp/blob/master/README_zh_CN.md)
 
 # Nacos-sdk-cpp
 
