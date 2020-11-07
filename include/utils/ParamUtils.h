@@ -14,7 +14,7 @@ namespace nacos{
 class ParamUtils {
 public:
     template<typename T>
-    static T getNthElem(const std::list <T> &parm, size_t i) {
+    static const T &getNthElem(const std::list <T> &parm, size_t i) {
         assert(parm.size() > i);
         typename std::list<T>::const_iterator it = parm.begin();
         for (size_t skipper = 0; skipper < i; skipper++) {

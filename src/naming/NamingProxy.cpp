@@ -107,7 +107,7 @@ NamingProxy::reqAPI(const NacosString &api, list <NacosString> &params, int meth
         log_debug("selected_server:%d\n", selectedServer);
 
         for (size_t i = 0; i < servers.size(); i++) {
-            NacosServerInfo server = ParamUtils::getNthElem(servers, selectedServer);
+            const NacosServerInfo &server = ParamUtils::getNthElem(servers, selectedServer);
             log_debug("Trying to access server:%s\n", server.toString().c_str());
             try {
                 return callServer(api, params, server.getCompleteAddress(), method);

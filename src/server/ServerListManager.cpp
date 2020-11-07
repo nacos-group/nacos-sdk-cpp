@@ -141,7 +141,7 @@ list <NacosServerInfo> ServerListManager::tryPullServerListFromNacosServer() thr
     NacosString errmsg;
     for (size_t i = 0; i < serverList.size(); i++) {
         size_t selectedServer = rand() % maxSvrSlot;
-        NacosServerInfo server = ParamUtils::getNthElem(serverList, selectedServer);
+        const NacosServerInfo &server = ParamUtils::getNthElem(serverList, selectedServer);
         log_debug("selected_server:%d\n", selectedServer);
         log_debug("Trying to access server:%s\n", server.getCompleteAddress().c_str());
         try {
