@@ -54,6 +54,8 @@ public:
 
     static const NacosString NACOS_LOG_PATH;
 
+    static const int NACOS_DEFAULT_PORT = 8848;
+
     /*public static class SystemEnv {
 
         static const NacosString ALIBABA_ALIWARE_ENDPOINT_PORT = "ALIBABA_ALIWARE_ENDPOINT_PORT";

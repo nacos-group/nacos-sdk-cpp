@@ -10,8 +10,10 @@
 
 namespace nacos{
 //a instance of nacos naming service
+
 class NacosServerInfo {
 private:
+    int mode;//1 - http/2 - https
     NacosString ip;
     int port;
     NacosString site;
@@ -22,6 +24,19 @@ private:
     NacosString lastRefTimeStr;
     NacosString key;
 public:
+    enum MODE {
+        mode_http = 1,
+        mode_http_safe
+    };
+
+    int getMode() const {
+        return mode;
+    }
+
+    void setMode(int mode) {
+        NacosServerInfo::mode = mode;
+    }
+
     const NacosString getIp() const {
         return ip;
     }

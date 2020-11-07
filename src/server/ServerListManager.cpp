@@ -11,18 +11,41 @@ using namespace std;
 
 namespace nacos{
 void ServerListManager::addToSrvList(NacosString &address) {
-    //If the address doesn't contain port, add 8848 as the default port for it
-    if (address.find(':') == std::string::npos) {
+    address = ParamUtils::trim(address);
+    if (address.find("http://") == 0 ||
+            address.find("https://") == 0) {
+        size_t startPos = address.find(':');//4=http,5=https
+        //use http://someaddress[:port] as server address
+        NacosString ip = address;
+        int port = PropertyKeyConst::NACOS_DEFAULT_PORT;
+        size_t pos = address.find_last_of(':');
+        if (pos != 4 && pos != 5) {
+            NacosString portStr = address.substr(pos + 1);
+            port = atoi(portStr.c_str());
+            ip = address.substr(0, pos);
+        }
         NacosServerInfo curServer;
-        curServer.setKey(address + ":8848");
+        curServer.setKey(address);
         curServer.setAlive(true);
-        curServer.setIp(address);
-        //TODO:dynamically read default port, don't use hard-coded value
-        curServer.setPort(8848);
+        curServer.setIp(ip);
+        curServer.setPort(port);
         curServer.setWeight(1.0);
         curServer.setAdWeight(1.0);
+        curServer.setMode(startPos == 4 ? NacosServerInfo::mode_http : NacosServerInfo::mode_http_safe);
+        serverList.push_back(curServer);
+    } else if (address.find(':') == std::string::npos) {
+        //If the address doesn't contain port, add 8848 as the default port for it
+        NacosServerInfo curServer;
+        curServer.setKey(address + ":" + NacosStringOps::valueOf(PropertyKeyConst::NACOS_DEFAULT_PORT));
+        curServer.setAlive(true);
+        curServer.setIp(address);
+        curServer.setPort(PropertyKeyConst::NACOS_DEFAULT_PORT);
+        curServer.setWeight(1.0);
+        curServer.setAdWeight(1.0);
+        curServer.setMode(NacosServerInfo::mode_http);
         serverList.push_back(curServer);
     } else {
+        //user specified address & port
         vector <NacosString> explodedAddress;
         ParamUtils::Explode(explodedAddress, address, ':');
         NacosServerInfo curServer;
@@ -32,6 +55,7 @@ void ServerListManager::addToSrvList(NacosString &address) {
         curServer.setPort(atoi(explodedAddress[1].c_str()));
         curServer.setWeight(1.0);
         curServer.setAdWeight(1.0);
+        curServer.setMode(NacosServerInfo::mode_http);
         serverList.push_back(curServer);
     }
 }
