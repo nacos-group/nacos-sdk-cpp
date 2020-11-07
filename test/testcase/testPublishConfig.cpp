@@ -32,6 +32,7 @@ bool testPublishConfig() {
             int retry = 0;
             ss = n->getConfig(key_s, NULLSTR, 1000);
             while (!(ss == val_s) && retry++ < 10) {
+                sleep(1);
                 ss = n->getConfig(key_s, NULLSTR, 1000);
             }
 
