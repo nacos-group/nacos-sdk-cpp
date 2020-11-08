@@ -20,7 +20,7 @@ bool testGetConfig() {
     try {
         ss = n->getConfig("k", NULLSTR, 1000);
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout <<
              "Request failed with curl code:" << e.errorcode() << endl <<
              "Reason:" << e.what() << endl;
@@ -57,7 +57,7 @@ bool testInvalidConfig() {
         ResourceGuard <ConfigService> _serviceFactory(n);
         ss = n->getConfig("k", NULLSTR, 1000);
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         NacosString errmsgShouldBe = "endpoint is blank";
         if (errmsgShouldBe == e.what()) {
             return true;

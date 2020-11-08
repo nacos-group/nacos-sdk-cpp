@@ -43,7 +43,7 @@ bool testNamingProxySmokeTest() {
             namingProxy->deregisterService(serviceName, theinstance);
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "Exception caught during deregistering service, raison:" << e.what() << endl;
 
         return false;
@@ -58,7 +58,7 @@ bool testNamingProxySmokeTest() {
             sleep(1);
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "Exception caught during registering service, raison:" << e.what() << endl;
 
         return false;
@@ -84,7 +84,7 @@ bool testNamingProxySmokeTest() {
             namingProxy->deregisterService(serviceName, theinstance);
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "Exception caught during cleaning the test environment, raison:" << e.what() << endl;
 
         return false;
@@ -110,7 +110,7 @@ bool testNamingProxyServerHealthy() {
     try {
         healthy = namingProxy->serverHealthy();
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "Exception caught during deregistering service, raison:" << e.what() << endl;
 
         return false;
@@ -159,7 +159,7 @@ bool testNamingServiceRegister() {
             }
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
         return false;
     }

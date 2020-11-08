@@ -42,7 +42,7 @@ bool testAddListener() {
         n->addListener("k", NULLSTR, thelistener);
         bSucc = n->publishConfig("k", NULLSTR, "hahaha");
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout <<
              "Failed to add listener" << endl <<
              "Reason:" << e.what() << endl;

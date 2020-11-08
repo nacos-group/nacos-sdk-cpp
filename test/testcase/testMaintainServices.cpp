@@ -32,7 +32,7 @@ bool testMaintainGetService() {
         cout << "service name got from server:" << res.getName() << endl;
         SHOULD_BE_TRUE(res.getName().compare("MaintainTestService") == 0, "Service name should be MaintainTestService");
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while getting service, raison:" << e.what() << endl;
         return false;
     }
@@ -64,7 +64,7 @@ bool testMaintainUpdateService() {
         ServiceInfo2 serviceInfoQuery = maintainService->queryService("MaintainTestService", NULLSTR);
         SHOULD_BE_TRUE(serviceInfoQuery.getProtectThreshold() - 2.0 < 1e-9, "protect threshold should be 2.0D");
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while updating service, raison:" << e.what() << endl;
         return false;
     }
@@ -117,7 +117,7 @@ bool testMaintainCreateService() {
         SHOULD_BE_TRUE(deleteFunctionality, "delete should be successful");
 
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while updating service, raison:" << e.what() << endl;
         return false;
     }

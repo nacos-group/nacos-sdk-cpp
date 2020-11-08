@@ -47,7 +47,7 @@ bool testEndpointWithNamingProxy() {
             namingSvc->registerInstance(serviceName, instance);
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
         return false;
     }
@@ -62,7 +62,7 @@ bool testEndpointWithNamingProxy() {
             sleep(1);
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
         return false;
     }

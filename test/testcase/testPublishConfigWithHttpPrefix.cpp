@@ -40,7 +40,7 @@ bool testPublishConfigWithHttpPrefix() {
                 throw NacosException(0, "getConfig() failed.");
             }
         }
-        catch (NacosException e) {
+        catch (NacosException &e) {
             cout <<
                  "Request failed with curl code:" << e.errorcode() << endl <<
                  "Reason:" << e.what() << endl;

@@ -53,7 +53,7 @@ bool testMaintainUpdateInstance() {
         } catch (exception &ignore) { /*We may come across service not exist exception, just ignore*/ }
         return true;
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while testing, raison:" << e.what() << endl;
         return false;
     }

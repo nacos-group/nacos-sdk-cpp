@@ -51,7 +51,7 @@ bool testInstanceSelectors() {
         }
         res = namingSvc->getInstanceWithPredicate("TestNamingService0", &randomSelector);
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while getting service names, raison:" << e.what() << endl;
         return false;
     }
@@ -94,7 +94,7 @@ bool testRandomByWeightSelector()
             namingSvc->registerInstance(serviceName, instance);
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
         return false;
     }

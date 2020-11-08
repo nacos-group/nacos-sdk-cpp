@@ -31,7 +31,7 @@ bool testGetServiceNames() {
     try {
         res = namingSvc->getServiceList(1, 10);
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while getting service names, raison:" << e.what() << endl;
         return false;
     }
