@@ -31,6 +31,10 @@ NacosString NacosStringOps::valueOf(T val) {
 
     return NULLSTR;
 }
+
+template<>
+NacosString NacosStringOps::valueOf<bool>(bool val);
+
 }//namespace nacos
 
 #endif
