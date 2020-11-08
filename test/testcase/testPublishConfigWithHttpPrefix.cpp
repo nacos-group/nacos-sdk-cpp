@@ -14,7 +14,7 @@ using namespace nacos;
 bool testPublishConfigWithHttpPrefix() {
     cout << "in function testPublishConfigWithHttpPrefix" << endl;
     Properties props;
-    props[PropertyKeyConst::SERVER_ADDR] = "http://localhost:8848,http://127.0.0.1:8848";
+    props[PropertyKeyConst::SERVER_ADDR] = "htTp://localhost:8848,HtTP://127.0.0.1:8848";
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();

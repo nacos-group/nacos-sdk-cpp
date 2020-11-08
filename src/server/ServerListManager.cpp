@@ -12,8 +12,9 @@ using namespace std;
 namespace nacos{
 void ServerListManager::addToSrvList(NacosString &address) {
     address = ParamUtils::trim(address);
-    if (address.find("http://") == 0 ||
-            address.find("https://") == 0) {
+    NacosString address_lc = ParamUtils::toLower(address);
+    if (address_lc.find("http://") == 0 ||
+            address_lc.find("https://") == 0) {
         size_t startPos = address.find(':');//4=http,5=https
         //use http://someaddress[:port] as server address
         NacosString ip = address;

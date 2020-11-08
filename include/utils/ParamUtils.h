@@ -192,6 +192,23 @@ public:
         list.push_back(key);
         list.push_back(value);
     }
+
+    static NacosString toLower(const NacosString &str) {
+        NacosString lowerCaseString;
+        for (NacosString::const_iterator it = str.begin(); it != str.end(); it++) {
+            lowerCaseString.push_back(tolower(*it));
+        }
+
+        return lowerCaseString;
+    }
+
+    static bool equals_ic(const NacosString &str1, const NacosString &str2) {
+
+        NacosString lcase_str1 = toLower(str1);
+        NacosString lcase_str2 = toLower(str2);
+
+        return lcase_str1 == lcase_str2;
+    }
 };
 }//namespace nacos
 
