@@ -37,9 +37,9 @@ void ServerListManager::addToSrvList(NacosString &address) {
     } else if (address.find(':') == std::string::npos) {
         //If the address doesn't contain port, add 8848 as the default port for it
         NacosServerInfo curServer;
-        curServer.setKey(address + ":" + NacosStringOps::valueOf(PropertyKeyConst::NACOS_DEFAULT_PORT));
+        curServer.setKey("http://" + address + ":" + NacosStringOps::valueOf(PropertyKeyConst::NACOS_DEFAULT_PORT));
         curServer.setAlive(true);
-        curServer.setIp(address);
+        curServer.setIp("http://" + address);
         curServer.setPort(PropertyKeyConst::NACOS_DEFAULT_PORT);
         curServer.setWeight(1.0);
         curServer.setAdWeight(1.0);
@@ -50,9 +50,9 @@ void ServerListManager::addToSrvList(NacosString &address) {
         vector <NacosString> explodedAddress;
         ParamUtils::Explode(explodedAddress, address, ':');
         NacosServerInfo curServer;
-        curServer.setKey(address);
+        curServer.setKey("http://" + address);
         curServer.setAlive(true);
-        curServer.setIp(explodedAddress[0]);
+        curServer.setIp("http://" + explodedAddress[0]);
         curServer.setPort(atoi(explodedAddress[1].c_str()));
         curServer.setWeight(1.0);
         curServer.setAdWeight(1.0);
@@ -105,11 +105,17 @@ void ServerListManager::initAll() throw(NacosException) {
         }
 
         isFixed = false;
+        NacosString endpoint = getEndpoint();
+        NacosString endpoint_lc = ParamUtils::toLower(endpoint);
+        //endpoint doesn't start with http or https prefix, consider it as http
+        if (!endpoint_lc.find("http://") == 0 && !endpoint_lc.find("https://") == 0) {
+            endpoint = "http://" + endpoint;
+        }
         if (NacosStringOps::isNullStr(getNamespace())) {
-            addressServerUrl = getEndpoint() + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
+            addressServerUrl = endpoint + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
                                getContextPath() + "/" + getClusterName();
         } else {
-            addressServerUrl = getEndpoint() + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
+            addressServerUrl = endpoint + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
                                getContextPath() + "/" + getClusterName() + "?namespace=" + getNamespace();
         }
 

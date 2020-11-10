@@ -168,7 +168,7 @@ NacosString NamingProxy::callServer
     }
 
     //TODO:http/https implementation
-    requestUrl = "http://" + requestUrl + api;
+    requestUrl = requestUrl + api;
 
     HttpResult requestRes;
     list <NacosString> headers;
