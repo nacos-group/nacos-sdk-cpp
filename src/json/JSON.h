@@ -26,7 +26,7 @@ public:
 
     static NacosString toJSONString(const std::map <NacosString, NacosString> &mapinfo);
 
-    static void Map2JSONObject(rapidjson::Value &jsonOb, std::map <NacosString, NacosString> &mapinfo);
+    static void Map2JSONObject(rapidjson::Document &d, rapidjson::Value &jsonOb, std::map <NacosString, NacosString> &mapinfo);
 
     static void JSONObject2Map(std::map <NacosString, NacosString> &mapinfo, const rapidjson::Value &jsonOb);
 

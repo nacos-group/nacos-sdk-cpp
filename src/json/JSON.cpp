@@ -41,19 +41,17 @@ NacosString JSON::toJSONString(const map <NacosString, NacosString> &mapinfo) {
         d.AddMember(k, v, d.GetAllocator());
     }
 
-
     return documentToString(d);
 }
 
-void JSON::Map2JSONObject(Value &jsonOb, map <NacosString, NacosString> &mapinfo) {
-    Document document;
+void JSON::Map2JSONObject(Document &d, Value &jsonOb, map <NacosString, NacosString> &mapinfo) {
     jsonOb.SetObject();
     for (map<NacosString, NacosString>::iterator it = mapinfo.begin(); it != mapinfo.end(); it++) {
         Value k;
-        k.SetString(it->first.c_str(), document.GetAllocator());
+        k.SetString(it->first.c_str(), d.GetAllocator());
         Value v;
-        v.SetString(it->second.c_str(), document.GetAllocator());
-        jsonOb.AddMember(k, v, document.GetAllocator());
+        v.SetString(it->second.c_str(), d.GetAllocator());
+        jsonOb.AddMember(k, v, d.GetAllocator());
     }
 }
 
@@ -90,7 +88,7 @@ NacosString JSON::toJSONString(BeatInfo &beatInfo) {
     AddKV(d, "cluster", beatInfo.cluster);
     AddKV(d, "scheduled", NacosStringOps::valueOf(beatInfo.scheduled));
     Value metadata;
-    Map2JSONObject(metadata, beatInfo.metadata);
+    Map2JSONObject(d, metadata, beatInfo.metadata);
     AddKO(d, "metadata", metadata);
 
     //d["port"] = NacosStringOps::valueOf(beatInfo.port);
