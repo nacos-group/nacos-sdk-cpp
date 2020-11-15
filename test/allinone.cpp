@@ -113,6 +113,8 @@ bool testMaintainUpdateInstance();
 
 bool testPublishConfigWithHttpPrefix();
 
+bool testRemoveKeyBeingWatched();
+
 TestData testList1[] =
 TEST_ITEM_START
 
@@ -176,6 +178,7 @@ TEST_ITEM_START
     TEST_ITEM("MaintainService: testMaintainCreateService", testMaintainCreateService)
     TEST_ITEM("MaintainService: testMaintainUpdateInstance", testMaintainUpdateInstance)
     TEST_ITEM("Test with address config containing http prefix", testPublishConfigWithHttpPrefix)
+    TEST_ITEM("Test with address config containing http prefix", testRemoveKeyBeingWatched)
 TEST_ITEM_END
 
 int main() {

@@ -30,11 +30,13 @@ bool testPublishConfigWithHttpPrefix() {
         try {
             bSucc = n->publishConfig(key_s, NULLSTR, val_s);
             int retry = 0;
-            ss = n->getConfig(key_s, NULLSTR, 1000);
             while (!(ss == val_s) && retry++ < 10) {
                 sleep(1);
-                ss = n->getConfig(key_s, NULLSTR, 1000);
+                try {
+                    ss = n->getConfig(key_s, NULLSTR, 1000);
+                } catch (NacosException &e) { }
             }
+            n->removeConfig(key_s, NULLSTR);
 
             if (!(ss == val_s)) {
                 throw NacosException(0, "getConfig() failed.");

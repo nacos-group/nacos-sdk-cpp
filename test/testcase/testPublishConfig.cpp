@@ -30,10 +30,13 @@ bool testPublishConfig() {
         try {
             bSucc = n->publishConfig(key_s, NULLSTR, val_s);
             int retry = 0;
-            ss = n->getConfig(key_s, NULLSTR, 1000);
             while (!(ss == val_s) && retry++ < 10) {
                 sleep(1);
-                ss = n->getConfig(key_s, NULLSTR, 1000);
+                try {
+                    ss = n->getConfig(key_s, NULLSTR, 1000);
+                } catch (NacosException & ignore) {
+                    //getConfig may throw 404, but that doesn't matter
+                }
             }
 
             if (!(ss == val_s)) {
