@@ -6,7 +6,7 @@
 #include "src/utils/NetUtils.h"
 #include "utils/RandomUtils.h"
 #include "src/json/JSON.h"
-#include "src/http/httpStatCode.h"
+#include "src/http/HttpStatus.h"
 #include "Debug.h"
 #include "NacosExceptions.h"
 
@@ -200,11 +200,11 @@ NacosString NamingProxy::callServer
         throw NacosException(NacosException::SERVER_ERROR, errMsg);
     }
 
-    if (requestRes.code == HTTP_OK) {
+    if (requestRes.code == HttpStatus::HTTP_OK) {
         return requestRes.content;
     }
 
-    if (requestRes.code == HTTP_NOT_MODIFIED) {
+    if (requestRes.code == HttpStatus::HTTP_NOT_MODIFIED) {
         return NULLSTR;
     }
     //TODO:Metrics & Monitoring

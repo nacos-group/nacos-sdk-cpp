@@ -86,6 +86,8 @@ public:
 
     NacosString getServerConfig(const NacosString &tenant, const NacosString &dataId, const NacosString &group,
                                 long timeoutMs) throw(NacosException);
+    HttpResult getServerConfigHelper(const NacosString &tenant, const NacosString &dataId, const NacosString &group,
+                                long timeoutMs) throw(NacosException);
 };
 }//namespace nacos
 

@@ -5,7 +5,6 @@
 #include "listen/Listener.h"
 #include "utils/url.h"
 #include "utils/GroupKey.h"
-#include "src/http/httpStatCode.h"
 #include "src/md5/md5.h"
 #include "utils/ParamUtils.h"
 #include "Debug.h"
@@ -13,6 +12,7 @@
 #include "Constants.h"
 #include "Parameters.h"
 #include "PropertyKeyConst.h"
+#include "src/http/HttpStatus.h"
 
 using namespace std;
 
@@ -45,12 +45,32 @@ int64_t getCurrentTimeInMs() {
 }
 
 NacosString ClientWorker::getServerConfig
-        (
-                const NacosString &tenant,
-                const NacosString &dataId,
-                const NacosString &group,
-                long timeoutMs
-        ) throw(NacosException) {
+(
+    const NacosString &tenant,
+    const NacosString &dataId,
+    const NacosString &group,
+    long timeoutMs
+) throw(NacosException) {
+    HttpResult res = getServerConfigHelper(tenant, dataId, group, timeoutMs);
+    switch (res.code) {
+        case HttpStatus::HTTP_OK:
+            return res.content;
+        case HttpStatus::HTTP_NOT_FOUND:
+            throw NacosException(NacosException::HTTP_NOT_FOUND, "getServerConfig could not get content for Key" + group + ":" + dataId);
+        default:
+            throw NacosException(NacosException::SERVER_ERROR, "getServerConfig failed with code:" + NacosStringOps::valueOf(res.code));
+    }
+    return NULLSTR;
+}
+
+
+HttpResult ClientWorker::getServerConfigHelper
+(
+    const NacosString &tenant,
+    const NacosString &dataId,
+    const NacosString &group,
+    long timeoutMs
+) throw(NacosException) {
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
 
@@ -80,14 +100,9 @@ NacosString ClientWorker::getServerConfig
         throw NacosException(NacosException::SERVER_ERROR, e.what());
     }
 
-    switch (res.code) {
-        case HTTP_OK:
-            return res.content;
-        case HTTP_NOT_FOUND:
-            return NULLSTR;
-    }
-    return NULLSTR;
+    return res;
 }
+
 
 void *ClientWorker::listenerThread(void *parm) {
     log_debug("Entered watch thread...\n");
@@ -337,6 +352,7 @@ void ClientWorker::performWatch() {
 
         NacosString key = GroupKey::getKeyTenant(dataId, group, tenant);
         map<NacosString, ListeningData *>::iterator listenedDataIter = listeningKeys.find(key);
+        HttpResult res;
         //check whether the data being watched still exists
         if (listenedDataIter != listeningKeys.end()) {
             log_debug("Found entry for:%s\n", key.c_str());
@@ -344,8 +360,9 @@ void ClientWorker::performWatch() {
             NacosString updatedcontent = "";
 
             try {
-                updatedcontent = getServerConfig(listenedList->getTenant(), listenedList->getDataId(),
+                res = getServerConfigHelper(listenedList->getTenant(), listenedList->getDataId(),
                                                  listenedList->getGroup(), _readTimeout);
+                updatedcontent = res.content;
             }
             catch (NacosException &e) {
                 //Same design as TcpNamingServicePoller
@@ -357,10 +374,17 @@ void ClientWorker::performWatch() {
                 break;
             }
             log_debug("Data fetched from the server: %s\n", updatedcontent.c_str());
-            md5.reset();
-            md5.update(updatedcontent.c_str());
-            listenedList->setMD5(md5.toString());
-            log_debug("MD5 got for that data: %s\n", listenedList->getMD5().c_str());
+
+            //Bugfix #42, please check github
+            if (res.code == HttpStatus::HTTP_OK) {
+                md5.reset();
+                md5.update(updatedcontent.c_str());
+                listenedList->setMD5(md5.toString());
+                log_debug("MD5 got for that data: %s\n", listenedList->getMD5().c_str());
+            } else {
+                listenedList->setMD5("");
+                updatedcontent = "";
+            }
             std::map < Listener * , char > const *listenerList = listenedList->getListenerList();
             for (std::map<Listener *, char>::const_iterator listenerIt = listenerList->begin();
                  listenerIt != listenerList->end(); listenerIt++) {

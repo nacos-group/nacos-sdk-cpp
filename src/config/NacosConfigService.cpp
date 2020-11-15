@@ -186,7 +186,7 @@ bool NacosConfigService::publishConfigInner
     }
     catch (NetworkException e) {
         //
-        log_warn("[{}] [publish-single] exception, dataId=%s, group=%s, msg=%s\n", dataId.c_str(), group.c_str(),
+        log_warn("[NacosConfigService] [publish-single] exception, dataId=%s, group=%s, msg=%s\n", dataId.c_str(), group.c_str(),
                  tenant.c_str(), e.what());
         return false;
     }
@@ -211,7 +211,12 @@ void NacosConfigService::addListener
     }
 
     //TODO:give a constant to this hard-coded number
-    NacosString cfgcontent = getConfig(dataId, group, 3000);
+    NacosString cfgcontent;
+    try {
+        cfgcontent = getConfig(dataId, group, 3000);
+    } catch (NacosException &e) {
+        cfgcontent = "";
+    }
 
     clientWorker->addListener(dataId, parmgroup, getNamespace(), cfgcontent, listener);
     clientWorker->startListening();
