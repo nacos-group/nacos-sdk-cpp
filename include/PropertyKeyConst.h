@@ -51,8 +51,11 @@ public:
     static const NacosString HB_FAIL_WAIT_TIME;
 
     static const NacosString NACOS_SNAPSHOT_PATH;
+    static const NacosString NACOS_FAILOVER_PATH;
 
     static const NacosString NACOS_LOG_PATH;
+
+    static const NacosString CLIENT_NAME;
 
     static const int NACOS_DEFAULT_PORT = 8848;
 

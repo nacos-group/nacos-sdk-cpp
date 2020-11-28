@@ -9,25 +9,27 @@ using namespace std;
 namespace nacos{
 NacosConfigService::NacosConfigService
         (
-                AppConfigManager *_appConfigManager,
+                AppConfigManager *appConfigManager,
                 IHttpCli *httpCli,
                 HttpDelegate *httpDelegate,
-                ServerListManager *_serverListManager,
-                ClientWorker *_clientWorker
+                ServerListManager *serverListManager,
+                ClientWorker *clientWorker,
+                LocalSnapshotManager *localSnapshotManager
         ) throw(NacosException) {
-    appConfigManager = _appConfigManager;
+    _appConfigManager = appConfigManager;
     _httpCli = httpCli;
-    svrListMgr = _serverListManager;
+    _svrListMgr = serverListManager;
     _httpDelegate = httpDelegate;
-    clientWorker = _clientWorker;
+    _clientWorker = clientWorker;
+    _localSnapshotManager = localSnapshotManager;
 }
 
 NacosConfigService::~NacosConfigService() {
     log_debug("NacosConfigService::~NacosConfigService()\n");
-    if (clientWorker != NULL) {
-        clientWorker->stopListening();
-        delete clientWorker;
-        clientWorker = NULL;
+    if (_clientWorker != NULL) {
+        _clientWorker->stopListening();
+        delete _clientWorker;
+        _clientWorker = NULL;
     }
 
     if (_httpDelegate != NULL) {
@@ -35,9 +37,9 @@ NacosConfigService::~NacosConfigService() {
         _httpDelegate = NULL;
     }
 
-    if (svrListMgr != NULL) {
-        delete svrListMgr;
-        svrListMgr = NULL;
+    if (_svrListMgr != NULL) {
+        delete _svrListMgr;
+        _svrListMgr = NULL;
     }
 
     if (_httpCli != NULL) {
@@ -45,9 +47,9 @@ NacosConfigService::~NacosConfigService() {
         _httpCli = NULL;
     }
 
-    if (appConfigManager != NULL) {
-        delete appConfigManager;
-        appConfigManager = NULL;
+    if (_appConfigManager != NULL) {
+        delete _appConfigManager;
+        _appConfigManager = NULL;
     }
 }
 
@@ -84,7 +86,17 @@ NacosString NacosConfigService::getConfigInner
                 const NacosString &group,
                 long timeoutMs
         ) throw(NacosException) {
-    return clientWorker->getServerConfig(tenant, dataId, group, timeoutMs);
+    NacosString result = NULLSTR;
+    try {
+        result = _clientWorker->getServerConfig(tenant, dataId, group, timeoutMs);
+    } catch (NacosException &e) {
+        if (e.errorcode() == NacosException::NO_RIGHT) {
+            throw e;
+        }
+
+        result = _localSnapshotManager->getSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant);
+    }
+    return result;
 }
 
 bool NacosConfigService::removeConfigInner
@@ -113,7 +125,7 @@ bool NacosConfigService::removeConfigInner
         paramValues.push_back(tenant);
     }
 
-    NacosString serverAddr = svrListMgr->getCurrentServerAddr();
+    NacosString serverAddr = _svrListMgr->getCurrentServerAddr();
     NacosString url = serverAddr + "/" + path;
     log_debug("httpDelete Assembled URL:%s\n", url.c_str());
 
@@ -177,7 +189,7 @@ bool NacosConfigService::publishConfigInner
         ParamUtils::addKV(paramValues, "betaIps", betaIps);
     }
 
-    NacosString serverAddr = svrListMgr->getCurrentServerAddr();
+    NacosString serverAddr = _svrListMgr->getCurrentServerAddr();
     NacosString url = serverAddr + "/" + path;
     log_debug("httpPost Assembled URL:%s\n", url.c_str());
 
@@ -218,8 +230,8 @@ void NacosConfigService::addListener
         cfgcontent = "";
     }
 
-    clientWorker->addListener(dataId, parmgroup, getNamespace(), cfgcontent, listener);
-    clientWorker->startListening();
+    _clientWorker->addListener(dataId, parmgroup, getNamespace(), cfgcontent, listener);
+    _clientWorker->startListening();
 }
 
 void NacosConfigService::removeListener
@@ -233,7 +245,7 @@ void NacosConfigService::removeListener
         parmgroup = group;
     }
     log_debug("NacosConfigService::removeListener()\n");
-    clientWorker->removeListener(dataId, parmgroup, getNamespace(), listener);
+    _clientWorker->removeListener(dataId, parmgroup, getNamespace(), listener);
 }
 
 }//namespace nacos

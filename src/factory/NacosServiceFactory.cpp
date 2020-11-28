@@ -95,12 +95,14 @@ ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException) 
     ServerListManager *serverListManager = new ServerListManager(httpDelegate, appConfigManager);
     objectConfigData.serverListManager = serverListManager;
 
-    ClientWorker *clientWorker = new ClientWorker(httpDelegate, appConfigManager, serverListManager);
+    LocalSnapshotManager *localSnapshotManager = new LocalSnapshotManager(appConfigManager);
+    ClientWorker *clientWorker = new ClientWorker(httpDelegate, appConfigManager, serverListManager, localSnapshotManager);
     ConfigService *instance = new NacosConfigService(appConfigManager,
                                                      httpCli,
                                                      httpDelegate,
                                                      serverListManager,
-                                                     clientWorker);
+                                                     clientWorker,
+                                                     localSnapshotManager);
 
     log_debug("Created config data: %s", objectConfigData.name.c_str());
     return instance;

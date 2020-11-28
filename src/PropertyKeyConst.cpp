@@ -45,5 +45,7 @@ const NacosString PropertyKeyConst::CONFIG_GET_TIMEOUT = "config.get.timeout";
 
 const NacosString PropertyKeyConst::HB_FAIL_WAIT_TIME = "naming.heartbeat.failwait";
 const NacosString PropertyKeyConst::NACOS_SNAPSHOT_PATH = "nacos.snapshot.path";
+const NacosString PropertyKeyConst::NACOS_FAILOVER_PATH = "nacos.failover.path";
 const NacosString PropertyKeyConst::NACOS_LOG_PATH = "nacos.log.path";
+const NacosString PropertyKeyConst::CLIENT_NAME = "nacos.client.name";
 }//namespace nacos

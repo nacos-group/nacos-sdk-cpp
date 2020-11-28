@@ -17,18 +17,23 @@
 using namespace std;
 
 namespace nacos{
-ClientWorker::ClientWorker(HttpDelegate *httpDelegate, AppConfigManager *_appConfigManager, ServerListManager *svrListMgr) {
+ClientWorker::ClientWorker(
+        HttpDelegate *httpDelegate,
+        AppConfigManager *appConfigManager,
+        ServerListManager *svrListMgr,
+        LocalSnapshotManager *localSnapshotManager) {
     threadId = 0;
     stopThread = true;
     pthread_mutex_init(&watchListMutex, NULL);
     pthread_mutex_init(&stopThreadMutex, NULL);
     _httpDelegate = httpDelegate;
-    appConfigManager = _appConfigManager;
+    _appConfigManager = appConfigManager;
     _svrListMgr = svrListMgr;
+    _localSnapshotManager = localSnapshotManager;
 
-    _longPullingTimeoutStr = appConfigManager->get(PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT);
+    _longPullingTimeoutStr = _appConfigManager->get(PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT);
     _longPullingTimeout = atoi(_longPullingTimeoutStr.c_str());
-    _readTimeout = atoi(appConfigManager->get(PropertyKeyConst::CONFIG_GET_TIMEOUT).c_str());
+    _readTimeout = atoi(_appConfigManager->get(PropertyKeyConst::CONFIG_GET_TIMEOUT).c_str());
 }
 
 ClientWorker::~ClientWorker() {
@@ -54,10 +59,18 @@ NacosString ClientWorker::getServerConfig
     HttpResult res = getServerConfigHelper(tenant, dataId, group, timeoutMs);
     switch (res.code) {
         case HttpStatus::HTTP_OK:
+            _localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, res.content);
             return res.content;
         case HttpStatus::HTTP_NOT_FOUND:
-            throw NacosException(NacosException::HTTP_NOT_FOUND, "getServerConfig could not get content for Key" + group + ":" + dataId);
+            //Update snapshot
+            _localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
+            throw NacosException(NacosException::HTTP_NOT_FOUND, "getServerConfig could not get content for Key " + group + ":" + dataId);
+        case HttpStatus::HTTP_FORBIDDEN:
+            //Update snapshot
+            _localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
+            throw NacosException(NacosException::NO_RIGHT, "permission denied for Key " + group + ":" + dataId);
         default:
+            _localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
             throw NacosException(NacosException::SERVER_ERROR, "getServerConfig failed with code:" + NacosStringOps::valueOf(res.code));
     }
     return NULLSTR;

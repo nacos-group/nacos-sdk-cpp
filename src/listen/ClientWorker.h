@@ -11,6 +11,7 @@
 #include "OperateItem.h"
 #include "src/config/AppConfigManager.h"
 #include "src/server/ServerListManager.h"
+#include "src/config/LocalSnapshotManager.h"
 #include "NacosExceptions.h"
 
 /**
@@ -30,8 +31,9 @@ private:
     std::map<NacosString, ListeningData *> listeningKeys;
     pthread_mutex_t watchListMutex;//TODO:refactor to Mutex
     HttpDelegate *_httpDelegate = NULL;
-    AppConfigManager *appConfigManager = NULL;
+    AppConfigManager *_appConfigManager = NULL;
     ServerListManager *_svrListMgr;
+    LocalSnapshotManager *_localSnapshotManager;
     //Listener thread related info
     pthread_t threadId;
 
@@ -58,7 +60,10 @@ private:
     void addDeleteItem(const OperateItem &item);
 
 public:
-    ClientWorker(HttpDelegate *httpDelegate, AppConfigManager *_appConfigManager, ServerListManager *svrListMgr);
+    ClientWorker(HttpDelegate *httpDelegate,
+                 AppConfigManager *appConfigManager,
+                 ServerListManager *svrListMgr,
+                 LocalSnapshotManager *localSnapshotManager);
 
     ~ClientWorker();
 

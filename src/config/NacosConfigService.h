@@ -13,9 +13,10 @@ class NacosConfigService : public ConfigService {
 private:
     HttpDelegate *_httpDelegate = NULL;
     IHttpCli *_httpCli = NULL;
-    ServerListManager *svrListMgr = NULL;
-    ClientWorker *clientWorker = NULL;
-    AppConfigManager *appConfigManager = NULL;
+    ServerListManager *_svrListMgr = NULL;
+    ClientWorker *_clientWorker = NULL;
+    AppConfigManager *_appConfigManager = NULL;
+    LocalSnapshotManager *_localSnapshotManager = NULL;
 
     //Private Methods
     NacosConfigService();
@@ -32,7 +33,7 @@ private:
     //NacosString monitorChange(std::map<NacosString, NacosString> &keysAndContents, long timeoutMs) throw (NacosException);
     //static NacosString monitorListToString(std::map<NacosString, NacosString> &keysAndContents);
 
-    NacosString getNamespace() const { return appConfigManager->get(PropertyKeyConst::NAMESPACE); };
+    NacosString getNamespace() const { return _appConfigManager->get(PropertyKeyConst::NAMESPACE); };
 public:
     const static long POST_TIMEOUT = 3000L;
 
@@ -52,28 +53,29 @@ public:
 
     IHttpCli *getHttpCli() const { return _httpCli; };
 
-    ServerListManager *getServerListManager() const { return svrListMgr; };
+    ServerListManager *getServerListManager() const { return _svrListMgr; };
 
-    ClientWorker *getClientWorker() const { return clientWorker; };
+    ClientWorker *getClientWorker() const { return _clientWorker; };
 
-    AppConfigManager *getAppConfigManager() const { return appConfigManager; };
+    AppConfigManager *getAppConfigManager() const { return _appConfigManager; };
 
     void setHttpDelegate(HttpDelegate *httpDelegate) { _httpDelegate = httpDelegate; };
 
     void setHttpCli(IHttpCli *httpCli) { _httpCli = httpCli; };
 
-    void setServerListManager(ServerListManager *_svrListMgr) { svrListMgr = _svrListMgr; };
+    void setServerListManager(ServerListManager *svrListMgr) { _svrListMgr = svrListMgr; };
 
-    void setClientWorker(ClientWorker *_clientWorker) { clientWorker = _clientWorker; };
+    void setClientWorker(ClientWorker *clientWorker) { _clientWorker = clientWorker; };
 
-    void setAppConfigManager(AppConfigManager *_appConfigManager) { appConfigManager = _appConfigManager; };
+    void setAppConfigManager(AppConfigManager *appConfigManager) { _appConfigManager = appConfigManager; };
 
     //ctors/dtor
     NacosConfigService(AppConfigManager *_appConfigManager,
                        IHttpCli *httpCli,
                        HttpDelegate *httpDelegate,
-                       ServerListManager *_serverListManager,
-                       ClientWorker *_clientWorker) throw(NacosException);
+                       ServerListManager *serverListManager,
+                       ClientWorker *clientWorker,
+                       LocalSnapshotManager *localSnapshotManager) throw(NacosException);
 
     virtual ~NacosConfigService();
 };
