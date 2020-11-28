@@ -87,6 +87,19 @@ NacosString NacosConfigService::getConfigInner
                 long timeoutMs
         ) throw(NacosException) {
     NacosString result = NULLSTR;
+
+    NacosString clientName = _appConfigManager->get(PropertyKeyConst::CLIENT_NAME);
+    result = _localSnapshotManager->getFailover(clientName.c_str(), dataId, group, tenant);
+    if (!NacosStringOps::isNullStr(result)) {
+        log_warn("[%s] [get-config] get failover ok, dataId=%s, group=%s, tenant=%s, config=%s",
+                 clientName.c_str(),
+                 dataId.c_str(),
+                 group.c_str(),
+                 tenant.c_str(),
+                 result.c_str());
+        return result;
+    }
+
     try {
         result = _clientWorker->getServerConfig(tenant, dataId, group, timeoutMs);
     } catch (NacosException &e) {

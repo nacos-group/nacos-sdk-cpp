@@ -121,10 +121,8 @@ void AppConfigManager::initDefaults() {
 
     appConfig[PropertyKeyConst::NACOS_LOG_PATH] = homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "log";
     appConfig[PropertyKeyConst::NACOS_SNAPSHOT_PATH] = homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "snapshot";
-    appConfig[PropertyKeyConst::NACOS_FAILOVER_PATH] = homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "failover";
     log_info("DEFAULT_LOG_PATH:%s\n", appConfig[PropertyKeyConst::NACOS_LOG_PATH].c_str());
     log_info("DEFAULT_SNAPSHOT_PATH:%s\n", appConfig[PropertyKeyConst::NACOS_SNAPSHOT_PATH].c_str());
-    log_info("DEFAULT_FAILOVER_PATH:%s\n", appConfig[PropertyKeyConst::NACOS_FAILOVER_PATH].c_str());
 }
 
 

@@ -51,7 +51,6 @@ public:
     static const NacosString HB_FAIL_WAIT_TIME;
 
     static const NacosString NACOS_SNAPSHOT_PATH;
-    static const NacosString NACOS_FAILOVER_PATH;
 
     static const NacosString NACOS_LOG_PATH;
 

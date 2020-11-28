@@ -22,6 +22,7 @@ NacosString LocalSnapshotManager::getFailover(const NacosString &serverName, con
     NacosString localPath = getFailoverFile(serverName, dataId, group, tenant);
 
     if (IOUtils::checkNotExistOrNotFile(localPath)) {
+        log_debug("[%s] failover file %s doesn't exist", serverName.c_str(), localPath.c_str());
         return NULLSTR;
     }
 
