@@ -75,6 +75,8 @@ public:
     static const int INVALID_FACTORY_CONFIG = 1003;
     static const int ALL_SERVERS_TRIED_AND_FAILED = 1004;
     static const int NO_SERVER_AVAILABLE = 1005;
+    static const int INVALID_LOGIN_CREDENTIAL = 1006;
+
 };
 
 class NetworkException : public std::exception {

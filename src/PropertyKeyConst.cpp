@@ -31,20 +31,18 @@ const NacosString PropertyKeyConst::NAMING_CLIENT_BEAT_THREAD_COUNT = "namingCli
 
 const NacosString PropertyKeyConst::NAMING_POLLING_THREAD_COUNT = "namingPollingThreadCount";
 
-const NacosString PropertyKeyConst::HTTP_REQ_TIMEOUT = "httpReqTimeout";
-
 const NacosString PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL = "serverListMgr.refreshInterval";
 
-const NacosString PropertyKeyConst::SRVLISTMGR_READ_TIMEOUT = "serverListMgr.readTimeout";
+const NacosString PropertyKeyConst::SERVER_REQ_TIMEOUT = "nacos.server.reqtimeout";
 
 const NacosString PropertyKeyConst::TCP_NAMING_POLL_INTERVAL = "naming.poller.interval";
 
 const NacosString PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT = "config.longpulling.timeout";
 
-const NacosString PropertyKeyConst::CONFIG_GET_TIMEOUT = "config.get.timeout";
-
 const NacosString PropertyKeyConst::HB_FAIL_WAIT_TIME = "naming.heartbeat.failwait";
 const NacosString PropertyKeyConst::NACOS_SNAPSHOT_PATH = "nacos.snapshot.path";
 const NacosString PropertyKeyConst::NACOS_LOG_PATH = "nacos.log.path";
 const NacosString PropertyKeyConst::CLIENT_NAME = "nacos.client.name";
+const NacosString PropertyKeyConst::AUTH_USERNAME = "nacos.auth.username";
+const NacosString PropertyKeyConst::AUTH_PASSWORD = "nacos.auth.password";
 }//namespace nacos

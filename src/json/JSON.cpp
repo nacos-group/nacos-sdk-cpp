@@ -396,4 +396,22 @@ ServiceInfo2 JSON::Json2ServiceInfo2(const NacosString &nacosString) throw(Nacos
     return serviceInfo2;
 }
 
+AccessToken JSON::Json2AccessToken(const NacosString &nacosString) throw(NacosException)
+{
+    AccessToken accessTokenRes;
+    Document d;
+    d.Parse(nacosString.c_str());
+    markRequired(d, "accessToken");
+    const Value &accessToken = d["accessToken"];
+    accessTokenRes.accessToken = accessToken.GetString();
+    markRequired(d, "tokenTtl");
+    const Value &tokenTtl = d["tokenTtl"];
+    accessTokenRes.tokenTtl = tokenTtl.GetInt();
+    markRequired(d, "globalAdmin");
+    const Value &globalAdmin = d["globalAdmin"];
+    accessTokenRes.globalAdmin = globalAdmin.GetBool();
+
+    return accessTokenRes;
+}
+
 }//namespace nacos
