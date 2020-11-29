@@ -25,7 +25,6 @@ NamingProxy::NamingProxy(HttpDelegate *httpDelegate, ServerListManager *_serverL
     _httpDelegate = httpDelegate;
     appConfigManager = _appConfigManager;
     serverPort = "8848";
-    _http_req_timeout = atoi(appConfigManager->get(PropertyKeyConst::HTTP_REQ_TIMEOUT).c_str());
 
     if (serverListManager->getServerCount() == 1) {
         nacosDomain = serverListManager->getServerList().begin()->getCompleteAddress();
@@ -175,6 +174,7 @@ NacosString NamingProxy::callServer
     headers = builderHeaders();
 
     try {
+        long _http_req_timeout = appConfigManager->getServeReqTimeout();
         switch (method) {
             case IHttpCli::GET:
                 requestRes = _httpDelegate->httpGet(requestUrl, headers, params, UtilAndComs::ENCODING,

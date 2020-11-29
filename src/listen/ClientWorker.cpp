@@ -33,7 +33,6 @@ ClientWorker::ClientWorker(
 
     _longPullingTimeoutStr = _appConfigManager->get(PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT);
     _longPullingTimeout = atoi(_longPullingTimeoutStr.c_str());
-    _readTimeout = atoi(_appConfigManager->get(PropertyKeyConst::CONFIG_GET_TIMEOUT).c_str());
 }
 
 ClientWorker::~ClientWorker() {
@@ -374,7 +373,7 @@ void ClientWorker::performWatch() {
 
             try {
                 res = getServerConfigHelper(listenedList->getTenant(), listenedList->getDataId(),
-                                                 listenedList->getGroup(), _readTimeout);
+                                                 listenedList->getGroup(), _appConfigManager->getServeReqTimeout());
                 updatedcontent = res.content;
             }
             catch (NacosException &e) {

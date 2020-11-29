@@ -65,7 +65,6 @@ ServerListManager::ServerListManager(list <NacosString> &fixed) {
     started = false;
     isFixed = true;
     refreshInterval = 30000;
-    _read_timeout = 3000;
     for (list<NacosString>::iterator it = fixed.begin(); it != fixed.end(); it++) {
         addToSrvList(*it);
     }
@@ -131,7 +130,6 @@ ServerListManager::ServerListManager(HttpDelegate *httpDelegate, AppConfigManage
     this->_httpDelegate = httpDelegate;
     this->appConfigManager = _appConfigManager;
     refreshInterval = atoi(appConfigManager->get(PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL).c_str());
-    _read_timeout = atoi(appConfigManager->get(PropertyKeyConst::SRVLISTMGR_READ_TIMEOUT).c_str());
     initAll();
 }
 
@@ -145,6 +143,7 @@ list <NacosServerInfo> ServerListManager::tryPullServerListFromNacosServer() thr
     log_debug("nr_servers:%d\n", maxSvrSlot);
     srand(time(NULL));
 
+    long _read_timeout = appConfigManager->getServeReqTimeout();
     NacosString errmsg;
     for (size_t i = 0; i < serverList.size(); i++) {
         size_t selectedServer = rand() % maxSvrSlot;
@@ -179,6 +178,7 @@ list <NacosServerInfo> ServerListManager::pullServerList() throw(NacosException)
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
 
+    long _read_timeout = appConfigManager->getServeReqTimeout();
     if (!NacosStringOps::isNullStr(addressServerUrl)) {
         HttpResult serverRes = _httpDelegate->httpGet(addressServerUrl, headers, paramValues, NULLSTR,
                                                 _read_timeout);
@@ -316,6 +316,7 @@ int ServerListManager::getServerCount() {
 };
 
 list <NacosServerInfo> ServerListManager::getServerList() {
+    //further optimization could be implemented here if the server list cannot be changed during runtime
     std::list <NacosServerInfo> res;
     {
         ReadGuard _readGuard(rwLock);

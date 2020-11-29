@@ -40,7 +40,6 @@ private:
     volatile bool stopThread;
     pthread_mutex_t stopThreadMutex;
 
-    int _readTimeout;
     int _longPullingTimeout;
     NacosString _longPullingTimeoutStr;
 

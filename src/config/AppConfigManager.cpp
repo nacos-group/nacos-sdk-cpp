@@ -8,6 +8,7 @@
 #include "Parameters.h"
 #include "utils/DirUtils.h"
 #include <vector>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -71,21 +72,24 @@ void AppConfigManager::clearConfig() {
     appConfig.clear();
 }
 
-NacosString AppConfigManager::get(const NacosString &key) const {
+const NacosString &AppConfigManager::get(const NacosString &key) {
     if (appConfig.count(key) == 0) {
         return NULLSTR;
     }
 
-    Properties copyProps = appConfig;
     if (key.compare(PropertyKeyConst::NAMESPACE) == 0
-        && copyProps[PropertyKeyConst::NAMESPACE].compare("Public") == 0)
+        && appConfig[PropertyKeyConst::NAMESPACE].compare("Public") == 0)
     {
         return NULLSTR;
     }
-    return copyProps[key];
+    return appConfig[key];
 }
 
 void AppConfigManager::set(const NacosString &key, const NacosString &value) {
+    //Special case handle
+    if (key.compare(PropertyKeyConst::SERVER_REQ_TIMEOUT) == 0) {
+        _serverReqTimeout = atoi(value.c_str());
+    }
     appConfig[key] = value;
 }
 
@@ -107,20 +111,18 @@ AppConfigManager::AppConfigManager(const NacosString &_configFile) {
 void AppConfigManager::initDefaults() {
     appConfig.clear();
     //appConfig[PropertyKeyConst::NAMESPACE] = "public";
-    appConfig[PropertyKeyConst::HTTP_REQ_TIMEOUT] = "50000";
-    appConfig[PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL] = "30000";
-    appConfig[PropertyKeyConst::SRVLISTMGR_READ_TIMEOUT] = "3000";
-    appConfig[PropertyKeyConst::CONTEXT_PATH] = DEFAULT_CONTEXT_PATH;
-    appConfig[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "30000";//30 secs by default
-    appConfig[PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT] = "30000";//ms
-    appConfig[PropertyKeyConst::CONFIG_GET_TIMEOUT] = "3000";//ms
-    appConfig[PropertyKeyConst::HB_FAIL_WAIT_TIME] = "20000";//ms
-    appConfig[PropertyKeyConst::CLIENT_NAME] = "default";
+    set(PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL, "30000");
+    set(PropertyKeyConst::SERVER_REQ_TIMEOUT, "3000");
+    set(PropertyKeyConst::CONTEXT_PATH, DEFAULT_CONTEXT_PATH);
+    set(PropertyKeyConst::TCP_NAMING_POLL_INTERVAL, "30000");//30 secs by default
+    set(PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT, "30000");//ms
+    set(PropertyKeyConst::HB_FAIL_WAIT_TIME, "20000");//ms
+    set(PropertyKeyConst::CLIENT_NAME, "default");
 
     NacosString homedir = DirUtils::getHome();
 
-    appConfig[PropertyKeyConst::NACOS_LOG_PATH] = homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "log";
-    appConfig[PropertyKeyConst::NACOS_SNAPSHOT_PATH] = homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "snapshot";
+    set(PropertyKeyConst::NACOS_LOG_PATH, homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "log");
+    set(PropertyKeyConst::NACOS_SNAPSHOT_PATH, homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "snapshot");
     log_info("DEFAULT_LOG_PATH:%s\n", appConfig[PropertyKeyConst::NACOS_LOG_PATH].c_str());
     log_info("DEFAULT_SNAPSHOT_PATH:%s\n", appConfig[PropertyKeyConst::NACOS_SNAPSHOT_PATH].c_str());
 }
@@ -129,7 +131,8 @@ void AppConfigManager::initDefaults() {
 void AppConfigManager::applyConfig(Properties &rhs) {
     for (map<NacosString, NacosString>::iterator it = rhs.begin();
          it != rhs.end(); it++) {
-        appConfig[it->first] = it->second;
+        set(it->first, it->second);
     }
 }
+
 }//namespace nacos
