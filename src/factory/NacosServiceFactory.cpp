@@ -22,8 +22,8 @@ namespace nacos{
 //the resource for HttpDelegate is never released
 NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) {
     checkConfig();
-    ObjectConfigData objectConfigData;
-    objectConfigData.name = "config";
+    ObjectConfigData *objectConfigData = new ObjectConfigData(NAMING);
+    objectConfigData->name = "config";
     NacosString encoding = "UTF-8";
 
     //Create configuration data and load configs
@@ -34,45 +34,42 @@ NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) 
     } else {
         appConfigManager = new AppConfigManager(props);
     }
-    objectConfigData.appConfigManager = appConfigManager;
+    objectConfigData->_appConfigManager = appConfigManager;
 
     //Create http client
     IHttpCli *httpCli= new HTTPCli();
-    objectConfigData.httpCli = httpCli;
+    objectConfigData->_httpCli = httpCli;
 
-    HttpDelegate *httpDelegate = new NoOpHttpDelegate(httpCli, encoding);
+    HttpDelegate *httpDelegate = new NoOpHttpDelegate(objectConfigData);
+    objectConfigData->_httpDelegate = httpDelegate;
 
     //Create server manager
-    ServerListManager *serverListManager = new ServerListManager(httpDelegate, appConfigManager);
-    objectConfigData.serverListManager = serverListManager;
+    ServerListManager *serverListManager = new ServerListManager(objectConfigData);
+    objectConfigData->_serverListManager = serverListManager;
 
     //Create naming service & heartbeat sender
-    NamingProxy *namingProxy = new NamingProxy(httpDelegate, serverListManager, appConfigManager);
-    objectConfigData.namingProxy = namingProxy;
-    BeatReactor *beatReactor = new BeatReactor(namingProxy);
-    objectConfigData.beatReactor = beatReactor;
+    NamingProxy *namingProxy = new NamingProxy(objectConfigData);
+    objectConfigData->_serverProxy = namingProxy;
+    BeatReactor *beatReactor = new BeatReactor(objectConfigData);
+    objectConfigData->_beatReactor = beatReactor;
 
     EventDispatcher *eventDispatcher = new EventDispatcher();
+    objectConfigData->_eventDispatcher = eventDispatcher;
 
-    TcpNamingServicePoller *tcpNamingServicePoller = new TcpNamingServicePoller(eventDispatcher, namingProxy, appConfigManager);
+    TcpNamingServicePoller *tcpNamingServicePoller = new TcpNamingServicePoller(objectConfigData);
+    objectConfigData->_tcpNamingServicePoller = tcpNamingServicePoller;
 
-    NamingService *instance = new NacosNamingService(httpDelegate,
-                                                     httpCli,
-                                                     namingProxy,
-                                                     beatReactor,
-                                                     eventDispatcher,
-                                                     tcpNamingServicePoller,
-                                                     appConfigManager,
-                                                     serverListManager);
+    objectConfigData->checkAssembledObject();
+    NamingService *instance = new NacosNamingService(objectConfigData);
 
-    log_debug("Created config data: %s", objectConfigData.name.c_str());
+    log_debug("Created config data: %s", objectConfigData->name.c_str());
     return instance;
 }
 
 ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException) {
     checkConfig();
-    ObjectConfigData objectConfigData;
-    objectConfigData.name = "name";
+    ObjectConfigData *objectConfigData = new ObjectConfigData(CONFIG);
+    objectConfigData->name = "name";
 
     //Create configuration data and load configs
     AppConfigManager *appConfigManager = NULL;
@@ -82,36 +79,36 @@ ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException) 
     } else {
         appConfigManager = new AppConfigManager(props);
     }
-    objectConfigData.appConfigManager = appConfigManager;
+    objectConfigData->_appConfigManager = appConfigManager;
 
     //Create http client
     IHttpCli *httpCli = NULL;
     httpCli = new HTTPCli();
     NacosString encoding = "UTF-8";
-    HttpDelegate *httpDelegate = new NoOpHttpDelegate(httpCli, encoding);
-    objectConfigData.httpCli = httpCli;
+    HttpDelegate *httpDelegate = new NoOpHttpDelegate(objectConfigData);
+    objectConfigData->_httpDelegate = httpDelegate;
+    objectConfigData->_httpCli = httpCli;
 
     //Create server manager
-    ServerListManager *serverListManager = new ServerListManager(httpDelegate, appConfigManager);
-    objectConfigData.serverListManager = serverListManager;
+    ServerListManager *serverListManager = new ServerListManager(objectConfigData);
+    objectConfigData->_serverListManager = serverListManager;
 
     LocalSnapshotManager *localSnapshotManager = new LocalSnapshotManager(appConfigManager);
-    ClientWorker *clientWorker = new ClientWorker(httpDelegate, appConfigManager, serverListManager, localSnapshotManager);
-    ConfigService *instance = new NacosConfigService(appConfigManager,
-                                                     httpCli,
-                                                     httpDelegate,
-                                                     serverListManager,
-                                                     clientWorker,
-                                                     localSnapshotManager);
+    objectConfigData->_localSnapshotManager = localSnapshotManager;
+    ClientWorker *clientWorker = new ClientWorker(objectConfigData);
+    objectConfigData->_clientWorker = clientWorker;
+    objectConfigData->checkAssembledObject();
 
-    log_debug("Created config data: %s", objectConfigData.name.c_str());
+    ConfigService *instance = new NacosConfigService(objectConfigData);
+
+    log_debug("Created config data: %s", objectConfigData->name.c_str());
     return instance;
 }
 
 NamingMaintainService *NacosServiceFactory::CreateNamingMaintainService() throw(NacosException){
     checkConfig();
-    ObjectConfigData objectConfigData;
-    objectConfigData.name = "config";
+    ObjectConfigData *objectConfigData = new ObjectConfigData(MAINTAIN);
+    objectConfigData->name = "config";
     NacosString encoding = "UTF-8";
 
     //Create configuration data and load configs
@@ -122,29 +119,26 @@ NamingMaintainService *NacosServiceFactory::CreateNamingMaintainService() throw(
     } else {
         appConfigManager = new AppConfigManager(props);
     }
-    objectConfigData.appConfigManager = appConfigManager;
+    objectConfigData->_appConfigManager = appConfigManager;
 
     //Create http client
     IHttpCli *httpCli= new HTTPCli();
-    objectConfigData.httpCli = httpCli;
+    objectConfigData->_httpCli = httpCli;
 
-    HttpDelegate *httpDelegate = new NoOpHttpDelegate(httpCli, encoding);
+    HttpDelegate *httpDelegate = new NoOpHttpDelegate(objectConfigData);
+    objectConfigData->_httpDelegate = httpDelegate;
 
     //Create server manager
-    ServerListManager *serverListManager = new ServerListManager(httpDelegate, appConfigManager);
-    objectConfigData.serverListManager = serverListManager;
+    ServerListManager *serverListManager = new ServerListManager(objectConfigData);
+    objectConfigData->_serverListManager = serverListManager;
 
     //Create naming service & heartbeat sender
-    NamingProxy *namingProxy = new NamingProxy(httpDelegate, serverListManager, appConfigManager);
-    objectConfigData.namingProxy = namingProxy;
+    NamingProxy *namingProxy = new NamingProxy(objectConfigData);
+    objectConfigData->_serverProxy = namingProxy;
 
-    NacosNamingMaintainService *instance = new NacosNamingMaintainService(namingProxy,
-                                                                          httpDelegate,
-                                                                          httpCli,
-                                                                          appConfigManager,
-                                                                          serverListManager);
+    NacosNamingMaintainService *instance = new NacosNamingMaintainService(objectConfigData);
 
-    log_debug("Created config data: %s", objectConfigData.name.c_str());
+    log_debug("Created config data: %s", objectConfigData->name.c_str());
     return instance;
 }
 

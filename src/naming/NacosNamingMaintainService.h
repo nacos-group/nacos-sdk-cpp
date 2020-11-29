@@ -7,6 +7,7 @@
 #include "src/http/IHttpCli.h"
 #include "NacosString.h"
 #include "Properties.h"
+#include "src/factory/ObjectConfigData.h"
 
 namespace nacos{
 
@@ -22,19 +23,9 @@ namespace nacos{
 class NacosNamingMaintainService : public NamingMaintainService {
 private:
     NacosNamingMaintainService();
-    NamingProxy *_namingProxy;
-    HttpDelegate *_httpDelegate;
-    IHttpCli *_httpCli;
-    AppConfigManager *_appConfigManager;
-    ServerListManager *_serverListManager;
+    ObjectConfigData *_objectConfigData;
 public:
-    NacosNamingMaintainService(
-            NamingProxy *namingProxy,
-            HttpDelegate *httpDelegate,
-            IHttpCli *httpCli,
-            AppConfigManager *appConfigManager,
-            ServerListManager *serverListManager
-    );
+    NacosNamingMaintainService(ObjectConfigData *objectConfigData);
     bool updateInstance(const NacosString &serviceName, const NacosString & groupName, const Instance &instance) throw(NacosException);
     ServiceInfo2 queryService(const NacosString &serviceName, const NacosString &groupName) throw(NacosException);
     bool createService(const ServiceInfo2 &service, naming::Selector *selector) throw(NacosException);

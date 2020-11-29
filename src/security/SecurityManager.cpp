@@ -9,14 +9,8 @@
 
 using namespace std;
 namespace nacos {
-SecurityManager::SecurityManager(
-    AppConfigManager *appConfigManager,
-    ServerListManager *serverListManager,
-    IHttpCli *iHttpCli
-) {
-    _appConfigManager = appConfigManager;
-    _serverListManager = serverListManager;
-    _httpCli = iHttpCli;
+SecurityManager::SecurityManager(ObjectConfigData *objectConfigData) {
+    _objectConfigData = objectConfigData;
 }
 void SecurityManager::doLogin(const NacosString &serverAddr) throw(NacosException, NetworkException) {
     //TODO:refactor string constants
@@ -24,14 +18,14 @@ void SecurityManager::doLogin(const NacosString &serverAddr) throw(NacosExceptio
     list <NacosString> headers;
     list <NacosString> paramValues;
 
-    HttpResult result = _httpCli->httpPost(url, headers, paramValues, NULLSTR, 3000);
+    HttpResult result = _objectConfigData->_httpCli->httpPost(url, headers, paramValues, NULLSTR, 3000);
 
     _accessToken = JSON::Json2AccessToken(result.content);
 }
 
 void SecurityManager::login() throw (NacosException) {
     WriteGuard writeGuard(_rwLock);
-    list <NacosServerInfo> serversToTry = _serverListManager->getServerList();
+    list <NacosServerInfo> serversToTry = _objectConfigData->_serverListManager->getServerList();
     size_t nr_servers = serversToTry.size();
     if (nr_servers == 0) {
         throw NacosException(NacosException::NO_SERVER_AVAILABLE, "No available server when getting access token");

@@ -87,7 +87,7 @@ NacosString ServerListManager::getCurrentServerAddr() {
 
 void ServerListManager::initAll() throw(NacosException) {
     serverList.clear();
-    Properties props = appConfigManager->getAllConfig();
+    Properties props = _objectConfigData->_appConfigManager->getAllConfig();
     if (props.contains(PropertyKeyConst::SERVER_ADDR)) {//Server address is configured
         isFixed = true;
         NacosString server_addr = props[PropertyKeyConst::SERVER_ADDR];
@@ -125,11 +125,10 @@ void ServerListManager::initAll() throw(NacosException) {
     }
 }
 
-ServerListManager::ServerListManager(HttpDelegate *httpDelegate, AppConfigManager *_appConfigManager) throw(NacosException) {
+ServerListManager::ServerListManager(ObjectConfigData *objectConfigData) throw(NacosException) {
     started = false;
-    this->_httpDelegate = httpDelegate;
-    this->appConfigManager = _appConfigManager;
-    refreshInterval = atoi(appConfigManager->get(PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL).c_str());
+    _objectConfigData = objectConfigData;
+    refreshInterval = atoi(_objectConfigData->_appConfigManager->get(PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL).c_str());
     initAll();
 }
 
@@ -143,7 +142,7 @@ list <NacosServerInfo> ServerListManager::tryPullServerListFromNacosServer() thr
     log_debug("nr_servers:%d\n", maxSvrSlot);
     srand(time(NULL));
 
-    long _read_timeout = appConfigManager->getServeReqTimeout();
+    long _read_timeout = _objectConfigData->_appConfigManager->getServeReqTimeout();
     NacosString errmsg;
     for (size_t i = 0; i < serverList.size(); i++) {
         size_t selectedServer = rand() % maxSvrSlot;
@@ -151,7 +150,7 @@ list <NacosServerInfo> ServerListManager::tryPullServerListFromNacosServer() thr
         log_debug("selected_server:%d\n", selectedServer);
         log_debug("Trying to access server:%s\n", server.getCompleteAddress().c_str());
         try {
-            HttpResult serverRes = _httpDelegate->httpGet(
+            HttpResult serverRes = _objectConfigData->_httpDelegate->httpGet(
                     server.getCompleteAddress() + "/" + DEFAULT_CONTEXT_PATH + "/" + PROTOCOL_VERSION + "/" +
                     GET_SERVERS_PATH,
                     headers, paramValues, NULLSTR, _read_timeout);
@@ -178,9 +177,9 @@ list <NacosServerInfo> ServerListManager::pullServerList() throw(NacosException)
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
 
-    long _read_timeout = appConfigManager->getServeReqTimeout();
+    long _read_timeout = _objectConfigData->_appConfigManager->getServeReqTimeout();
     if (!NacosStringOps::isNullStr(addressServerUrl)) {
-        HttpResult serverRes = _httpDelegate->httpGet(addressServerUrl, headers, paramValues, NULLSTR,
+        HttpResult serverRes = _objectConfigData->_httpDelegate->httpGet(addressServerUrl, headers, paramValues, NULLSTR,
                                                 _read_timeout);
         list<NacosString> explodedServerList;
         ParamUtils::Explode(explodedServerList, serverRes.content, '\n');
@@ -295,7 +294,7 @@ void ServerListManager::stop() {
 }
 
 NacosString ServerListManager::getContextPath() const {
-    return appConfigManager->get(PropertyKeyConst::CONTEXT_PATH);
+    return _objectConfigData->_appConfigManager->get(PropertyKeyConst::CONTEXT_PATH);
 }
 
 ServerListManager::~ServerListManager() {

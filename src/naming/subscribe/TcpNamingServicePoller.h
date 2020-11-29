@@ -9,6 +9,7 @@
 #include "src/thread/Thread.h"
 #include "src/naming/NamingProxy.h"
 #include "EventDispatcher.h"
+#include "src/factory/ObjectConfigData.h"
 
 namespace nacos{
 struct PollingData
@@ -24,9 +25,7 @@ private:
     Thread *_pollingThread = NULL;
     int _pollingInterval;//In ms
     bool _started;
-    EventDispatcher *_eventDispatcher = NULL;
-    NamingProxy *_namingProxy = NULL;
-    AppConfigManager *_appConfigMgr = NULL;
+    ObjectConfigData *_objectConfigData;
 
     TcpNamingServicePoller();
 
@@ -36,7 +35,7 @@ private:
     std::map<NacosString, PollingData> pollingList;
     std::map<NacosString, ServiceInfo> serviceInfoList;
 public:
-    TcpNamingServicePoller(EventDispatcher *eventDispatcher, NamingProxy *namingProxy, AppConfigManager *appConfigManager);
+    TcpNamingServicePoller(ObjectConfigData *objectConfigData);
     bool addPollItem(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters);
     bool removePollItem(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters);
     void start();

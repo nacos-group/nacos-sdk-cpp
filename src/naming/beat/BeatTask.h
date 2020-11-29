@@ -7,6 +7,7 @@
 #include "src/thread/ThreadPool.h"
 #include "thread/AtomicInt.h"
 #include "Debug.h"
+#include "src/factory/ObjectConfigData.h"
 
 namespace nacos{
 class BeatReactor;
@@ -14,12 +15,11 @@ class BeatReactor;
 class BeatTask : public Task {
 private:
     BeatInfo _beatInfo;
-    NamingProxy *_namingProxy;
-    BeatReactor *_beatReactor;
+    ObjectConfigData *_objectConfigData;
     AtomicInt _refCount;
     bool _scheduled;
 public:
-    BeatTask(BeatInfo &beatInfo, NamingProxy *namingProxy, BeatReactor *beatReactor);
+    BeatTask(BeatInfo &beatInfo, ObjectConfigData *objectConfigData);
 
     ~BeatTask();
 

@@ -8,6 +8,7 @@
 #include "src/config/AppConfigManager.h"
 #include "src/http/IHttpCli.h"
 #include "src/server/ServerListManager.h"
+#include "src/factory/ObjectConfigData.h"
 
 namespace nacos {
 
@@ -20,19 +21,13 @@ struct AccessToken {
 
 class SecurityManager {
 private:
-    AppConfigManager *_appConfigManager;
-    ServerListManager *_serverListManager;
-    IHttpCli *_httpCli;
+    ObjectConfigData *_objectConfigData;
     AccessToken _accessToken;
     void doLogin(const NacosString &serverAddr) throw(NacosException, NetworkException);
     void login() throw (NacosException);
     RWLock _rwLock;
 public:
-    SecurityManager(
-        AppConfigManager *appConfigManager,
-        ServerListManager *serverListManager,
-        IHttpCli *iHttpCli
-        );
+    SecurityManager(ObjectConfigData *objectConfigData);
     NacosString &getAccessToken();
 };
 }

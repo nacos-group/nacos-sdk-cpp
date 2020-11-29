@@ -6,13 +6,11 @@
 using namespace std;
 
 namespace nacos{
-TcpNamingServicePoller::TcpNamingServicePoller(EventDispatcher *eventDispatcher, NamingProxy *namingProxy, AppConfigManager *appConfigManager)
+TcpNamingServicePoller::TcpNamingServicePoller(ObjectConfigData *objectConfigData)
 {
-    _eventDispatcher = eventDispatcher;
-    _namingProxy = namingProxy;
-    _appConfigMgr = appConfigManager;
+    _objectConfigData = objectConfigData;
     _pollingThread = new Thread("NamingServicePoller", pollingThreadFunc, (void*)this);
-    _pollingInterval = atoi(_appConfigMgr->get(PropertyKeyConst::TCP_NAMING_POLL_INTERVAL).c_str());
+    _pollingInterval = atoi(_objectConfigData->_appConfigManager->get(PropertyKeyConst::TCP_NAMING_POLL_INTERVAL).c_str());
     _started = false;
 }
 
@@ -21,9 +19,6 @@ TcpNamingServicePoller::~TcpNamingServicePoller()
     if (_started) {
         stop();
     }
-    _eventDispatcher = NULL;
-    _namingProxy = NULL;
-    _appConfigMgr = NULL;
     if (_pollingThread != NULL)
     {
         delete _pollingThread;
@@ -110,8 +105,8 @@ void *TcpNamingServicePoller::pollingThreadFunc(void *parm)
 
             NacosString result;
             try {
-                result = thisObj->_namingProxy->queryList(it->second.serviceName, it->second.clusters, 0,
-                                                          false);
+                result = thisObj->_objectConfigData->_serverProxy->queryList(
+                        it->second.serviceName, it->second.clusters, 0,false);
             }
             catch (NacosException &e) {
                 //no server available or all servers tried but failed
@@ -140,7 +135,7 @@ void *TcpNamingServicePoller::pollingThreadFunc(void *parm)
                 if (changeAdvice.modified || changeAdvice.added || changeAdvice.removed) {
                     //asm volatile("int $3");
                     changeAdvice.newServiceInfo = serviceInfo;
-                    thisObj->_eventDispatcher->notifyDirectly(changeAdvice);
+                    thisObj->_objectConfigData->_eventDispatcher->notifyDirectly(changeAdvice);
                 }
                 thisObj->serviceInfoList[key] = serviceInfo;//update local service info to the new one
             }

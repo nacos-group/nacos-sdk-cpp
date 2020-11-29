@@ -10,18 +10,12 @@
 #include "src/http/IHttpCli.h"
 #include "NacosString.h"
 #include "Properties.h"
+#include "src/factory/ObjectConfigData.h"
 
 namespace nacos{
 class NacosNamingService : public NamingService {
 private:
-    HttpDelegate *_httpDelegate = NULL;
-    NamingProxy *serverProxy = NULL;
-    BeatReactor *beatReactor = NULL;
-    EventDispatcher *_eventDispatcher = NULL;
-    TcpNamingServicePoller *_tcpNamingServicePoller = NULL;
-    AppConfigManager *_appConfigMgr = NULL;
-    IHttpCli *_httpCli = NULL;
-    ServerListManager *_serverListManager = NULL;
+    ObjectConfigData *_objectConfigData;
 
     NacosNamingService();
 
@@ -29,14 +23,7 @@ private:
 
     NacosString logName;
 public:
-    NacosNamingService(HttpDelegate *httpDelegate,
-                       IHttpCli *httpCli,
-                       NamingProxy *serverProxy,
-                       BeatReactor *beatReactor,
-                       EventDispatcher *eventDispatcher,
-                       TcpNamingServicePoller *tcpNamingServicePoller,
-                       AppConfigManager *appConfigManager,
-                       ServerListManager *serverListManager);
+    NacosNamingService(ObjectConfigData *objectConfigData);
 
     ~NacosNamingService();
 
@@ -116,17 +103,17 @@ public:
     std::list<Instance> getInstanceWithPredicate(const NacosString &serviceName,
                                                  nacos::naming::selectors::Selector<Instance> *predicate) throw(NacosException);
 
-    IHttpCli *getHttpCli() const { return _httpCli; };
+    IHttpCli *getHttpCli() const { return _objectConfigData->_httpCli; };
 
-    NamingProxy *getServerProxy() const { return serverProxy; };
+    NamingProxy *getServerProxy() const { return _objectConfigData->_serverProxy; };
 
-    BeatReactor *getBeatReactor() const { return beatReactor; };
+    BeatReactor *getBeatReactor() const { return _objectConfigData->_beatReactor; };
 
-    void setHttpCli(IHttpCli *httpCli) { this->_httpCli = httpCli; };
+    void setHttpCli(IHttpCli *httpCli) { this->_objectConfigData->_httpCli = httpCli; };
 
-    void setServerProxy(NamingProxy *_namingProxy) { this->serverProxy = _namingProxy; };
+    void setServerProxy(NamingProxy *_namingProxy) { this->_objectConfigData->_serverProxy = _namingProxy; };
 
-    void setBeatReactor(BeatReactor *_beatReactor) { this->beatReactor = beatReactor; };
+    void setBeatReactor(BeatReactor *_beatReactor) { this->_objectConfigData->_beatReactor = _beatReactor; };
 };
 }//namespace nacos
 

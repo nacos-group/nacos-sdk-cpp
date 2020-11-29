@@ -16,29 +16,24 @@ namespace nacos{
 
 ListView<NacosString> NamingProxy::nullResult;
 
-NamingProxy::NamingProxy(HttpDelegate *httpDelegate, ServerListManager *_serverListManager, AppConfigManager *_appConfigManager) {
+NamingProxy::NamingProxy(ObjectConfigData *objectConfigData) {
+    _objectConfigData = objectConfigData;
     log_debug("NamingProxy Constructor:\n"
               "namespace:%s, endpoint:%s, Servers:%s\n",
-              _serverListManager->getNamespace().c_str(), _serverListManager->getEndpoint().c_str(),
-              _serverListManager->toString().c_str());
-    serverListManager = _serverListManager;
-    _httpDelegate = httpDelegate;
-    appConfigManager = _appConfigManager;
+              objectConfigData->_serverListManager->getNamespace().c_str(), objectConfigData->_serverListManager->getEndpoint().c_str(),
+              objectConfigData->_serverListManager->toString().c_str());
     serverPort = "8848";
 
-    if (serverListManager->getServerCount() == 1) {
-        nacosDomain = serverListManager->getServerList().begin()->getCompleteAddress();
+    if (objectConfigData->_serverListManager->getServerCount() == 1) {
+        nacosDomain = objectConfigData->_serverListManager->getServerList().begin()->getCompleteAddress();
     }
-    log_debug("The serverlist:%s\n", _serverListManager->toString().c_str());
+    log_debug("The serverlist:%s\n", objectConfigData->_serverListManager->toString().c_str());
 
     nullResult.setCount(0);
-    _hb_fail_wait = atoi(appConfigManager->get(PropertyKeyConst::HB_FAIL_WAIT_TIME).c_str());
+    _hb_fail_wait = atoi(objectConfigData->_appConfigManager->get(PropertyKeyConst::HB_FAIL_WAIT_TIME).c_str());
 }
 
 NamingProxy::~NamingProxy() {
-    _httpDelegate = NULL;
-    appConfigManager = NULL;
-    serverListManager = NULL;
 }
 
 void NamingProxy::registerService(const NacosString &serviceName, const NacosString &groupName,
@@ -92,9 +87,10 @@ NacosString NamingProxy::queryList(const NacosString &serviceName, const NacosSt
 
 NacosString
 NamingProxy::reqAPI(const NacosString &api, list <NacosString> &params, int method) throw(NacosException) {
-    list <NacosServerInfo> servers = serverListManager->getServerList();
+    ServerListManager *_serverListManager = _objectConfigData->_serverListManager;
+    list <NacosServerInfo> servers = _serverListManager->getServerList();
 
-    if (serverListManager->getServerCount() == 0) {
+    if (_serverListManager->getServerCount() == 0) {
         throw NacosException(NacosException::NO_SERVER_AVAILABLE, "no server available");
     }
 
@@ -123,7 +119,7 @@ NamingProxy::reqAPI(const NacosString &api, list <NacosString> &params, int meth
             selectedServer = (selectedServer + 1) % servers.size();
         }
 
-        throw NacosException(NacosException::ALL_SERVERS_TRIED_AND_FAILED, "failed to req API:" + api + " after all servers(" + serverListManager->toString() +
+        throw NacosException(NacosException::ALL_SERVERS_TRIED_AND_FAILED, "failed to req API:" + api + " after all servers(" + _serverListManager->toString() +
                                 ") tried: "
                                 + errmsg);
     }
@@ -138,7 +134,7 @@ NamingProxy::reqAPI(const NacosString &api, list <NacosString> &params, int meth
         }
     }
 
-    throw NacosException(NacosException::ALL_SERVERS_TRIED_AND_FAILED, "failed to req API:/api/" + api + " after all servers(" + serverListManager->toString() +
+    throw NacosException(NacosException::ALL_SERVERS_TRIED_AND_FAILED, "failed to req API:/api/" + api + " after all servers(" + _serverListManager->toString() +
                             ") tried: " + errmsg);
 }
 
@@ -173,8 +169,9 @@ NacosString NamingProxy::callServer
     list <NacosString> headers;
     headers = builderHeaders();
 
+    HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
     try {
-        long _http_req_timeout = appConfigManager->getServeReqTimeout();
+        long _http_req_timeout = _objectConfigData->_appConfigManager->getServeReqTimeout();
         switch (method) {
             case IHttpCli::GET:
                 requestRes = _httpDelegate->httpGet(requestUrl, headers, params, UtilAndComs::ENCODING,
@@ -215,7 +212,7 @@ NacosString NamingProxy::callServer
 }
 
 inline NacosString NamingProxy::getNamespaceId() {
-    return appConfigManager->get(PropertyKeyConst::NAMESPACE);
+    return _objectConfigData->_appConfigManager->get(PropertyKeyConst::NAMESPACE);
 }
 
 list <NacosString> NamingProxy::builderHeaders() {

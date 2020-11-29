@@ -17,21 +17,14 @@
 using namespace std;
 
 namespace nacos{
-ClientWorker::ClientWorker(
-        HttpDelegate *httpDelegate,
-        AppConfigManager *appConfigManager,
-        ServerListManager *svrListMgr,
-        LocalSnapshotManager *localSnapshotManager) {
+ClientWorker::ClientWorker(ObjectConfigData *objectConfigData) {
     threadId = 0;
     stopThread = true;
     pthread_mutex_init(&watchListMutex, NULL);
     pthread_mutex_init(&stopThreadMutex, NULL);
-    _httpDelegate = httpDelegate;
-    _appConfigManager = appConfigManager;
-    _svrListMgr = svrListMgr;
-    _localSnapshotManager = localSnapshotManager;
+    _objectConfigData = objectConfigData;
 
-    _longPullingTimeoutStr = _appConfigManager->get(PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT);
+    _longPullingTimeoutStr = _objectConfigData->_appConfigManager->get(PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT);
     _longPullingTimeout = atoi(_longPullingTimeoutStr.c_str());
 }
 
@@ -56,20 +49,21 @@ NacosString ClientWorker::getServerConfig
     long timeoutMs
 ) throw(NacosException) {
     HttpResult res = getServerConfigHelper(tenant, dataId, group, timeoutMs);
+    AppConfigManager *_appConfigManager = _objectConfigData->_appConfigManager;
     switch (res.code) {
         case HttpStatus::HTTP_OK:
-            _localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, res.content);
+            _objectConfigData->_localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, res.content);
             return res.content;
         case HttpStatus::HTTP_NOT_FOUND:
             //Update snapshot
-            _localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
+            _objectConfigData->_localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
             throw NacosException(NacosException::HTTP_NOT_FOUND, "getServerConfig could not get content for Key " + group + ":" + dataId);
         case HttpStatus::HTTP_FORBIDDEN:
             //Update snapshot
-            _localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
+            _objectConfigData->_localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
             throw NacosException(NacosException::NO_RIGHT, "permission denied for Key " + group + ":" + dataId);
         default:
-            _localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
+            _objectConfigData->_localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
             throw NacosException(NacosException::SERVER_ERROR, "getServerConfig failed with code:" + NacosStringOps::valueOf(res.code));
     }
     return NULLSTR;
@@ -100,11 +94,12 @@ HttpResult ClientWorker::getServerConfigHelper
 
     //Get the request url
     NacosString path = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
-    NacosString serverAddr = _svrListMgr->getCurrentServerAddr();
+    NacosString serverAddr = _objectConfigData->_serverListManager->getCurrentServerAddr();
     NacosString url = serverAddr + "/" + path;
     log_debug("httpGet Assembled URL:%s\n", url.c_str());
 
     HttpResult res;
+    HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
     try {
         res = _httpDelegate->httpGet(url, headers, paramValues, _httpDelegate->getEncode(), timeoutMs);
     }
@@ -334,10 +329,11 @@ NacosString ClientWorker::checkListenedKeys() {
     NacosString path = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH + "/listener";
     HttpResult res;
 
-    NacosString serverAddr = _svrListMgr->getCurrentServerAddr();
+    NacosString serverAddr = _objectConfigData->_serverListManager->getCurrentServerAddr();
     NacosString url = serverAddr + "/" + path;
     log_debug("httpPost Assembled URL:%s\n", url.c_str());
 
+    HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
     try {
         res = _httpDelegate->httpPost(url, headers, paramValues, _httpDelegate->getEncode(), _longPullingTimeout);
     }
@@ -373,7 +369,8 @@ void ClientWorker::performWatch() {
 
             try {
                 res = getServerConfigHelper(listenedList->getTenant(), listenedList->getDataId(),
-                                                 listenedList->getGroup(), _appConfigManager->getServeReqTimeout());
+                                                 listenedList->getGroup(),
+                                                 _objectConfigData->_appConfigManager->getServeReqTimeout());
                 updatedcontent = res.content;
             }
             catch (NacosException &e) {
