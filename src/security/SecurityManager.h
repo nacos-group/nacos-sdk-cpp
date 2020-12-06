@@ -26,9 +26,17 @@ private:
     void doLogin(const NacosString &serverAddr) throw(NacosException, NetworkException);
     void login() throw (NacosException);
     RWLock _rwLock;
+    bool _started;
+    static void * tokenRefreshThreadFunc(void *param);
+    Thread *_tokenRefreshThread;
+    void sleepWithRunStatusCheck(long _milliSecsToSleep);
 public:
     SecurityManager(ObjectConfigData *objectConfigData);
+    ~SecurityManager();
     NacosString &getAccessToken();
+    void addAccessToken2Req(std::list<NacosString> &parameter);
+    void start();
+    void stop();
 };
 }
 

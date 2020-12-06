@@ -1,5 +1,3 @@
-#include <sys/time.h>
-#include <unistd.h>
 #include <vector>
 #include "ClientWorker.h"
 #include "listen/Listener.h"
@@ -7,10 +5,10 @@
 #include "utils/GroupKey.h"
 #include "src/md5/md5.h"
 #include "utils/ParamUtils.h"
+#include "src/utils/TimeUtils.h"
 #include "Debug.h"
 #include "DebugAssertion.h"
 #include "Constants.h"
-#include "Parameters.h"
 #include "PropertyKeyConst.h"
 #include "src/http/HttpStatus.h"
 
@@ -34,13 +32,6 @@ ClientWorker::~ClientWorker() {
     cleanUp();
 }
 
-int64_t getCurrentTimeInMs() {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-
-    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
-}
-
 NacosString ClientWorker::getServerConfig
 (
     const NacosString &tenant,
@@ -50,20 +41,21 @@ NacosString ClientWorker::getServerConfig
 ) throw(NacosException) {
     HttpResult res = getServerConfigHelper(tenant, dataId, group, timeoutMs);
     AppConfigManager *_appConfigManager = _objectConfigData->_appConfigManager;
+    LocalSnapshotManager *localSnapshotManager = _objectConfigData->_localSnapshotManager;
     switch (res.code) {
         case HttpStatus::HTTP_OK:
-            _objectConfigData->_localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, res.content);
+            localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, res.content);
             return res.content;
         case HttpStatus::HTTP_NOT_FOUND:
             //Update snapshot
-            _objectConfigData->_localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
+            localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
             throw NacosException(NacosException::HTTP_NOT_FOUND, "getServerConfig could not get content for Key " + group + ":" + dataId);
         case HttpStatus::HTTP_FORBIDDEN:
             //Update snapshot
-            _objectConfigData->_localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
+            localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
             throw NacosException(NacosException::NO_RIGHT, "permission denied for Key " + group + ":" + dataId);
         default:
-            _objectConfigData->_localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
+            localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
             throw NacosException(NacosException::SERVER_ERROR, "getServerConfig failed with code:" + NacosStringOps::valueOf(res.code));
     }
     return NULLSTR;
@@ -93,7 +85,7 @@ HttpResult ClientWorker::getServerConfigHelper
     }
 
     //Get the request url
-    NacosString path = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
+    NacosString path = Constants::DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
     NacosString serverAddr = _objectConfigData->_serverListManager->getCurrentServerAddr();
     NacosString url = serverAddr + "/" + path;
     log_debug("httpGet Assembled URL:%s\n", url.c_str());
@@ -116,11 +108,11 @@ void *ClientWorker::listenerThread(void *parm) {
     ClientWorker *thelistener = (ClientWorker *) parm;
 
     while (!thelistener->stopThread) {
-        int64_t start_time = getCurrentTimeInMs();
+        int64_t start_time = TimeUtils::getCurrentTimeInMs();
         log_debug("Start watching at %u...\n", start_time);
         thelistener->performWatch();
 
-        log_debug("Watch function exit at %u...\n", getCurrentTimeInMs());
+        log_debug("Watch function exit at %u...\n", TimeUtils::getCurrentTimeInMs());
     }
 
     return 0;
@@ -326,7 +318,7 @@ NacosString ClientWorker::checkListenedKeys() {
 
     //Get the request url
     //TODO:move /listener to constant
-    NacosString path = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH + "/listener";
+    NacosString path = Constants::DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH + "/listener";
     HttpResult res;
 
     NacosString serverAddr = _objectConfigData->_serverListManager->getCurrentServerAddr();

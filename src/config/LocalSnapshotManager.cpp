@@ -22,14 +22,14 @@ NacosString LocalSnapshotManager::getFailover(const NacosString &serverName, con
     NacosString localPath = getFailoverFile(serverName, dataId, group, tenant);
 
     if (IOUtils::checkNotExistOrNotFile(localPath)) {
-        log_debug("[%s] failover file %s doesn't exist", serverName.c_str(), localPath.c_str());
+        log_debug("[%s] failover file %s doesn't exist\n", serverName.c_str(), localPath.c_str());
         return NULLSTR;
     }
 
     try {
         return readFile(localPath);
     } catch (IOException ioe) {
-        log_error("[%s] get failover error, file: %s, exception:%s", serverName.c_str(), localPath.c_str(), ioe.what());
+        log_error("[%s] get failover error, file: %s, exception:%s\n", serverName.c_str(), localPath.c_str(), ioe.what());
         return NULLSTR;
     }
 };

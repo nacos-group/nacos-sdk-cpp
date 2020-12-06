@@ -12,6 +12,8 @@
  */
 namespace nacos{
 class HttpDelegate {
+private:
+    HttpDelegate *_next = NULL;
 public:
     /**
     * invoke http get method

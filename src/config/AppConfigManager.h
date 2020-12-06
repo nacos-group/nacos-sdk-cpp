@@ -27,6 +27,8 @@ private:
     void applyConfig(Properties &rhs);
 
 public:
+    bool nacosAuthEnabled();
+
     long getServeReqTimeout() const { return _serverReqTimeout; };
 
     bool isReloadable() const { return reloadable; };

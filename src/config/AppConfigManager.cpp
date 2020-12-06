@@ -5,7 +5,6 @@
 #include "PropertyKeyConst.h"
 #include "IOUtils.h"
 #include "NacosExceptions.h"
-#include "Parameters.h"
 #include "utils/DirUtils.h"
 #include <vector>
 #include <stdlib.h>
@@ -15,6 +14,15 @@ using namespace std;
 namespace nacos{
 NacosString AppConfigManager::LINE_SEPARATOR = "\n";
 NacosString AppConfigManager::KV_SEPARATOR = "=";
+
+
+bool AppConfigManager::nacosAuthEnabled() {
+    if (contains(PropertyKeyConst::AUTH_USERNAME) && contains(PropertyKeyConst::AUTH_PASSWORD)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 Properties AppConfigManager::parseConfigFile(const NacosString &file) {
     Properties parsedConfig;
@@ -113,7 +121,7 @@ void AppConfigManager::initDefaults() {
     //appConfig[PropertyKeyConst::NAMESPACE] = "public";
     set(PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL, "30000");
     set(PropertyKeyConst::SERVER_REQ_TIMEOUT, "3000");
-    set(PropertyKeyConst::CONTEXT_PATH, DEFAULT_CONTEXT_PATH);
+    set(PropertyKeyConst::CONTEXT_PATH, Constants::DEFAULT_CONTEXT_PATH);
     set(PropertyKeyConst::TCP_NAMING_POLL_INTERVAL, "30000");//30 secs by default
     set(PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT, "30000");//ms
     set(PropertyKeyConst::HB_FAIL_WAIT_TIME, "20000");//ms

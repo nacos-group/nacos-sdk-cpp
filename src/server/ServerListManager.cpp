@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include "ServerListManager.h"
 #include "PropertyKeyConst.h"
-#include "Parameters.h"
 #include "utils/ParamUtils.h"
 #include "Debug.h"
 #include "src/json/JSON.h"
@@ -151,8 +150,8 @@ list <NacosServerInfo> ServerListManager::tryPullServerListFromNacosServer() thr
         log_debug("Trying to access server:%s\n", server.getCompleteAddress().c_str());
         try {
             HttpResult serverRes = _objectConfigData->_httpDelegate->httpGet(
-                    server.getCompleteAddress() + "/" + DEFAULT_CONTEXT_PATH + "/" + PROTOCOL_VERSION + "/" +
-                    GET_SERVERS_PATH,
+                    server.getCompleteAddress() + "/" + Constants::DEFAULT_CONTEXT_PATH + "/"
+                    + Constants::PROTOCOL_VERSION + "/" + Constants::GET_SERVERS_PATH,
                     headers, paramValues, NULLSTR, _read_timeout);
             return JSON::Json2NacosServerInfo(serverRes.content);
         }

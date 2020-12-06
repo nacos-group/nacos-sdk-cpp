@@ -1,6 +1,4 @@
-#include <string.h>
 #include "NoOpHttpDelegate.h"
-#include "Debug.h"
 
 using namespace std;
 

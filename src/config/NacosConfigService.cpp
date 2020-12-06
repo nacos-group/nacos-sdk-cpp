@@ -1,7 +1,6 @@
 #include "src/config/NacosConfigService.h"
+#include "src/security/SecurityManager.h"
 #include "Constants.h"
-#include "Parameters.h"
-#include "utils/ParamUtils.h"
 #include "Debug.h"
 
 using namespace std;
@@ -9,6 +8,9 @@ using namespace std;
 namespace nacos{
 NacosConfigService::NacosConfigService(ObjectConfigData *objectConfigData) throw(NacosException) {
     _objectConfigData = objectConfigData;
+    if (_objectConfigData->_appConfigManager->nacosAuthEnabled()) {
+        _objectConfigData->_securityManager->start();
+    }
 }
 
 NacosConfigService::~NacosConfigService() {
@@ -89,7 +91,7 @@ bool NacosConfigService::removeConfigInner
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
     //Get the request url
-    NacosString path = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
+    NacosString path = Constants::DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
 
     HttpResult res;
 
@@ -143,7 +145,7 @@ bool NacosConfigService::publishConfigInner
     std::list <NacosString> paramValues;
     NacosString parmGroupid;
     //Get the request url
-    NacosString path = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
+    NacosString path = Constants::DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
 
     HttpResult res;
 
