@@ -12,6 +12,7 @@ bool testGetConfig() {
     cout << "in function testGetConfig" << endl;
     Properties props;
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
+    ADD_AUTH_INFO(props);
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
@@ -35,6 +36,7 @@ bool testGetConfigwithDefaultPort() {
     cout << "in function testGetConfigwithDefaultPort" << endl;
     Properties props;
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
+    ADD_AUTH_INFO(props);
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
@@ -48,6 +50,7 @@ bool testGetConfigwithDefaultPort() {
 bool testInvalidConfig() {
     cout << "in function testInvalidConfig" << endl;
     Properties props;
+    ADD_AUTH_INFO(props);
 
     NacosString ss;
     try {

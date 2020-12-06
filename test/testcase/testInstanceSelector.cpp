@@ -24,6 +24,7 @@ using namespace nacos::naming::selectors;
 bool testInstanceSelectors() {
     cout << "in function testInstanceSelectors" << endl;
     Properties configProps;
+    ADD_AUTH_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     configProps[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "3000";
 
@@ -70,6 +71,7 @@ bool testRandomByWeightSelector()
 
     cout << "in function testRandomByWeightSelector" << endl;
     Properties configProps;
+    ADD_AUTH_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     configProps[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "3000";
 

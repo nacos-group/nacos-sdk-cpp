@@ -1,8 +1,6 @@
 #include <iostream>
-#include <stdlib.h>
 #include "src/config/LocalSnapshotManager.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
 #include "NacosString.h"
 #include "ResourceGuard.h"
 

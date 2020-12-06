@@ -17,6 +17,7 @@ using namespace nacos;
 bool testMaintainUpdateInstance() {
     cout << "in function testMaintainUpdateInstance" << endl;
     Properties configProps;
+    ADD_AUTH_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);

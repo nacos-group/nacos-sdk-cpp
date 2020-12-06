@@ -22,6 +22,7 @@ bool testNamingProxySmokeTest() {
     cout << "in function testNamingProxySmokeTest" << endl;
     NacosString servers = "127.0.0.1:8848";
     Properties props;
+    ADD_AUTH_INFO(props);
     props[PropertyKeyConst::SERVER_ADDR] = servers;
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
@@ -97,6 +98,7 @@ bool testNamingProxyServerHealthy() {
     cout << "in function testNamingProxyServerHealthy" << endl;
     NacosString servers = "127.0.0.1:8848";
     Properties props;
+    ADD_AUTH_INFO(props);
     props[PropertyKeyConst::SERVER_ADDR] = servers;
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
@@ -135,6 +137,7 @@ bool testNamingServiceRegister() {
     cout << "in function testNamingServiceRegister" << endl;
     Properties configProps;
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
+    ADD_AUTH_INFO(configProps);
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     NamingService *namingSvc = factory->CreateNamingService();

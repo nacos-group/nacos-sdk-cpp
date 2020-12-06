@@ -37,12 +37,14 @@ do \
 
 #define SHOULD_BE_FALSE(assertion, message) SHOULD_BE_TRUE(!(assertion), (message))
 
-#define ReleaseResource(x) \
+#ifdef NACOS_AUTH
+#define ADD_AUTH_INFO(x) \
 do { \
-    if ((x) != NULL) \
-        delete (x); \
-    x = NULL; \
+    (x)["nacos.auth.username"] = "nacos"; \
+    (x)["nacos.auth.password"] = "nacos"; \
 } while (0)
+#else
+#define ADD_AUTH_INFO(x)
+#endif
 }//namespace nacos
-
 #endif

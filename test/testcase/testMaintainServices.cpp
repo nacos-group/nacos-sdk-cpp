@@ -17,6 +17,7 @@ using namespace nacos;
 bool testMaintainGetService() {
     cout << "in function testMaintainGetService" << endl;
     Properties configProps;
+    ADD_AUTH_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
@@ -43,6 +44,7 @@ bool testMaintainGetService() {
 bool testMaintainUpdateService() {
     cout << "in function testMaintainUpdateService" << endl;
     Properties configProps;
+    ADD_AUTH_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
@@ -76,6 +78,7 @@ bool testMaintainUpdateService() {
 bool testMaintainCreateService() {
     cout << "in function testMaintainCreateService" << endl;
     Properties configProps;
+    ADD_AUTH_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
