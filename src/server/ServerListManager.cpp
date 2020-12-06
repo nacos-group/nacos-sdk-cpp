@@ -193,7 +193,7 @@ list <NacosServerInfo> ServerListManager::pullServerList() throw(NacosException)
                 curServer.setPort(8848);
             } else {
                 NacosString ip = it->substr(0, pos);
-                NacosString port = it->substr(pos);
+                NacosString port = it->substr(pos + 1);
 
                 curServer.setIp(ip);
                 curServer.setPort(atoi(port.c_str()));
