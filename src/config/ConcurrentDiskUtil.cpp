@@ -19,7 +19,8 @@ NacosString
 ConcurrentDiskUtil::getFileContent(const NacosString &file, const NacosString &charsetName) throw(IOException) {
     if (IOUtils::checkNotExistOrNotFile(file)) {
         //TODO:add errorcode
-        throw IOException(99999, "checkNotExistOrNotFile failed, unable to access the file, maybe it doesn't exist.");
+        throw IOException(NacosException::FILE_NOT_FOUND,
+                          "checkNotExistOrNotFile failed, unable to access the file, maybe it doesn't exist.");
     }
     size_t toRead = IOUtils::getFileSize(file);
     FILE *fp = fopen(file.c_str(), "rb");
@@ -27,7 +28,7 @@ ConcurrentDiskUtil::getFileContent(const NacosString &file, const NacosString &c
         char errbuf[100];
         sprintf(errbuf, "Failed to open file for read, errno: %d", errno);
         //TODO:add errorcode
-        throw IOException(99999, errbuf);
+        throw IOException(NacosException::UNABLE_TO_OPEN_FILE, errbuf);
     }
     flock(fileno(fp), LOCK_SH);
     char buf[toRead + 1];
@@ -58,7 +59,7 @@ bool ConcurrentDiskUtil::writeFileContent
         char errbuf[100];
         sprintf(errbuf, "Failed to open file for write, errno: %d", errno);
         //TODO:add errorcode
-        throw IOException(99999, errbuf);
+        throw IOException(NacosException::UNABLE_TO_OPEN_FILE, errbuf);
     }
     flock(fileno(fp), LOCK_SH);
     fwrite(content.c_str(), content.size(), 1, fp);
