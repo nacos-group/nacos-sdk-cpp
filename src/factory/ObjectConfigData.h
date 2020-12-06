@@ -16,6 +16,7 @@ class AppConfigManager;
 class ServerListManager;
 class ClientWorker;
 class LocalSnapshotManager;
+class SecurityManager;
 
 enum FactoryType {
     CONFIG = 0,
@@ -49,6 +50,7 @@ public:
     ServerListManager *_serverListManager;
     ClientWorker *_clientWorker;
     LocalSnapshotManager *_localSnapshotManager;
+    SecurityManager *_securityManager;
 };
 }//namespace nacos
 

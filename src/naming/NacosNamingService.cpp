@@ -14,6 +14,10 @@ NacosNamingService::NacosNamingService(ObjectConfigData *objectConfigData) {
     _objectConfigData = objectConfigData;
     _objectConfigData->_beatReactor->start();
     _objectConfigData->_tcpNamingServicePoller->start();
+
+    if (_objectConfigData->_appConfigManager->nacosAuthEnabled()) {
+        _objectConfigData->_securityManager->start();
+    }
 }
 
 NacosNamingService::~NacosNamingService() {

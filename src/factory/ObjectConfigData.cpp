@@ -9,6 +9,7 @@
 #include "src/server/ServerListManager.h"
 #include "src/listen/ClientWorker.h"
 #include "src/config/LocalSnapshotManager.h"
+#include "src/security/SecurityManager.h"
 namespace nacos{
 
 ObjectConfigData::ObjectConfigData(FactoryType theFactoryType) {
@@ -23,6 +24,7 @@ ObjectConfigData::ObjectConfigData(FactoryType theFactoryType) {
     _serverListManager = NULL;
     _clientWorker = NULL;
     _localSnapshotManager = NULL;
+    _securityManager = NULL;
 }
 
 void ObjectConfigData::checkNamingService() throw(NacosException) {
@@ -64,6 +66,19 @@ void ObjectConfigData::checkMaintainService() throw(NacosException) {
 }
 
 void ObjectConfigData::destroyConfigService() {
+
+    if (_clientWorker != NULL) {
+        _clientWorker->stopListening();
+    }
+
+    if (_securityManager != NULL) {
+        _securityManager->stop();
+    }
+
+    if (_serverListManager) {
+        _serverListManager->stop();
+    }
+
     if (_clientWorker != NULL) {
         _clientWorker->stopListening();
         delete _clientWorker;
@@ -73,6 +88,11 @@ void ObjectConfigData::destroyConfigService() {
     if (_httpDelegate != NULL) {
         delete _httpDelegate;
         _httpDelegate = NULL;
+    }
+
+    if (_securityManager != NULL) {
+        delete _securityManager;
+        _securityManager = NULL;
     }
 
     if (_serverListManager != NULL) {
@@ -92,63 +112,109 @@ void ObjectConfigData::destroyConfigService() {
 }
 
 void ObjectConfigData::destroyNamingService() {
+
+    if (_beatReactor != NULL) {
+        _beatReactor->stop();
+    }
+
+    if (_tcpNamingServicePoller != NULL) {
+        _tcpNamingServicePoller->stop();
+    }
+
+    if (_eventDispatcher != NULL) {
+        _eventDispatcher->stop();
+    }
+
+    if (_securityManager != NULL) {
+        _securityManager->stop();
+    }
+
+    if (_serverListManager) {
+        _serverListManager->stop();
+    }
+
+    if (_securityManager != NULL) {
+        _securityManager->stop();
+    }
+
+    if (_httpDelegate != NULL) {
+        delete _httpDelegate;
+        _httpDelegate = NULL;
+    }
+
     if (_beatReactor != NULL) {
         delete _beatReactor;
+        _beatReactor = NULL;
     }
-    _beatReactor = NULL;
 
     if (_tcpNamingServicePoller != NULL)
     {
         delete _tcpNamingServicePoller;
+        _tcpNamingServicePoller = NULL;
     }
-    _tcpNamingServicePoller = NULL;
 
     if (_eventDispatcher != NULL)
     {
         delete _eventDispatcher;
+        _eventDispatcher = NULL;
     }
-    _eventDispatcher = NULL;
 
     if (_serverProxy != NULL) {
         delete _serverProxy;
+        _serverProxy = NULL;
     }
-    _serverProxy = NULL;
+
+    if (_securityManager != NULL) {
+        delete _securityManager;
+        _securityManager = NULL;
+    }
 
     if (_serverListManager != NULL) {
         delete _serverListManager;
+        _serverListManager = NULL;
     }
-    _serverListManager = NULL;
 
     if (_httpDelegate != NULL) {
         delete _httpDelegate;
+        _httpDelegate = NULL;
     }
-    _httpDelegate = NULL;
 
     if (_httpCli != NULL) {
         delete _httpCli;
+        _httpCli = NULL;
     }
-    _httpCli = NULL;
 
     if (_appConfigManager != NULL)
     {
         delete _appConfigManager;
+        _appConfigManager = NULL;
     }
-    _appConfigManager = NULL;
 }
 
 void ObjectConfigData::destroyMaintainService() {
+    if (_serverListManager != NULL) {
+        _serverListManager->stop();
+    }
+
+    if (_securityManager != NULL) {
+        _securityManager->stop();
+    }
+
     if (_serverProxy != NULL) {
         delete _serverProxy;
         _serverProxy = NULL;
     }
     if (_serverListManager != NULL) {
-        _serverListManager->stop();
         delete _serverListManager;
         _serverListManager = NULL;
     }
     if (_appConfigManager != NULL) {
         delete _appConfigManager;
         _appConfigManager = NULL;
+    }
+    if (_securityManager != NULL) {
+        delete _securityManager;
+        _securityManager = NULL;
     }
     if (_httpDelegate != NULL) {
         delete _httpDelegate;

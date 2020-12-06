@@ -1,4 +1,5 @@
 #include "src/naming/NacosNamingMaintainService.h"
+#include "src/security/SecurityManager.h"
 
 using namespace std;
 
@@ -6,6 +7,9 @@ namespace nacos{
 
 NacosNamingMaintainService::NacosNamingMaintainService(ObjectConfigData *objectConfigData) {
     _objectConfigData = objectConfigData;
+    if (_objectConfigData->_appConfigManager->nacosAuthEnabled()) {
+        _objectConfigData->_securityManager->start();
+    }
 }
 
 bool NacosNamingMaintainService::updateInstance
