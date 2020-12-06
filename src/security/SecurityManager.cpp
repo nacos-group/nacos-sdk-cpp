@@ -108,7 +108,7 @@ void *SecurityManager::tokenRefreshThreadFunc(void *param) {
             log_debug("Trying to login...\n");
             thisObj->login();
             log_debug("Ttl got from nacos server:%ld\n", thisObj->_accessToken.tokenTtl);
-            thisObj->sleepWithRunStatusCheck(thisObj->_accessToken.tokenTtl);
+            thisObj->sleepWithRunStatusCheck(thisObj->_accessToken.tokenTtl * 1000);
         } catch (NacosException &e) {
             if (e.errorcode() == NacosException::INVALID_LOGIN_CREDENTIAL) {
                 throw e;//Invalid login credential, let it crash

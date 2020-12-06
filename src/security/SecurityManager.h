@@ -26,7 +26,7 @@ private:
     void doLogin(const NacosString &serverAddr) throw(NacosException, NetworkException);
     void login() throw (NacosException);
     RWLock _rwLock;
-    bool _started;
+    volatile bool _started;
     static void * tokenRefreshThreadFunc(void *param);
     Thread *_tokenRefreshThread;
     void sleepWithRunStatusCheck(long _milliSecsToSleep);
