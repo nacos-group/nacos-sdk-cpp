@@ -10,12 +10,28 @@
 #include "src/config/NacosConfigService.h"
 #include "src/http/HttpDelegate.h"
 #include "src/http/delegate/NoOpHttpDelegate.h"
+#include "src/http/delegate/NacosAuthHttpDelegate.h"
 #include "src/http/HTTPCli.h"
 #include "src/naming/subscribe/EventDispatcher.h"
 #include "src/naming/subscribe/TcpNamingServicePoller.h"
+#include "src/security/SecurityManager.h"
 
 //Unlike Java, in cpp, there's no container, no spring to do the ORM job, so I have to handle it myself
 namespace nacos{
+
+void buildSecurityManagerAndHttpDelegate(ObjectConfigData *objectConfigData) {
+    AppConfigManager *appConfigManager = objectConfigData->_appConfigManager;
+    if (appConfigManager->nacosAuthEnabled()) {
+        //nacos authentication is enabled
+        SecurityManager *securityManager = new SecurityManager(objectConfigData);
+        objectConfigData->_securityManager = securityManager;
+        HttpDelegate *httpDelegate = new NacosAuthHttpDelegate(objectConfigData);
+        objectConfigData->_httpDelegate = httpDelegate;
+    } else {
+        HttpDelegate *httpDelegate = new NoOpHttpDelegate(objectConfigData);
+        objectConfigData->_httpDelegate = httpDelegate;
+    }
+}
 
 //FIXME:Memory leak at initializing stage, e.g.:
 //when a HttpDelegate is allocated in CreateConfigService, after that an EXCEPTION is thrown during the initialization of ServerListManager
@@ -40,8 +56,7 @@ NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) 
     IHttpCli *httpCli= new HTTPCli();
     objectConfigData->_httpCli = httpCli;
 
-    HttpDelegate *httpDelegate = new NoOpHttpDelegate(objectConfigData);
-    objectConfigData->_httpDelegate = httpDelegate;
+    buildSecurityManagerAndHttpDelegate(objectConfigData);
 
     //Create server manager
     ServerListManager *serverListManager = new ServerListManager(objectConfigData);
@@ -85,9 +100,9 @@ ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException) 
     IHttpCli *httpCli = NULL;
     httpCli = new HTTPCli();
     NacosString encoding = "UTF-8";
-    HttpDelegate *httpDelegate = new NoOpHttpDelegate(objectConfigData);
-    objectConfigData->_httpDelegate = httpDelegate;
     objectConfigData->_httpCli = httpCli;
+
+    buildSecurityManagerAndHttpDelegate(objectConfigData);
 
     //Create server manager
     ServerListManager *serverListManager = new ServerListManager(objectConfigData);
@@ -125,8 +140,7 @@ NamingMaintainService *NacosServiceFactory::CreateNamingMaintainService() throw(
     IHttpCli *httpCli= new HTTPCli();
     objectConfigData->_httpCli = httpCli;
 
-    HttpDelegate *httpDelegate = new NoOpHttpDelegate(objectConfigData);
-    objectConfigData->_httpDelegate = httpDelegate;
+    buildSecurityManagerAndHttpDelegate(objectConfigData);
 
     //Create server manager
     ServerListManager *serverListManager = new ServerListManager(objectConfigData);
