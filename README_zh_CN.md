@@ -414,7 +414,6 @@ using namespace nacos;
 ......
 ```
 
-
 # 关于Nacos
 
 Nacos (官方网站: [http://nacos.io](http://nacos.io)) 是一个易用的动态服务发现、配置管理以及服务管理平台。它将助力您轻松建立云上原生应用和微服务。
