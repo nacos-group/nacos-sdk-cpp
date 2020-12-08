@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include "ServerListManager.h"
 #include "PropertyKeyConst.h"
-#include "Parameters.h"
 #include "utils/ParamUtils.h"
 #include "Debug.h"
 #include "src/json/JSON.h"
@@ -11,27 +10,52 @@ using namespace std;
 
 namespace nacos{
 void ServerListManager::addToSrvList(NacosString &address) {
-    //If the address doesn't contain port, add 8848 as the default port for it
-    if (address.find(':') == std::string::npos) {
-        NacosServerInfo curServer;
-        curServer.setKey(address + ":8848");
-        curServer.setAlive(true);
-        curServer.setIp(address);
-        //TODO:dynamically read default port, don't use hard-coded value
-        curServer.setPort(8848);
-        curServer.setWeight(1.0);
-        curServer.setAdWeight(1.0);
-        serverList.push_back(curServer);
-    } else {
-        vector <NacosString> explodedAddress;
-        ParamUtils::Explode(explodedAddress, address, ':');
+    address = ParamUtils::trim(address);
+    NacosString address_lc = ParamUtils::toLower(address);
+    if (address_lc.find("http://") == 0 ||
+            address_lc.find("https://") == 0) {
+        size_t startPos = address.find(':');//4=http,5=https
+        //use http://someaddress[:port] as server address
+        NacosString ip = address;
+        int port = PropertyKeyConst::NACOS_DEFAULT_PORT;
+        size_t pos = address.find_last_of(':');
+        if (pos != 4 && pos != 5) {
+            NacosString portStr = address.substr(pos + 1);
+            port = atoi(portStr.c_str());
+            ip = address.substr(0, pos);
+        }
         NacosServerInfo curServer;
         curServer.setKey(address);
         curServer.setAlive(true);
-        curServer.setIp(explodedAddress[0]);
+        curServer.setIp(ip);
+        curServer.setPort(port);
+        curServer.setWeight(1.0);
+        curServer.setAdWeight(1.0);
+        curServer.setMode(startPos == 4 ? NacosServerInfo::mode_http : NacosServerInfo::mode_http_safe);
+        serverList.push_back(curServer);
+    } else if (address.find(':') == std::string::npos) {
+        //If the address doesn't contain port, add 8848 as the default port for it
+        NacosServerInfo curServer;
+        curServer.setKey("http://" + address + ":" + NacosStringOps::valueOf(PropertyKeyConst::NACOS_DEFAULT_PORT));
+        curServer.setAlive(true);
+        curServer.setIp("http://" + address);
+        curServer.setPort(PropertyKeyConst::NACOS_DEFAULT_PORT);
+        curServer.setWeight(1.0);
+        curServer.setAdWeight(1.0);
+        curServer.setMode(NacosServerInfo::mode_http);
+        serverList.push_back(curServer);
+    } else {
+        //user specified address & port
+        vector <NacosString> explodedAddress;
+        ParamUtils::Explode(explodedAddress, address, ':');
+        NacosServerInfo curServer;
+        curServer.setKey("http://" + address);
+        curServer.setAlive(true);
+        curServer.setIp("http://" + explodedAddress[0]);
         curServer.setPort(atoi(explodedAddress[1].c_str()));
         curServer.setWeight(1.0);
         curServer.setAdWeight(1.0);
+        curServer.setMode(NacosServerInfo::mode_http);
         serverList.push_back(curServer);
     }
 }
@@ -40,7 +64,6 @@ ServerListManager::ServerListManager(list <NacosString> &fixed) {
     started = false;
     isFixed = true;
     refreshInterval = 30000;
-    _read_timeout = 3000;
     for (list<NacosString>::iterator it = fixed.begin(); it != fixed.end(); it++) {
         addToSrvList(*it);
     }
@@ -63,7 +86,7 @@ NacosString ServerListManager::getCurrentServerAddr() {
 
 void ServerListManager::initAll() throw(NacosException) {
     serverList.clear();
-    Properties props = appConfigManager->getAllConfig();
+    Properties props = _objectConfigData->_appConfigManager->getAllConfig();
     if (props.contains(PropertyKeyConst::SERVER_ADDR)) {//Server address is configured
         isFixed = true;
         NacosString server_addr = props[PropertyKeyConst::SERVER_ADDR];
@@ -80,11 +103,17 @@ void ServerListManager::initAll() throw(NacosException) {
         }
 
         isFixed = false;
+        NacosString endpoint = getEndpoint();
+        NacosString endpoint_lc = ParamUtils::toLower(endpoint);
+        //endpoint doesn't start with http or https prefix, consider it as http
+        if (!endpoint_lc.find("http://") == 0 && !endpoint_lc.find("https://") == 0) {
+            endpoint = "http://" + endpoint;
+        }
         if (NacosStringOps::isNullStr(getNamespace())) {
-            addressServerUrl = getEndpoint() + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
+            addressServerUrl = endpoint + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
                                getContextPath() + "/" + getClusterName();
         } else {
-            addressServerUrl = getEndpoint() + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
+            addressServerUrl = endpoint + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
                                getContextPath() + "/" + getClusterName() + "?namespace=" + getNamespace();
         }
 
@@ -95,12 +124,10 @@ void ServerListManager::initAll() throw(NacosException) {
     }
 }
 
-ServerListManager::ServerListManager(HttpDelegate *httpDelegate, AppConfigManager *_appConfigManager) throw(NacosException) {
+ServerListManager::ServerListManager(ObjectConfigData *objectConfigData) throw(NacosException) {
     started = false;
-    this->_httpDelegate = httpDelegate;
-    this->appConfigManager = _appConfigManager;
-    refreshInterval = atoi(appConfigManager->get(PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL).c_str());
-    _read_timeout = atoi(appConfigManager->get(PropertyKeyConst::SRVLISTMGR_READ_TIMEOUT).c_str());
+    _objectConfigData = objectConfigData;
+    refreshInterval = atoi(_objectConfigData->_appConfigManager->get(PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL).c_str());
     initAll();
 }
 
@@ -114,16 +141,17 @@ list <NacosServerInfo> ServerListManager::tryPullServerListFromNacosServer() thr
     log_debug("nr_servers:%d\n", maxSvrSlot);
     srand(time(NULL));
 
+    long _read_timeout = _objectConfigData->_appConfigManager->getServeReqTimeout();
     NacosString errmsg;
     for (size_t i = 0; i < serverList.size(); i++) {
         size_t selectedServer = rand() % maxSvrSlot;
-        NacosServerInfo server = ParamUtils::getNthElem(serverList, selectedServer);
+        const NacosServerInfo &server = ParamUtils::getNthElem(serverList, selectedServer);
         log_debug("selected_server:%d\n", selectedServer);
         log_debug("Trying to access server:%s\n", server.getCompleteAddress().c_str());
         try {
-            HttpResult serverRes = _httpDelegate->httpGet(
-                    server.getCompleteAddress() + "/" + DEFAULT_CONTEXT_PATH + "/" + PROTOCOL_VERSION + "/" +
-                    GET_SERVERS_PATH,
+            HttpResult serverRes = _objectConfigData->_httpDelegate->httpGet(
+                    server.getCompleteAddress() + "/" + Constants::DEFAULT_CONTEXT_PATH + "/"
+                    + Constants::PROTOCOL_VERSION + "/" + Constants::GET_SERVERS_PATH,
                     headers, paramValues, NULLSTR, _read_timeout);
             return JSON::Json2NacosServerInfo(serverRes.content);
         }
@@ -148,8 +176,9 @@ list <NacosServerInfo> ServerListManager::pullServerList() throw(NacosException)
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
 
+    long _read_timeout = _objectConfigData->_appConfigManager->getServeReqTimeout();
     if (!NacosStringOps::isNullStr(addressServerUrl)) {
-        HttpResult serverRes = _httpDelegate->httpGet(addressServerUrl, headers, paramValues, NULLSTR,
+        HttpResult serverRes = _objectConfigData->_httpDelegate->httpGet(addressServerUrl, headers, paramValues, NULLSTR,
                                                 _read_timeout);
         list<NacosString> explodedServerList;
         ParamUtils::Explode(explodedServerList, serverRes.content, '\n');
@@ -164,7 +193,7 @@ list <NacosServerInfo> ServerListManager::pullServerList() throw(NacosException)
                 curServer.setPort(8848);
             } else {
                 NacosString ip = it->substr(0, pos);
-                NacosString port = it->substr(pos);
+                NacosString port = it->substr(pos + 1);
 
                 curServer.setIp(ip);
                 curServer.setPort(atoi(port.c_str()));
@@ -264,7 +293,7 @@ void ServerListManager::stop() {
 }
 
 NacosString ServerListManager::getContextPath() const {
-    return appConfigManager->get(PropertyKeyConst::CONTEXT_PATH);
+    return _objectConfigData->_appConfigManager->get(PropertyKeyConst::CONTEXT_PATH);
 }
 
 ServerListManager::~ServerListManager() {
@@ -285,6 +314,7 @@ int ServerListManager::getServerCount() {
 };
 
 list <NacosServerInfo> ServerListManager::getServerList() {
+    //further optimization could be implemented here if the server list cannot be changed during runtime
     std::list <NacosServerInfo> res;
     {
         ReadGuard _readGuard(rwLock);

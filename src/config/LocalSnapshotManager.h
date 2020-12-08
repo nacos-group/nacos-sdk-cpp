@@ -1,24 +1,25 @@
-#ifndef __LOC_CFG_INF_PROCESSOR_H_
-#define __LOC_CFG_INF_PROCESSOR_H_
+#ifndef __LOCAL_SNAPSHOT_MGR_H_
+#define __LOCAL_SNAPSHOT_MGR_H_
 
 #include "NacosString.h"
 #include "NacosExceptions.h"
 #include "src/config/AppConfigManager.h"
 
 /**
- * Local Disaster Recovery Directory Tool
+ * Snapshot/Failover manager
  *
  * @author Nacos
  */
 
 namespace nacos{
-class LocalConfigInfoProcessor {
+class LocalSnapshotManager {
 private:
     AppConfigManager *_appCfgMgr;
     NacosString LOCAL_SNAPSHOT_PATH;
+    NacosString LOCAL_FAILOVER_PATH;
 public:
 
-    LocalConfigInfoProcessor(AppConfigManager *appConfigManager);
+    LocalSnapshotManager(AppConfigManager *appConfigManager);
 
     NacosString getFailover(const NacosString &serverName, const NacosString &dataId, const NacosString &group,
                                    const NacosString &tenant);

@@ -4,7 +4,7 @@
 #include <exception>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <sys/syscall.h>
+//#include <sys/syscall.h>
 #include "NacosString.h"
 #include "Debug.h"
 
@@ -26,6 +26,7 @@ private:
     NacosString _threadName;
     pthread_t _thread;
     ThreadFn _function;
+    //TODO:thread id
     pid_t _tid;
     bool _start;
     void *_threadData;

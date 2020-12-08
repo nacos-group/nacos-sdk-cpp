@@ -36,23 +36,25 @@ public:
 
     static const NacosString NAMING_POLLING_THREAD_COUNT;
 
-    static const NacosString HTTP_REQ_TIMEOUT;
-
     static const NacosString SRVLISTMGR_REFRESH_INTERVAL;
 
-    static const NacosString SRVLISTMGR_READ_TIMEOUT;
+    static const NacosString SERVER_REQ_TIMEOUT;
 
     static const NacosString TCP_NAMING_POLL_INTERVAL;
 
     static const NacosString CONFIG_LONGPULLLING_TIMEOUT;
-
-    static const NacosString CONFIG_GET_TIMEOUT;
 
     static const NacosString HB_FAIL_WAIT_TIME;
 
     static const NacosString NACOS_SNAPSHOT_PATH;
 
     static const NacosString NACOS_LOG_PATH;
+
+    static const NacosString CLIENT_NAME;
+    static const NacosString AUTH_USERNAME;
+    static const NacosString AUTH_PASSWORD;
+
+    static const int NACOS_DEFAULT_PORT = 8848;
 
     /*public static class SystemEnv {
 

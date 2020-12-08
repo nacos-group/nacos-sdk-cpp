@@ -1,22 +1,16 @@
 #include "src/naming/NacosNamingMaintainService.h"
+#include "src/security/SecurityManager.h"
 
 using namespace std;
 
 namespace nacos{
 
-NacosNamingMaintainService::NacosNamingMaintainService
-(
-    NamingProxy *namingProxy,
-    HttpDelegate *httpDelegate,
-    IHttpCli *httpCli,
-    AppConfigManager *appConfigManager,
-    ServerListManager *serverListManager
-) {
-    _namingProxy = namingProxy;
-    _httpDelegate = httpDelegate;
-    _httpCli = httpCli;
-    _appConfigManager = appConfigManager;
-    _serverListManager = serverListManager;
+NacosNamingMaintainService::NacosNamingMaintainService(ObjectConfigData *objectConfigData) {
+    _objectConfigData = objectConfigData;
+    if (_objectConfigData->_appConfigManager->nacosAuthEnabled()) {
+        _objectConfigData->_securityManager->login();
+        _objectConfigData->_securityManager->start();
+    }
 }
 
 bool NacosNamingMaintainService::updateInstance
@@ -28,7 +22,7 @@ bool NacosNamingMaintainService::updateInstance
     Instance paramInstance = instance;
     paramInstance.serviceName = serviceName;
     paramInstance.groupName = groupName;
-    return _namingProxy->updateServiceInstance(paramInstance);
+    return _objectConfigData->_serverProxy->updateServiceInstance(paramInstance);
 }
 
 ServiceInfo2 NacosNamingMaintainService::queryService
@@ -36,7 +30,7 @@ ServiceInfo2 NacosNamingMaintainService::queryService
     const NacosString &serviceName,
     const NacosString &groupName
 ) throw(NacosException) {
-    return _namingProxy->getServiceInfo(serviceName, groupName);
+    return _objectConfigData->_serverProxy->getServiceInfo(serviceName, groupName);
 }
 
 bool NacosNamingMaintainService::createService(const ServiceInfo2 &service, naming::Selector *selector) throw(NacosException) {
@@ -44,39 +38,19 @@ bool NacosNamingMaintainService::createService(const ServiceInfo2 &service, nami
     if (!parmServiceInfo.isGroupNameSet()) {
         parmServiceInfo.setGroupName(Constants::DEFAULT_GROUP);
     }
-    return _namingProxy->createServiceInfo(parmServiceInfo, selector);
+    return _objectConfigData->_serverProxy->createServiceInfo(parmServiceInfo, selector);
 }
 
 bool NacosNamingMaintainService::deleteService(const NacosString &serviceName, const NacosString &groupName) throw(NacosException) {
-    return _namingProxy->deleteServiceInfo(serviceName, groupName);
+    return _objectConfigData->_serverProxy->deleteServiceInfo(serviceName, groupName);
 }
 
 bool NacosNamingMaintainService::updateService(const ServiceInfo2 &service, naming::Selector *selector) throw(NacosException) {
-    return _namingProxy->updateServiceInfo(service, selector);
+    return _objectConfigData->_serverProxy->updateServiceInfo(service, selector);
 }
 
 NacosNamingMaintainService::~NacosNamingMaintainService() {
-    if (_namingProxy != NULL) {
-        delete _namingProxy;
-        _namingProxy = NULL;
-    }
-    if (_serverListManager != NULL) {
-        _serverListManager->stop();
-        delete _serverListManager;
-        _serverListManager = NULL;
-    }
-    if (_appConfigManager != NULL) {
-        delete _appConfigManager;
-        _appConfigManager = NULL;
-    }
-    if (_httpDelegate != NULL) {
-        delete _httpDelegate;
-        _httpDelegate = NULL;
-    }
-    if (_httpCli != NULL) {
-        delete _httpCli;
-        _httpCli = NULL;
-    }
+    delete _objectConfigData;
 }
 
 }//namespace nacos

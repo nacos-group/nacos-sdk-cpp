@@ -1,34 +1,29 @@
-#include <sys/time.h>
-#include <unistd.h>
 #include <vector>
 #include "ClientWorker.h"
 #include "listen/Listener.h"
 #include "utils/url.h"
 #include "utils/GroupKey.h"
-#include "src/http/httpStatCode.h"
 #include "src/md5/md5.h"
 #include "utils/ParamUtils.h"
+#include "src/utils/TimeUtils.h"
 #include "Debug.h"
 #include "DebugAssertion.h"
 #include "Constants.h"
-#include "Parameters.h"
 #include "PropertyKeyConst.h"
+#include "src/http/HttpStatus.h"
 
 using namespace std;
 
 namespace nacos{
-ClientWorker::ClientWorker(HttpDelegate *httpDelegate, AppConfigManager *_appConfigManager, ServerListManager *svrListMgr) {
+ClientWorker::ClientWorker(ObjectConfigData *objectConfigData) {
     threadId = 0;
     stopThread = true;
     pthread_mutex_init(&watchListMutex, NULL);
     pthread_mutex_init(&stopThreadMutex, NULL);
-    _httpDelegate = httpDelegate;
-    appConfigManager = _appConfigManager;
-    _svrListMgr = svrListMgr;
+    _objectConfigData = objectConfigData;
 
-    _longPullingTimeoutStr = appConfigManager->get(PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT);
+    _longPullingTimeoutStr = _objectConfigData->_appConfigManager->get(PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT);
     _longPullingTimeout = atoi(_longPullingTimeoutStr.c_str());
-    _readTimeout = atoi(appConfigManager->get(PropertyKeyConst::CONFIG_GET_TIMEOUT).c_str());
 }
 
 ClientWorker::~ClientWorker() {
@@ -37,20 +32,43 @@ ClientWorker::~ClientWorker() {
     cleanUp();
 }
 
-int64_t getCurrentTimeInMs() {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-
-    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+NacosString ClientWorker::getServerConfig
+(
+    const NacosString &tenant,
+    const NacosString &dataId,
+    const NacosString &group,
+    long timeoutMs
+) throw(NacosException) {
+    HttpResult res = getServerConfigHelper(tenant, dataId, group, timeoutMs);
+    AppConfigManager *_appConfigManager = _objectConfigData->_appConfigManager;
+    LocalSnapshotManager *localSnapshotManager = _objectConfigData->_localSnapshotManager;
+    switch (res.code) {
+        case HttpStatus::HTTP_OK:
+            localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, res.content);
+            return res.content;
+        case HttpStatus::HTTP_NOT_FOUND:
+            //Update snapshot
+            localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
+            throw NacosException(NacosException::HTTP_NOT_FOUND, "getServerConfig could not get content for Key " + group + ":" + dataId);
+        case HttpStatus::HTTP_FORBIDDEN:
+            //Update snapshot
+            localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
+            throw NacosException(NacosException::NO_RIGHT, "permission denied for Key " + group + ":" + dataId);
+        default:
+            localSnapshotManager->saveSnapshot(_appConfigManager->get(PropertyKeyConst::CLIENT_NAME), dataId, group, tenant, NULLSTR);
+            throw NacosException(NacosException::SERVER_ERROR, "getServerConfig failed with code:" + NacosStringOps::valueOf(res.code));
+    }
+    return NULLSTR;
 }
 
-NacosString ClientWorker::getServerConfig
-        (
-                const NacosString &tenant,
-                const NacosString &dataId,
-                const NacosString &group,
-                long timeoutMs
-        ) throw(NacosException) {
+
+HttpResult ClientWorker::getServerConfigHelper
+(
+    const NacosString &tenant,
+    const NacosString &dataId,
+    const NacosString &group,
+    long timeoutMs
+) throw(NacosException) {
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
 
@@ -67,12 +85,13 @@ NacosString ClientWorker::getServerConfig
     }
 
     //Get the request url
-    NacosString path = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
-    NacosString serverAddr = _svrListMgr->getCurrentServerAddr();
+    NacosString path = Constants::DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
+    NacosString serverAddr = _objectConfigData->_serverListManager->getCurrentServerAddr();
     NacosString url = serverAddr + "/" + path;
     log_debug("httpGet Assembled URL:%s\n", url.c_str());
 
     HttpResult res;
+    HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
     try {
         res = _httpDelegate->httpGet(url, headers, paramValues, _httpDelegate->getEncode(), timeoutMs);
     }
@@ -80,25 +99,20 @@ NacosString ClientWorker::getServerConfig
         throw NacosException(NacosException::SERVER_ERROR, e.what());
     }
 
-    switch (res.code) {
-        case HTTP_OK:
-            return res.content;
-        case HTTP_NOT_FOUND:
-            return NULLSTR;
-    }
-    return NULLSTR;
+    return res;
 }
+
 
 void *ClientWorker::listenerThread(void *parm) {
     log_debug("Entered watch thread...\n");
     ClientWorker *thelistener = (ClientWorker *) parm;
 
     while (!thelistener->stopThread) {
-        int64_t start_time = getCurrentTimeInMs();
+        int64_t start_time = TimeUtils::getCurrentTimeInMs();
         log_debug("Start watching at %u...\n", start_time);
         thelistener->performWatch();
 
-        log_debug("Watch function exit at %u...\n", getCurrentTimeInMs());
+        log_debug("Watch function exit at %u...\n", TimeUtils::getCurrentTimeInMs());
     }
 
     return 0;
@@ -304,13 +318,14 @@ NacosString ClientWorker::checkListenedKeys() {
 
     //Get the request url
     //TODO:move /listener to constant
-    NacosString path = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH + "/listener";
+    NacosString path = Constants::DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH + "/listener";
     HttpResult res;
 
-    NacosString serverAddr = _svrListMgr->getCurrentServerAddr();
+    NacosString serverAddr = _objectConfigData->_serverListManager->getCurrentServerAddr();
     NacosString url = serverAddr + "/" + path;
     log_debug("httpPost Assembled URL:%s\n", url.c_str());
 
+    HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
     try {
         res = _httpDelegate->httpPost(url, headers, paramValues, _httpDelegate->getEncode(), _longPullingTimeout);
     }
@@ -337,6 +352,7 @@ void ClientWorker::performWatch() {
 
         NacosString key = GroupKey::getKeyTenant(dataId, group, tenant);
         map<NacosString, ListeningData *>::iterator listenedDataIter = listeningKeys.find(key);
+        HttpResult res;
         //check whether the data being watched still exists
         if (listenedDataIter != listeningKeys.end()) {
             log_debug("Found entry for:%s\n", key.c_str());
@@ -344,8 +360,10 @@ void ClientWorker::performWatch() {
             NacosString updatedcontent = "";
 
             try {
-                updatedcontent = getServerConfig(listenedList->getTenant(), listenedList->getDataId(),
-                                                 listenedList->getGroup(), _readTimeout);
+                res = getServerConfigHelper(listenedList->getTenant(), listenedList->getDataId(),
+                                                 listenedList->getGroup(),
+                                                 _objectConfigData->_appConfigManager->getServeReqTimeout());
+                updatedcontent = res.content;
             }
             catch (NacosException &e) {
                 //Same design as TcpNamingServicePoller
@@ -357,10 +375,17 @@ void ClientWorker::performWatch() {
                 break;
             }
             log_debug("Data fetched from the server: %s\n", updatedcontent.c_str());
-            md5.reset();
-            md5.update(updatedcontent.c_str());
-            listenedList->setMD5(md5.toString());
-            log_debug("MD5 got for that data: %s\n", listenedList->getMD5().c_str());
+
+            //Bugfix #42, please check github
+            if (res.code == HttpStatus::HTTP_OK) {
+                md5.reset();
+                md5.update(updatedcontent.c_str());
+                listenedList->setMD5(md5.toString());
+                log_debug("MD5 got for that data: %s\n", listenedList->getMD5().c_str());
+            } else {
+                listenedList->setMD5("");
+                updatedcontent = "";
+            }
             std::map < Listener * , char > const *listenerList = listenedList->getListenerList();
             for (std::map<Listener *, char>::const_iterator listenerIt = listenerList->begin();
                  listenerIt != listenerList->end(); listenerIt++) {

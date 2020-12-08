@@ -1,55 +1,22 @@
 #include "src/config/NacosConfigService.h"
+#include "src/security/SecurityManager.h"
 #include "Constants.h"
-#include "Parameters.h"
-#include "utils/ParamUtils.h"
 #include "Debug.h"
-#include "src/md5/md5.h"
 
 using namespace std;
 
 namespace nacos{
-NacosConfigService::NacosConfigService
-        (
-                AppConfigManager *_appConfigManager,
-                IHttpCli *httpCli,
-                HttpDelegate *httpDelegate,
-                ServerListManager *_serverListManager,
-                ClientWorker *_clientWorker
-        ) throw(NacosException) {
-    appConfigManager = _appConfigManager;
-    _httpCli = httpCli;
-    svrListMgr = _serverListManager;
-    _httpDelegate = httpDelegate;
-    clientWorker = _clientWorker;
+NacosConfigService::NacosConfigService(ObjectConfigData *objectConfigData) throw(NacosException) {
+    _objectConfigData = objectConfigData;
+    if (_objectConfigData->_appConfigManager->nacosAuthEnabled()) {
+        _objectConfigData->_securityManager->login();
+        _objectConfigData->_securityManager->start();
+    }
 }
 
 NacosConfigService::~NacosConfigService() {
     log_debug("NacosConfigService::~NacosConfigService()\n");
-    if (clientWorker != NULL) {
-        clientWorker->stopListening();
-        delete clientWorker;
-        clientWorker = NULL;
-    }
-
-    if (_httpDelegate != NULL) {
-        delete _httpDelegate;
-        _httpDelegate = NULL;
-    }
-
-    if (svrListMgr != NULL) {
-        delete svrListMgr;
-        svrListMgr = NULL;
-    }
-
-    if (_httpCli != NULL) {
-        delete _httpCli;
-        _httpCli = NULL;
-    }
-
-    if (appConfigManager != NULL) {
-        delete appConfigManager;
-        appConfigManager = NULL;
-    }
+    delete _objectConfigData;
 }
 
 NacosString NacosConfigService::getConfig
@@ -85,7 +52,34 @@ NacosString NacosConfigService::getConfigInner
                 const NacosString &group,
                 long timeoutMs
         ) throw(NacosException) {
-    return clientWorker->getServerConfig(tenant, dataId, group, timeoutMs);
+    NacosString result = NULLSTR;
+
+    AppConfigManager *_appConfigManager = _objectConfigData->_appConfigManager;
+    LocalSnapshotManager *_localSnapshotManager = _objectConfigData->_localSnapshotManager;
+
+    NacosString clientName = _appConfigManager->get(PropertyKeyConst::CLIENT_NAME);
+    result = _localSnapshotManager->getFailover(clientName.c_str(), dataId, group, tenant);
+    if (!NacosStringOps::isNullStr(result)) {
+        log_warn("[%s] [get-config] get failover ok, dataId=%s, group=%s, tenant=%s, config=%s",
+                 clientName.c_str(),
+                 dataId.c_str(),
+                 group.c_str(),
+                 tenant.c_str(),
+                 result.c_str());
+        return result;
+    }
+
+    try {
+        result = _objectConfigData->_clientWorker->getServerConfig(tenant, dataId, group, timeoutMs);
+    } catch (NacosException &e) {
+        if (e.errorcode() == NacosException::NO_RIGHT) {
+            throw e;
+        }
+
+        const NacosString &clientName = _appConfigManager->get(PropertyKeyConst::CLIENT_NAME);
+        result = _localSnapshotManager->getSnapshot(clientName, dataId, group, tenant);
+    }
+    return result;
 }
 
 bool NacosConfigService::removeConfigInner
@@ -98,7 +92,7 @@ bool NacosConfigService::removeConfigInner
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
     //Get the request url
-    NacosString path = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
+    NacosString path = Constants::DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
 
     HttpResult res;
 
@@ -114,10 +108,11 @@ bool NacosConfigService::removeConfigInner
         paramValues.push_back(tenant);
     }
 
-    NacosString serverAddr = svrListMgr->getCurrentServerAddr();
+    NacosString serverAddr = _objectConfigData->_serverListManager->getCurrentServerAddr();
     NacosString url = serverAddr + "/" + path;
     log_debug("httpDelete Assembled URL:%s\n", url.c_str());
 
+    HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
     try {
         res = _httpDelegate->httpDelete(url, headers, paramValues, _httpDelegate->getEncode(), POST_TIMEOUT);
     }
@@ -151,7 +146,7 @@ bool NacosConfigService::publishConfigInner
     std::list <NacosString> paramValues;
     NacosString parmGroupid;
     //Get the request url
-    NacosString path = DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
+    NacosString path = Constants::DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
 
     HttpResult res;
 
@@ -178,16 +173,17 @@ bool NacosConfigService::publishConfigInner
         ParamUtils::addKV(paramValues, "betaIps", betaIps);
     }
 
-    NacosString serverAddr = svrListMgr->getCurrentServerAddr();
+    NacosString serverAddr = _objectConfigData->_serverListManager->getCurrentServerAddr();
     NacosString url = serverAddr + "/" + path;
     log_debug("httpPost Assembled URL:%s\n", url.c_str());
 
+    HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
     try {
         res = _httpDelegate->httpPost(url, headers, paramValues, _httpDelegate->getEncode(), POST_TIMEOUT);
     }
     catch (NetworkException e) {
         //
-        log_warn("[{}] [publish-single] exception, dataId=%s, group=%s, msg=%s\n", dataId.c_str(), group.c_str(),
+        log_warn("[NacosConfigService] [publish-single] exception, dataId=%s, group=%s, msg=%s\n", dataId.c_str(), group.c_str(),
                  tenant.c_str(), e.what());
         return false;
     }
@@ -212,10 +208,15 @@ void NacosConfigService::addListener
     }
 
     //TODO:give a constant to this hard-coded number
-    NacosString cfgcontent = getConfig(dataId, group, 3000);
+    NacosString cfgcontent;
+    try {
+        cfgcontent = getConfig(dataId, group, 3000);
+    } catch (NacosException &e) {
+        cfgcontent = "";
+    }
 
-    clientWorker->addListener(dataId, parmgroup, getNamespace(), cfgcontent, listener);
-    clientWorker->startListening();
+    _objectConfigData->_clientWorker->addListener(dataId, parmgroup, getNamespace(), cfgcontent, listener);
+    _objectConfigData->_clientWorker->startListening();
 }
 
 void NacosConfigService::removeListener
@@ -229,7 +230,7 @@ void NacosConfigService::removeListener
         parmgroup = group;
     }
     log_debug("NacosConfigService::removeListener()\n");
-    clientWorker->removeListener(dataId, parmgroup, getNamespace(), listener);
+    _objectConfigData->_clientWorker->removeListener(dataId, parmgroup, getNamespace(), listener);
 }
 
 }//namespace nacos

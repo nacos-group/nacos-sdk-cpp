@@ -12,6 +12,7 @@
 #include "src/server/NacosServerInfo.h"
 #include "naming/ListView.h"
 #include "naming/ServiceInfo2.h"
+#include "src/security/SecurityManager.h"
 
 /**
  * JSON
@@ -26,7 +27,7 @@ public:
 
     static NacosString toJSONString(const std::map <NacosString, NacosString> &mapinfo);
 
-    static void Map2JSONObject(rapidjson::Value &jsonOb, std::map <NacosString, NacosString> &mapinfo);
+    static void Map2JSONObject(rapidjson::Document &d, rapidjson::Value &jsonOb, std::map <NacosString, NacosString> &mapinfo);
 
     static void JSONObject2Map(std::map <NacosString, NacosString> &mapinfo, const rapidjson::Value &jsonOb);
 
@@ -48,6 +49,7 @@ public:
 
     static ListView<NacosString> Json2ServiceList(const NacosString &nacosString) throw(NacosException);
 
+    static AccessToken Json2AccessToken(const NacosString &nacosString) throw(NacosException);
 };
 }//namespace nacos
 

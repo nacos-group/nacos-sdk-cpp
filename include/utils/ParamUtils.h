@@ -14,7 +14,7 @@ namespace nacos{
 class ParamUtils {
 public:
     template<typename T>
-    static T getNthElem(const std::list <T> &parm, size_t i) {
+    static const T &getNthElem(const std::list <T> &parm, size_t i) {
         assert(parm.size() > i);
         typename std::list<T>::const_iterator it = parm.begin();
         for (size_t skipper = 0; skipper < i; skipper++) {
@@ -191,6 +191,23 @@ public:
     static void addKV(std::list<NacosString> &list, const NacosString &key, const NacosString &value) {
         list.push_back(key);
         list.push_back(value);
+    }
+
+    static NacosString toLower(const NacosString &str) {
+        NacosString lowerCaseString;
+        for (NacosString::const_iterator it = str.begin(); it != str.end(); it++) {
+            lowerCaseString.push_back(tolower(*it));
+        }
+
+        return lowerCaseString;
+    }
+
+    static bool equals_ic(const NacosString &str1, const NacosString &str2) {
+
+        NacosString lcase_str1 = toLower(str1);
+        NacosString lcase_str2 = toLower(str2);
+
+        return lcase_str1 == lcase_str2;
     }
 };
 }//namespace nacos

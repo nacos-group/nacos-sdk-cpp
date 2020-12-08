@@ -28,41 +28,33 @@ public:
     }
 };
 
-bool testListeningKeys() {
+bool testRemoveKeyBeingWatched() {
     cout << "in function testListeningKeys" << endl;
     Properties props;
-    ADD_AUTH_INFO(props);
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
+    ADD_AUTH_INFO(props);
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
     ResourceGuard <ConfigService> _serviceFactory(n);
+    n->publishConfig("RemovedWhileWatching", NULLSTR, "dummyContent");
 
     MyListener *theListener = new MyListener(1);
-    MyListener *theListener2 = new MyListener(2);
-    MyListener *theListener3 = new MyListener(3);
-    n->addListener("dqid", NULLSTR, theListener);
-    n->addListener("dqid", NULLSTR, theListener2);
-    n->addListener("dqid", NULLSTR, theListener3);
-    n->addListener("dqid1", NULLSTR, theListener3);
-    n->addListener("dqid2", NULLSTR, theListener3);
-    n->addListener("dqid3", NULLSTR, theListener3);
+    n->addListener("RemovedWhileWatching", NULLSTR, theListener);
 
-    for (int i = 10; i < 60; i++) {
-        NacosString strKey = "dqid" + NacosStringOps::valueOf(i);
-        n->addListener(strKey, NULLSTR, theListener3);
-    }
-
-    cout << "Hold for 2 mins" << endl;
-    sleep(120);
-    cout << "remove listener" << endl;
-    n->removeListener("dqid", NULLSTR, theListener);
-
-    cout << "Hold for 2 mins" << endl;
-    sleep(120);
+    sleep(2);
+    cout << "remove key" << endl;
+    n->removeConfig("RemovedWhileWatching", NULLSTR);
+    sleep(2);
+    cout << "set key" << endl;
+    n->publishConfig("RemovedWhileWatching", NULLSTR, "dummyContent1");
+    sleep(2);
+    cout << "remove key" << endl;
+    n->removeConfig("RemovedWhileWatching", NULLSTR);
+    cout << "Hold for 30 secs" << endl;
+    sleep(30);
+    n->removeListener("RemovedWhileWatching", NULLSTR, theListener);
     cout << "remove listener2" << endl;
-    n->removeListener("dqid", NULLSTR, theListener2);
-    n->removeListener("dqid", NULLSTR, theListener3);
     cout << "test successful" << endl;
 
     return true;

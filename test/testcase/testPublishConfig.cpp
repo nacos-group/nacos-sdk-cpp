@@ -15,6 +15,7 @@ bool testPublishConfig() {
     cout << "in function testPublishConfig" << endl;
     Properties props;
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
+    ADD_AUTH_INFO(props);
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
@@ -30,16 +31,20 @@ bool testPublishConfig() {
         try {
             bSucc = n->publishConfig(key_s, NULLSTR, val_s);
             int retry = 0;
-            ss = n->getConfig(key_s, NULLSTR, 1000);
             while (!(ss == val_s) && retry++ < 10) {
-                ss = n->getConfig(key_s, NULLSTR, 1000);
+                sleep(1);
+                try {
+                    ss = n->getConfig(key_s, NULLSTR, 1000);
+                } catch (NacosException & ignore) {
+                    //getConfig may throw 404, but that doesn't matter
+                }
             }
 
             if (!(ss == val_s)) {
                 throw NacosException(0, "getConfig() failed.");
             }
         }
-        catch (NacosException e) {
+        catch (NacosException &e) {
             cout <<
                  "Request failed with curl code:" << e.errorcode() << endl <<
                  "Reason:" << e.what() << endl;

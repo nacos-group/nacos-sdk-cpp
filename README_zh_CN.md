@@ -19,8 +19,8 @@ Nacos-sdk-cpp是nacos客戶端的C++版本，它支持服务发现和动态配�
 
 运行 `./nacos-cli.out` 以执行客户端的所有testcase
 
-**注意: 你需要在本机运行一个nacos server，监听8848端口以完成所有测试
-其中有个测试将会测试端点（endpoint）功能，所以你需要在本机运行一个http服务器，在路径/endpoints/endpoint0提供下述内容：
+**注意:** 你需要在本机运行一个nacos server，监听8848端口以完成所有测试
+其中有个测试将会测试端点（endpoint）功能，**所以你还需要**在本机运行一个http服务器，在路径/endpoints/endpoint0提供下述内容：
 
 `127.0.0.1:8848`
 
@@ -397,7 +397,6 @@ int main() {
     return 0;
 }
 ```
-
 
 ### 启用认证
 

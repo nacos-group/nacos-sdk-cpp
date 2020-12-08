@@ -22,12 +22,12 @@ a libnacos-cli.so and a nacos-cli.out will be generated
 
 run `./nacos-cli.out` to perform test on the library
 
-**Note: You need to run a nacos server on your local machine listening on port 8848 to go through the whole test
-One of the testcases will test endpoint functionality, so you also need to run a simple http server on port 80 which provides the following content:
+**Note:** You need to run a nacos server on your local machine listening on port 8848 to go through the whole test
+One of the testcases will test endpoint functionality, so **you also need** to run a simple http server on port 80 which provides the following content:
 
 `127.0.0.1:8848`
 
-**on path /endpoints/endpoint0
+**on path /endpoints/endpoint0**
 
 ## Integrate the library into your project
 
@@ -401,6 +401,22 @@ int main() {
 
     return 0;
 }
+```
+
+### Enabling Authentication
+
+If your Nacos server is secured with password, you can add the following snippet to any of the examples above to enable authentication:
+
+```C++
+using namespace nacos;
+......
+    configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
+    configProps[PropertyKeyConst::AUTH_USERNAME] = "username";
+    configProps[PropertyKeyConst::AUTH_PASSWORD] = "password";
+    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
+    ConfigService *n = factory->CreateConfigService();
+    NamingService *namingSvc = factory->CreateNamingService();
+......
 ```
 
 # About Nacos

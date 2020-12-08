@@ -22,6 +22,7 @@ bool testNamingProxySmokeTest() {
     cout << "in function testNamingProxySmokeTest" << endl;
     NacosString servers = "127.0.0.1:8848";
     Properties props;
+    ADD_AUTH_INFO(props);
     props[PropertyKeyConst::SERVER_ADDR] = servers;
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
@@ -43,7 +44,7 @@ bool testNamingProxySmokeTest() {
             namingProxy->deregisterService(serviceName, theinstance);
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "Exception caught during deregistering service, raison:" << e.what() << endl;
 
         return false;
@@ -58,7 +59,7 @@ bool testNamingProxySmokeTest() {
             sleep(1);
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "Exception caught during registering service, raison:" << e.what() << endl;
 
         return false;
@@ -84,7 +85,7 @@ bool testNamingProxySmokeTest() {
             namingProxy->deregisterService(serviceName, theinstance);
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "Exception caught during cleaning the test environment, raison:" << e.what() << endl;
 
         return false;
@@ -97,6 +98,7 @@ bool testNamingProxyServerHealthy() {
     cout << "in function testNamingProxyServerHealthy" << endl;
     NacosString servers = "127.0.0.1:8848";
     Properties props;
+    ADD_AUTH_INFO(props);
     props[PropertyKeyConst::SERVER_ADDR] = servers;
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
@@ -110,7 +112,7 @@ bool testNamingProxyServerHealthy() {
     try {
         healthy = namingProxy->serverHealthy();
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "Exception caught during deregistering service, raison:" << e.what() << endl;
 
         return false;
@@ -135,6 +137,7 @@ bool testNamingServiceRegister() {
     cout << "in function testNamingServiceRegister" << endl;
     Properties configProps;
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
+    ADD_AUTH_INFO(configProps);
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     NamingService *namingSvc = factory->CreateNamingService();
@@ -159,7 +162,7 @@ bool testNamingServiceRegister() {
             }
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
         return false;
     }

@@ -12,6 +12,9 @@ const NacosString Constants::CLIENT_VERSION = "3.0.0";
 const int Constants::DATA_IN_BODY_VERSION = 204;
 
 const NacosString Constants::DEFAULT_GROUP = "DEFAULT_GROUP";
+const NacosString Constants::DEFAULT_CONTEXT_PATH = "nacos";
+const NacosString Constants::PROTOCOL_VERSION = "v1";
+const NacosString Constants::GET_SERVERS_PATH = "ns/operator/servers";
 
 const NacosString Constants::APPNAME = "AppName";
 

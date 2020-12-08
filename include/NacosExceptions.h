@@ -6,7 +6,7 @@
 
 namespace nacos{
 class NacosException : public std::exception {
-private:
+protected:
     int _errcode;
     NacosString _errmsg;
 public:
@@ -75,6 +75,9 @@ public:
     static const int INVALID_FACTORY_CONFIG = 1003;
     static const int ALL_SERVERS_TRIED_AND_FAILED = 1004;
     static const int NO_SERVER_AVAILABLE = 1005;
+    static const int INVALID_LOGIN_CREDENTIAL = 1006;
+    static const int UNABLE_TO_OPEN_FILE = 1007;
+
 };
 
 class NetworkException : public std::exception {
@@ -93,20 +96,13 @@ public:
     const int errorcode() const throw() { return _curlerrcode; };
 };
 
-class IOException : public std::exception {
-private:
-    int _errcode;
-    NacosString _errmsg;
+class IOException : public NacosException {
 public:
-    IOException(int errorcode, const char *errormsg) throw(): _errcode(errorcode), _errmsg(errormsg) {};
+    IOException(int errorcode, const char *errormsg) throw() : NacosException(errorcode, errormsg) {};
 
-    IOException(int errorcode, const NacosString &errormsg) throw(): _errcode(errorcode), _errmsg(errormsg) {};
+    IOException(int errorcode, const NacosString &errormsg) throw() : NacosException(errorcode, errormsg) {};
 
     ~IOException() throw() {};
-
-    const char *what() const throw() { return _errmsg.c_str(); };
-
-    const int errorcode() const throw() { return _errcode; };
 };
 
 class MalformedConfigException : public NacosException {

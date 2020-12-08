@@ -29,6 +29,7 @@ bool testAddListener() {
     cout << "in function testAddListener" << endl;
     Properties props;
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
+    ADD_AUTH_INFO(props);
     KeyChangeListener *thelistener = new KeyChangeListener();
     thelistener->setKey("k");
     bool bSucc;
@@ -42,7 +43,7 @@ bool testAddListener() {
         n->addListener("k", NULLSTR, thelistener);
         bSucc = n->publishConfig("k", NULLSTR, "hahaha");
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout <<
              "Failed to add listener" << endl <<
              "Reason:" << e.what() << endl;

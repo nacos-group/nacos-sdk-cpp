@@ -18,6 +18,12 @@ public:
 
     const static NacosString DEFAULT_GROUP;
 
+    const static NacosString DEFAULT_CONTEXT_PATH;
+
+    const static NacosString PROTOCOL_VERSION;
+
+    const static NacosString GET_SERVERS_PATH;
+
     const static NacosString APPNAME;
 
     const static NacosString UNKNOWN_APP;

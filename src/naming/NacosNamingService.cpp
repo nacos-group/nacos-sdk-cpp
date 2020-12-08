@@ -10,64 +10,19 @@ using namespace std;
 using nacos::naming::selectors::Selector;
 
 namespace nacos{
-NacosNamingService::NacosNamingService(HttpDelegate *httpDelegate, IHttpCli *httpCli, NamingProxy *_serverProxy, BeatReactor *_beatReactor,
-                                       EventDispatcher *eventDispatcher, TcpNamingServicePoller *tcpNamingServicePoller,
-                                       AppConfigManager *appConfigManager, ServerListManager *serverListManager) {
-    _appConfigMgr = appConfigManager;
-    _httpCli = httpCli;
-    _httpDelegate = httpDelegate;
-    serverProxy = _serverProxy;
-    beatReactor = _beatReactor;
-    _eventDispatcher = eventDispatcher;
-    _tcpNamingServicePoller = tcpNamingServicePoller;
-    _serverListManager = serverListManager;
-    beatReactor->start();
-    _tcpNamingServicePoller->start();
+NacosNamingService::NacosNamingService(ObjectConfigData *objectConfigData) {
+    _objectConfigData = objectConfigData;
+    _objectConfigData->_beatReactor->start();
+    _objectConfigData->_tcpNamingServicePoller->start();
+
+    if (_objectConfigData->_appConfigManager->nacosAuthEnabled()) {
+        _objectConfigData->_securityManager->login();
+        _objectConfigData->_securityManager->start();
+    }
 }
 
 NacosNamingService::~NacosNamingService() {
-    if (beatReactor != NULL) {
-        delete beatReactor;
-    }
-    beatReactor = NULL;
-
-    if (_tcpNamingServicePoller != NULL)
-    {
-        delete _tcpNamingServicePoller;
-    }
-    _tcpNamingServicePoller = NULL;
-
-    if (_eventDispatcher != NULL)
-    {
-        delete _eventDispatcher;
-    }
-    _eventDispatcher = NULL;
-
-    if (serverProxy != NULL) {
-        delete serverProxy;
-    }
-    serverProxy = NULL;
-
-    if (_serverListManager != NULL) {
-        delete _serverListManager;
-    }
-    _serverListManager = NULL;
-
-    if (_httpDelegate != NULL) {
-        delete _httpDelegate;
-    }
-    _httpDelegate = NULL;
-
-    if (_httpCli != NULL) {
-        delete _httpCli;
-    }
-    _httpCli = NULL;
-
-    if (_appConfigMgr != NULL)
-    {
-        delete _appConfigMgr;
-    }
-    _appConfigMgr = NULL;
+    delete _objectConfigData;
 }
 
 void NacosNamingService::registerInstance
@@ -141,10 +96,10 @@ void NacosNamingService::registerInstance
         beatInfo.metadata = instance.metadata;
         beatInfo.scheduled = false;
 
-        beatReactor->addBeatInfo(NamingUtils::getGroupedName(serviceName, groupName), beatInfo);
+        _objectConfigData->_beatReactor->addBeatInfo(NamingUtils::getGroupedName(serviceName, groupName), beatInfo);
     }
 
-    serverProxy->registerService(NamingUtils::getGroupedName(serviceName, groupName), groupName, instance);
+    _objectConfigData->_serverProxy->registerService(NamingUtils::getGroupedName(serviceName, groupName), groupName, instance);
 }
 
 void NacosNamingService::deregisterInstance
@@ -198,8 +153,8 @@ void NacosNamingService::deregisterInstance
                 const NacosString &groupName,
                 Instance &instance
         ) throw(NacosException) {
-    beatReactor->removeBeatInfo(NamingUtils::getGroupedName(serviceName, groupName), instance.ip, instance.port);
-    serverProxy->deregisterService(NamingUtils::getGroupedName(serviceName, groupName), instance);
+    _objectConfigData->_beatReactor->removeBeatInfo(NamingUtils::getGroupedName(serviceName, groupName), instance.ip, instance.port);
+    _objectConfigData->_serverProxy->deregisterService(NamingUtils::getGroupedName(serviceName, groupName), instance);
 }
 
 list <Instance> NacosNamingService::getAllInstances
@@ -236,7 +191,7 @@ list <Instance> NacosNamingService::getAllInstances
     ServiceInfo serviceInfo;
     //TODO:cache and failover
     NacosString clusterString = ParamUtils::Implode(clusters);
-    NacosString result = serverProxy->queryList(serviceName, clusterString, 0/*What should be filled in UDPPort??*/,
+    NacosString result = _objectConfigData->_serverProxy->queryList(serviceName, clusterString, 0/*What should be filled in UDPPort??*/,
                                                 false);
     serviceInfo = JSON::JsonStr2ServiceInfo(result);
     list <Instance> hostlist = serviceInfo.getHosts();
@@ -280,10 +235,10 @@ void NacosNamingService::subscribe
 {
     NacosString clusterName = ParamUtils::Implode(clusters);
     NacosString groupedName = NamingUtils::getGroupedName(serviceName, groupName);
-    if (!_eventDispatcher->addListener(groupedName, clusterName, listener)){
+    if (!_objectConfigData->_eventDispatcher->addListener(groupedName, clusterName, listener)){
         return;//The listener is already listening to the service specified, no need to add to the polling list
     }
-    _tcpNamingServicePoller->addPollItem(serviceName, groupName, clusterName);
+    _objectConfigData->_tcpNamingServicePoller->addPollItem(serviceName, groupName, clusterName);
 }
 
 
@@ -297,12 +252,12 @@ void NacosNamingService::unsubscribe(
     NacosString clusterName = ParamUtils::Implode(clusters);
     NacosString groupedName = NamingUtils::getGroupedName(serviceName, groupName);
     int remainingListener;
-    if (!_eventDispatcher->removeListener(groupedName, clusterName, listener, remainingListener)) {
+    if (!_objectConfigData->_eventDispatcher->removeListener(groupedName, clusterName, listener, remainingListener)) {
         return;//The listener is not in the list or it is already removed
     }
     if (remainingListener == 0) {
         //Since there's no more listeners listening to this service, remove it from the polling list
-        _tcpNamingServicePoller->removePollItem(serviceName, groupName, clusterName);
+        _objectConfigData->_tcpNamingServicePoller->removePollItem(serviceName, groupName, clusterName);
     }
 }
 
@@ -334,11 +289,11 @@ void NacosNamingService::unsubscribe(const NacosString &serviceName, EventListen
 }
 
 ListView<NacosString> NacosNamingService::getServiceList(int pageNo, int pageSize) throw (NacosException) {
-    return serverProxy->getServiceList(pageNo, pageSize, Constants::DEFAULT_GROUP);
+    return _objectConfigData->_serverProxy->getServiceList(pageNo, pageSize, Constants::DEFAULT_GROUP);
 }
 
 ListView<NacosString> NacosNamingService::getServiceList(int pageNo, int pageSize, const NacosString &groupName) throw (NacosException){
-    return serverProxy->getServiceList(pageNo, pageSize, groupName);
+    return _objectConfigData->_serverProxy->getServiceList(pageNo, pageSize, groupName);
 }
 
 list<Instance> NacosNamingService::getInstanceWithPredicate

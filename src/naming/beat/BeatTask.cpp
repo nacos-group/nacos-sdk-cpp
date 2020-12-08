@@ -7,8 +7,8 @@
 using namespace std;
 
 namespace nacos{
-BeatTask::BeatTask(BeatInfo &beatInfo, NamingProxy *namingProxy, BeatReactor *beatReactor)
-        : _beatInfo(beatInfo), _namingProxy(namingProxy), _beatReactor(beatReactor), _scheduled(false) {
+BeatTask::BeatTask(BeatInfo &beatInfo, ObjectConfigData *objectConfigData)
+        : _beatInfo(beatInfo), _objectConfigData(objectConfigData), _scheduled(false) {
     incRef();
 };
 
@@ -21,8 +21,8 @@ void BeatTask::setBeatInfo(const BeatInfo &beatInfo) {
 }
 
 void BeatTask::run() {
-    long newInterval = _namingProxy->sendBeat(_beatInfo);
-    _beatReactor->setClientBeatInterval(newInterval);
+    long newInterval = _objectConfigData->_serverProxy->sendBeat(_beatInfo);
+    _objectConfigData->_beatReactor->setClientBeatInterval(newInterval);
     setScheduled(false);
     int refcount = decRef();
     if (refcount == 0) {

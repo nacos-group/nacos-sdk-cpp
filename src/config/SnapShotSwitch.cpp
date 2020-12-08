@@ -1,4 +1,4 @@
-#include "LocalConfigInfoProcessor.h"
+#include "LocalSnapshotManager.h"
 #include "SnapShotSwitch.h"
 
 namespace nacos{

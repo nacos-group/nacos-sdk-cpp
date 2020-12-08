@@ -3,23 +3,22 @@
 
 #include "NacosExceptions.h"
 #include "NacosString.h"
-#include "src/http/HTTPCli.h"
 #include "src/http/HttpDelegate.h"
-#include "src/server/ServerListManager.h"
+#include "src/factory/ObjectConfigData.h"
 
 /**
- * ServerHttpDelegate
+ * NoOpHttpDelegate
  *
  * @author Liu, Hanyu
+ * Directly send request to HttpCli without any operation
  */
 namespace nacos{
 class NoOpHttpDelegate : public HttpDelegate {
 private:
-    //Variables
+    ObjectConfigData *_objectConfigData;
     NacosString encoding;
-    IHttpCli *httpCli = NULL;
 public:
-    NoOpHttpDelegate(IHttpCli *httpcli, const NacosString &encoding);
+    NoOpHttpDelegate(ObjectConfigData *objectConfigData);
 
     HttpResult httpGet(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
                        const NacosString &encoding, long readTimeoutMs) throw(NetworkException);
@@ -38,7 +37,6 @@ public:
     NacosString getEncode() const;
 
     virtual ~NoOpHttpDelegate() {
-        httpCli = NULL;
     };
 };
 }//namespace nacos

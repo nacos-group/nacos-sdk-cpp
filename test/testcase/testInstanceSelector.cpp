@@ -24,6 +24,7 @@ using namespace nacos::naming::selectors;
 bool testInstanceSelectors() {
     cout << "in function testInstanceSelectors" << endl;
     Properties configProps;
+    ADD_AUTH_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     configProps[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "3000";
 
@@ -51,7 +52,7 @@ bool testInstanceSelectors() {
         }
         res = namingSvc->getInstanceWithPredicate("TestNamingService0", &randomSelector);
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while getting service names, raison:" << e.what() << endl;
         return false;
     }
@@ -70,6 +71,7 @@ bool testRandomByWeightSelector()
 
     cout << "in function testRandomByWeightSelector" << endl;
     Properties configProps;
+    ADD_AUTH_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     configProps[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "3000";
 
@@ -94,7 +96,7 @@ bool testRandomByWeightSelector()
             namingSvc->registerInstance(serviceName, instance);
         }
     }
-    catch (NacosException e) {
+    catch (NacosException &e) {
         cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
         return false;
     }

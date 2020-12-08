@@ -1,8 +1,14 @@
 #include <unistd.h>
 #include <sys/types.h>
-#include <linux/limits.h>
 #include <pwd.h>
 #include "utils/DirUtils.h"
+
+#if defined(__CYGWIN__) || defined(MS_WINDOWS)
+#define PATH_MAX 260
+#else
+#include <linux/limits.h>
+#endif
+
 
 namespace nacos{
 NacosString DirUtils::getHome() {

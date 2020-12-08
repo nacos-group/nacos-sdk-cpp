@@ -16,6 +16,7 @@ private:
 
     static NacosString LINE_SEPARATOR;
     static NacosString KV_SEPARATOR;
+    volatile long _serverReqTimeout;
 
     AppConfigManager();
 
@@ -26,6 +27,10 @@ private:
     void applyConfig(Properties &rhs);
 
 public:
+    bool nacosAuthEnabled();
+
+    long getServeReqTimeout() const { return _serverReqTimeout; };
+
     bool isReloadable() const { return reloadable; };
 
     AppConfigManager(Properties &props);
@@ -38,7 +43,7 @@ public:
 
     void clearConfig();
 
-    NacosString get(const NacosString &key) const;
+    const NacosString &get(const NacosString &key);
 
     bool contains(const NacosString &key) const;
 

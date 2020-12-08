@@ -12,11 +12,11 @@
 using namespace std;
 using namespace nacos;
 
-class MyListener : public Listener {
+class MyListenerHttpPrefix : public Listener {
 private:
     int num;
 public:
-    MyListener(int num) {
+    MyListenerHttpPrefix(int num) {
         this->num = num;
     }
 
@@ -28,19 +28,19 @@ public:
     }
 };
 
-bool testListeningKeys() {
-    cout << "in function testListeningKeys" << endl;
+bool testListeningKeysWithHttpPrefix() {
+    cout << "in function testListeningKeysWithHttpPrefix" << endl;
     Properties props;
     ADD_AUTH_INFO(props);
-    props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
+    props[PropertyKeyConst::SERVER_ADDR] = "HttP://127.0.0.1:8848,HtTP://localhost";
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
     ResourceGuard <ConfigService> _serviceFactory(n);
 
-    MyListener *theListener = new MyListener(1);
-    MyListener *theListener2 = new MyListener(2);
-    MyListener *theListener3 = new MyListener(3);
+    MyListenerHttpPrefix *theListener = new MyListenerHttpPrefix(1);
+    MyListenerHttpPrefix *theListener2 = new MyListenerHttpPrefix(2);
+    MyListenerHttpPrefix *theListener3 = new MyListenerHttpPrefix(3);
     n->addListener("dqid", NULLSTR, theListener);
     n->addListener("dqid", NULLSTR, theListener2);
     n->addListener("dqid", NULLSTR, theListener3);
@@ -53,13 +53,13 @@ bool testListeningKeys() {
         n->addListener(strKey, NULLSTR, theListener3);
     }
 
-    cout << "Hold for 2 mins" << endl;
-    sleep(120);
+    cout << "Hold for 20 secs" << endl;
+    sleep(20);
     cout << "remove listener" << endl;
     n->removeListener("dqid", NULLSTR, theListener);
 
-    cout << "Hold for 2 mins" << endl;
-    sleep(120);
+    cout << "Hold for 20 secs" << endl;
+    sleep(20);
     cout << "remove listener2" << endl;
     n->removeListener("dqid", NULLSTR, theListener2);
     n->removeListener("dqid", NULLSTR, theListener3);

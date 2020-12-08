@@ -11,14 +11,13 @@
 #include "src/server/ServerListManager.h"
 #include "naming/ListView.h"
 #include "naming/ServiceInfo2.h"
+#include "src/factory/ObjectConfigData.h"
 
 namespace nacos{
 class NamingProxy {
 private:
     NacosString serverPort;
-    HttpDelegate *_httpDelegate = NULL;
-    ServerListManager *serverListManager;
-    AppConfigManager *appConfigManager;
+    ObjectConfigData *_objectConfigData;
 
     NacosString nacosDomain;
 
@@ -36,12 +35,11 @@ private:
 
     std::list <NacosString> builderHeaders();
 
-    long _http_req_timeout;
     long _hb_fail_wait;//Time to wait when a heartbeat request fails (in ms)
 
     static ListView<NacosString> nullResult;
 public:
-    NamingProxy(HttpDelegate *httpDelegate, ServerListManager *serverListManager, AppConfigManager *appConfigManager);
+    NamingProxy(ObjectConfigData *objectConfigData);
 
     ~NamingProxy();
 

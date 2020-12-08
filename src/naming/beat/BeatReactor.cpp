@@ -49,7 +49,7 @@ void *BeatReactor::beatMaster(void *param) {
 void BeatReactor::addBeatInfo(const NacosString &serviceName, BeatInfo &beatInfo) {
     NacosString beatInfoStr = beatInfo.toString();
     log_info("[BEAT] adding beat: %s to beat map.", beatInfoStr.c_str());
-    BeatTask *beattask = new BeatTask(beatInfo, _namingProxy, this);
+    BeatTask *beattask = new BeatTask(beatInfo, _objectConfigData);
     NacosString beatKey = buildKey(serviceName, beatInfo.ip, beatInfo.port);
     beattask->setTaskName(beatKey);
     {

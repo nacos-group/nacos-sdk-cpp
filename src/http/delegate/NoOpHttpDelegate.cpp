@@ -1,6 +1,4 @@
-#include <string.h>
 #include "NoOpHttpDelegate.h"
-#include "Debug.h"
 
 using namespace std;
 
@@ -11,11 +9,9 @@ NacosString NoOpHttpDelegate::getEncode() const {
 
 NoOpHttpDelegate::NoOpHttpDelegate
 (
-        IHttpCli *httpcli,
-        const NacosString &_encoding
+    ObjectConfigData *objectConfigData
 ) {
-    encoding = _encoding;
-    httpCli = httpcli;
+    _objectConfigData = objectConfigData;
 }
 
 HttpResult NoOpHttpDelegate::httpGet
@@ -28,7 +24,7 @@ HttpResult NoOpHttpDelegate::httpGet
         ) throw(NetworkException) {
     HttpResult res;
 
-    res = httpCli->httpGet(path, headers, paramValues, _encoding, readTimeoutMs);
+    res = _objectConfigData->_httpCli->httpGet(path, headers, paramValues, _encoding, readTimeoutMs);
     return res;
 }
 
@@ -41,7 +37,7 @@ HttpResult NoOpHttpDelegate::httpDelete
                 long readTimeoutMs
         ) throw(NetworkException) {
     HttpResult res;
-    res = httpCli->httpDelete(path, headers, paramValues, _encoding, readTimeoutMs);
+    res = _objectConfigData->_httpCli->httpDelete(path, headers, paramValues, _encoding, readTimeoutMs);
     return res;
 }
 
@@ -55,7 +51,7 @@ HttpResult NoOpHttpDelegate::httpPost
         ) throw(NetworkException) {
     HttpResult res;
 
-    res = httpCli->httpPost(path, headers, paramValues, _encoding, readTimeoutMs);
+    res = _objectConfigData->_httpCli->httpPost(path, headers, paramValues, _encoding, readTimeoutMs);
     return res;
 }
 
@@ -69,7 +65,7 @@ HttpResult NoOpHttpDelegate::httpPut
         ) throw(NetworkException) {
 
     HttpResult res;
-    res = httpCli->httpPut(path, headers, paramValues, _encoding, readTimeoutMs);
+    res = _objectConfigData->_httpCli->httpPut(path, headers, paramValues, _encoding, readTimeoutMs);
     return res;
 }
 

@@ -11,7 +11,9 @@
 #include "OperateItem.h"
 #include "src/config/AppConfigManager.h"
 #include "src/server/ServerListManager.h"
+#include "src/config/LocalSnapshotManager.h"
 #include "NacosExceptions.h"
+#include "src/factory/ObjectConfigData.h"
 
 /**
  * ClientWorker
@@ -29,16 +31,13 @@ private:
     //dataID||group||tenant -> Cachedata* Mapping
     std::map<NacosString, ListeningData *> listeningKeys;
     pthread_mutex_t watchListMutex;//TODO:refactor to Mutex
-    HttpDelegate *_httpDelegate = NULL;
-    AppConfigManager *appConfigManager = NULL;
-    ServerListManager *_svrListMgr;
+    ObjectConfigData *_objectConfigData;
     //Listener thread related info
     pthread_t threadId;
 
     volatile bool stopThread;
     pthread_mutex_t stopThreadMutex;
 
-    int _readTimeout;
     int _longPullingTimeout;
     NacosString _longPullingTimeoutStr;
 
@@ -58,7 +57,7 @@ private:
     void addDeleteItem(const OperateItem &item);
 
 public:
-    ClientWorker(HttpDelegate *httpDelegate, AppConfigManager *_appConfigManager, ServerListManager *svrListMgr);
+    ClientWorker(ObjectConfigData *objectConfigData);
 
     ~ClientWorker();
 
@@ -85,6 +84,8 @@ public:
     void performWatch();
 
     NacosString getServerConfig(const NacosString &tenant, const NacosString &dataId, const NacosString &group,
+                                long timeoutMs) throw(NacosException);
+    HttpResult getServerConfigHelper(const NacosString &tenant, const NacosString &dataId, const NacosString &group,
                                 long timeoutMs) throw(NacosException);
 };
 }//namespace nacos

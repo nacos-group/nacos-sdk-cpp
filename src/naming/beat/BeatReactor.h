@@ -12,11 +12,12 @@
 #include "BeatTask.h"
 #include "Constants.h"
 #include "utils/UtilAndComs.h"
+#include "src/factory/ObjectConfigData.h"
 
 namespace nacos{
 class BeatReactor {
 private:
-    NamingProxy *_namingProxy;
+    ObjectConfigData *_objectConfigData;
     int _threadCount;
     ThreadPool *_threadPool;
     Thread *_beatMaster;
@@ -32,15 +33,15 @@ public:
 
     long getClientBeatInterval() { return _clientBeatInterval; };
 
-    BeatReactor(NamingProxy *namingProxy, int threadCount)
-            : _namingProxy(namingProxy), _threadCount(threadCount), _beatInfoLock(), _stop(true),
+    BeatReactor(ObjectConfigData *objectConfigData, int threadCount)
+            : _objectConfigData(objectConfigData), _threadCount(threadCount), _beatInfoLock(), _stop(true),
               _clientBeatInterval(5 * 1000) {
         _threadPool = new ThreadPool("HeartbeatDaemonPool", _threadCount);
         _beatMaster = new Thread("BeatMaster", beatMaster, this);
     };
 
-    BeatReactor(NamingProxy *namingProxy)
-            : _namingProxy(namingProxy), _threadCount(UtilAndComs::DEFAULT_CLIENT_BEAT_THREAD_COUNT), _beatInfoLock(),
+    BeatReactor(ObjectConfigData *objectConfigData)
+            : _objectConfigData(objectConfigData), _threadCount(UtilAndComs::DEFAULT_CLIENT_BEAT_THREAD_COUNT), _beatInfoLock(),
               _stop(true), _clientBeatInterval(5 * 1000) {
         _threadPool = new ThreadPool("HeartbeatDaemonPool", _threadCount);
         _beatMaster = new Thread("BeatMaster", beatMaster, this);

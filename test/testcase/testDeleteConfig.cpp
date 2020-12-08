@@ -3,7 +3,6 @@
 #include "factory/NacosServiceFactory.h"
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
 #include "ResourceGuard.h"
 
 using namespace std;
@@ -13,6 +12,7 @@ bool testDeleteConfig() {
     cout << "in function testDeleteConfig" << endl;
     Properties props;
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
+    ADD_AUTH_INFO(props);
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
@@ -27,7 +27,7 @@ bool testDeleteConfig() {
         try {
             bSucc = n->removeConfig(key_s, NULLSTR);
         }
-        catch (NacosException e) {
+        catch (NacosException &e) {
             cout <<
                  "Request failed with curl code:" << e.errorcode() << endl <<
                  "Reason:" << e.what() << endl;
