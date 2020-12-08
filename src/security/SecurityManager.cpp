@@ -89,6 +89,9 @@ SecurityManager::~SecurityManager() {
 }
 
 void SecurityManager::sleepWithRunStatusCheck(long _milliSecsToSleep) {
+    if (_milliSecsToSleep == 0) {
+        return;
+    }
     long granularity = 10;
     long sleep_start_time = TimeUtils::getCurrentTimeInMs();
     long sleep_end_time = sleep_start_time + _milliSecsToSleep;
@@ -105,10 +108,10 @@ void *SecurityManager::tokenRefreshThreadFunc(void *param) {
     log_debug("In thread SecurityManager::tokenRefreshThreadFunc\n");
     while (thisObj->_started) {
         try {
-            log_debug("Trying to login...\n");
-            thisObj->login();
             log_debug("Ttl got from nacos server:%ld\n", thisObj->_accessToken.tokenTtl);
             thisObj->sleepWithRunStatusCheck(thisObj->_accessToken.tokenTtl * 1000);
+            log_debug("Trying to login...\n");
+            thisObj->login();
         } catch (NacosException &e) {
             if (e.errorcode() == NacosException::INVALID_LOGIN_CREDENTIAL) {
                 throw e;//Invalid login credential, let it crash

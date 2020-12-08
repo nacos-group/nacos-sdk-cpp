@@ -9,6 +9,7 @@ namespace nacos{
 NacosConfigService::NacosConfigService(ObjectConfigData *objectConfigData) throw(NacosException) {
     _objectConfigData = objectConfigData;
     if (_objectConfigData->_appConfigManager->nacosAuthEnabled()) {
+        _objectConfigData->_securityManager->login();
         _objectConfigData->_securityManager->start();
     }
 }

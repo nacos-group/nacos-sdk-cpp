@@ -17,6 +17,12 @@ struct AccessToken {
     long tokenTtl;
     bool globalAdmin;
     long lastRefTime;
+    AccessToken() {
+        accessToken = "";
+        tokenTtl = 0;
+        globalAdmin = false;
+        lastRefTime = 0;
+    }
 };
 
 class SecurityManager {
@@ -24,7 +30,6 @@ private:
     ObjectConfigData *_objectConfigData;
     AccessToken _accessToken;
     void doLogin(const NacosString &serverAddr) throw(NacosException, NetworkException);
-    void login() throw (NacosException);
     RWLock _rwLock;
     volatile bool _started;
     static void * tokenRefreshThreadFunc(void *param);
@@ -33,6 +38,7 @@ private:
 public:
     SecurityManager(ObjectConfigData *objectConfigData);
     ~SecurityManager();
+    void login() throw (NacosException);
     NacosString &getAccessToken();
     void addAccessToken2Req(std::list<NacosString> &parameter);
     void start();
