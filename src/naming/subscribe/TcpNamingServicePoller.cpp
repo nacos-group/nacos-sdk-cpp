@@ -106,7 +106,7 @@ void *TcpNamingServicePoller::pollingThreadFunc(void *parm)
             NacosString result;
             try {
                 result = thisObj->_objectConfigData->_serverProxy->queryList(
-                        it->second.serviceName, it->second.clusters, 0,false);
+                        it->second.serviceName, it->second.groupName, it->second.clusters, 0,false);
             }
             catch (NacosException &e) {
                 //no server available or all servers tried but failed
