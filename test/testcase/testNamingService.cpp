@@ -68,7 +68,7 @@ bool testNamingProxySmokeTest() {
     //check whether the data are correct
     for (int i = 0; i < 10; i++) {
         NacosString serviceName = "TestServiceName" + NacosStringOps::valueOf(i);
-        NacosString serverlist = namingProxy->queryList(serviceName, "TestCluster", 0, false);
+        NacosString serverlist = namingProxy->queryList(serviceName, Constants::DEFAULT_GROUP, "TestCluster", 0, false);
 
         if (serverlist.find("\"serviceName\":\"" + serviceName + "\"") == string::npos) {
             cout << "Failed to get data for:" << serviceName << endl;

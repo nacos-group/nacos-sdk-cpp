@@ -72,11 +72,12 @@ void NamingProxy::deregisterService(const NacosString &serviceName, Instance &in
     reqAPI(UtilAndComs::NACOS_URL_INSTANCE, params, IHttpCli::DELETE);
 }
 
-NacosString NamingProxy::queryList(const NacosString &serviceName, const NacosString &clusters, int udpPort,
-                                   bool healthyOnly) throw(NacosException) {
+NacosString NamingProxy::queryList(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters,
+                                    int udpPort, bool healthyOnly) throw(NacosException) {
     list <NacosString> params;
     ParamUtils::addKV(params, NamingCommonParams::NAMESPACE_ID, getNamespaceId());
     ParamUtils::addKV(params, NamingCommonParams::SERVICE_NAME, serviceName);
+    ParamUtils::addKV(params, NamingCommonParams::GROUP_NAME, groupName);
     ParamUtils::addKV(params, "clusters", clusters);
     ParamUtils::addKV(params, "udpPort", NacosStringOps::valueOf(udpPort));
     ParamUtils::addKV(params, "clientIP", NetUtils::localIP());
