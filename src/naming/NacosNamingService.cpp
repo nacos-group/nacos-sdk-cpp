@@ -191,7 +191,7 @@ list <Instance> NacosNamingService::getAllInstances
     ServiceInfo serviceInfo;
     //TODO:cache and failover
     NacosString clusterString = ParamUtils::Implode(clusters);
-    NacosString result = _objectConfigData->_serverProxy->queryList(serviceName, clusterString, 0/*What should be filled in UDPPort??*/,
+    NacosString result = _objectConfigData->_serverProxy->queryList(serviceName, groupName, clusterString, 0/*What should be filled in UDPPort??*/,
                                                 false);
     serviceInfo = JSON::JsonStr2ServiceInfo(result);
     list <Instance> hostlist = serviceInfo.getHosts();

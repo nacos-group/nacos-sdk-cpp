@@ -55,8 +55,8 @@ public:
 
     void deregisterService(const NacosString &serviceName, Instance &instance) throw(NacosException);
 
-    NacosString queryList(const NacosString &serviceName, const NacosString &clusters, int udpPort,
-                          bool healthyOnly) throw(NacosException);
+    NacosString queryList(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters,
+                        int udpPort, bool healthyOnly) throw(NacosException);
 
     //service CRUD
     ListView<NacosString> getServiceList(int page, int pageSize, const NacosString &groupName) throw(NacosException);
