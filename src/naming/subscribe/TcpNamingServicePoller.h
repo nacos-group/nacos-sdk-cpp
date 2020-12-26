@@ -24,7 +24,7 @@ class TcpNamingServicePoller
 private:
     Thread *_pollingThread = NULL;
     int _pollingInterval;//In ms
-    bool _started;
+    volatile bool _started;
     ObjectConfigData *_objectConfigData;
 
     TcpNamingServicePoller();
