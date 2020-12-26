@@ -6,6 +6,7 @@
 #include "utils/UtilAndComs.h"
 #include "utils/UuidUtils.h"
 #include "utils/RandomUtils.h"
+#include "src/thread/Thread.h"
 static nacos::Init initobj;//Implicitly call the constructors
 
 namespace nacos{
@@ -25,6 +26,7 @@ void Init::doInit() {
     UtilAndComs::Init();
     RandomUtils::Init();
     UuidUtils::Init();
+    Thread::Init();
     ServiceInfo2::nullServiceInfo2.setNull(true);
 }
 
@@ -33,6 +35,7 @@ void Init::doDeinit() {
         return;
     }
     inited = false;
+    Thread::DeInit();
     UuidUtils::DeInit();
     RandomUtils::DeInit();
     HTTPCli::HTTP_GLOBAL_DEINIT();

@@ -77,6 +77,7 @@ void TcpNamingServicePoller::stop()
     }
 
     _started = false;
+    _pollingThread->kill();
     _pollingThread->join();
 }
 

@@ -19,6 +19,7 @@ void BeatReactor::stop() {
         return;
     }
     _stop = true;
+    _beatMaster->kill();
     _beatMaster->join();
     _threadPool->stop();
 }
