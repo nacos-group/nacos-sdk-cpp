@@ -2,11 +2,13 @@
 #define __NET_UTILS_H_
 
 #include "NacosString.h"
+#include "NacosExceptions.h"
 
 namespace nacos{
 class NetUtils {
 public:
-    static NacosString localIP();
+    //Get IP address (best guess)
+    static NacosString getHostIp() throw(NacosException);
 };
 }//namespace nacos
 

@@ -141,6 +141,11 @@ Instance JSON::Json2Instance(const Value &host) throw(NacosException) {
 
     theinstance.metadata = mtdata;
 
+    if (host.HasMember("clusterName")) {
+        const Value &clusterName = host["clusterName"];
+        theinstance.clusterName = clusterName.GetString();
+    }
+
     return theinstance;
 }
 
