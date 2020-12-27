@@ -2,7 +2,8 @@
 #include "AppConfigManager.h"
 #include "NacosString.h"
 #include "Properties.h"
-#include "PropertyKeyConst.h"
+#include "src/utils/NetUtils.h"
+#include "constant/PropertyKeyConst.h"
 #include "IOUtils.h"
 #include "NacosExceptions.h"
 #include "utils/DirUtils.h"
@@ -121,16 +122,17 @@ void AppConfigManager::initDefaults() {
     //appConfig[PropertyKeyConst::NAMESPACE] = "public";
     set(PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL, "30000");
     set(PropertyKeyConst::SERVER_REQ_TIMEOUT, "3000");
-    set(PropertyKeyConst::CONTEXT_PATH, Constants::DEFAULT_CONTEXT_PATH);
+    set(PropertyKeyConst::CONTEXT_PATH, ConfigConstant::DEFAULT_CONTEXT_PATH);
     set(PropertyKeyConst::TCP_NAMING_POLL_INTERVAL, "30000");//30 secs by default
     set(PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT, "30000");//ms
     set(PropertyKeyConst::HB_FAIL_WAIT_TIME, "20000");//ms
     set(PropertyKeyConst::CLIENT_NAME, "default");
+    set(PropertyKeyConst::LOCAL_IP, NetUtils::getHostIp());
 
     NacosString homedir = DirUtils::getHome();
 
-    set(PropertyKeyConst::NACOS_LOG_PATH, homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "log");
-    set(PropertyKeyConst::NACOS_SNAPSHOT_PATH, homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "snapshot");
+    set(PropertyKeyConst::NACOS_LOG_PATH, homedir + ConfigConstant::FILE_SEPARATOR + "nacos" + ConfigConstant::FILE_SEPARATOR + "log");
+    set(PropertyKeyConst::NACOS_SNAPSHOT_PATH, homedir + ConfigConstant::FILE_SEPARATOR + "nacos" + ConfigConstant::FILE_SEPARATOR + "snapshot");
     log_info("DEFAULT_LOG_PATH:%s\n", appConfig[PropertyKeyConst::NACOS_LOG_PATH].c_str());
     log_info("DEFAULT_SNAPSHOT_PATH:%s\n", appConfig[PropertyKeyConst::NACOS_SNAPSHOT_PATH].c_str());
 }

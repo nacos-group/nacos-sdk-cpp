@@ -5,7 +5,7 @@
 #include <list>
 #include <sys/time.h>
 #include "NacosString.h"
-#include "Constants.h"
+#include "constant/ConfigConstant.h"
 #include "utils/url.h"
 #include "utils/ParamUtils.h"
 #include "naming/Instance.h"

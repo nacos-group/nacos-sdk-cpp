@@ -12,8 +12,8 @@
 #include "JVMUtil.h"
 #include "ConcurrentDiskUtil.h"
 #include "IOUtils.h"
-#include "Constants.h"
-#include "PropertyKeyConst.h"
+#include "constant/ConfigConstant.h"
+#include "constant/PropertyKeyConst.h"
 
 namespace nacos{
 
@@ -66,9 +66,9 @@ NacosString LocalSnapshotManager::readFile(const NacosString &file) throw(IOExce
     }
 
     if (JVMUtil::isMultiInstance()) {
-        return ConcurrentDiskUtil::getFileContent(file, Constants::ENCODE);
+        return ConcurrentDiskUtil::getFileContent(file, ConfigConstant::ENCODE);
     } else {
-        return IOUtils::readStringFromFile(file, Constants::ENCODE);
+        return IOUtils::readStringFromFile(file, ConfigConstant::ENCODE);
     }
 };
 
@@ -96,9 +96,9 @@ LocalSnapshotManager::saveSnapshot(const NacosString &envName, const NacosString
         }
 
         if (JVMUtil::isMultiInstance()) {
-            ConcurrentDiskUtil::writeFileContent(file, config, Constants::ENCODE);
+            ConcurrentDiskUtil::writeFileContent(file, config, ConfigConstant::ENCODE);
         } else {
-            IOUtils::writeStringToFile(file, config, Constants::ENCODE);
+            IOUtils::writeStringToFile(file, config, ConfigConstant::ENCODE);
         }
 
         //LOGGER.error("[" + envName + "] save snapshot error, " + file, ioe);
@@ -141,7 +141,7 @@ NacosString LocalSnapshotManager::getFailoverFile(const NacosString &serverName,
         Failoverfile += tenant;
     }
     if (NacosStringOps::isNullStr(group)) {
-        Failoverfile += "/" + Constants::DEFAULT_GROUP + "/" + dataId;
+        Failoverfile += "/" + ConfigConstant::DEFAULT_GROUP + "/" + dataId;
     } else {
         Failoverfile += "/" + group + "/" + dataId;
     }
@@ -158,7 +158,7 @@ NacosString LocalSnapshotManager::getSnapshotFile(const NacosString &envName, co
     }
 
     if (NacosStringOps::isNullStr(group)) {
-        filename += "/" + Constants::DEFAULT_GROUP + "/" + dataId;
+        filename += "/" + ConfigConstant::DEFAULT_GROUP + "/" + dataId;
     } else {
         filename += "/" + group + "/" + dataId;
     }

@@ -162,7 +162,7 @@ void BeatReactor::removeAllBeatInfo() {
 }
 
 NacosString BeatReactor::buildKey(const NacosString &serviceName, const NacosString &ip, int port) {
-    return serviceName + Constants::NAMING_INSTANCE_ID_SPLITTER
-           + ip + Constants::NAMING_INSTANCE_ID_SPLITTER + NacosStringOps::valueOf(port);
+    return serviceName + ConfigConstant::NAMING_INSTANCE_ID_SPLITTER
+           + ip + ConfigConstant::NAMING_INSTANCE_ID_SPLITTER + NacosStringOps::valueOf(port);
 }
 }//namespace nacos

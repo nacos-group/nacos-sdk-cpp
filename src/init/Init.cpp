@@ -3,7 +3,7 @@
 #include "src/config/SnapShotSwitch.h"
 #include "src/config/JVMUtil.h"
 #include "naming/ServiceInfo2.h"
-#include "utils/UtilAndComs.h"
+#include "constant/UtilAndComs.h"
 #include "utils/UuidUtils.h"
 #include "utils/RandomUtils.h"
 #include "src/thread/Thread.h"

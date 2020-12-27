@@ -7,7 +7,7 @@
 #include <assert.h>
 #include "NacosString.h"
 #include "NacosExceptions.h"
-#include "Constants.h"
+#include "constant/ConfigConstant.h"
 #include "Debug.h"
 
 namespace nacos{
@@ -40,13 +40,13 @@ public:
     }
 
     static NacosString null2defaultGroup(const NacosString &group) {
-        return (isNull(group)) ? Constants::DEFAULT_GROUP : ParamUtils::trim(group);
+        return (isNull(group)) ? ConfigConstant::DEFAULT_GROUP : ParamUtils::trim(group);
     }
 
     static void parseString2KeyGroupTenant(const NacosString &stringToParse, NacosString &dataId, NacosString &group,
                                            NacosString &tenant) {
         std::vector <NacosString> KGT;//KeyGroupTenant
-        Explode(KGT, stringToParse, Constants::WORD_SEPARATOR);
+        Explode(KGT, stringToParse, ConfigConstant::WORD_SEPARATOR);
         dataId = KGT[0];
         group = KGT[1];
         if (KGT.size() == 3)//with tenant

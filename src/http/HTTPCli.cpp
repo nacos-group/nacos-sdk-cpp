@@ -1,6 +1,7 @@
 #include <string.h>
 #include "HTTPCli.h"
 #include "utils/url.h"
+#include "constant/UtilAndComs.h"
 #include "Debug.h"
 
 using namespace std;
@@ -74,7 +75,7 @@ void HTTPCli::destroyCurlHandle(void *arg) {
 }
 
 void HTTPCli::HTTPBasicSettings(CURL *curlHandle) {
-    curl_easy_setopt(curlHandle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+    curl_easy_setopt(curlHandle, CURLOPT_USERAGENT, UtilAndComs::VERSION.c_str());
     curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, receiveResponseCallback);
     curl_easy_setopt(curlHandle, CURLOPT_HEADERFUNCTION, receiveHeaderCallback);
 }

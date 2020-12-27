@@ -9,7 +9,7 @@
 #include "src/http/HttpDelegate.h"
 #include "src/thread/Thread.h"
 #include "src/config/AppConfigManager.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 #include "src/thread/RWLock.h"
 #include "src/factory/ObjectConfigData.h"
 

@@ -10,8 +10,8 @@
 #include "src/thread/Thread.h"
 #include "src/thread/Mutex.h"
 #include "BeatTask.h"
-#include "Constants.h"
-#include "utils/UtilAndComs.h"
+#include "constant/ConfigConstant.h"
+#include "constant/UtilAndComs.h"
 #include "src/factory/ObjectConfigData.h"
 
 namespace nacos{
