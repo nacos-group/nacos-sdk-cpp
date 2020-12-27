@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include "DebugAssertion.h"
+#include <list>
 
 using namespace std;
 using namespace nacos;
@@ -115,7 +116,9 @@ bool testPublishConfigWithHttpPrefix();
 
 bool testRemoveKeyBeingWatched();
 
-TestData testList1[] =
+bool testGetHostIp();
+
+TestData disabledTestList[] =
 TEST_ITEM_START
 
 TEST_ITEM_END
@@ -179,9 +182,11 @@ TEST_ITEM_START
     TEST_ITEM("MaintainService: testMaintainUpdateInstance", testMaintainUpdateInstance)
     TEST_ITEM("Test with address config containing http prefix", testPublishConfigWithHttpPrefix)
     TEST_ITEM("Test with address config containing http prefix", testRemoveKeyBeingWatched)
+    TEST_ITEM("Get local machine's IP", testGetHostIp)
 TEST_ITEM_END
 
 int main() {
+    list<TestData *> failed_list;
     cout << "Please start a nacos server listening on port 8848 in this machine first." << endl;
     cout << "And when the server is ready, press any key to start the test." << endl;
     getchar();
@@ -196,6 +201,7 @@ int main() {
         bool pass = testfunction();
         if (!pass) {
             cout << "FAILED" << endl;
+            failed_list.push_back(curtest);
             nr_fail++;
         } else {
             cout << "PASSED!" << endl;
@@ -203,6 +209,15 @@ int main() {
         }
         cout << "===========================" << endl;
     }
+
+    if (!failed_list.empty()) {
+        cout << "List of failed cases:" << endl;
+        for (list<TestData*>::iterator it = failed_list.begin(); it != failed_list.end(); it++) {
+            cout << (*it)->testName << endl;
+        }
+        cout << "===========================" << endl;
+    }
+
     cout << "SUMMARY" << endl;
     cout << "Total:" << nr_succ + nr_fail << endl;
     cout << "Succ:" << nr_succ << endl;

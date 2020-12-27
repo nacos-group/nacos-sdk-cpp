@@ -6,20 +6,20 @@
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
 #include "naming/Instance.h"
-#include "Constants.h"
-#include "utils/UtilAndComs.h"
+#include "constant/ConfigConstant.h"
+#include "constant/UtilAndComs.h"
 #include "src/http/HTTPCli.h"
 #include "DebugAssertion.h"
 #include "Debug.h"
 #include "NacosString.h"
 #include "Properties.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 
 using namespace std;
 using namespace nacos;
 
 bool testEndpointWithNamingProxy() {
-    cout << "in function testNamingServiceRegister" << endl;
+    cout << "in function testEndpointWithNamingProxy" << endl;
     cout << "For this test, please create an endpoint on your 80 port with a file in the following path:" << endl;
     cout << "yourip:80/endpoints/endpoint0" << endl;
     cout << "And the content should be a list of ip:port separated with \\n the ip:port group points at a nacos server" << endl;
