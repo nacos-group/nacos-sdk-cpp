@@ -1,20 +1,22 @@
-#include "TcpNamingServicePoller.h"
+#include "SubscriptionPoller.h"
 #include "constant/ConfigConstant.h"
 #include "utils/NamingUtils.h"
 #include "src/json/JSON.h"
+#include "HostReactor.h"
 
 using namespace std;
 
 namespace nacos{
-TcpNamingServicePoller::TcpNamingServicePoller(ObjectConfigData *objectConfigData)
+SubscriptionPoller::SubscriptionPoller(ObjectConfigData *objectConfigData)
 {
     _objectConfigData = objectConfigData;
     _pollingThread = new Thread("NamingServicePoller", pollingThreadFunc, (void*)this);
-    _pollingInterval = atoi(_objectConfigData->_appConfigManager->get(PropertyKeyConst::TCP_NAMING_POLL_INTERVAL).c_str());
+    _pollingInterval = atoi(_objectConfigData->_appConfigManager->get(PropertyKeyConst::SUBSCRIPTION_POLL_INTERVAL).c_str());
+    _udpPort = atoi(_objectConfigData->_appConfigManager->get(PropertyKeyConst::UDP_RECEIVER_PORT).c_str());
     _started = false;
 }
 
-TcpNamingServicePoller::~TcpNamingServicePoller()
+SubscriptionPoller::~SubscriptionPoller()
 {
     if (_started) {
         stop();
@@ -26,7 +28,7 @@ TcpNamingServicePoller::~TcpNamingServicePoller()
     }
 }
 
-bool TcpNamingServicePoller::addPollItem(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters)
+bool SubscriptionPoller::addPollItem(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters)
 {
     struct PollingData pd;
     pd.clusters = clusters;
@@ -45,7 +47,7 @@ bool TcpNamingServicePoller::addPollItem(const NacosString &serviceName, const N
     }
 }
 
-bool TcpNamingServicePoller::removePollItem(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters)
+bool SubscriptionPoller::removePollItem(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters)
 {
     NacosString name = NamingUtils::getGroupedName(serviceName, groupName);
     NacosString key = ServiceInfo::getKey(name, clusters);
@@ -59,20 +61,20 @@ bool TcpNamingServicePoller::removePollItem(const NacosString &serviceName, cons
     return true;
 }
 
-void TcpNamingServicePoller::start()
+void SubscriptionPoller::start()
 {
     if (_started) {
-        log_warn("Calling start on already-started TcpNamingServicePoller\n");
+        log_warn("Calling start on already-started SubscriptionPoller\n");
         return;
     }
     _started = true;
     _pollingThread->start();
 }
 
-void TcpNamingServicePoller::stop()
+void SubscriptionPoller::stop()
 {
     if (!_started) {
-        log_warn("Calling stop on already-stopped TcpNamingServicePoller\n");
+        log_warn("Calling stop on already-stopped SubscriptionPoller\n");
         return;
     }
 
@@ -81,11 +83,11 @@ void TcpNamingServicePoller::stop()
     _pollingThread->join();
 }
 
-void *TcpNamingServicePoller::pollingThreadFunc(void *parm)
+void *SubscriptionPoller::pollingThreadFunc(void *parm)
 {
-    TcpNamingServicePoller *thisObj = (TcpNamingServicePoller*)parm;
+    SubscriptionPoller *thisObj = (SubscriptionPoller*)parm;
     while (thisObj->_started) {
-        log_debug("TcpNamingServicePoller::pollingThreadFunc start polling, interval = %d\n", thisObj->_pollingInterval);
+        log_debug("SubscriptionPoller::pollingThreadFunc start polling, interval = %d\n", thisObj->_pollingInterval);
         map<NacosString, PollingData> copiedList;
         {
             ReadGuard __readGuard(thisObj->rwLock);
@@ -107,7 +109,7 @@ void *TcpNamingServicePoller::pollingThreadFunc(void *parm)
             NacosString result;
             try {
                 result = thisObj->_objectConfigData->_serverProxy->queryList(
-                        it->second.serviceName, it->second.groupName, it->second.clusters, 0,false);
+                        it->second.serviceName, it->second.groupName, it->second.clusters, thisObj->_udpPort,false);
             }
             catch (NacosException &e) {
                 //no server available or all servers tried but failed
@@ -123,23 +125,8 @@ void *TcpNamingServicePoller::pollingThreadFunc(void *parm)
             }
 
             log_debug("Server info got from server:%s\n=======>\n", result.c_str());
-            ServiceInfo serviceInfo = JSON::JsonStr2ServiceInfo(result);
-            if (thisObj->serviceInfoList.count(key) == 0) {
-                //The first time, don't notify
-                thisObj->serviceInfoList[key] = serviceInfo;
-            } else {
-                ServiceInfo oldServiceInfo = thisObj->serviceInfoList[key];
-                ChangeAdvice changeAdvice;
-                changeAdvice.key = key;
-                ChangeAdvice::compareChange(oldServiceInfo, serviceInfo, changeAdvice);
-                log_debug("Change status:modified:%d added:%d removed:%d\n", changeAdvice.modified, changeAdvice.added, changeAdvice.removed);
-                if (changeAdvice.modified || changeAdvice.added || changeAdvice.removed) {
-                    //asm volatile("int $3");
-                    changeAdvice.newServiceInfo = serviceInfo;
-                    thisObj->_objectConfigData->_eventDispatcher->notifyDirectly(changeAdvice);
-                }
-                thisObj->serviceInfoList[key] = serviceInfo;//update local service info to the new one
-            }
+
+            thisObj->_objectConfigData->_hostReactor->processServiceJson(result);
         }
 
         log_debug("Polling process finished, hibernating...\n");

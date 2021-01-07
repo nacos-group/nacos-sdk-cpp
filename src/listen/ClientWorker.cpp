@@ -366,7 +366,7 @@ void ClientWorker::performWatch() {
                 updatedcontent = res.content;
             }
             catch (NacosException &e) {
-                //Same design as TcpNamingServicePoller
+                //Same design as SubscriptionPoller
                 log_warn("Encountered exception when getting config from server:%s:%s:%s\n",
                          listenedList->getTenant().c_str(),
                          listenedList->getGroup().c_str(),

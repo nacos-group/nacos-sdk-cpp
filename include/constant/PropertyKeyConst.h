@@ -40,7 +40,7 @@ public:
 
     static const NacosString SERVER_REQ_TIMEOUT;
 
-    static const NacosString TCP_NAMING_POLL_INTERVAL;
+    static const NacosString SUBSCRIPTION_POLL_INTERVAL;
 
     static const NacosString CONFIG_LONGPULLLING_TIMEOUT;
 
@@ -54,6 +54,7 @@ public:
     static const NacosString AUTH_USERNAME;
     static const NacosString AUTH_PASSWORD;
     static const NacosString LOCAL_IP;
+    static const NacosString UDP_RECEIVER_PORT;
 
     static const int NACOS_DEFAULT_PORT = 8848;
 

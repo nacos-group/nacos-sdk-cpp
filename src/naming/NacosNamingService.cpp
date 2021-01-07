@@ -1,4 +1,6 @@
 #include "src/naming/NacosNamingService.h"
+#include "src/naming/subscribe/SubscriptionPoller.h"
+#include "src/naming/subscribe/UdpNamingServiceListener.h"
 #include "src/naming/beat/BeatReactor.h"
 #include "utils/NamingUtils.h"
 #include "constant/UtilAndComs.h"
@@ -13,7 +15,8 @@ namespace nacos{
 NacosNamingService::NacosNamingService(ObjectConfigData *objectConfigData) {
     _objectConfigData = objectConfigData;
     _objectConfigData->_beatReactor->start();
-    _objectConfigData->_tcpNamingServicePoller->start();
+    _objectConfigData->_subscriptionPoller->start();
+    _objectConfigData->_udpNamingServiceListener->start();
 
     if (_objectConfigData->_appConfigManager->nacosAuthEnabled()) {
         _objectConfigData->_securityManager->login();
@@ -191,8 +194,10 @@ list <Instance> NacosNamingService::getAllInstances
     ServiceInfo serviceInfo;
     //TODO:cache and failover
     NacosString clusterString = ParamUtils::Implode(clusters);
-    NacosString result = _objectConfigData->_serverProxy->queryList(serviceName, groupName, clusterString, 0/*What should be filled in UDPPort??*/,
-                                                false);
+    NacosString result = _objectConfigData->_serverProxy->queryList(
+            serviceName, groupName, clusterString,
+            0/*non-zero value to receive subscription push from the server, set to 0 since we don't need it here*/,
+            false);
     serviceInfo = JSON::JsonStr2ServiceInfo(result);
     list <Instance> hostlist = serviceInfo.getHosts();
     return hostlist;
@@ -238,7 +243,7 @@ void NacosNamingService::subscribe
     if (!_objectConfigData->_eventDispatcher->addListener(groupedName, clusterName, listener)){
         return;//The listener is already listening to the service specified, no need to add to the polling list
     }
-    _objectConfigData->_tcpNamingServicePoller->addPollItem(serviceName, groupName, clusterName);
+    _objectConfigData->_subscriptionPoller->addPollItem(serviceName, groupName, clusterName);
 }
 
 
@@ -257,7 +262,7 @@ void NacosNamingService::unsubscribe(
     }
     if (remainingListener == 0) {
         //Since there's no more listeners listening to this service, remove it from the polling list
-        _objectConfigData->_tcpNamingServicePoller->removePollItem(serviceName, groupName, clusterName);
+        _objectConfigData->_subscriptionPoller->removePollItem(serviceName, groupName, clusterName);
     }
 }
 

@@ -1,25 +1,26 @@
 #include "ObjectConfigData.h"
 #include "src/http/HttpDelegate.h"
-#include "src/http/IHttpCli.h"
 #include "src/naming/NamingProxy.h"
 #include "src/naming/beat/BeatReactor.h"
 #include "src/naming/subscribe/EventDispatcher.h"
-#include "src/naming/subscribe/TcpNamingServicePoller.h"
-#include "src/config/AppConfigManager.h"
-#include "src/server/ServerListManager.h"
+#include "src/naming/subscribe/SubscriptionPoller.h"
+#include "src/naming/subscribe/UdpNamingServiceListener.h"
+#include "src/naming/subscribe/HostReactor.h"
 #include "src/listen/ClientWorker.h"
-#include "src/config/LocalSnapshotManager.h"
 #include "src/security/SecurityManager.h"
+#include "utils/UuidUtils.h"
+
 namespace nacos{
 
 ObjectConfigData::ObjectConfigData(FactoryType theFactoryType) {
+    objectId = UuidUtils::generateUuid();
     factoryType = theFactoryType;
     _httpDelegate = NULL;
     _httpCli = NULL;
     _serverProxy = NULL;
     _beatReactor = NULL;
     _eventDispatcher = NULL;
-    _tcpNamingServicePoller = NULL;
+    _subscriptionPoller = NULL;
     _appConfigManager = NULL;
     _serverListManager = NULL;
     _clientWorker = NULL;
@@ -36,9 +37,11 @@ void ObjectConfigData::checkNamingService() throw(NacosException) {
     NACOS_ASSERT(_serverProxy != NULL);
     NACOS_ASSERT(_beatReactor != NULL);
     NACOS_ASSERT(_eventDispatcher != NULL);
-    NACOS_ASSERT(_tcpNamingServicePoller != NULL);
+    NACOS_ASSERT(_subscriptionPoller != NULL);
+    NACOS_ASSERT(_hostReactor != NULL);
     NACOS_ASSERT(_appConfigManager != NULL);
     NACOS_ASSERT(_serverListManager != NULL);
+    NACOS_ASSERT(_udpNamingServiceListener != NULL);
 }
 
 void ObjectConfigData::checkConfigService() throw(NacosException) {
@@ -117,8 +120,12 @@ void ObjectConfigData::destroyNamingService() {
         _beatReactor->stop();
     }
 
-    if (_tcpNamingServicePoller != NULL) {
-        _tcpNamingServicePoller->stop();
+    if (_subscriptionPoller != NULL) {
+        _subscriptionPoller->stop();
+    }
+
+    if (_udpNamingServiceListener != NULL) {
+        _udpNamingServiceListener->stop();
     }
 
     if (_eventDispatcher != NULL) {
@@ -133,10 +140,6 @@ void ObjectConfigData::destroyNamingService() {
         _serverListManager->stop();
     }
 
-    if (_securityManager != NULL) {
-        _securityManager->stop();
-    }
-
     if (_httpDelegate != NULL) {
         delete _httpDelegate;
         _httpDelegate = NULL;
@@ -147,16 +150,27 @@ void ObjectConfigData::destroyNamingService() {
         _beatReactor = NULL;
     }
 
-    if (_tcpNamingServicePoller != NULL)
+    if (_subscriptionPoller != NULL)
     {
-        delete _tcpNamingServicePoller;
-        _tcpNamingServicePoller = NULL;
+        delete _subscriptionPoller;
+        _subscriptionPoller = NULL;
+    }
+
+    if (_udpNamingServiceListener != NULL)
+    {
+        delete _udpNamingServiceListener;
+        _udpNamingServiceListener = NULL;
     }
 
     if (_eventDispatcher != NULL)
     {
         delete _eventDispatcher;
         _eventDispatcher = NULL;
+    }
+
+    if (_hostReactor != NULL) {
+        delete _hostReactor;
+        _hostReactor = NULL;
     }
 
     if (_serverProxy != NULL) {

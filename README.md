@@ -337,7 +337,7 @@ int main() {
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
     //Interval for poller to check the status of subscribed services(unit:Ms), 30000 by default
     //Here we set it to 5000 to see the output more quick
-    props[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "5000";
+    props[PropertyKeyConst::SUBSCRIPTION_POLL_INTERVAL] = "5000";
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     NamingService *n = factory->CreateNamingService();

@@ -13,7 +13,9 @@
 #include "src/http/delegate/NacosAuthHttpDelegate.h"
 #include "src/http/HTTPCli.h"
 #include "src/naming/subscribe/EventDispatcher.h"
-#include "src/naming/subscribe/TcpNamingServicePoller.h"
+#include "src/naming/subscribe/SubscriptionPoller.h"
+#include "src/naming/subscribe/UdpNamingServiceListener.h"
+#include "src/naming/subscribe/HostReactor.h"
 #include "src/security/SecurityManager.h"
 
 //Unlike Java, in cpp, there's no container, no spring to do the ORM job, so I have to handle it myself
@@ -71,8 +73,14 @@ NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) 
     EventDispatcher *eventDispatcher = new EventDispatcher();
     objectConfigData->_eventDispatcher = eventDispatcher;
 
-    TcpNamingServicePoller *tcpNamingServicePoller = new TcpNamingServicePoller(objectConfigData);
-    objectConfigData->_tcpNamingServicePoller = tcpNamingServicePoller;
+    SubscriptionPoller *subscriptionPoller = new SubscriptionPoller(objectConfigData);
+    objectConfigData->_subscriptionPoller = subscriptionPoller;
+
+    UdpNamingServiceListener *udpNamingServiceListener = new UdpNamingServiceListener(objectConfigData);
+    objectConfigData->_udpNamingServiceListener = udpNamingServiceListener;
+
+    HostReactor *hostReactor = new HostReactor(objectConfigData);
+    objectConfigData->_hostReactor = hostReactor;
 
     objectConfigData->checkAssembledObject();
     NamingService *instance = new NacosNamingService(objectConfigData);

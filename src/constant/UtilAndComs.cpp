@@ -1,7 +1,7 @@
 #include "constant/UtilAndComs.h"
 
 namespace nacos{
-NacosString UtilAndComs::VERSION = "Nacos-C-Client:v1.0.21";
+NacosString UtilAndComs::VERSION = "Nacos-C-Client:v1.0.21";//TODO:fix nacos trunk code for cpp client
 
 NacosString UtilAndComs::WEB_CONTEXT = "/nacos";
 

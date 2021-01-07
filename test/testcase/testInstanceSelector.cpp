@@ -26,7 +26,7 @@ bool testInstanceSelectors() {
     Properties configProps;
     ADD_AUTH_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
-    configProps[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "3000";
+    configProps[PropertyKeyConst::SUBSCRIPTION_POLL_INTERVAL] = "3000";
 
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
@@ -73,7 +73,7 @@ bool testRandomByWeightSelector()
     Properties configProps;
     ADD_AUTH_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
-    configProps[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "3000";
+    configProps[PropertyKeyConst::SUBSCRIPTION_POLL_INTERVAL] = "3000";
 
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);

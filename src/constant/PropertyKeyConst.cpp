@@ -35,7 +35,9 @@ const NacosString PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL = "serverListMgr
 
 const NacosString PropertyKeyConst::SERVER_REQ_TIMEOUT = "nacos.server.reqtimeout";
 
-const NacosString PropertyKeyConst::TCP_NAMING_POLL_INTERVAL = "naming.poller.interval";
+const NacosString PropertyKeyConst::SUBSCRIPTION_POLL_INTERVAL = "naming.poller.interval";
+
+const NacosString PropertyKeyConst::UDP_RECEIVER_PORT = "nacos.udp.port";
 
 const NacosString PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT = "config.longpulling.timeout";
 

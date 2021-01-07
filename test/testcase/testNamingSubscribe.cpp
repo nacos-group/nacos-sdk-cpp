@@ -33,6 +33,7 @@ bool testListenService() {
     cout << "in function testListenService" << endl;
     Properties props;
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
+    props[PropertyKeyConst::LOCAL_IP] = "127.0.0.1";
     ADD_AUTH_INFO(props);
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
@@ -44,7 +45,7 @@ bool testListenService() {
     n->registerInstance("ss", "127.0.0.1", 33);
     n->registerInstance("ss", "127.0.0.1", 34);
     cout << "Hold for 1 min" << endl;
-    sleep(60);
+    getchar();
 
     n->deregisterInstance("ss", "127.0.0.1", 33);
     n->deregisterInstance("ss", "127.0.0.1", 34);

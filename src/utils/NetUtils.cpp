@@ -16,7 +16,7 @@ NacosString NetUtils::getHostIp() throw(NacosException){
 
     if (getifaddrs(&ifaddr) == -1)
     {
-        throw new NacosException(NacosException::UNABLE_TO_GET_HOST_IP, "Failed to get IF address");
+        throw NacosException(NacosException::UNABLE_TO_GET_HOST_IP, "Failed to get IF address");
     }
 
 
@@ -34,7 +34,7 @@ NacosString NetUtils::getHostIp() throw(NacosException){
         s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
         if (s != 0) {
             freeifaddrs(ifaddr);
-            throw new NacosException(NacosException::UNABLE_TO_GET_HOST_IP, "Failed to get IF address");
+            throw NacosException(NacosException::UNABLE_TO_GET_HOST_IP, "Failed to get IF address");
         }
 
         log_debug("selected iface=%s ip=%s\n", ifa->ifa_name, host);
@@ -42,6 +42,6 @@ NacosString NetUtils::getHostIp() throw(NacosException){
         return host;
     }
     //Usually the program will not run to here
-    throw new NacosException(NacosException::UNABLE_TO_GET_HOST_IP, "Failed to get IF address");
+    throw NacosException(NacosException::UNABLE_TO_GET_HOST_IP, "Failed to get IF address");
 }
 }//namespace nacos

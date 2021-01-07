@@ -5,7 +5,6 @@
 #include "naming/Instance.h"
 #include "src/naming/NamingProxy.h"
 #include "src/naming/subscribe/EventDispatcher.h"
-#include "src/naming/subscribe/TcpNamingServicePoller.h"
 #include "src/naming/beat/BeatReactor.h"
 #include "src/http/IHttpCli.h"
 #include "NacosString.h"

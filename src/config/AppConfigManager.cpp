@@ -123,11 +123,12 @@ void AppConfigManager::initDefaults() {
     set(PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL, "30000");
     set(PropertyKeyConst::SERVER_REQ_TIMEOUT, "3000");
     set(PropertyKeyConst::CONTEXT_PATH, ConfigConstant::DEFAULT_CONTEXT_PATH);
-    set(PropertyKeyConst::TCP_NAMING_POLL_INTERVAL, "30000");//30 secs by default
+    set(PropertyKeyConst::SUBSCRIPTION_POLL_INTERVAL, "10000");//10 secs by default
     set(PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT, "30000");//ms
     set(PropertyKeyConst::HB_FAIL_WAIT_TIME, "20000");//ms
     set(PropertyKeyConst::CLIENT_NAME, "default");
     set(PropertyKeyConst::LOCAL_IP, NetUtils::getHostIp());
+    set(PropertyKeyConst::UDP_RECEIVER_PORT, "30620");
 
     NacosString homedir = DirUtils::getHome();
 

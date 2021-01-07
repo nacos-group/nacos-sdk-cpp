@@ -419,4 +419,24 @@ AccessToken JSON::Json2AccessToken(const NacosString &nacosString) throw(NacosEx
     return accessTokenRes;
 }
 
+PushPacket JSON::Json2PushPacket(const char *jsonString) throw(NacosException)
+{
+    PushPacket pushPacket;
+    Document d;
+    d.Parse(jsonString);
+    markRequired(d, "data");
+    const Value &data = d["data"];
+    pushPacket.data = data.GetString();
+
+    markRequired(d, "type");
+    const Value &type = d["type"];
+    pushPacket.type = type.GetString();
+
+    markRequired(d, "lastRefTime");
+    const Value &lastRefTime = d["lastRefTime"];
+    pushPacket.lastRefTime = lastRefTime.GetInt();
+
+    return pushPacket;
+}
+
 }//namespace nacos

@@ -13,6 +13,7 @@
 #include "naming/ListView.h"
 #include "naming/ServiceInfo2.h"
 #include "src/security/SecurityManager.h"
+#include "src/naming/subscribe/UdpNamingServiceListener.h"
 
 /**
  * JSON
@@ -50,6 +51,8 @@ public:
     static ListView<NacosString> Json2ServiceList(const NacosString &nacosString) throw(NacosException);
 
     static AccessToken Json2AccessToken(const NacosString &nacosString) throw(NacosException);
+
+    static PushPacket Json2PushPacket(const char *jsonString) throw(NacosException);
 };
 }//namespace nacos
 
