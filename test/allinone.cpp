@@ -54,6 +54,8 @@ bool testURLEncodeAndDecode();
 
 bool testStringExplode();
 
+bool testStringExplode2();
+
 bool testNamingProxySmokeTest();
 
 bool testNamingServiceRegister();
@@ -120,7 +122,6 @@ bool testGetHostIp();
 
 TestData disabledTestList[] =
 TEST_ITEM_START
-
 TEST_ITEM_END
 
 TestData
@@ -164,6 +165,7 @@ TEST_ITEM_START
     TEST_ITEM("Register many services and get one", testGetAllInstances)
     TEST_ITEM("Listen to key and remove it from listening list", testListeningKeys)
     TEST_ITEM("Test explode function", testStringExplode)
+    TEST_ITEM("Test explode function version 2 enhanced", testStringExplode2)
     TEST_ITEM("AppConfigManager smoke test", testAppConfigManager)
     TEST_ITEM("ServerListManager smoke test", testServerListManager)
     TEST_ITEM("Test UUID generation", testUUID)

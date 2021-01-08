@@ -45,7 +45,8 @@ bool testListenService() {
     n->registerInstance("ss", "127.0.0.1", 33);
     n->registerInstance("ss", "127.0.0.1", 34);
     cout << "Hold for 1 min" << endl;
-    getchar();
+
+    sleep(60);
 
     n->deregisterInstance("ss", "127.0.0.1", 33);
     n->deregisterInstance("ss", "127.0.0.1", 34);

@@ -97,7 +97,22 @@ public:
     //A little trick here for NacosString constants
     static void
     Explode(std::vector <NacosString> &explodedList, const NacosString &stringToExplode, const NacosString &separator) {
-        Explode(explodedList, stringToExplode, separator[0]);
+        size_t start_pos = 0;
+        size_t separator_len = separator.length();
+        size_t cur_pos = 0;
+        cur_pos = stringToExplode.find(separator, start_pos);
+
+        //break the string with separator
+        while (cur_pos != std::string::npos) {
+            NacosString cur_addr = stringToExplode.substr(start_pos, cur_pos - start_pos);
+            explodedList.push_back(cur_addr);
+            start_pos = cur_pos + separator_len;
+            cur_pos = stringToExplode.find(separator, start_pos);
+        }
+
+        //deal with the last string
+        NacosString last_addr = stringToExplode.substr(start_pos);
+        explodedList.push_back(last_addr);
     }
 
     static void Explode(std::vector <NacosString> &explodedList, const NacosString &stringToExplode, char separator) {
