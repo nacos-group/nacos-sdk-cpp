@@ -178,8 +178,7 @@ public:
     }
 
     //@JSONField(serialize = false)
-    static ServiceInfo fromKey(const NacosString &key) {
-        ServiceInfo serviceInfo;
+    static void fromKey(ServiceInfo &serviceInfo, const NacosString &key) {
         std::vector <NacosString> segs;
         ParamUtils::Explode(segs, key, ConfigConstant::SERVICE_INFO_SPLITER);
 
@@ -191,8 +190,6 @@ public:
             serviceInfo.setName(segs[1]);
             serviceInfo.setClusters(segs[2]);
         }
-
-        return serviceInfo;
     }
 
     //@JSONField(serialize = false)

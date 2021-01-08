@@ -18,24 +18,38 @@ void HostReactor::processServiceJson(const NacosString &json) {
 
     NacosString name = NamingUtils::getGroupedName(serviceInfo.getName(), serviceInfo.getGroupName());
     NacosString key = ServiceInfo::getKey(name, serviceInfo.getClusters());
-    WriteGuard _writeGuard(rwLock);
-    if (serviceInfoMap.count(key) == 0) {
-        //The first time, don't notify
-        serviceInfoMap[key] = serviceInfo;
-    } else {
-        ServiceInfo oldServiceInfo = serviceInfoMap[key];
-        ChangeAdvice changeAdvice;
-        changeAdvice.key = key;
+    ServiceInfo oldServiceInfo;
+    bool newServiceInfo = false;
+    {
+        WriteGuard _writeGuard(rwLock);
+        if (serviceInfoMap.count(key) == 0) {
+            serviceInfoMap[key] = serviceInfo;
+            newServiceInfo = true;
+        } else {
+            oldServiceInfo = serviceInfoMap[key];
+            if (oldServiceInfo.getLastRefTime() >= serviceInfo.getLastRefTime()) {
+                log_warn("ServiceInfo got from server is older than the one in client.\n");
+                return;
+            }
+            serviceInfoMap[key] = serviceInfo;//update local service info to the new one
+        }
+    }
+    ChangeAdvice changeAdvice;
+    changeAdvice.key = key;
+    if (newServiceInfo) {
+        changeAdvice.added = true;
+        changeAdvice.newServiceInfo = serviceInfo;
+        _objectConfigData->_eventDispatcher->notifyDirectly(changeAdvice);
+    } else {//service info is updated
         ChangeAdvice::compareChange(oldServiceInfo, serviceInfo, changeAdvice);
-        log_debug("Change status:modified:%d added:%d removed:%d\n", changeAdvice.modified, changeAdvice.added, changeAdvice.removed);
+        log_debug("Change status:modified:%d added:%d removed:%d\n", changeAdvice.modified, changeAdvice.added,
+                  changeAdvice.removed);
         if (changeAdvice.modified || changeAdvice.added || changeAdvice.removed) {
             //asm volatile("int $3");
             changeAdvice.newServiceInfo = serviceInfo;
             _objectConfigData->_eventDispatcher->notifyDirectly(changeAdvice);
         }
-        serviceInfoMap[key] = serviceInfo;//update local service info to the new one
     }
 }
-
 
 }

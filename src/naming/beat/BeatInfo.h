@@ -33,6 +33,7 @@ public:
     NacosString cluster;
     std::map <NacosString, NacosString> metadata;
     volatile bool scheduled;
+    volatile long nextHbTime;
 
     NacosString toString();
 };

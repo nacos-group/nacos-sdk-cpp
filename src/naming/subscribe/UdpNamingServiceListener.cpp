@@ -38,22 +38,6 @@ void UdpNamingServiceListener::initializeUdpListener() throw(NacosException) {
     log_debug("socket bound\n");
 }
 
-void sendAll(int sockfd, const char *buf, ssize_t size) {
-    ssize_t remaining = size;
-    ssize_t sent = 0;
-
-    while (remaining > 0) {
-        ssize_t ret = send(sockfd, buf + sent, remaining, 0);
-        if (ret < 0) {
-            log_error("error while sending data...%d", errno);
-            break;
-        }
-
-        remaining -= ret;
-        sent += ret;
-    }
-}
-
 void *UdpNamingServiceListener::listenerThreadFunc(void *param) {
     UdpNamingServiceListener *thisObj = (UdpNamingServiceListener*)param;
     log_debug("in thread UdpNamingServiceListener::listenerThreadFunc()\n");
@@ -62,12 +46,17 @@ void *UdpNamingServiceListener::listenerThreadFunc(void *param) {
         int ret;//also data_len
 
         log_debug("before recvfrom() socketfd:%d\n", thisObj->sockfd);
-        ret = recv(thisObj->sockfd, (char *)thisObj->receiveBuffer, UDP_MSS, MSG_WAITALL);
+        struct sockaddr src_addr;
+        socklen_t src_addr_len;
+        ret = recvfrom(thisObj->sockfd, (char *)thisObj->receiveBuffer, UDP_MSS, MSG_WAITALL, &src_addr, &src_addr_len);
         log_debug("ret got from recvfrom():%d\n", ret);
 
-        cout << "ret is " << ret << endl;
-        if (ret == -1 && errno == EINTR) {
-            //got kill() signal from main thread, free resources & exit
+        if (ret == -1) {
+            if (errno == EINTR) {
+                log_debug("got sigint from main thread, exitiing...\n");
+                //got kill() signal from main thread, free resources & exit
+            }
+            //other kinds of error
             break;
         }
         //parse the package
@@ -99,7 +88,10 @@ void *UdpNamingServiceListener::listenerThreadFunc(void *param) {
                   + "\", \"data\":\"\"}";
         }
 
-        sendAll(thisObj->sockfd, ack.c_str(), ack.length());
+        ssize_t recv_ret = sendto(thisObj->sockfd, ack.c_str(), ack.length(), 0, &src_addr, src_addr_len);
+        if (recv_ret < 0) {
+            log_error("error while sending data...%d", errno);
+        }
     }
 
     close(thisObj->sockfd);

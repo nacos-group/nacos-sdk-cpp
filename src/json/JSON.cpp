@@ -260,6 +260,10 @@ ServiceInfo JSON::JsonStr2ServiceInfo(const NacosString &jsonString) throw(Nacos
     const Value &clusters = d["clusters"];
     si.setClusters(clusters.GetString());
 
+    markRequired(d, "name");
+    const Value &name = d["name"];
+    ServiceInfo::fromKey(si, name.GetString());
+
     return si;
 }
 
@@ -421,6 +425,7 @@ AccessToken JSON::Json2AccessToken(const NacosString &nacosString) throw(NacosEx
 
 PushPacket JSON::Json2PushPacket(const char *jsonString) throw(NacosException)
 {
+    cout << jsonString << endl;
     PushPacket pushPacket;
     Document d;
     d.Parse(jsonString);
@@ -434,7 +439,7 @@ PushPacket JSON::Json2PushPacket(const char *jsonString) throw(NacosException)
 
     markRequired(d, "lastRefTime");
     const Value &lastRefTime = d["lastRefTime"];
-    pushPacket.lastRefTime = lastRefTime.GetInt();
+    pushPacket.lastRefTime = lastRefTime.GetInt64();
 
     return pushPacket;
 }

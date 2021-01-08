@@ -17,6 +17,7 @@ struct PollingData
     NacosString serviceName;
     NacosString groupName;
     NacosString clusters;
+    volatile long nextPollTime;
 };
 
 class SubscriptionPoller
