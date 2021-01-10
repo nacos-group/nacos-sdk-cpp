@@ -22,12 +22,17 @@ Properties ConfigParserUtils::parseConfigFile(const NacosString &file) throw(Nac
     for (vector<NacosString>::iterator it = configList.begin();
          it != configList.end(); it++) {
         line++;
-        if (ParamUtils::isBlank(ParamUtils::trim(*it))) {
+        NacosString trimmedLine = ParamUtils::trim(*it);
+        if (ParamUtils::isBlank(trimmedLine)) {
             continue;
         }
 
-        if (it->find(ConfigConstant::CONFIG_KV_SEPARATOR) == std::string::npos ||
-            it->at(0) == '=') {
+        if (trimmedLine[0] == '#') {
+            //skip comment
+            continue;
+        }
+
+        if (it->find(ConfigConstant::CONFIG_KV_SEPARATOR) == std::string::npos) {
             throw MalformedConfigException(file, " no '=' found at line " + NacosStringOps::valueOf(line));
         }
 
@@ -37,11 +42,6 @@ Properties ConfigParserUtils::parseConfigFile(const NacosString &file) throw(Nac
         NacosString key = ParamUtils::trim(configKV[0]);
         if (ParamUtils::isBlank(key)) {
             throw MalformedConfigException(file, " key is blank at " + NacosStringOps::valueOf(line));
-        }
-
-        if (key[0] == '#') {
-            //skip comment
-            continue;
         }
 
         if (configKV.size() == 1) {
