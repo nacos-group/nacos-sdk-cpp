@@ -110,8 +110,8 @@ public:
 
 class MalformedConfigException : public NacosException {
 public:
-    MalformedConfigException(const NacosString &file) : NacosException(NacosException::MALFORMED_CONFIG_FILE,
-                                                                       "Malformed Config file:" + file) {};
+    MalformedConfigException(const NacosString &file, const NacosString &detailedMsg) : NacosException(NacosException::MALFORMED_CONFIG_FILE,
+                                                                       "Malformed Config file:" + file + " reason:" + detailedMsg) {};
 };
 
 class InvalidFactoryConfigException : public NacosException {

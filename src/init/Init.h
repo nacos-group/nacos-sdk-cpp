@@ -1,10 +1,13 @@
 #ifndef __INIT_H_
 #define __INIT_H_
 
+#include "src/thread/Mutex.h"
+
 namespace nacos{
 class Init {
 private:
     static bool inited;
+    static Mutex initflagMutex;
 public:
     Init() {};
 
