@@ -37,10 +37,12 @@ void Logger::setBaseDir(const NacosString &baseDir) {
     }
 
     IOUtils::recursivelyCreate(_log_base_dir.c_str());
-    _log_file = _log_base_dir + "/nacos-sdk-cpp.log";
+    _log_file = _log_base_dir + ConfigConstant::FILE_SEPARATOR + "nacos-sdk-cpp.log";
     _output_file = fopen(_log_file.c_str(), "a");
     if (_output_file == NULL) {
-        throw NacosException(NacosException::UNABLE_TO_OPEN_FILE, "Unable to open file " + _log_file);
+        NacosString errMsg = "Unable to open file ";
+        errMsg += _log_file;
+        throw NacosException(NacosException::UNABLE_TO_OPEN_FILE, errMsg);
     }
 }
 
@@ -136,11 +138,8 @@ void Logger::deInit() {
 void Logger::initializeLogSystem() {
     Properties props;
 
-    try {
-        props = ConfigParserUtils::parseConfigFile(DirUtils::getCwd() + ConfigConstant::DEFAULT_CONFIG_FILE);
-    } catch (NacosException &ignore) {
-        //failed to read file, use failback settings
-    }
+    //if we failed to read log settings
+    props = ConfigParserUtils::parseConfigFile(DirUtils::getCwd() + ConfigConstant::FILE_SEPARATOR + ConfigConstant::DEFAULT_CONFIG_FILE);
 
     if (!props.contains(PropertyKeyConst::LOG_PATH)) {
         NacosString homedir = DirUtils::getHome();
