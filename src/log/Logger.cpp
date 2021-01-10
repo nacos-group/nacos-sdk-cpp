@@ -72,12 +72,13 @@ int Logger::debug_helper(LOG_LEVEL level, const char *format, va_list args) {
 
     //va_start(argList, format);
     int64_t now = TimeUtils::getCurrentTimeInMs();
-    if (_last_rotate_time + _rotate_time >= now) {
+    if (now - _last_rotate_time >= _rotate_time) {
         truncate(_log_file.c_str(), 0);
         _last_rotate_time = now;
     }
 
     int retval = vfprintf(_output_file, format, args);
+    fflush(_output_file);
     //va_end(argList);
     return retval;
 }
