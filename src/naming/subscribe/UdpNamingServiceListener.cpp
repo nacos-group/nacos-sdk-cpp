@@ -53,7 +53,7 @@ void *UdpNamingServiceListener::listenerThreadFunc(void *param) {
 
         if (ret == -1) {
             if (errno == EINTR) {
-                log_debug("got sigint from main thread, exitiing...\n");
+                log_debug("got sigint from main thread, exiting...\n");
                 //got kill() signal from main thread, free resources & exit
             }
             //other kinds of error
