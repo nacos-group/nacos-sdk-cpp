@@ -99,7 +99,7 @@ void ServerListManager::initAll() throw(NacosException) {
         serverList.sort();
     } else {//use endpoint mode to pull nacos server info from server
         if (!props.contains(PropertyKeyConst::ENDPOINT)) {
-            throw NacosException(NacosException::CLIENT_INVALID_PARAM, "endpoint is blank");
+            throw NacosException(NacosException::CLIENT_INVALID_PARAM, "no server address specified and the endpoint is blank");
         }
 
         isFixed = false;
