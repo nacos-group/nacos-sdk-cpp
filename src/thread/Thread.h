@@ -7,7 +7,7 @@
 #include <sys/types.h>
 //#include <sys/syscall.h>
 #include "NacosString.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 #define gettidv1() ::syscall(__NR_gettid)
 #define THREAD_STOP_SIGNAL SIGUSR1

@@ -4,18 +4,16 @@
 #include "Properties.h"
 #include "src/utils/NetUtils.h"
 #include "constant/PropertyKeyConst.h"
-#include "IOUtils.h"
 #include "NacosExceptions.h"
 #include "utils/DirUtils.h"
 #include <vector>
 #include <stdlib.h>
+#include "src/log/Logger.h"
+#include "src/utils/ConfigParserUtils.h"
 
 using namespace std;
 
 namespace nacos{
-NacosString AppConfigManager::LINE_SEPARATOR = "\n";
-NacosString AppConfigManager::KV_SEPARATOR = "=";
-
 
 bool AppConfigManager::nacosAuthEnabled() {
     if (contains(PropertyKeyConst::AUTH_USERNAME) && contains(PropertyKeyConst::AUTH_PASSWORD)) {
@@ -24,36 +22,6 @@ bool AppConfigManager::nacosAuthEnabled() {
         return false;
     }
 }
-
-Properties AppConfigManager::parseConfigFile(const NacosString &file) {
-    Properties parsedConfig;
-    NacosString confContent = IOUtils::readStringFromFile(file, NULLSTR);//TODO: add encoding support
-
-    vector <NacosString> configList;
-    ParamUtils::Explode(configList, confContent, LINE_SEPARATOR);
-
-    for (vector<NacosString>::iterator it = configList.begin();
-         it != configList.end(); it++) {
-        if (ParamUtils::isBlank(ParamUtils::trim(*it))) {
-            continue;
-        }
-        if (it->find(KV_SEPARATOR) == std::string::npos ||
-            it->at(0) == '=') {
-            throw MalformedConfigException(file);
-        }
-        vector <NacosString> configKV;
-        ParamUtils::Explode(configKV, *it, KV_SEPARATOR);
-        //k = v
-        if (configKV.size() == 1) {
-            parsedConfig[configKV[0]] = NULLSTR;
-        } else {
-            parsedConfig[configKV[0]] = configKV[1];
-        }
-    }
-
-    return parsedConfig;
-}
-
 
 void AppConfigManager::checkReloadable() throw(NacosException) {
     if (!reloadable) {
@@ -64,7 +32,7 @@ void AppConfigManager::checkReloadable() throw(NacosException) {
 size_t AppConfigManager::loadConfig() throw(NacosException) {
     checkReloadable();
     initDefaults();
-    Properties parsedConfig = parseConfigFile(configFile);
+    Properties parsedConfig = ConfigParserUtils::parseConfigFile(configFile);
     applyConfig(parsedConfig);
     log_debug("loaded config file:%s\n", appConfig.toString().c_str());
     return appConfig.size();
@@ -132,12 +100,9 @@ void AppConfigManager::initDefaults() {
 
     NacosString homedir = DirUtils::getHome();
 
-    set(PropertyKeyConst::NACOS_LOG_PATH, homedir + ConfigConstant::FILE_SEPARATOR + "nacos" + ConfigConstant::FILE_SEPARATOR + "log");
     set(PropertyKeyConst::NACOS_SNAPSHOT_PATH, homedir + ConfigConstant::FILE_SEPARATOR + "nacos" + ConfigConstant::FILE_SEPARATOR + "snapshot");
-    log_info("DEFAULT_LOG_PATH:%s\n", appConfig[PropertyKeyConst::NACOS_LOG_PATH].c_str());
     log_info("DEFAULT_SNAPSHOT_PATH:%s\n", appConfig[PropertyKeyConst::NACOS_SNAPSHOT_PATH].c_str());
 }
-
 
 void AppConfigManager::applyConfig(Properties &rhs) {
     for (map<NacosString, NacosString>::iterator it = rhs.begin();

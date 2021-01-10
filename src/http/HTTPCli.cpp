@@ -2,7 +2,7 @@
 #include "HTTPCli.h"
 #include "utils/url.h"
 #include "constant/UtilAndComs.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 using namespace std;
 

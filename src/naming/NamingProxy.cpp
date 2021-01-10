@@ -7,7 +7,7 @@
 #include "utils/RandomUtils.h"
 #include "src/json/JSON.h"
 #include "src/http/HttpStatus.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 #include "NacosExceptions.h"
 
 using namespace std;

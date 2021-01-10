@@ -8,7 +8,7 @@
 #include <limits.h>
 #include <list>
 #include <unistd.h>
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 namespace nacos{
 size_t IOUtils::getFileSize(const NacosString &file) {

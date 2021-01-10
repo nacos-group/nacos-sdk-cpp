@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "Debug.h"
+#include "src/log/Logger.h"
 #include "DebugAssertion.h"
 #include "listen/Listener.h"
 #include "src/http/HttpDelegate.h"

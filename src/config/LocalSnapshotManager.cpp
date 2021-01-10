@@ -14,6 +14,7 @@
 #include "IOUtils.h"
 #include "constant/ConfigConstant.h"
 #include "constant/PropertyKeyConst.h"
+#include "src/log/Logger.h"
 
 namespace nacos{
 

@@ -6,7 +6,7 @@
 #include "src/md5/md5.h"
 #include "utils/ParamUtils.h"
 #include "src/utils/TimeUtils.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 #include "DebugAssertion.h"
 #include "constant/ConfigConstant.h"
 #include "constant/PropertyKeyConst.h"

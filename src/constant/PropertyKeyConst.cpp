@@ -1,8 +1,6 @@
 #include "constant/PropertyKeyConst.h"
 
 namespace nacos{
-const NacosString PropertyKeyConst::CONFIG_FILE_NAME = "nacos-cpp-cli.properties";
-
 const NacosString PropertyKeyConst::IS_USE_ENDPOINT_PARSING_RULE = "isUseEndpointParsingRule";
 
 const NacosString PropertyKeyConst::ENDPOINT = "endpoint";
@@ -43,7 +41,11 @@ const NacosString PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT = "config.longpu
 
 const NacosString PropertyKeyConst::HB_FAIL_WAIT_TIME = "naming.heartbeat.failwait";
 const NacosString PropertyKeyConst::NACOS_SNAPSHOT_PATH = "nacos.snapshot.path";
-const NacosString PropertyKeyConst::NACOS_LOG_PATH = "nacos.log.path";
+
+const NacosString PropertyKeyConst::LOG_PATH = "nacos.log.path";
+const NacosString PropertyKeyConst::LOG_ROTATE_TIME = "nacos.log.rotateTime";
+const NacosString PropertyKeyConst::LOG_LEVEL = "nacos.log.level";
+
 const NacosString PropertyKeyConst::CLIENT_NAME = "nacos.client.name";
 const NacosString PropertyKeyConst::AUTH_USERNAME = "nacos.auth.username";
 const NacosString PropertyKeyConst::AUTH_PASSWORD = "nacos.auth.password";

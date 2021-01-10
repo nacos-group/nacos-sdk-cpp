@@ -7,6 +7,10 @@
 
 #include "INacosServiceFactory.h"
 namespace nacos{
+
+class AppConfigManager;
+class ObjectConfigData;
+
 class NacosServiceFactory : public INacosServiceFactory {
 private:
     NacosString configFile;
@@ -15,6 +19,7 @@ private:
     bool propsIsSet;
 
     void checkConfig() throw(InvalidFactoryConfigException);
+    AppConfigManager *buildConfigManager(ObjectConfigData *objectConfigData);
 
 public:
     void setConfig(const NacosString &_configFile);

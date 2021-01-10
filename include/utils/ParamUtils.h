@@ -8,7 +8,6 @@
 #include "NacosString.h"
 #include "NacosExceptions.h"
 #include "constant/ConfigConstant.h"
-#include "Debug.h"
 
 namespace nacos{
 class ParamUtils {

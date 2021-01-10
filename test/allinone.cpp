@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include "DebugAssertion.h"
+#include "src/init/Init.h"
 #include <list>
 
 using namespace std;
@@ -188,12 +189,13 @@ TEST_ITEM_START
 TEST_ITEM_END
 
 int main() {
+    Init::doInit();
     list<TestData *> failed_list;
     cout << "Please start a nacos server listening on port 8848 in this machine first." << endl;
     cout << "And when the server is ready, press any key to start the test." << endl;
     getchar();
     int nr_succ = 0, nr_fail = 0;
-    //Debug::set_debug_level(DEBUG);
+    Logger::setLogLevel(DEBUG);
     cout << "BEGIN OF TESTS" << endl;
     cout << "===========================" << endl;
     for (size_t i = 0; i < sizeof(testList) / sizeof(TestData); i++) {

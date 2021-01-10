@@ -11,7 +11,7 @@
 #include "constant/UtilAndComs.h"
 #include "src/http/HTTPCli.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 #include "NacosString.h"
 #include "Properties.h"
 #include "constant/PropertyKeyConst.h"

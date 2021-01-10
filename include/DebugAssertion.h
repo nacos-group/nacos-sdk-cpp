@@ -1,9 +1,10 @@
-#ifndef _ALL_IN_ONE_H_
-#define _ALL_IN_ONE_H_
+#ifndef __DEBUG_ASSERTION_H_
+#define __DEBUG_ASSERTION_H_
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "NacosString.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 namespace nacos{
 #define TEST_ITEM_START {
@@ -13,7 +14,7 @@ namespace nacos{
 #define NACOS_ASSERT(x) \
 if (!(x)) \
 { \
-    log_error("Assertion failed! file:" __FILE__":%d\n", __LINE__); \
+    printf("Assertion failed! file:" __FILE__":%d\n", __LINE__); \
     abort(); \
 }
 

@@ -21,7 +21,7 @@ void Init::doInit() {
     }
 
     inited = true;
-    Debug::set_debug_level(ERROR);
+    Logger::Init();
     HTTPCli::HTTP_GLOBAL_INIT();
     UtilAndComs::Init();
     RandomUtils::Init();
@@ -39,6 +39,7 @@ void Init::doDeinit() {
     UuidUtils::DeInit();
     RandomUtils::DeInit();
     HTTPCli::HTTP_GLOBAL_DEINIT();
+    Logger::deInit();
 }
 
 }//namespace nacos

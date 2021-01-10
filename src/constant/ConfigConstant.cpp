@@ -42,4 +42,10 @@ const NacosString ConfigConstant::DEFAULT_CLUSTER_NAME = "DEFAULT";
 const NacosString ConfigConstant::SERVICE_INFO_SPLITER = "@@";
 
 const NacosString ConfigConstant::FILE_SEPARATOR = "/";
+
+const NacosString ConfigConstant::CONFIG_NEXT_LINE = "\n";
+
+const NacosString ConfigConstant::CONFIG_KV_SEPARATOR = "=";
+
+const NacosString ConfigConstant::DEFAULT_CONFIG_FILE = "nacos-cpp-cli.properties";
 }//namespace nacos

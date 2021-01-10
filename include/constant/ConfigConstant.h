@@ -53,6 +53,12 @@ public:
     const static NacosString SERVICE_INFO_SPLITER;
 
     const static NacosString FILE_SEPARATOR;
+
+    const static NacosString CONFIG_NEXT_LINE;
+
+    const static NacosString CONFIG_KV_SEPARATOR;
+
+    const static NacosString DEFAULT_CONFIG_FILE;
 };
 }//namespace nacos
 

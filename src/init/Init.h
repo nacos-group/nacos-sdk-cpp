@@ -6,7 +6,7 @@ class Init {
 private:
     static bool inited;
 public:
-    Init() { doInit(); };
+    Init() {};
 
     ~Init() { doDeinit(); };
 

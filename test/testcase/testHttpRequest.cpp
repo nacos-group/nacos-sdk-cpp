@@ -1,5 +1,5 @@
 #include "src/http/HTTPCli.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 #include "DebugAssertion.h"
 #include <iostream>
 

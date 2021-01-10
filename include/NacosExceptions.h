@@ -79,6 +79,7 @@ public:
     static const int UNABLE_TO_OPEN_FILE = 1007;
     static const int UNABLE_TO_GET_HOST_IP = 1008;
     static const int UNABLE_TO_CREATE_SOCKET = 1009;
+    static const int INVALID_CONFIG_PARAM = 1010;
 
 };
 

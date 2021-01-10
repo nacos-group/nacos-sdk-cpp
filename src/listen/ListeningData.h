@@ -6,7 +6,7 @@
 #include "NacosString.h"
 #include "listen/Listener.h"
 #include "src/md5/md5.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 namespace nacos{
 class ListeningData {

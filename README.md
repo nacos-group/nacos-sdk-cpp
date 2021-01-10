@@ -40,7 +40,7 @@ Create a file named IntegratingIntoYourProject.cpp:
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
 #include "ResourceGuard.h"
-#include "Debug.h"
+#include "Logger.h"
 #include "NacosString.h"
 
 using namespace std;
@@ -98,7 +98,7 @@ or you can use ldconfig to add libnacos-cli.so to your lib path.
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
 #include "ResourceGuard.h"
-#include "Debug.h"
+#include "Logger.h"
 
 using namespace std;
 using namespace nacos;
@@ -136,7 +136,7 @@ int main() {
 #include "ResourceGuard.h"
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "Logger.h"
 
 using namespace std;
 using namespace nacos;
@@ -187,7 +187,7 @@ int main() {
 #include "listen/Listener.h"
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "Logger.h"
 
 using namespace std;
 using namespace nacos;
@@ -246,7 +246,7 @@ int main() {
 #include "utils/UtilAndComs.h"
 #include "http/HTTPCli.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "Logger.h"
 #include "NacosString.h"
 #include "Properties.h"
 #include "PropertyKeyConst.h"
@@ -310,7 +310,7 @@ int main() {
 #include "naming/subscribe/EventListener.h"
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "Logger.h"
 
 using namespace std;
 using namespace nacos;
@@ -375,7 +375,7 @@ int main() {
 #include "utils/UtilAndComs.h"
 #include "http/HTTPCli.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "Logger.h"
 #include "NacosString.h"
 #include "Properties.h"
 #include "PropertyKeyConst.h"

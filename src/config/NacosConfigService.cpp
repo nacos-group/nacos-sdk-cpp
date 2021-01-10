@@ -1,6 +1,6 @@
 #include "src/config/NacosConfigService.h"
 #include "src/security/SecurityManager.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 using namespace std;
 

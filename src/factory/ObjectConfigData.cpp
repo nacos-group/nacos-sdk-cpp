@@ -32,6 +32,7 @@ void ObjectConfigData::checkNamingService() throw(NacosException) {
     if (factoryType != NAMING) {
         throw NacosException(NacosException::INVALID_PARAM, "Invalid configuration for naming service, please check");
     }
+
     NACOS_ASSERT(_httpDelegate != NULL);
     NACOS_ASSERT(_httpCli != NULL);
     NACOS_ASSERT(_serverProxy != NULL);
@@ -42,12 +43,14 @@ void ObjectConfigData::checkNamingService() throw(NacosException) {
     NACOS_ASSERT(_appConfigManager != NULL);
     NACOS_ASSERT(_serverListManager != NULL);
     NACOS_ASSERT(_udpNamingServiceListener != NULL);
+    NACOS_ASSERT(_udpNamingServiceListener != NULL);
 }
 
 void ObjectConfigData::checkConfigService() throw(NacosException) {
     if (factoryType != CONFIG) {
         throw NacosException(NacosException::INVALID_PARAM, "Invalid configuration for config service, please check");
     }
+
     NACOS_ASSERT(_appConfigManager != NULL);
     NACOS_ASSERT(_httpCli != NULL);
     NACOS_ASSERT(_httpDelegate != NULL);

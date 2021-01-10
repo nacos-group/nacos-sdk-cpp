@@ -6,8 +6,6 @@
 namespace nacos{
 class PropertyKeyConst {
 public:
-    static const NacosString CONFIG_FILE_NAME;
-
     static const NacosString IS_USE_ENDPOINT_PARSING_RULE;
 
     static const NacosString ENDPOINT;
@@ -48,7 +46,9 @@ public:
 
     static const NacosString NACOS_SNAPSHOT_PATH;
 
-    static const NacosString NACOS_LOG_PATH;
+    static const NacosString LOG_PATH;
+    static const NacosString LOG_ROTATE_TIME;
+    static const NacosString LOG_LEVEL;
 
     static const NacosString CLIENT_NAME;
     static const NacosString AUTH_USERNAME;

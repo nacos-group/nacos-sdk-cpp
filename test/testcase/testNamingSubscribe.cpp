@@ -7,7 +7,7 @@
 #include "naming/subscribe/EventListener.h"
 #include "constant/PropertyKeyConst.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 using namespace std;
 using namespace nacos;
