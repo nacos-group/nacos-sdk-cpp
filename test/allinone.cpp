@@ -152,7 +152,7 @@ TEST_ITEM_START
     TEST_ITEM("Test MD5", testMD5)
     TEST_ITEM("Endpoint function test, get available nacos server from endpoint", testEndpointWithNamingProxy)
     TEST_ITEM("Test urlencode/urldecode of libcurl", testURLEncodeAndDecode)
-    TEST_ITEM("Test Listener function for nacos", testAddListener)
+    TEST_ITEM("Test Config Listener function for nacos", testAddListener)
     TEST_ITEM("Test basic function of NamingProxy's registerService", testNamingProxySmokeTest)
     TEST_ITEM("Check whether rapidjson is introduced into the project successfully", testRapidJsonIntroduce)
     TEST_ITEM("Check if the serialization succeeds", testSerialize)
