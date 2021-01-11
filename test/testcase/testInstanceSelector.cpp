@@ -7,14 +7,14 @@
 #include "naming/selectors/RandomByWeightSelector.h"
 #include "naming/selectors/HealthInstanceSelector.h"
 #include "naming/selectors/RandomSelector.h"
-#include "Constants.h"
-#include "utils/UtilAndComs.h"
+#include "constant/ConfigConstant.h"
+#include "constant/UtilAndComs.h"
 #include "src/http/HTTPCli.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 #include "NacosString.h"
 #include "Properties.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 #include "ResourceGuard.h"
 
 using namespace std;
@@ -26,7 +26,7 @@ bool testInstanceSelectors() {
     Properties configProps;
     ADD_AUTH_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
-    configProps[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "3000";
+    configProps[PropertyKeyConst::SUBSCRIPTION_POLL_INTERVAL] = "3000";
 
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
@@ -73,7 +73,7 @@ bool testRandomByWeightSelector()
     Properties configProps;
     ADD_AUTH_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
-    configProps[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "3000";
+    configProps[PropertyKeyConst::SUBSCRIPTION_POLL_INTERVAL] = "3000";
 
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);

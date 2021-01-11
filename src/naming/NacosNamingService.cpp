@@ -1,9 +1,11 @@
 #include "src/naming/NacosNamingService.h"
+#include "src/naming/subscribe/SubscriptionPoller.h"
+#include "src/naming/subscribe/UdpNamingServiceListener.h"
 #include "src/naming/beat/BeatReactor.h"
 #include "utils/NamingUtils.h"
-#include "utils/UtilAndComs.h"
+#include "constant/UtilAndComs.h"
 #include "utils/ParamUtils.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 #include "src/json/JSON.h"
 
 using namespace std;
@@ -13,7 +15,8 @@ namespace nacos{
 NacosNamingService::NacosNamingService(ObjectConfigData *objectConfigData) {
     _objectConfigData = objectConfigData;
     _objectConfigData->_beatReactor->start();
-    _objectConfigData->_tcpNamingServicePoller->start();
+    _objectConfigData->_subscriptionPoller->start();
+    _objectConfigData->_udpNamingServiceListener->start();
 
     if (_objectConfigData->_appConfigManager->nacosAuthEnabled()) {
         _objectConfigData->_securityManager->login();
@@ -31,7 +34,7 @@ void NacosNamingService::registerInstance
                 const NacosString &ip,
                 int port
         ) throw(NacosException) {
-    registerInstance(serviceName, ip, port, Constants::DEFAULT_CLUSTER_NAME);
+    registerInstance(serviceName, ip, port, ConfigConstant::DEFAULT_CLUSTER_NAME);
 }
 
 void NacosNamingService::registerInstance
@@ -41,7 +44,7 @@ void NacosNamingService::registerInstance
                 const NacosString &ip,
                 int port
         ) throw(NacosException) {
-    registerInstance(serviceName, groupName, ip, port, Constants::DEFAULT_CLUSTER_NAME);
+    registerInstance(serviceName, groupName, ip, port, ConfigConstant::DEFAULT_CLUSTER_NAME);
 }
 
 void NacosNamingService::registerInstance
@@ -51,7 +54,7 @@ void NacosNamingService::registerInstance
                 int port,
                 const NacosString &clusterName
         ) throw(NacosException) {
-    registerInstance(serviceName, Constants::DEFAULT_GROUP, ip, port, clusterName);
+    registerInstance(serviceName, ConfigConstant::DEFAULT_GROUP, ip, port, clusterName);
 }
 
 void NacosNamingService::registerInstance
@@ -76,7 +79,7 @@ void NacosNamingService::registerInstance
                 const NacosString &serviceName,
                 Instance &instance
         ) throw(NacosException) {
-    registerInstance(serviceName, Constants::DEFAULT_GROUP, instance);
+    registerInstance(serviceName, ConfigConstant::DEFAULT_GROUP, instance);
 }
 
 void NacosNamingService::registerInstance
@@ -108,7 +111,7 @@ void NacosNamingService::deregisterInstance
                 const NacosString &ip,
                 int port
         ) throw(NacosException) {
-    deregisterInstance(serviceName, ip, port, Constants::DEFAULT_CLUSTER_NAME);
+    deregisterInstance(serviceName, ip, port, ConfigConstant::DEFAULT_CLUSTER_NAME);
 }
 
 void NacosNamingService::deregisterInstance
@@ -118,7 +121,7 @@ void NacosNamingService::deregisterInstance
                 const NacosString &ip,
                 int port
         ) throw(NacosException) {
-    deregisterInstance(serviceName, groupName, ip, port, Constants::DEFAULT_CLUSTER_NAME);
+    deregisterInstance(serviceName, groupName, ip, port, ConfigConstant::DEFAULT_CLUSTER_NAME);
 }
 
 void NacosNamingService::deregisterInstance
@@ -128,7 +131,7 @@ void NacosNamingService::deregisterInstance
                 int port,
                 const NacosString &clusterName
         ) throw(NacosException) {
-    deregisterInstance(serviceName, Constants::DEFAULT_GROUP, ip, port, clusterName);
+    deregisterInstance(serviceName, ConfigConstant::DEFAULT_GROUP, ip, port, clusterName);
 }
 
 void NacosNamingService::deregisterInstance
@@ -179,7 +182,7 @@ list <Instance> NacosNamingService::getAllInstances
                 const NacosString &serviceName,
                 const list <NacosString> &clusters
         ) throw(NacosException) {
-    return getAllInstances(serviceName, Constants::DEFAULT_GROUP, clusters);
+    return getAllInstances(serviceName, ConfigConstant::DEFAULT_GROUP, clusters);
 }
 
 list <Instance> NacosNamingService::getAllInstances
@@ -191,8 +194,10 @@ list <Instance> NacosNamingService::getAllInstances
     ServiceInfo serviceInfo;
     //TODO:cache and failover
     NacosString clusterString = ParamUtils::Implode(clusters);
-    NacosString result = _objectConfigData->_serverProxy->queryList(serviceName, clusterString, 0/*What should be filled in UDPPort??*/,
-                                                false);
+    NacosString result = _objectConfigData->_serverProxy->queryList(
+            serviceName, groupName, clusterString,
+            0/*non-zero value to receive subscription push from the server, set to 0 since we don't need it here*/,
+            false);
     serviceInfo = JSON::JsonStr2ServiceInfo(result);
     list <Instance> hostlist = serviceInfo.getHosts();
     return hostlist;
@@ -201,7 +206,7 @@ list <Instance> NacosNamingService::getAllInstances
 void NacosNamingService::subscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException)
 {
     list<NacosString> clusters;//empty cluster
-    subscribe(serviceName, Constants::DEFAULT_GROUP, clusters, listener);
+    subscribe(serviceName, ConfigConstant::DEFAULT_GROUP, clusters, listener);
 }
 
 
@@ -222,7 +227,7 @@ void NacosNamingService::subscribe(
     EventListener *listener
 ) throw (NacosException)
 {
-    subscribe(serviceName, Constants::DEFAULT_GROUP, clusters, listener);
+    subscribe(serviceName, ConfigConstant::DEFAULT_GROUP, clusters, listener);
 }
 
 void NacosNamingService::subscribe
@@ -238,7 +243,7 @@ void NacosNamingService::subscribe
     if (!_objectConfigData->_eventDispatcher->addListener(groupedName, clusterName, listener)){
         return;//The listener is already listening to the service specified, no need to add to the polling list
     }
-    _objectConfigData->_tcpNamingServicePoller->addPollItem(serviceName, groupName, clusterName);
+    _objectConfigData->_subscriptionPoller->addPollItem(serviceName, groupName, clusterName);
 }
 
 
@@ -257,7 +262,7 @@ void NacosNamingService::unsubscribe(
     }
     if (remainingListener == 0) {
         //Since there's no more listeners listening to this service, remove it from the polling list
-        _objectConfigData->_tcpNamingServicePoller->removePollItem(serviceName, groupName, clusterName);
+        _objectConfigData->_subscriptionPoller->removePollItem(serviceName, groupName, clusterName);
     }
 }
 
@@ -268,7 +273,7 @@ void NacosNamingService::unsubscribe
     EventListener *listener
 ) throw (NacosException)
 {
-    unsubscribe(serviceName, Constants::DEFAULT_GROUP, clusters, listener);
+    unsubscribe(serviceName, ConfigConstant::DEFAULT_GROUP, clusters, listener);
 }
 
 void NacosNamingService::unsubscribe
@@ -285,11 +290,11 @@ void NacosNamingService::unsubscribe
 void NacosNamingService::unsubscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException)
 {
     list<NacosString> clusters;
-    unsubscribe(serviceName, Constants::DEFAULT_GROUP, clusters, listener);
+    unsubscribe(serviceName, ConfigConstant::DEFAULT_GROUP, clusters, listener);
 }
 
 ListView<NacosString> NacosNamingService::getServiceList(int pageNo, int pageSize) throw (NacosException) {
-    return _objectConfigData->_serverProxy->getServiceList(pageNo, pageSize, Constants::DEFAULT_GROUP);
+    return _objectConfigData->_serverProxy->getServiceList(pageNo, pageSize, ConfigConstant::DEFAULT_GROUP);
 }
 
 ListView<NacosString> NacosNamingService::getServiceList(int pageNo, int pageSize, const NacosString &groupName) throw (NacosException){
@@ -319,7 +324,7 @@ list<Instance> NacosNamingService::getInstanceWithPredicate
     Selector<Instance> *predicate
 ) throw(NacosException)
 {
-    list<Instance> allInstances = getAllInstances(serviceName, Constants::DEFAULT_GROUP, clusters);
+    list<Instance> allInstances = getAllInstances(serviceName, ConfigConstant::DEFAULT_GROUP, clusters);
     if (predicate) {
         return predicate->select(allInstances);
     } else {
@@ -350,7 +355,7 @@ list<Instance> NacosNamingService::getInstanceWithPredicate
 ) throw(NacosException)
 {
     list<NacosString> clusters;
-    list<Instance> allInstances = getAllInstances(serviceName, Constants::DEFAULT_GROUP, clusters);
+    list<Instance> allInstances = getAllInstances(serviceName, ConfigConstant::DEFAULT_GROUP, clusters);
     if (predicate) {
         return predicate->select(allInstances);
     } else {

@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stdio.h>
 #include "DebugAssertion.h"
+#include "src/init/Init.h"
+#include <list>
 
 using namespace std;
 using namespace nacos;
@@ -52,6 +54,8 @@ bool testMD5();
 bool testURLEncodeAndDecode();
 
 bool testStringExplode();
+
+bool testStringExplode2();
 
 bool testNamingProxySmokeTest();
 
@@ -115,9 +119,10 @@ bool testPublishConfigWithHttpPrefix();
 
 bool testRemoveKeyBeingWatched();
 
-TestData testList1[] =
-TEST_ITEM_START
+bool testGetHostIp();
 
+TestData disabledTestList[] =
+TEST_ITEM_START
 TEST_ITEM_END
 
 TestData
@@ -147,7 +152,7 @@ TEST_ITEM_START
     TEST_ITEM("Test MD5", testMD5)
     TEST_ITEM("Endpoint function test, get available nacos server from endpoint", testEndpointWithNamingProxy)
     TEST_ITEM("Test urlencode/urldecode of libcurl", testURLEncodeAndDecode)
-    TEST_ITEM("Test Listener function for nacos", testAddListener)
+    TEST_ITEM("Test Config Listener function for nacos", testAddListener)
     TEST_ITEM("Test basic function of NamingProxy's registerService", testNamingProxySmokeTest)
     TEST_ITEM("Check whether rapidjson is introduced into the project successfully", testRapidJsonIntroduce)
     TEST_ITEM("Check if the serialization succeeds", testSerialize)
@@ -161,6 +166,7 @@ TEST_ITEM_START
     TEST_ITEM("Register many services and get one", testGetAllInstances)
     TEST_ITEM("Listen to key and remove it from listening list", testListeningKeys)
     TEST_ITEM("Test explode function", testStringExplode)
+    TEST_ITEM("Test explode function version 2 enhanced", testStringExplode2)
     TEST_ITEM("AppConfigManager smoke test", testAppConfigManager)
     TEST_ITEM("ServerListManager smoke test", testServerListManager)
     TEST_ITEM("Test UUID generation", testUUID)
@@ -179,14 +185,17 @@ TEST_ITEM_START
     TEST_ITEM("MaintainService: testMaintainUpdateInstance", testMaintainUpdateInstance)
     TEST_ITEM("Test with address config containing http prefix", testPublishConfigWithHttpPrefix)
     TEST_ITEM("Test with address config containing http prefix", testRemoveKeyBeingWatched)
+    TEST_ITEM("Get local machine's IP", testGetHostIp)
 TEST_ITEM_END
 
 int main() {
+    Init::doInit();
+    list<TestData *> failed_list;
     cout << "Please start a nacos server listening on port 8848 in this machine first." << endl;
     cout << "And when the server is ready, press any key to start the test." << endl;
     getchar();
     int nr_succ = 0, nr_fail = 0;
-    //Debug::set_debug_level(DEBUG);
+    Logger::setLogLevel(DEBUG);
     cout << "BEGIN OF TESTS" << endl;
     cout << "===========================" << endl;
     for (size_t i = 0; i < sizeof(testList) / sizeof(TestData); i++) {
@@ -196,6 +205,7 @@ int main() {
         bool pass = testfunction();
         if (!pass) {
             cout << "FAILED" << endl;
+            failed_list.push_back(curtest);
             nr_fail++;
         } else {
             cout << "PASSED!" << endl;
@@ -203,6 +213,15 @@ int main() {
         }
         cout << "===========================" << endl;
     }
+
+    if (!failed_list.empty()) {
+        cout << "List of failed cases:" << endl;
+        for (list<TestData*>::iterator it = failed_list.begin(); it != failed_list.end(); it++) {
+            cout << (*it)->testName << endl;
+        }
+        cout << "===========================" << endl;
+    }
+
     cout << "SUMMARY" << endl;
     cout << "Total:" << nr_succ + nr_fail << endl;
     cout << "Succ:" << nr_succ << endl;

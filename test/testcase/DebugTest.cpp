@@ -1,4 +1,4 @@
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 using namespace std;
 using namespace nacos;

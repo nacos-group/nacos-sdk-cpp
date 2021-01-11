@@ -19,6 +19,7 @@ void BeatReactor::stop() {
         return;
     }
     _stop = true;
+    _beatMaster->kill();
     _beatMaster->join();
     _threadPool->stop();
 }
@@ -48,7 +49,7 @@ void *BeatReactor::beatMaster(void *param) {
 
 void BeatReactor::addBeatInfo(const NacosString &serviceName, BeatInfo &beatInfo) {
     NacosString beatInfoStr = beatInfo.toString();
-    log_info("[BEAT] adding beat: %s to beat map.", beatInfoStr.c_str());
+    log_info("[BEAT] adding beat: %s to beat map.\n", beatInfoStr.c_str());
     BeatTask *beattask = new BeatTask(beatInfo, _objectConfigData);
     NacosString beatKey = buildKey(serviceName, beatInfo.ip, beatInfo.port);
     beattask->setTaskName(beatKey);
@@ -96,7 +97,7 @@ bool BeatReactor::getBeatInfo(const NacosString &serviceName, const NacosString 
 */
 bool BeatReactor::modifyBeatInfo(const NacosString &serviceName, BeatInfo &beatInfo) {
     NacosString beatInfoStr = beatInfo.toString();
-    log_info("[BEAT] modify beat: %s to beat map.", beatInfoStr.c_str());
+    log_info("[BEAT] modify beat: %s to beat map.\n", beatInfoStr.c_str());
     NacosString beatKey = buildKey(serviceName, beatInfo.ip, beatInfo.port);
     {
         LockGuard _lockguard(_beatInfoLock);
@@ -161,7 +162,7 @@ void BeatReactor::removeAllBeatInfo() {
 }
 
 NacosString BeatReactor::buildKey(const NacosString &serviceName, const NacosString &ip, int port) {
-    return serviceName + Constants::NAMING_INSTANCE_ID_SPLITTER
-           + ip + Constants::NAMING_INSTANCE_ID_SPLITTER + NacosStringOps::valueOf(port);
+    return serviceName + ConfigConstant::NAMING_INSTANCE_ID_SPLITTER
+           + ip + ConfigConstant::NAMING_INSTANCE_ID_SPLITTER + NacosStringOps::valueOf(port);
 }
 }//namespace nacos

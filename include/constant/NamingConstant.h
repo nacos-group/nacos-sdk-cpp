@@ -1,14 +1,18 @@
-#ifndef __NAMING_COMM_PARAMS_H_
-#define __NAMING_COMM_PARAMS_H_
+#ifndef __NAMING_CONSTANT_H_
+#define __NAMING_CONSTANT_H_
 
 #include "NacosString.h"
 
 namespace nacos{
-class NamingCommonParams {
+class NamingConstant {
 public:
     static const NacosString SERVICE_NAME;
 
     static const NacosString CLUSTER_NAME;
+    static const NacosString UDP_PORT;
+    static const NacosString CLUSTERS;
+    static const NacosString CLIENT_IP;
+    static const NacosString HEALTHY_ONLY;
 
     static const NacosString HEALTHY;
 

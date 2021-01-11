@@ -2,7 +2,7 @@
 #include "DebugAssertion.h"
 #include "src/config/IOUtils.h"
 #include "utils/DirUtils.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 #define ENCODING "UTF-8"
 

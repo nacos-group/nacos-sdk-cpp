@@ -1,9 +1,9 @@
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 #include "DebugAssertion.h"
 #include "ResourceGuard.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 using namespace std;
 using namespace nacos;
@@ -61,7 +61,7 @@ bool testInvalidConfig() {
         ss = n->getConfig("k", NULLSTR, 1000);
     }
     catch (NacosException &e) {
-        NacosString errmsgShouldBe = "endpoint is blank";
+        NacosString errmsgShouldBe = "no server address specified and the endpoint is blank";
         if (errmsgShouldBe == e.what()) {
             return true;
         } else {

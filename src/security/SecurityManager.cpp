@@ -16,7 +16,7 @@ SecurityManager::SecurityManager(ObjectConfigData *objectConfigData) {
 }
 void SecurityManager::doLogin(const NacosString &serverAddr) throw(NacosException, NetworkException) {
     //TODO:refactor string constants
-    NacosString url = serverAddr + "/" + Constants::DEFAULT_CONTEXT_PATH + "/v1/auth/users/login";
+    NacosString url = serverAddr + "/" + ConfigConstant::DEFAULT_CONTEXT_PATH + "/v1/auth/users/login";
     list <NacosString> headers;
     list <NacosString> paramValues;
 
@@ -138,6 +138,7 @@ void SecurityManager::stop() {
         return;
     }
     _started = false;
+    _tokenRefreshThread->kill();
     _tokenRefreshThread->join();
 }
 }//nacos

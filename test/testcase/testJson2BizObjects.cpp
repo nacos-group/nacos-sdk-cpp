@@ -28,7 +28,8 @@ bool testString2ServiceInfo() {
             "	\"checksum\": \"3bbcf6dd1175203a8afdade0e77a27cd1528787794594\","
             "	\"lastRefTime\": 1528787794594,"
             "	\"env\": \"\","
-            "	\"clusters\": \"\""
+            "	\"clusters\": \"\","
+            "	\"name\": \"test\""
             "}";
 
     cout << "Deserializing the following string into an object:" << endl << json << endl;
@@ -61,7 +62,8 @@ bool testMalformedJson2ServiceInfo() {
             "	\"checksum\": \"3bbcf6dd1175203a8afdade0e77a27cd1528787794594\","
             "	\"lastRefTime\": 152878779459499999999999999999999999999999999999999,"
             "	\"env\": \"\","
-            "	\"clusters\": \"\""
+            "	\"clusters\": \"\","
+            "	\"name\": \"test\""
             "}";
 
     cout << "Deserializing the following string into an object:" << endl << json << endl;
@@ -99,7 +101,8 @@ bool testMalformedDouble2ServiceInfo() {
             "	\"checksum\": \"3bbcf6dd1175203a8afdade0e77a27cd1528787794594\","
             "	\"lastRefTime\": 1528787794594,"
             "	\"env\": \"\","
-            "	\"clusters\": \"\""
+            "	\"clusters\": \"\","
+            "	\"name\": \"test\""
             "}";
 
     cout << "Deserializing the following string into an object:" << endl << json << endl;
@@ -139,7 +142,8 @@ bool testLackcacheMillisServiceInfo() {
             "	\"checksum\": \"3bbcf6dd1175203a8afdade0e77a27cd1528787794594\","
             "	\"lastRefTime\": 1528787794594,"
             "	\"env\": \"\","
-            "	\"clusters\": \"\""
+            "	\"clusters\": \"\","
+            "	\"name\": \"test\""
             "}";
 
     cout << "Deserializing the following string into an object:" << endl << json << endl;

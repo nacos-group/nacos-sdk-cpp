@@ -40,7 +40,7 @@ Create a file named IntegratingIntoYourProject.cpp:
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
 #include "ResourceGuard.h"
-#include "Debug.h"
+#include "Logger.h"
 #include "NacosString.h"
 
 using namespace std;
@@ -98,7 +98,7 @@ or you can use ldconfig to add libnacos-cli.so to your lib path.
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
 #include "ResourceGuard.h"
-#include "Debug.h"
+#include "Logger.h"
 
 using namespace std;
 using namespace nacos;
@@ -136,7 +136,7 @@ int main() {
 #include "ResourceGuard.h"
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "Logger.h"
 
 using namespace std;
 using namespace nacos;
@@ -187,7 +187,7 @@ int main() {
 #include "listen/Listener.h"
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "Logger.h"
 
 using namespace std;
 using namespace nacos;
@@ -246,7 +246,7 @@ int main() {
 #include "utils/UtilAndComs.h"
 #include "http/HTTPCli.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "Logger.h"
 #include "NacosString.h"
 #include "Properties.h"
 #include "PropertyKeyConst.h"
@@ -310,7 +310,7 @@ int main() {
 #include "naming/subscribe/EventListener.h"
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "Logger.h"
 
 using namespace std;
 using namespace nacos;
@@ -337,7 +337,7 @@ int main() {
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
     //Interval for poller to check the status of subscribed services(unit:Ms), 30000 by default
     //Here we set it to 5000 to see the output more quick
-    props[PropertyKeyConst::TCP_NAMING_POLL_INTERVAL] = "5000";
+    props[PropertyKeyConst::SUBSCRIPTION_POLL_INTERVAL] = "5000";
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     NamingService *n = factory->CreateNamingService();
@@ -375,7 +375,7 @@ int main() {
 #include "utils/UtilAndComs.h"
 #include "http/HTTPCli.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "Logger.h"
 #include "NacosString.h"
 #include "Properties.h"
 #include "PropertyKeyConst.h"

@@ -1,7 +1,6 @@
 #include "src/config/NacosConfigService.h"
 #include "src/security/SecurityManager.h"
-#include "Constants.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 using namespace std;
 
@@ -92,7 +91,7 @@ bool NacosConfigService::removeConfigInner
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
     //Get the request url
-    NacosString path = Constants::DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
+    NacosString path = ConfigConstant::DEFAULT_CONTEXT_PATH + ConfigConstant::CONFIG_CONTROLLER_PATH;
 
     HttpResult res;
 
@@ -146,7 +145,7 @@ bool NacosConfigService::publishConfigInner
     std::list <NacosString> paramValues;
     NacosString parmGroupid;
     //Get the request url
-    NacosString path = Constants::DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
+    NacosString path = ConfigConstant::DEFAULT_CONTEXT_PATH + ConfigConstant::CONFIG_CONTROLLER_PATH;
 
     HttpResult res;
 
@@ -202,7 +201,7 @@ void NacosConfigService::addListener
                 const NacosString &group,
                 Listener *listener
         ) throw(NacosException) {
-    NacosString parmgroup = Constants::DEFAULT_GROUP;
+    NacosString parmgroup = ConfigConstant::DEFAULT_GROUP;
     if (!isNull(group)) {
         parmgroup = group;
     }
@@ -225,7 +224,7 @@ void NacosConfigService::removeListener
                 const NacosString &group,
                 Listener *listener
         ) {
-    NacosString parmgroup = Constants::DEFAULT_GROUP;
+    NacosString parmgroup = ConfigConstant::DEFAULT_GROUP;
     if (!isNull(group)) {
         parmgroup = group;
     }

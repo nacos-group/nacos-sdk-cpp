@@ -6,10 +6,10 @@
 #include "src/md5/md5.h"
 #include "utils/ParamUtils.h"
 #include "src/utils/TimeUtils.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 #include "DebugAssertion.h"
-#include "Constants.h"
-#include "PropertyKeyConst.h"
+#include "constant/ConfigConstant.h"
+#include "constant/PropertyKeyConst.h"
 #include "src/http/HttpStatus.h"
 
 using namespace std;
@@ -77,7 +77,7 @@ HttpResult ClientWorker::getServerConfigHelper
     if (!isNull(group)) {
         ParamUtils::addKV(paramValues, "group", group);
     } else {
-        ParamUtils::addKV(paramValues, "group", Constants::DEFAULT_GROUP);
+        ParamUtils::addKV(paramValues, "group", ConfigConstant::DEFAULT_GROUP);
     }
 
     if (!isNull(tenant)) {
@@ -85,7 +85,7 @@ HttpResult ClientWorker::getServerConfigHelper
     }
 
     //Get the request url
-    NacosString path = Constants::DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH;
+    NacosString path = ConfigConstant::DEFAULT_CONTEXT_PATH + ConfigConstant::CONFIG_CONTROLLER_PATH;
     NacosString serverAddr = _objectConfigData->_serverListManager->getCurrentServerAddr();
     NacosString url = serverAddr + "/" + path;
     log_debug("httpGet Assembled URL:%s\n", url.c_str());
@@ -122,7 +122,7 @@ vector <NacosString> ClientWorker::parseListenedKeys(const NacosString &Returned
     NacosString changedKeyList = urldecode(ReturnedKeys);
 
     vector <NacosString> explodedList;
-    ParamUtils::Explode(explodedList, changedKeyList, Constants::LINE_SEPARATOR);
+    ParamUtils::Explode(explodedList, changedKeyList, ConfigConstant::LINE_SEPARATOR);
 
     //If the server returns a string with a trailing \x01, actually there is no data after that
     //but ParamUtils::Explode will return an extra item with empty string, we need to remove that
@@ -290,18 +290,18 @@ NacosString ClientWorker::checkListenedKeys() {
         ListeningData *curListenedKey = it->second;
 
         postData += curListenedKey->getDataId();
-        postData += Constants::WORD_SEPARATOR;
+        postData += ConfigConstant::WORD_SEPARATOR;
         postData += curListenedKey->getGroup();
-        postData += Constants::WORD_SEPARATOR;
+        postData += ConfigConstant::WORD_SEPARATOR;
 
         if (!isNull(curListenedKey->getTenant())) {
             postData += curListenedKey->getMD5();
-            postData += Constants::WORD_SEPARATOR;
+            postData += ConfigConstant::WORD_SEPARATOR;
             postData += curListenedKey->getTenant();
-            postData += Constants::LINE_SEPARATOR;
+            postData += ConfigConstant::LINE_SEPARATOR;
         } else {
             postData += curListenedKey->getMD5();
-            postData += Constants::LINE_SEPARATOR;
+            postData += ConfigConstant::LINE_SEPARATOR;
         }
     }
     pthread_mutex_unlock(&watchListMutex);
@@ -312,13 +312,13 @@ NacosString ClientWorker::checkListenedKeys() {
     headers.push_back("Long-Pulling-Timeout");
     headers.push_back(_longPullingTimeoutStr);
 
-    paramValues.push_back(Constants::PROBE_MODIFY_REQUEST);
+    paramValues.push_back(ConfigConstant::PROBE_MODIFY_REQUEST);
     paramValues.push_back(postData);
     log_debug("Assembled postData:%s\n", postData.c_str());
 
     //Get the request url
     //TODO:move /listener to constant
-    NacosString path = Constants::DEFAULT_CONTEXT_PATH + Constants::CONFIG_CONTROLLER_PATH + "/listener";
+    NacosString path = ConfigConstant::DEFAULT_CONTEXT_PATH + ConfigConstant::CONFIG_CONTROLLER_PATH + "/listener";
     HttpResult res;
 
     NacosString serverAddr = _objectConfigData->_serverListManager->getCurrentServerAddr();
@@ -366,7 +366,7 @@ void ClientWorker::performWatch() {
                 updatedcontent = res.content;
             }
             catch (NacosException &e) {
-                //Same design as TcpNamingServicePoller
+                //Same design as SubscriptionPoller
                 log_warn("Encountered exception when getting config from server:%s:%s:%s\n",
                          listenedList->getTenant().c_str(),
                          listenedList->getGroup().c_str(),

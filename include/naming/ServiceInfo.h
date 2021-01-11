@@ -5,7 +5,7 @@
 #include <list>
 #include <sys/time.h>
 #include "NacosString.h"
-#include "Constants.h"
+#include "constant/ConfigConstant.h"
 #include "utils/url.h"
 #include "utils/ParamUtils.h"
 #include "naming/Instance.h"
@@ -48,7 +48,7 @@ public:
     explicit ServiceInfo(const NacosString &key)  : _jsonFromServer(""), _cacheMillis(1000L), _lastRefTime(0L), _checksum(""),
                                           _allIPs(false) {
         std::vector <NacosString> segs;
-        ParamUtils::Explode(segs, key, Constants::SERVICE_INFO_SPLITER);
+        ParamUtils::Explode(segs, key, ConfigConstant::SERVICE_INFO_SPLITER);
 
         if (segs.size() == 2) {
             setGroupName(segs[0]);
@@ -178,10 +178,9 @@ public:
     }
 
     //@JSONField(serialize = false)
-    static ServiceInfo fromKey(const NacosString &key) {
-        ServiceInfo serviceInfo;
+    static void fromKey(ServiceInfo &serviceInfo, const NacosString &key) {
         std::vector <NacosString> segs;
-        ParamUtils::Explode(segs, key, Constants::SERVICE_INFO_SPLITER);
+        ParamUtils::Explode(segs, key, ConfigConstant::SERVICE_INFO_SPLITER);
 
         if (segs.size() == 2) {
             serviceInfo.setGroupName(segs[0]);
@@ -191,14 +190,12 @@ public:
             serviceInfo.setName(segs[1]);
             serviceInfo.setClusters(segs[2]);
         }
-
-        return serviceInfo;
     }
 
     //@JSONField(serialize = false)
     static NacosString getKey(const NacosString &name, const NacosString &clusters) {
         if (!ParamUtils::isBlank(clusters)) {
-            return name + Constants::SERVICE_INFO_SPLITER + clusters;
+            return name + ConfigConstant::SERVICE_INFO_SPLITER + clusters;
         }
 
         return name;

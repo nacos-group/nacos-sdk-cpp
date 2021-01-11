@@ -7,8 +7,7 @@
 #include <assert.h>
 #include "NacosString.h"
 #include "NacosExceptions.h"
-#include "Constants.h"
-#include "Debug.h"
+#include "constant/ConfigConstant.h"
 
 namespace nacos{
 class ParamUtils {
@@ -40,13 +39,13 @@ public:
     }
 
     static NacosString null2defaultGroup(const NacosString &group) {
-        return (isNull(group)) ? Constants::DEFAULT_GROUP : ParamUtils::trim(group);
+        return (isNull(group)) ? ConfigConstant::DEFAULT_GROUP : ParamUtils::trim(group);
     }
 
     static void parseString2KeyGroupTenant(const NacosString &stringToParse, NacosString &dataId, NacosString &group,
                                            NacosString &tenant) {
         std::vector <NacosString> KGT;//KeyGroupTenant
-        Explode(KGT, stringToParse, Constants::WORD_SEPARATOR);
+        Explode(KGT, stringToParse, ConfigConstant::WORD_SEPARATOR);
         dataId = KGT[0];
         group = KGT[1];
         if (KGT.size() == 3)//with tenant
@@ -97,7 +96,22 @@ public:
     //A little trick here for NacosString constants
     static void
     Explode(std::vector <NacosString> &explodedList, const NacosString &stringToExplode, const NacosString &separator) {
-        Explode(explodedList, stringToExplode, separator[0]);
+        size_t start_pos = 0;
+        size_t separator_len = separator.length();
+        size_t cur_pos = 0;
+        cur_pos = stringToExplode.find(separator, start_pos);
+
+        //break the string with separator
+        while (cur_pos != std::string::npos) {
+            NacosString cur_addr = stringToExplode.substr(start_pos, cur_pos - start_pos);
+            explodedList.push_back(cur_addr);
+            start_pos = cur_pos + separator_len;
+            cur_pos = stringToExplode.find(separator, start_pos);
+        }
+
+        //deal with the last string
+        NacosString last_addr = stringToExplode.substr(start_pos);
+        explodedList.push_back(last_addr);
     }
 
     static void Explode(std::vector <NacosString> &explodedList, const NacosString &stringToExplode, char separator) {

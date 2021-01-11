@@ -2,7 +2,7 @@
 #define __THREAD_LOCAL_H_
 
 #include <pthread.h>
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 namespace nacos{
 template <typename T>

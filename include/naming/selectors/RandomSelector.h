@@ -3,7 +3,7 @@
 
 #include <list>
 #include "naming/selectors/Selector.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 #include "utils/ParamUtils.h"
 
 namespace nacos { namespace naming { namespace selectors {

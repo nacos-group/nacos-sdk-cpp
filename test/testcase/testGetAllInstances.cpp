@@ -5,14 +5,14 @@
 #include "src/naming/NamingProxy.h"
 #include "factory/NacosServiceFactory.h"
 #include "naming/Instance.h"
-#include "Constants.h"
-#include "utils/UtilAndComs.h"
+#include "constant/ConfigConstant.h"
+#include "constant/UtilAndComs.h"
 #include "src/http/HTTPCli.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 #include "NacosString.h"
 #include "Properties.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 #include "ResourceGuard.h"
 
 using namespace std;

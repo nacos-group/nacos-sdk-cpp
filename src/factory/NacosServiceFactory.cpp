@@ -8,13 +8,18 @@
 #include "src/naming/NacosNamingMaintainService.h"
 #include "ObjectConfigData.h"
 #include "src/config/NacosConfigService.h"
+#include "src/config/AppConfigManager.h"
 #include "src/http/HttpDelegate.h"
 #include "src/http/delegate/NoOpHttpDelegate.h"
 #include "src/http/delegate/NacosAuthHttpDelegate.h"
 #include "src/http/HTTPCli.h"
 #include "src/naming/subscribe/EventDispatcher.h"
-#include "src/naming/subscribe/TcpNamingServicePoller.h"
+#include "src/naming/subscribe/SubscriptionPoller.h"
+#include "src/naming/subscribe/UdpNamingServiceListener.h"
+#include "src/naming/subscribe/HostReactor.h"
 #include "src/security/SecurityManager.h"
+#include "src/utils/ConfigParserUtils.h"
+#include "utils/DirUtils.h"
 
 //Unlike Java, in cpp, there's no container, no spring to do the ORM job, so I have to handle it myself
 namespace nacos{
@@ -33,17 +38,10 @@ void buildSecurityManagerAndHttpDelegate(ObjectConfigData *objectConfigData) {
     }
 }
 
-//FIXME:Memory leak at initializing stage, e.g.:
-//when a HttpDelegate is allocated in CreateConfigService, after that an EXCEPTION is thrown during the initialization of ServerListManager
-//the resource for HttpDelegate is never released
-NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) {
-    checkConfig();
-    ObjectConfigData *objectConfigData = new ObjectConfigData(NAMING);
-    objectConfigData->name = "config";
-    NacosString encoding = "UTF-8";
-
+AppConfigManager *NacosServiceFactory::buildConfigManager(ObjectConfigData *objectConfigData) {
     //Create configuration data and load configs
     AppConfigManager *appConfigManager = NULL;
+
     if (configIsSet) {
         appConfigManager = new AppConfigManager(configFile);
         appConfigManager->loadConfig(configFile);
@@ -51,6 +49,21 @@ NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) 
         appConfigManager = new AppConfigManager(props);
     }
     objectConfigData->_appConfigManager = appConfigManager;
+
+    return appConfigManager;
+}
+
+//FIXME:Memory leak at initializing stage, e.g.:
+//when a HttpDelegate is allocated in CreateConfigService, after that an EXCEPTION is thrown during the initialization of ServerListManager
+//the resource for HttpDelegate is never released
+NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) {
+    Init::doInit();
+    checkConfig();
+    ObjectConfigData *objectConfigData = new ObjectConfigData(NAMING);
+    objectConfigData->name = "config";
+    NacosString encoding = "UTF-8";
+
+    buildConfigManager(objectConfigData);
 
     //Create http client
     IHttpCli *httpCli= new HTTPCli();
@@ -71,8 +84,14 @@ NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) 
     EventDispatcher *eventDispatcher = new EventDispatcher();
     objectConfigData->_eventDispatcher = eventDispatcher;
 
-    TcpNamingServicePoller *tcpNamingServicePoller = new TcpNamingServicePoller(objectConfigData);
-    objectConfigData->_tcpNamingServicePoller = tcpNamingServicePoller;
+    SubscriptionPoller *subscriptionPoller = new SubscriptionPoller(objectConfigData);
+    objectConfigData->_subscriptionPoller = subscriptionPoller;
+
+    UdpNamingServiceListener *udpNamingServiceListener = new UdpNamingServiceListener(objectConfigData);
+    objectConfigData->_udpNamingServiceListener = udpNamingServiceListener;
+
+    HostReactor *hostReactor = new HostReactor(objectConfigData);
+    objectConfigData->_hostReactor = hostReactor;
 
     objectConfigData->checkAssembledObject();
     NamingService *instance = new NacosNamingService(objectConfigData);
@@ -82,19 +101,12 @@ NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) 
 }
 
 ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException) {
+    Init::doInit();
     checkConfig();
     ObjectConfigData *objectConfigData = new ObjectConfigData(CONFIG);
     objectConfigData->name = "name";
 
-    //Create configuration data and load configs
-    AppConfigManager *appConfigManager = NULL;
-    if (configIsSet) {
-        appConfigManager = new AppConfigManager(configFile);
-        appConfigManager->loadConfig(configFile);
-    } else {
-        appConfigManager = new AppConfigManager(props);
-    }
-    objectConfigData->_appConfigManager = appConfigManager;
+    AppConfigManager *appConfigManager = buildConfigManager(objectConfigData);
 
     //Create http client
     IHttpCli *httpCli = NULL;
@@ -121,20 +133,13 @@ ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException) 
 }
 
 NamingMaintainService *NacosServiceFactory::CreateNamingMaintainService() throw(NacosException){
+    Init::doInit();
     checkConfig();
     ObjectConfigData *objectConfigData = new ObjectConfigData(MAINTAIN);
     objectConfigData->name = "config";
     NacosString encoding = "UTF-8";
 
-    //Create configuration data and load configs
-    AppConfigManager *appConfigManager = NULL;
-    if (configIsSet) {
-        appConfigManager = new AppConfigManager(configFile);
-        appConfigManager->loadConfig(configFile);
-    } else {
-        appConfigManager = new AppConfigManager(props);
-    }
-    objectConfigData->_appConfigManager = appConfigManager;
+    buildConfigManager(objectConfigData);
 
     //Create http client
     IHttpCli *httpCli= new HTTPCli();
@@ -160,7 +165,6 @@ NacosServiceFactory::~NacosServiceFactory() {
 
 }
 
-
 void NacosServiceFactory::checkConfig() throw(InvalidFactoryConfigException) {
     if (!configIsSet && !propsIsSet) {
         throw InvalidFactoryConfigException();
@@ -180,6 +184,8 @@ void NacosServiceFactory::setProps(Properties &_props) {
 NacosServiceFactory::NacosServiceFactory() {
     configIsSet = false;
     propsIsSet = false;
+
+    setConfig(DirUtils::getCwd() + "/" + ConfigConstant::DEFAULT_CONFIG_FILE);
 }
 
 NacosServiceFactory::NacosServiceFactory(const NacosString &_configFile) {
@@ -193,4 +199,5 @@ NacosServiceFactory::NacosServiceFactory(Properties &_props) {
     propsIsSet = false;
     setProps(_props);
 }
+
 }//namespace nacos

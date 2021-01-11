@@ -5,10 +5,10 @@
 #include "factory/NacosServiceFactory.h"
 #include "naming/NamingMaintainService.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 #include "NacosString.h"
 #include "Properties.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 #include "ResourceGuard.h"
 
 using namespace std;
@@ -34,7 +34,7 @@ bool testMaintainUpdateInstance() {
         instance.port = 2333;
         instance.ephemeral = false;
         try {
-            maintainService->deleteService("MaintainTestUpdateInstance", Constants::DEFAULT_GROUP);
+            maintainService->deleteService("MaintainTestUpdateInstance", ConfigConstant::DEFAULT_GROUP);
         } catch (exception &ignore) { /*We may come across service not exist exception, just ignore*/ }
         namingService->registerInstance("MaintainTestUpdateInstance", instance);
         map<NacosString, NacosString> metadata;
@@ -50,7 +50,7 @@ bool testMaintainUpdateInstance() {
         SHOULD_BE_TRUE(metadataGet["hello"].compare("world") == 0, "metadata should be {hello: world}");
         try {
             //restore to the initial status
-            maintainService->deleteService("MaintainTestUpdateInstance", Constants::DEFAULT_GROUP);
+            maintainService->deleteService("MaintainTestUpdateInstance", ConfigConstant::DEFAULT_GROUP);
         } catch (exception &ignore) { /*We may come across service not exist exception, just ignore*/ }
         return true;
     }

@@ -141,6 +141,11 @@ Instance JSON::Json2Instance(const Value &host) throw(NacosException) {
 
     theinstance.metadata = mtdata;
 
+    if (host.HasMember("clusterName")) {
+        const Value &clusterName = host["clusterName"];
+        theinstance.clusterName = clusterName.GetString();
+    }
+
     return theinstance;
 }
 
@@ -254,6 +259,10 @@ ServiceInfo JSON::JsonStr2ServiceInfo(const NacosString &jsonString) throw(Nacos
     markRequired(d, "clusters");
     const Value &clusters = d["clusters"];
     si.setClusters(clusters.GetString());
+
+    markRequired(d, "name");
+    const Value &name = d["name"];
+    ServiceInfo::fromKey(si, name.GetString());
 
     return si;
 }
@@ -412,6 +421,27 @@ AccessToken JSON::Json2AccessToken(const NacosString &nacosString) throw(NacosEx
     accessTokenRes.globalAdmin = globalAdmin.GetBool();
 
     return accessTokenRes;
+}
+
+PushPacket JSON::Json2PushPacket(const char *jsonString) throw(NacosException)
+{
+    cout << jsonString << endl;
+    PushPacket pushPacket;
+    Document d;
+    d.Parse(jsonString);
+    markRequired(d, "data");
+    const Value &data = d["data"];
+    pushPacket.data = data.GetString();
+
+    markRequired(d, "type");
+    const Value &type = d["type"];
+    pushPacket.type = type.GetString();
+
+    markRequired(d, "lastRefTime");
+    const Value &lastRefTime = d["lastRefTime"];
+    pushPacket.lastRefTime = lastRefTime.GetInt64();
+
+    return pushPacket;
 }
 
 }//namespace nacos

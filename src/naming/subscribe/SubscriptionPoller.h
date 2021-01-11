@@ -2,8 +2,8 @@
 // Created by liuhanyu on 2020/9/26.
 //
 
-#ifndef NACOS_SDK_CPP_TCPNAMINGSERVICEPOLLER_H
-#define NACOS_SDK_CPP_TCPNAMINGSERVICEPOLLER_H
+#ifndef NACOS_SDK_CPP_SUBSCRIPTIONPOLLER_H
+#define NACOS_SDK_CPP_SUBSCRIPTIONPOLLER_H
 
 #include <map>
 #include "src/thread/Thread.h"
@@ -17,32 +17,34 @@ struct PollingData
     NacosString serviceName;
     NacosString groupName;
     NacosString clusters;
+    volatile long nextPollTime;
 };
 
-class TcpNamingServicePoller
+class SubscriptionPoller
 {
 private:
     Thread *_pollingThread = NULL;
     int _pollingInterval;//In ms
-    bool _started;
+    int _udpPort;//udp receiver port
+    volatile bool _started;
     ObjectConfigData *_objectConfigData;
 
-    TcpNamingServicePoller();
+    SubscriptionPoller();
 
     static void *pollingThreadFunc(void *parm);
 
+    //for polling list
     RWLock rwLock;
     std::map<NacosString, PollingData> pollingList;
-    std::map<NacosString, ServiceInfo> serviceInfoList;
 public:
-    TcpNamingServicePoller(ObjectConfigData *objectConfigData);
+    SubscriptionPoller(ObjectConfigData *objectConfigData);
     bool addPollItem(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters);
     bool removePollItem(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters);
     void start();
     void stop();
-    ~TcpNamingServicePoller();
+    ~SubscriptionPoller();
 
 };
 }//namespace nacos
 
-#endif //NACOS_SDK_CPP_TCPNAMINGSERVICEPOLLER_H
+#endif //NACOS_SDK_CPP_SUBSCRIPTIONPOLLER_H

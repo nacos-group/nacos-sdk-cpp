@@ -5,9 +5,9 @@
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
 #include "listen/Listener.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 using namespace std;
 using namespace nacos;
@@ -53,16 +53,28 @@ bool testListeningKeys() {
         n->addListener(strKey, NULLSTR, theListener3);
     }
 
-    cout << "Hold for 2 mins" << endl;
-    sleep(120);
+    cout << "Change key and hold for 15 secs" << endl;
+    n->publishConfig("dqid", NULLSTR, "Hello");
+    n->publishConfig("dqid", NULLSTR, "World");
+    sleep(15);
     cout << "remove listener" << endl;
     n->removeListener("dqid", NULLSTR, theListener);
 
-    cout << "Hold for 2 mins" << endl;
-    sleep(120);
+    cout << "Hold for 15 secs" << endl;
+    n->publishConfig("dqid3", NULLSTR, "Hello-3");
+    n->publishConfig("dqid3", NULLSTR, "World-3");
+    n->publishConfig("dqid1", NULLSTR, "World-3");
+    n->publishConfig("dqid2", NULLSTR, "World-3");
+    n->publishConfig("dqid3", NULLSTR, "World-3");
+    n->publishConfig("dqid1", NULLSTR, "World-3");
+    n->publishConfig("dqid2", NULLSTR, "World-3");
+    n->publishConfig("dqid3", NULLSTR, "World-3");
+    sleep(15);
     cout << "remove listener2" << endl;
+    n->publishConfig("dqid", NULLSTR, "Data change before remove");
     n->removeListener("dqid", NULLSTR, theListener2);
     n->removeListener("dqid", NULLSTR, theListener3);
+    n->publishConfig("dqid", NULLSTR, "Data change after remove");
     cout << "test successful" << endl;
 
     return true;

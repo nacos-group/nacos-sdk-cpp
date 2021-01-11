@@ -6,7 +6,7 @@
 #include "BeatReactor.h"
 #include "src/thread/ThreadPool.h"
 #include "thread/AtomicInt.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 #include "src/factory/ObjectConfigData.h"
 
 namespace nacos{

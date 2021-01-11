@@ -1,6 +1,6 @@
 #include "naming/Instance.h"
 #include "utils/ParamUtils.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 namespace nacos{
 Instance::Instance() {

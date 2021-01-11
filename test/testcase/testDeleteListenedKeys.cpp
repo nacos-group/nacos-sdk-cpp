@@ -5,9 +5,9 @@
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
 #include "listen/Listener.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 using namespace std;
 using namespace nacos;
@@ -29,7 +29,7 @@ public:
 };
 
 bool testRemoveKeyBeingWatched() {
-    cout << "in function testListeningKeys" << endl;
+    cout << "in function testRemoveKeyBeingWatched" << endl;
     Properties props;
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
     ADD_AUTH_INFO(props);

@@ -1,8 +1,7 @@
 #include <iostream>
 #include "src/config/AppConfigManager.h"
-#include "PropertyKeyConst.h"
 #include "utils/DirUtils.h"
-#include "Constants.h"
+#include "constant/ConfigConstant.h"
 
 using namespace std;
 using namespace nacos;
@@ -10,7 +9,7 @@ using namespace nacos;
 bool testAppConfigManager() {
     cout << "in function testAppConfigManager" << endl;
 
-    NacosString configFile = DirUtils::getCwd() + Constants::FILE_SEPARATOR + PropertyKeyConst::CONFIG_FILE_NAME;
+    NacosString configFile = DirUtils::getCwd() + ConfigConstant::FILE_SEPARATOR + ConfigConstant::DEFAULT_CONFIG_FILE;
     AppConfigManager appConfigManager(configFile);
     appConfigManager.loadConfig(configFile);
     Properties configs = appConfigManager.getAllConfig();

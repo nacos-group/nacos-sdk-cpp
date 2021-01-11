@@ -5,7 +5,7 @@
 #ifndef NACOS_SDK_CPP_RESOURCEGUARD_H
 #define NACOS_SDK_CPP_RESOURCEGUARD_H
 
-#include "Debug.h"
+#include "src/log/Logger.h"
 
 namespace nacos{
 template<typename T>

@@ -6,14 +6,14 @@
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
 #include "naming/Instance.h"
-#include "Constants.h"
-#include "utils/UtilAndComs.h"
+#include "constant/ConfigConstant.h"
+#include "constant/UtilAndComs.h"
 #include "src/http/HTTPCli.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 #include "NacosString.h"
 #include "Properties.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 
 using namespace std;
 using namespace nacos;
@@ -55,7 +55,7 @@ bool testNamingProxySmokeTest() {
         for (int i = 0; i < 10; i++) {
             NacosString serviceName = "TestServiceName" + NacosStringOps::valueOf(i);
             theinstance.serviceName = serviceName;
-            namingProxy->registerService(serviceName, Constants::DEFAULT_GROUP, theinstance);
+            namingProxy->registerService(serviceName, ConfigConstant::DEFAULT_GROUP, theinstance);
             sleep(1);
         }
     }
@@ -68,7 +68,7 @@ bool testNamingProxySmokeTest() {
     //check whether the data are correct
     for (int i = 0; i < 10; i++) {
         NacosString serviceName = "TestServiceName" + NacosStringOps::valueOf(i);
-        NacosString serverlist = namingProxy->queryList(serviceName, "TestCluster", 0, false);
+        NacosString serverlist = namingProxy->queryList(serviceName, ConfigConstant::DEFAULT_GROUP, "TestCluster", 0, false);
 
         if (serverlist.find("\"serviceName\":\"" + serviceName + "\"") == string::npos) {
             cout << "Failed to get data for:" << serviceName << endl;
@@ -133,6 +133,24 @@ bool testNamingProxyFailOver() {
     return true;
 }
 
+class NamingServiceSelector : public naming::selectors::Selector<Instance> {
+private:
+    int _port;
+public:
+    void setSelectPort(int port) { _port = port; };
+    list<Instance> select(const std::list<Instance> &itemsToSelect) {
+        list<Instance> res;
+        for (list<Instance>::const_iterator it = itemsToSelect.begin();
+        it != itemsToSelect.end(); it++) {
+            if ((*it).port == _port) {
+                res.push_back(*it);
+            }
+        }
+
+        return res;
+    }
+};
+
 bool testNamingServiceRegister() {
     cout << "in function testNamingServiceRegister" << endl;
     Properties configProps;
@@ -164,6 +182,25 @@ bool testNamingServiceRegister() {
     }
     catch (NacosException &e) {
         cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
+        return false;
+    }
+
+    try {
+        for (int i = 0; i < 2; i++) {
+            NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
+            for (int j = 0; j < 3; j++) {
+                NamingServiceSelector selector;
+                selector.setSelectPort(20000 + i*10+j);
+                list<Instance> instanceList = namingSvc->getInstanceWithPredicate(serviceName, &selector);
+                cout << "Instance info got from server:" << instanceList.begin()->toString() << endl;
+                SHOULD_BE_TRUE(instanceList.size() == 1, "There should be only 1 instance for each port");
+                SHOULD_BE_TRUE(instanceList.begin()->clusterName == "DefaultCluster", "Cluster name should be DefaultCluster");
+                SHOULD_BE_TRUE(instanceList.begin()->ephemeral == true, "Should be ephemeral node");
+            }
+        }
+    }
+    catch (NacosException &e) {
+        cout << "encounter exception while getting service instance, raison:" << e.what() << endl;
         return false;
     }
 

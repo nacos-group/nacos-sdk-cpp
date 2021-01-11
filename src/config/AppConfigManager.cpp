@@ -2,19 +2,18 @@
 #include "AppConfigManager.h"
 #include "NacosString.h"
 #include "Properties.h"
-#include "PropertyKeyConst.h"
-#include "IOUtils.h"
+#include "src/utils/NetUtils.h"
+#include "constant/PropertyKeyConst.h"
 #include "NacosExceptions.h"
 #include "utils/DirUtils.h"
 #include <vector>
 #include <stdlib.h>
+#include "src/log/Logger.h"
+#include "src/utils/ConfigParserUtils.h"
 
 using namespace std;
 
 namespace nacos{
-NacosString AppConfigManager::LINE_SEPARATOR = "\n";
-NacosString AppConfigManager::KV_SEPARATOR = "=";
-
 
 bool AppConfigManager::nacosAuthEnabled() {
     if (contains(PropertyKeyConst::AUTH_USERNAME) && contains(PropertyKeyConst::AUTH_PASSWORD)) {
@@ -23,36 +22,6 @@ bool AppConfigManager::nacosAuthEnabled() {
         return false;
     }
 }
-
-Properties AppConfigManager::parseConfigFile(const NacosString &file) {
-    Properties parsedConfig;
-    NacosString confContent = IOUtils::readStringFromFile(file, NULLSTR);//TODO: add encoding support
-
-    vector <NacosString> configList;
-    ParamUtils::Explode(configList, confContent, LINE_SEPARATOR);
-
-    for (vector<NacosString>::iterator it = configList.begin();
-         it != configList.end(); it++) {
-        if (ParamUtils::isBlank(ParamUtils::trim(*it))) {
-            continue;
-        }
-        if (it->find(KV_SEPARATOR) == std::string::npos ||
-            it->at(0) == '=') {
-            throw MalformedConfigException(file);
-        }
-        vector <NacosString> configKV;
-        ParamUtils::Explode(configKV, *it, KV_SEPARATOR);
-        //k = v
-        if (configKV.size() == 1) {
-            parsedConfig[configKV[0]] = NULLSTR;
-        } else {
-            parsedConfig[configKV[0]] = configKV[1];
-        }
-    }
-
-    return parsedConfig;
-}
-
 
 void AppConfigManager::checkReloadable() throw(NacosException) {
     if (!reloadable) {
@@ -63,7 +32,7 @@ void AppConfigManager::checkReloadable() throw(NacosException) {
 size_t AppConfigManager::loadConfig() throw(NacosException) {
     checkReloadable();
     initDefaults();
-    Properties parsedConfig = parseConfigFile(configFile);
+    Properties parsedConfig = ConfigParserUtils::parseConfigFile(configFile);
     applyConfig(parsedConfig);
     log_debug("loaded config file:%s\n", appConfig.toString().c_str());
     return appConfig.size();
@@ -121,20 +90,19 @@ void AppConfigManager::initDefaults() {
     //appConfig[PropertyKeyConst::NAMESPACE] = "public";
     set(PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL, "30000");
     set(PropertyKeyConst::SERVER_REQ_TIMEOUT, "3000");
-    set(PropertyKeyConst::CONTEXT_PATH, Constants::DEFAULT_CONTEXT_PATH);
-    set(PropertyKeyConst::TCP_NAMING_POLL_INTERVAL, "30000");//30 secs by default
+    set(PropertyKeyConst::CONTEXT_PATH, ConfigConstant::DEFAULT_CONTEXT_PATH);
+    set(PropertyKeyConst::SUBSCRIPTION_POLL_INTERVAL, "10000");//10 secs by default
     set(PropertyKeyConst::CONFIG_LONGPULLLING_TIMEOUT, "30000");//ms
     set(PropertyKeyConst::HB_FAIL_WAIT_TIME, "20000");//ms
     set(PropertyKeyConst::CLIENT_NAME, "default");
+    set(PropertyKeyConst::LOCAL_IP, NetUtils::getHostIp());
+    set(PropertyKeyConst::UDP_RECEIVER_PORT, "30620");
 
     NacosString homedir = DirUtils::getHome();
 
-    set(PropertyKeyConst::NACOS_LOG_PATH, homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "log");
-    set(PropertyKeyConst::NACOS_SNAPSHOT_PATH, homedir + Constants::FILE_SEPARATOR + "nacos" + Constants::FILE_SEPARATOR + "snapshot");
-    log_info("DEFAULT_LOG_PATH:%s\n", appConfig[PropertyKeyConst::NACOS_LOG_PATH].c_str());
+    set(PropertyKeyConst::NACOS_SNAPSHOT_PATH, homedir + ConfigConstant::FILE_SEPARATOR + "nacos" + ConfigConstant::FILE_SEPARATOR + "snapshot");
     log_info("DEFAULT_SNAPSHOT_PATH:%s\n", appConfig[PropertyKeyConst::NACOS_SNAPSHOT_PATH].c_str());
 }
-
 
 void AppConfigManager::applyConfig(Properties &rhs) {
     for (map<NacosString, NacosString>::iterator it = rhs.begin();

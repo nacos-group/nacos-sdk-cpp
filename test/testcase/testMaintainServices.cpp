@@ -5,10 +5,10 @@
 #include "factory/NacosServiceFactory.h"
 #include "naming/NamingMaintainService.h"
 #include "DebugAssertion.h"
-#include "Debug.h"
+#include "src/log/Logger.h"
 #include "NacosString.h"
 #include "Properties.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 #include "ResourceGuard.h"
 
 using namespace std;

@@ -11,12 +11,14 @@ class IHttpCli;
 class NamingProxy;
 class BeatReactor;
 class EventDispatcher;
-class TcpNamingServicePoller;
+class SubscriptionPoller;
 class AppConfigManager;
 class ServerListManager;
 class ClientWorker;
 class LocalSnapshotManager;
 class SecurityManager;
+class UdpNamingServiceListener;
+class HostReactor;
 
 enum FactoryType {
     CONFIG = 0,
@@ -35,7 +37,9 @@ private:
     void checkConfigService() throw(NacosException);
     void checkNamingService() throw(NacosException);
     void checkMaintainService() throw(NacosException);
+    NacosString objectId;
 public:
+    const NacosString &getObjectId() const { return objectId; };
     ObjectConfigData(FactoryType theFactoryType);
     void checkAssembledObject() throw(NacosException);
     ~ObjectConfigData();
@@ -45,12 +49,14 @@ public:
     NamingProxy *_serverProxy;
     BeatReactor *_beatReactor;
     EventDispatcher *_eventDispatcher;
-    TcpNamingServicePoller *_tcpNamingServicePoller;
+    SubscriptionPoller *_subscriptionPoller;
     AppConfigManager *_appConfigManager;
     ServerListManager *_serverListManager;
     ClientWorker *_clientWorker;
     LocalSnapshotManager *_localSnapshotManager;
     SecurityManager *_securityManager;
+    UdpNamingServiceListener *_udpNamingServiceListener;
+    HostReactor *_hostReactor;
 };
 }//namespace nacos
 

@@ -77,6 +77,9 @@ public:
     static const int NO_SERVER_AVAILABLE = 1005;
     static const int INVALID_LOGIN_CREDENTIAL = 1006;
     static const int UNABLE_TO_OPEN_FILE = 1007;
+    static const int UNABLE_TO_GET_HOST_IP = 1008;
+    static const int UNABLE_TO_CREATE_SOCKET = 1009;
+    static const int INVALID_CONFIG_PARAM = 1010;
 
 };
 
@@ -107,8 +110,8 @@ public:
 
 class MalformedConfigException : public NacosException {
 public:
-    MalformedConfigException(const NacosString &file) : NacosException(NacosException::MALFORMED_CONFIG_FILE,
-                                                                       "Malformed Config file:" + file) {};
+    MalformedConfigException(const NacosString &file, const NacosString &detailedMsg) : NacosException(NacosException::MALFORMED_CONFIG_FILE,
+                                                                       "Malformed Config file:" + file + " reason:" + detailedMsg) {};
 };
 
 class InvalidFactoryConfigException : public NacosException {

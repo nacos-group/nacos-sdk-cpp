@@ -6,16 +6,13 @@
 #include "Properties.h"
 
 namespace nacos{
+
 class AppConfigManager {
 private:
     bool reloadable;
     Properties appConfig;
     NacosString configFile;
 
-    static Properties parseConfigFile(const NacosString &file);
-
-    static NacosString LINE_SEPARATOR;
-    static NacosString KV_SEPARATOR;
     volatile long _serverReqTimeout;
 
     AppConfigManager();
