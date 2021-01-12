@@ -28,7 +28,7 @@ private:
     pthread_t _thread;
     ThreadFn _function;
     //TODO:thread id
-    pid_t _tid;
+    TID_T _tid;
     bool _start;
     void *_threadData;
 

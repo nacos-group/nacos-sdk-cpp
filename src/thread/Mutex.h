@@ -16,7 +16,7 @@ class Mutex {
     friend class Condition;
 
 private:
-    pid_t _holder;
+    TID_T _holder;
     pthread_mutex_t _mutex;
 public:
     Mutex() { pthread_mutex_init(&_mutex, NULL); };

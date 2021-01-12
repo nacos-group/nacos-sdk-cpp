@@ -7,16 +7,14 @@
 //for linux
 //solved in header file
 
-#elif defined(FreeBSD)
-
+#elif defined(__APPLE__) && defined(__MACH__)
 //Mac OS code goes here
-namespace nacos {
-pid_t gettidv1() {
-    pid_t tid;
+#include<pthread.h>
+TID_T gettidv1() {
+    TID_T tid;
     pthread_threadid_np(NULL, &tid);
 
     return tid;
-}
 }
 
 #endif//OS-specific code
