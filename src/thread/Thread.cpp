@@ -20,7 +20,7 @@ void Thread::DeInit() {
 
 void *Thread::threadFunc(void *param) {
     Thread *currentThread = (Thread *) param;
-    //currentThread->_tid = gettidv1();
+    currentThread->_tid = gettidv1();
 
     try {
         return currentThread->_function(currentThread->_threadData);

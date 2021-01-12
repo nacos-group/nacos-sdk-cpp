@@ -2,7 +2,7 @@
 #define __MUTEX_H_
 
 #include <pthread.h>
-#include <unistd.h>
+#include "Tid.h"
 
 /*
 * Mutex.h
@@ -35,7 +35,7 @@ public:
 
     pthread_mutex_t *getPthreadMutex() { return &_mutex; };
 
-    void assignHolder() { _holder = 0; /*gettid();*/ };
+    void assignHolder() { _holder = gettidv1(); };
 
     void unassignHolder() { _holder = 0; };
 };

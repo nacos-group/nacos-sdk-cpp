@@ -5,11 +5,10 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <sys/types.h>
-//#include <sys/syscall.h>
 #include "NacosString.h"
 #include "src/log/Logger.h"
+#include "Tid.h"
 
-#define gettidv1() ::syscall(__NR_gettid)
 #define THREAD_STOP_SIGNAL SIGUSR1
 
 namespace nacos{
