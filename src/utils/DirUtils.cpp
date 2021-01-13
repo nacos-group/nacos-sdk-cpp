@@ -5,8 +5,10 @@
 
 #if defined(__CYGWIN__) || defined(MS_WINDOWS)
 #define PATH_MAX 260
-#else
+#elif defined(linux)
 #include <linux/limits.h>
+#elif defined(FreeBSD)
+#include <sys/syslimits.h>
 #endif
 
 

@@ -47,7 +47,8 @@ bool testGetAllInstances() {
         cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
         return false;
     }
-    sleep(20);
+    cout << "wait for 5 secs" << endl;
+    sleep(5);
     list <Instance> instances = namingSvc->getAllInstances("TestNamingService1");
     cout << "getAllInstances from server:" << endl;
     for (list<Instance>::iterator it = instances.begin();

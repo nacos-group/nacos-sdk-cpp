@@ -30,7 +30,7 @@ private:
     int udpReceiverPort;
     struct sockaddr_in cliaddr;
     char receiveBuffer[UDP_MSS];
-    Thread *_listenerThread = NULL;
+    Thread *_listenerThread;
 
     void initializeUdpListener() throw(NacosException);
     static void *listenerThreadFunc(void *param);

@@ -4,7 +4,7 @@
 
 namespace nacos{
 Instance::Instance() {
-    weight = 1.0D;
+    weight = (double)1;
     healthy = true;
     enabled = true;
     ephemeral = true;

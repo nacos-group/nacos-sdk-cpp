@@ -58,7 +58,7 @@ bool testMaintainUpdateService() {
         namingService->registerInstance("MaintainTestUpdateService", "127.0.0.1", 2333);
         ServiceInfo2 serviceInfo2;
         serviceInfo2.setName("MaintainTestUpdateService");
-        serviceInfo2.setProtectThreshold(2.0D);
+        serviceInfo2.setProtectThreshold((double)2);
         bool updateRes = maintainService->updateService(serviceInfo2, NULL);
         cout << "update protect threshold:" << NacosStringOps::valueOf(updateRes) << endl;
         SHOULD_BE_TRUE(updateRes, "update of protect threshold should be successful");
@@ -89,7 +89,7 @@ bool testMaintainCreateService() {
     try {
         ServiceInfo2 serviceInfo2;
         serviceInfo2.setName("MaintainTestCreateService");
-        serviceInfo2.setProtectThreshold(2.0D);
+        serviceInfo2.setProtectThreshold((double)2);
         map<NacosString, NacosString> metadata;
         metadata.insert(make_pair("hello", "world"));
         metadata.insert(make_pair("girlfriend", "Liao, Sijia"));

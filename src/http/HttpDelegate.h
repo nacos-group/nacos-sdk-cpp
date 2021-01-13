@@ -12,9 +12,11 @@
  */
 namespace nacos{
 class HttpDelegate {
-private:
-    HttpDelegate *_next = NULL;
+protected:
+    HttpDelegate *_next;
 public:
+    HttpDelegate() { _next = NULL; };
+
     /**
     * invoke http get method
     * @param path http path

@@ -2,7 +2,7 @@
 #define __MUTEX_H_
 
 #include <pthread.h>
-#include <unistd.h>
+#include "Tid.h"
 
 /*
 * Mutex.h
@@ -16,7 +16,7 @@ class Mutex {
     friend class Condition;
 
 private:
-    pid_t _holder;
+    TID_T _holder;
     pthread_mutex_t _mutex;
 public:
     Mutex() { pthread_mutex_init(&_mutex, NULL); };
@@ -35,7 +35,7 @@ public:
 
     pthread_mutex_t *getPthreadMutex() { return &_mutex; };
 
-    void assignHolder() { _holder = 0; /*gettid();*/ };
+    void assignHolder() { _holder = gettidv1(); };
 
     void unassignHolder() { _holder = 0; };
 };

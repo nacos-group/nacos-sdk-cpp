@@ -22,7 +22,7 @@ bool testNormalHttpRequest() {
                                   ENCODING,
                                   1000);
     }
-    catch (NetworkException e) {
+    catch (NetworkException &e) {
         cout <<
              "Request failed with curl code:" << e.errorcode() << endl <<
              "Reason:" << e.what() << endl;
@@ -56,7 +56,7 @@ bool testNoServerRequest() {
                                   ENCODING,
                                   1000);
     }
-    catch (NetworkException e) {
+    catch (NetworkException &e) {
         //should throw a exception
         cout <<
              "Request failed with curl code:" << e.errorcode() << endl <<

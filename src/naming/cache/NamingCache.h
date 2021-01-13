@@ -13,7 +13,7 @@ class NamingCache {
 private:
     std::map<NacosString, ServiceInfo> namingList;
     RWLock _rwLock;
-    EventDispatcher *_eventDispatcher = NULL;
+    EventDispatcher *_eventDispatcher;
 public:
     NamingCache();
     NamingCache(EventDispatcher *eventDispatcher) { _eventDispatcher = eventDispatcher; };

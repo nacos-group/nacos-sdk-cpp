@@ -63,6 +63,7 @@ void ServerListManager::addToSrvList(NacosString &address) {
 ServerListManager::ServerListManager(list <NacosString> &fixed) {
     started = false;
     isFixed = true;
+    _pullThread = NULL;
     refreshInterval = 30000;
     for (list<NacosString>::iterator it = fixed.begin(); it != fixed.end(); it++) {
         addToSrvList(*it);
@@ -106,7 +107,7 @@ void ServerListManager::initAll() throw(NacosException) {
         NacosString endpoint = getEndpoint();
         NacosString endpoint_lc = ParamUtils::toLower(endpoint);
         //endpoint doesn't start with http or https prefix, consider it as http
-        if (!endpoint_lc.find("http://") == 0 && !endpoint_lc.find("https://") == 0) {
+        if (!(endpoint_lc.find("http://") == 0) && !(endpoint_lc.find("https://") == 0)) {
             endpoint = "http://" + endpoint;
         }
         if (NacosStringOps::isNullStr(getNamespace())) {
@@ -126,6 +127,7 @@ void ServerListManager::initAll() throw(NacosException) {
 
 ServerListManager::ServerListManager(ObjectConfigData *objectConfigData) throw(NacosException) {
     started = false;
+    _pullThread = NULL;
     _objectConfigData = objectConfigData;
     refreshInterval = atoi(_objectConfigData->_appConfigManager->get(PropertyKeyConst::SRVLISTMGR_REFRESH_INTERVAL).c_str());
     initAll();

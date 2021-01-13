@@ -23,7 +23,7 @@ struct PollingData
 class SubscriptionPoller
 {
 private:
-    Thread *_pollingThread = NULL;
+    Thread *_pollingThread;
     int _pollingInterval;//In ms
     int _udpPort;//udp receiver port
     volatile bool _started;
