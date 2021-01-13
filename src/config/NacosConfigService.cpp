@@ -115,7 +115,7 @@ bool NacosConfigService::removeConfigInner
     try {
         res = _httpDelegate->httpDelete(url, headers, paramValues, _httpDelegate->getEncode(), POST_TIMEOUT);
     }
-    catch (NetworkException e) {
+    catch (NetworkException &e) {
         log_warn("[remove] error, %s, %s, %s, msg: %s\n", dataId.c_str(), group.c_str(), tenant.c_str(), e.what());
         return false;
     }
@@ -180,7 +180,7 @@ bool NacosConfigService::publishConfigInner
     try {
         res = _httpDelegate->httpPost(url, headers, paramValues, _httpDelegate->getEncode(), POST_TIMEOUT);
     }
-    catch (NetworkException e) {
+    catch (NetworkException &e) {
         //
         log_warn("[NacosConfigService] [publish-single] exception, dataId=%s, group=%s, msg=%s\n", dataId.c_str(), group.c_str(),
                  tenant.c_str(), e.what());
