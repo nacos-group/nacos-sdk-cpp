@@ -418,6 +418,15 @@ using namespace nacos;
     NamingService *namingSvc = factory->CreateNamingService();
 ......
 ```
+# Supported System/Compilers
+
+| OS | Compilers | Tested version |
+| ---- | ---- | ---- |
+|MacOS Darwin 19.6.0 x86_64|Clang|Apple clang version 12.0.0 (clang-1200.0.26.2)|
+|Windows 10 WSL|GCC||
+|CentOS|GCC||
+|Windows|Visual C++|To be done|
+
 
 # About Nacos
 
