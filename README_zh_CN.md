@@ -414,6 +414,15 @@ using namespace nacos;
 ......
 ```
 
+# 支持的系统/编译器
+
+| 操作系统 | 编译器 | 测试版本 |
+| ---- | ---- | ---- |
+|MacOS Darwin 19.6.0 x86_64|Clang|Apple clang version 12.0.0 (clang-1200.0.26.2)|
+|Windows 10 WSL|GCC||
+|CentOS|GCC||
+|Windows|Visual C++|计划中|
+
 # 关于Nacos
 
 Nacos (官方网站: [http://nacos.io](http://nacos.io)) 是一个易用的动态服务发现、配置管理以及服务管理平台。它将助力您轻松建立云上原生应用和微服务。
