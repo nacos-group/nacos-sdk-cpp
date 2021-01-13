@@ -99,6 +99,7 @@ void *UdpNamingServiceListener::listenerThreadFunc(void *param) {
 }
 
 UdpNamingServiceListener::UdpNamingServiceListener(ObjectConfigData *objectConfigData) {
+    _listenerThread = NULL;
     _started = false;
     _objectConfigData = objectConfigData;
     udpReceiverPort = atoi(_objectConfigData->_appConfigManager->get(PropertyKeyConst::UDP_RECEIVER_PORT).c_str());

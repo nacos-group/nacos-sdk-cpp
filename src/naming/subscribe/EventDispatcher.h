@@ -25,7 +25,7 @@ private:
     RWLock rwLock;//for observerMap
     std::map<NacosString, std::list<EventListener*> > observerMap;
     BlockingQueue<NotifyData> notifyDataList;
-    Thread *eventNotifier = NULL;
+    Thread *eventNotifier;
 
     static void *eventDispatcherThread(void *parm);
 

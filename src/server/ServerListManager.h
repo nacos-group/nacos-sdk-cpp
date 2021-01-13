@@ -27,7 +27,7 @@ private:
     NacosString addressServerUrl;
 
     //Worker thread
-    Thread *_pullThread = NULL;
+    Thread *_pullThread;
 
     static void *pullWorkerThread(void *param);
 
