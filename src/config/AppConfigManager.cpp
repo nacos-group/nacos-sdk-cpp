@@ -66,6 +66,8 @@ void AppConfigManager::set(const NacosString &key, const NacosString &value) {
     //Special case handle
     if (key.compare(PropertyKeyConst::SERVER_REQ_TIMEOUT) == 0) {
         _serverReqTimeout = atoi(value.c_str());
+    } else if (key.compare(PropertyKeyConst::CONTEXT_PATH) == 0) {
+        _contextPath = value;
     }
     appConfig[key] = value;
 }

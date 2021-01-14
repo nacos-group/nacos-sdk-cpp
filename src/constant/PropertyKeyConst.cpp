@@ -17,7 +17,7 @@ const NacosString PropertyKeyConst::RAM_ROLE_NAME = "ramRoleName";
 
 const NacosString PropertyKeyConst::SERVER_ADDR = "serverAddr";
 
-const NacosString PropertyKeyConst::CONTEXT_PATH = "contextPath";
+const NacosString PropertyKeyConst::CONTEXT_PATH = "nacos.server.contextpath";
 
 const NacosString PropertyKeyConst::CLUSTER_NAME = "clusterName";
 

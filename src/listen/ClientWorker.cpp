@@ -85,7 +85,7 @@ HttpResult ClientWorker::getServerConfigHelper
     }
 
     //Get the request url
-    NacosString path = ConfigConstant::DEFAULT_CONTEXT_PATH + ConfigConstant::CONFIG_CONTROLLER_PATH;
+    NacosString path = _objectConfigData->_appConfigManager->getContextPath() + ConfigConstant::CONFIG_CONTROLLER_PATH;
     NacosString serverAddr = _objectConfigData->_serverListManager->getCurrentServerAddr();
     NacosString url = serverAddr + "/" + path;
     log_debug("httpGet Assembled URL:%s\n", url.c_str());
@@ -318,7 +318,7 @@ NacosString ClientWorker::checkListenedKeys() {
 
     //Get the request url
     //TODO:move /listener to constant
-    NacosString path = ConfigConstant::DEFAULT_CONTEXT_PATH + ConfigConstant::CONFIG_CONTROLLER_PATH + "/listener";
+    NacosString path = _objectConfigData->_appConfigManager->getContextPath() + ConfigConstant::CONFIG_CONTROLLER_PATH + "/listener";
     HttpResult res;
 
     NacosString serverAddr = _objectConfigData->_serverListManager->getCurrentServerAddr();

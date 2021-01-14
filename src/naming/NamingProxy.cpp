@@ -54,7 +54,7 @@ void NamingProxy::registerService(const NacosString &serviceName, const NacosStr
     ParamUtils::addKV(params, "ephemeral", NacosStringOps::valueOf(instance.ephemeral));
     ParamUtils::addKV(params, "metadata", JSON::toJSONString(instance.metadata));
 
-    reqAPI(UtilAndComs::NACOS_URL_INSTANCE, params, IHttpCli::POST);
+    reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_INSTANCE, params, IHttpCli::POST);
 }
 
 void NamingProxy::deregisterService(const NacosString &serviceName, Instance &instance) throw(NacosException) {
@@ -69,7 +69,7 @@ void NamingProxy::deregisterService(const NacosString &serviceName, Instance &in
     ParamUtils::addKV(params, "port",  NacosStringOps::valueOf(instance.port));
     ParamUtils::addKV(params, "ephemeral", NacosStringOps::valueOf(instance.ephemeral));
 
-    reqAPI(UtilAndComs::NACOS_URL_INSTANCE, params, IHttpCli::DELETE);
+    reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_INSTANCE, params, IHttpCli::DELETE);
 }
 
 NacosString NamingProxy::queryList(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters,
@@ -84,7 +84,7 @@ NacosString NamingProxy::queryList(const NacosString &serviceName, const NacosSt
     ParamUtils::addKV(params, NamingConstant::CLIENT_IP, localIp);
     ParamUtils::addKV(params, NamingConstant::HEALTHY_ONLY, NacosStringOps::valueOf(healthyOnly));
 
-    return reqAPI(UtilAndComs::NACOS_URL_BASE + "/instance/list", params, IHttpCli::GET);
+    return reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_BASE + "/instance/list", params, IHttpCli::GET);
 }
 
 NacosString
@@ -244,7 +244,7 @@ long NamingProxy::sendBeat(BeatInfo &beatInfo) {
         ParamUtils::addKV(params, NamingConstant::BEAT, JSON::toJSONString(beatInfo));
         ParamUtils::addKV(params, NamingConstant::NAMESPACE_ID, getNamespaceId());
         ParamUtils::addKV(params, NamingConstant::SERVICE_NAME, beatInfo.serviceName);
-        NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/instance/beat", params, IHttpCli::PUT);
+        NacosString result = reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_BASE + "/instance/beat", params, IHttpCli::PUT);
         //JSONObject jsonObject = JSON.parseObject(result);
 
         if (!isNull(result)) {
@@ -267,7 +267,7 @@ ListView<NacosString> NamingProxy::getServiceList(int page, int pageSize, const 
     ParamUtils::addKV(params, NamingConstant::PAGE_SIZE, NacosStringOps::valueOf(pageSize));
     ParamUtils::addKV(params, NamingConstant::GROUP_NAME, groupName);
     ParamUtils::addKV(params, NamingConstant::NAMESPACE_ID, getNamespaceId());
-    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service/list", params, IHttpCli::GET);
+    NacosString result = reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_BASE + "/service/list", params, IHttpCli::GET);
 
     if (!isNull(result)) {
         return JSON::Json2ServiceList(result);
@@ -288,7 +288,7 @@ ServiceInfo2 NamingProxy::getServiceInfo(const NacosString &serviceName, const N
         ParamUtils::addKV(params, NamingConstant::GROUP_NAME, ConfigConstant::DEFAULT_GROUP);
     }
     ParamUtils::addKV(params, NamingConstant::NAMESPACE_ID, getNamespaceId());
-    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::GET);
+    NacosString result = reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::GET);
     log_debug("NamingProxy::getServiceInfo: service info from server:%s\n", result.c_str());
 
     if (!isNull(result)) {
@@ -321,7 +321,7 @@ bool NamingProxy::deleteServiceInfo(const NacosString &serviceName, const NacosS
     ParamUtils::addKV(params, NamingConstant::SERVICE_NAME, serviceName);
     ParamUtils::addKV(params, NamingConstant::GROUP_NAME, groupName);
     ParamUtils::addKV(params, NamingConstant::NAMESPACE_ID, getNamespaceId());
-    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::DELETE);
+    NacosString result = reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::DELETE);
 
     return areYouOk(result);
 }
@@ -351,7 +351,7 @@ bool NamingProxy::createServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Se
         ParamUtils::addKV(params, "selector", selector->getSelectorString());
     }
 
-    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::POST);
+    NacosString result = reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::POST);
     return areYouOk(result);
 }
 
@@ -362,13 +362,13 @@ bool NamingProxy::updateServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Se
         ParamUtils::addKV(params, "selector", selector->getSelectorString());
     }
 
-    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::PUT);
+    NacosString result = reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_BASE + "/service", params, IHttpCli::PUT);
     return areYouOk(result);
 }
 
 bool NamingProxy::serverHealthy() {
     list<NacosString> params;
-    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/operator/metrics", params, IHttpCli::GET);
+    NacosString result = reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_BASE + "/operator/metrics", params, IHttpCli::GET);
     NacosString healthyTag = "status\":\"";
     size_t pos = result.find(healthyTag);
     if (pos == std::string::npos) {
@@ -420,7 +420,7 @@ throw(NacosException) {
         ParamUtils::addKV(paramsList, NamingConstant::GROUP_NAME, ConfigConstant::DEFAULT_GROUP);
     }
 
-    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/instance", paramsList, IHttpCli::GET);
+    NacosString result = reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_BASE + "/instance", paramsList, IHttpCli::GET);
 
     return JSON::Json2Instance(result);
 }
@@ -454,7 +454,7 @@ bool NamingProxy::updateServiceInstance(const Instance &instance) throw(NacosExc
     //TODO:weight is optional
     ParamUtils::addKV(params, "weight", NacosStringOps::valueOf(instance.weight));
 
-    NacosString result = reqAPI(UtilAndComs::NACOS_URL_BASE + "/instance", params, IHttpCli::PUT);
+    NacosString result = reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_BASE + "/instance", params, IHttpCli::PUT);
 
     return areYouOk(result);
 }

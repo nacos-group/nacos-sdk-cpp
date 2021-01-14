@@ -91,7 +91,7 @@ bool NacosConfigService::removeConfigInner
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
     //Get the request url
-    NacosString path = ConfigConstant::DEFAULT_CONTEXT_PATH + ConfigConstant::CONFIG_CONTROLLER_PATH;
+    NacosString path = _objectConfigData->_appConfigManager->getContextPath() + ConfigConstant::CONFIG_CONTROLLER_PATH;
 
     HttpResult res;
 
@@ -145,7 +145,7 @@ bool NacosConfigService::publishConfigInner
     std::list <NacosString> paramValues;
     NacosString parmGroupid;
     //Get the request url
-    NacosString path = ConfigConstant::DEFAULT_CONTEXT_PATH + ConfigConstant::CONFIG_CONTROLLER_PATH;
+    NacosString path = _objectConfigData->_appConfigManager->getContextPath() + ConfigConstant::CONFIG_CONTROLLER_PATH;
 
     HttpResult res;
 

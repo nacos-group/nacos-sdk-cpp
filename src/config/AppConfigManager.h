@@ -12,6 +12,8 @@ private:
     bool reloadable;
     Properties appConfig;
     NacosString configFile;
+    //Cached contextpath
+    NacosString _contextPath;
 
     volatile long _serverReqTimeout;
 
@@ -45,6 +47,8 @@ public:
     bool contains(const NacosString &key) const;
 
     Properties getAllConfig() const { return appConfig; };
+
+    const NacosString & getContextPath() const { return _contextPath; };
 
     void set(const NacosString &key, const NacosString &value);
 };
