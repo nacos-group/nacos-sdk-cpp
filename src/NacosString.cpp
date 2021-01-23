@@ -5,8 +5,8 @@
 
 namespace nacos{
 const NacosString NacosStringOps::nullstr = "";
-const NacosString NacosStringOps::TRUE = "true";
-const NacosString NacosStringOps::FALSE = "false";
+const NacosString NacosStringOps::STR_TRUE = "true";
+const NacosString NacosStringOps::STR_FALSE = "false";
 
 //Returns true if str refers to nullstr
 bool NacosStringOps::isNullStr(const NacosString &str) {
@@ -15,7 +15,7 @@ bool NacosStringOps::isNullStr(const NacosString &str) {
 
 template<>
 NacosString NacosStringOps::valueOf<bool>(bool val) {
-    if (val) { return TRUE; }
-    else { return FALSE; }
+    if (val) { return STR_TRUE; }
+    else { return STR_FALSE; }
 }
 }//namespace nacos
