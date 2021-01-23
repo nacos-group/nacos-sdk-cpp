@@ -1,4 +1,4 @@
-#include "src/thread/DelayedThreadPool.h"
+/*#include "src/thread/DelayedThreadPool.h"
 
 namespace nacos {
 
@@ -36,4 +36,4 @@ void DelayedThreadPool::schedule(Task *t, long futureTimeToRun) {
     }
 }
 
-}
+}*/
