@@ -55,14 +55,7 @@ CURL *HTTPCli::getCurlHandle() {
     if (curlHandle == NULL) {
         curlHandle = curl_easy_init();
         pthread_setspecific(pthreadKey, reinterpret_cast<void *>(curlHandle));
-    } /*else//TODO:Temporary solution for 400 response when performing multiple post request with one curl handle
-    {
-        curl_easy_cleanup(curlHandle);
-        curlHandle = NULL;
-        pthread_setspecific(pthreadKey, reinterpret_cast<void *>(curlHandle));
-        return getCurlHandle();
-    }//TODO:END:Temporary solution for 400 response when performing multiple post request with one curl handle
-*/
+    }
     return curlHandle;
 }
 
