@@ -23,14 +23,15 @@ NacosString LocalSnapshotManager::getFailover(const NacosString &serverName, con
     NacosString localPath = getFailoverFile(serverName, dataId, group, tenant);
 
     if (IOUtils::checkNotExistOrNotFile(localPath)) {
-        log_debug("[%s] failover file %s doesn't exist\n", serverName.c_str(), localPath.c_str());
+        log_debug("[LocalSnapshotManager]-getFailover:[servername=%s] failover file %s doesn't exist\n",
+                  serverName.c_str(), localPath.c_str());
         return NULLSTR;
     }
 
     try {
         return readFile(localPath);
     } catch (IOException ioe) {
-        log_error("[%s] get failover error, file: %s, exception:%s\n", serverName.c_str(), localPath.c_str(), ioe.what());
+        log_error("[LocalSnapshotManager]-getFailover:[servername=%s] get failover error, file: %s, exception:%s\n", serverName.c_str(), localPath.c_str(), ioe.what());
         return NULLSTR;
     }
 };
@@ -56,7 +57,7 @@ NacosString LocalSnapshotManager::getSnapshot
     try {
         return readFile(file);
     } catch (IOException ioe) {
-        log_error("[%s]+get snapshot error, file:%s what:%s\n", name.c_str(), file.c_str(), ioe.what());
+        log_error("[LocalSnapshotManager]-getSnapshot:[servername=%s]+get snapshot error, file:%s what:%s\n", name.c_str(), file.c_str(), ioe.what());
         return NULLSTR;
     }
 };
@@ -86,7 +87,7 @@ LocalSnapshotManager::saveSnapshot(const NacosString &envName, const NacosString
         if (remove_result)//error happens when removing the file
         {
             //usually we get this error because we are deleting a non-existent file
-            log_debug("[%s] delete snapshot error, remove() returns %d, errno = %d\n",
+            log_debug("[LocalSnapshotManager]-saveSnapshot:[servername=%s] delete snapshot error, remove() returns %d, errno = %d\n",
                       envName.c_str(), remove_result, errno);
         }
     } else {
@@ -128,7 +129,7 @@ void LocalSnapshotManager::cleanEnvSnapshot(const NacosString &envName) {
     NacosString tmp_tenant = tmp + "-tenant";
     IOUtils::cleanDirectory(tmp);
     IOUtils::cleanDirectory(tmp_tenant);
-    log_info("success delete %s-snapshot: %s\n", envName.c_str(), tmp.c_str());
+    log_info("[LocalSnapshotManager]-cleanEnvSnapshot:success delete %s-snapshot: %s\n", envName.c_str(), tmp.c_str());
 };
 
 NacosString LocalSnapshotManager::getFailoverFile(const NacosString &serverName, const NacosString &dataId,

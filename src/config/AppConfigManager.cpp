@@ -34,7 +34,7 @@ size_t AppConfigManager::loadConfig() throw(NacosException) {
     initDefaults();
     Properties parsedConfig = ConfigParserUtils::parseConfigFile(configFile);
     applyConfig(parsedConfig);
-    log_debug("loaded config file:%s\n", appConfig.toString().c_str());
+    log_debug("[AppConfigManager]-loadConfig:loaded config file:%s\n", appConfig.toString().c_str());
     return appConfig.size();
 }
 
@@ -103,7 +103,7 @@ void AppConfigManager::initDefaults() {
     NacosString homedir = DirUtils::getHome();
 
     set(PropertyKeyConst::NACOS_SNAPSHOT_PATH, homedir + ConfigConstant::FILE_SEPARATOR + "nacos" + ConfigConstant::FILE_SEPARATOR + "snapshot");
-    log_info("DEFAULT_SNAPSHOT_PATH:%s\n", appConfig[PropertyKeyConst::NACOS_SNAPSHOT_PATH].c_str());
+    log_info("[AppConfigManager]-initDefaults:DEFAULT_SNAPSHOT_PATH:%s\n", appConfig[PropertyKeyConst::NACOS_SNAPSHOT_PATH].c_str());
 }
 
 void AppConfigManager::applyConfig(Properties &rhs) {

@@ -14,7 +14,7 @@ NacosConfigService::NacosConfigService(ObjectConfigData *objectConfigData) throw
 }
 
 NacosConfigService::~NacosConfigService() {
-    log_debug("NacosConfigService::~NacosConfigService()\n");
+    log_debug("[NacosConfigService]:~NacosConfigService()\n");
     delete _objectConfigData;
 }
 
@@ -59,7 +59,7 @@ NacosString NacosConfigService::getConfigInner
     NacosString clientName = _appConfigManager->get(PropertyKeyConst::CLIENT_NAME);
     result = _localSnapshotManager->getFailover(clientName.c_str(), dataId, group, tenant);
     if (!NacosStringOps::isNullStr(result)) {
-        log_warn("[%s] [get-config] get failover ok, dataId=%s, group=%s, tenant=%s, config=%s",
+        log_warn("[NacosConfigService]-getConfig:[clientName=%s] get failover ok, dataId=%s, group=%s, tenant=%s, config=%s",
                  clientName.c_str(),
                  dataId.c_str(),
                  group.c_str(),
@@ -109,14 +109,14 @@ bool NacosConfigService::removeConfigInner
 
     NacosString serverAddr = _objectConfigData->_serverListManager->getCurrentServerAddr();
     NacosString url = serverAddr + "/" + path;
-    log_debug("httpDelete Assembled URL:%s\n", url.c_str());
+    log_debug("[NacosConfigService]-removeConfigInner: Assembled URL:%s\n", url.c_str());
 
     HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
     try {
         res = _httpDelegate->httpDelete(url, headers, paramValues, _httpDelegate->getEncode(), POST_TIMEOUT);
     }
     catch (NetworkException &e) {
-        log_warn("[remove] error, %s, %s, %s, msg: %s\n", dataId.c_str(), group.c_str(), tenant.c_str(), e.what());
+        log_warn("[NacosConfigService]-removeConfigInner: error, %s, %s, %s, msg: %s\n", dataId.c_str(), group.c_str(), tenant.c_str(), e.what());
         return false;
     }
 
@@ -174,7 +174,7 @@ bool NacosConfigService::publishConfigInner
 
     NacosString serverAddr = _objectConfigData->_serverListManager->getCurrentServerAddr();
     NacosString url = serverAddr + "/" + path;
-    log_debug("httpPost Assembled URL:%s\n", url.c_str());
+    log_debug("[NacosConfigService]-publishConfigInner:httpPost Assembled URL:%s\n", url.c_str());
 
     HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
     try {
@@ -182,7 +182,7 @@ bool NacosConfigService::publishConfigInner
     }
     catch (NetworkException &e) {
         //
-        log_warn("[NacosConfigService] [publish-single] exception, dataId=%s, group=%s, msg=%s\n", dataId.c_str(), group.c_str(),
+        log_warn("[NacosConfigService]-publishConfigInner: exception, dataId=%s, group=%s, msg=%s\n", dataId.c_str(), group.c_str(),
                  tenant.c_str(), e.what());
         return false;
     }
@@ -228,7 +228,7 @@ void NacosConfigService::removeListener
     if (!isNull(group)) {
         parmgroup = group;
     }
-    log_debug("NacosConfigService::removeListener()\n");
+    log_debug("[NacosConfigService]-removeListener: calling client worker\n");
     _objectConfigData->_clientWorker->removeListener(dataId, parmgroup, getNamespace(), listener);
 }
 

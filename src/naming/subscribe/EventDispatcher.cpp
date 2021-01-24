@@ -45,12 +45,12 @@ bool EventDispatcher::removeListenerHelper(const NacosString &key, EventListener
          it != listenerList.end(); it++) {
         if (*it == eventListener) {
             EventListener *removedItem = *it;
-            log_debug("erased item: %s\n", removedItem->getListenerName().c_str());
+            log_debug("[EventDispatcher]-remove:erased item: %s\n", removedItem->getListenerName().c_str());
             listenerList.erase(it);
 
             int refCount = removedItem->decRef();
             if (refCount == 0) {
-                log_debug("The refcount of listener '%s' is 0, deleting the item.\n", removedItem->getListenerName().c_str());
+                log_debug("[EventDispatcher]-remove:The refcount of listener '%s' is 0, deleting the item.\n", removedItem->getListenerName().c_str());
                 delete removedItem;
             }
             if (listenerList.empty()) {
@@ -90,7 +90,7 @@ void EventDispatcher::start()
 void EventDispatcher::stop()
 {
     if (!_started) {
-        log_debug("Calling stop() on a already-stopped EventDispatcher\n");
+        log_debug("[EventDispatcher]:Calling stop() on a already-stopped EventDispatcher\n");
         return;
     }
     _started = false;
@@ -108,7 +108,7 @@ void EventDispatcher::notify(const ChangeAdvice &changeAdvice)
         ReadGuard __readGuard(rwLock);
         if (observerMap.count(key) == 0)
         {
-            log_debug("Notifying non-existent key:%s\n", key.c_str());
+            log_debug("[EventDispatcher]:Notifying non-existent key:%s\n", key.c_str());
             return;
         }
         list<EventListener*> &listeners = observerMap[key];
@@ -131,7 +131,7 @@ void EventDispatcher::notifyDirectly(const ChangeAdvice &changeAdvice)
         ReadGuard __readGuard(rwLock);
         if (observerMap.count(key) == 0)
         {
-            log_debug("Notifying non-existent key:%s\n", key.c_str());
+            log_debug("[EventDispatcher]:Notifying non-existent key:%s\n", key.c_str());
             return;
         }
         listeners = observerMap[key];
@@ -148,7 +148,7 @@ void EventDispatcher::notifyDirectly(const ChangeAdvice &changeAdvice)
         (*curListener)->receiveNamingInfo(changeAdvice.newServiceInfo);
         int refCnt = (*curListener)->decRef();
         if (refCnt == 0) {
-            log_debug("Destroying listener whose refcount = 0\n");
+            log_debug("[EventDispatcher]:Destroying listener whose refcount = 0\n");
             delete *curListener;
         }
     }
@@ -204,7 +204,7 @@ void EventDispatcher::purgeAllListeners()
             int refCount = (*listenerItem)->decRef();
             if (refCount == 0)
             {
-                log_debug("Deleting the object whose refcount = 0:%s\n", (*listenerItem)->getListenerName().c_str());
+                log_debug("[EventDispatcher]:Deleting the object whose refcount = 0:%s\n", (*listenerItem)->getListenerName().c_str());
                 delete *listenerItem;
                 *listenerItem = NULL;
             }
