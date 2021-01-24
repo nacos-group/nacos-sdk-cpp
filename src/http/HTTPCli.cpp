@@ -40,7 +40,7 @@ static size_t receiveHeaderCallback(
     }
     size_t realsize = size * nmemb;
 
-    log_debug("receivedHeaders: %s", (char *) contents);
+    log_debug("[HTTPCli]-receivedHeaders: %s", (char *) contents);
 
     return realsize;
 }
@@ -55,14 +55,14 @@ CURL *HTTPCli::getCurlHandle() {
     if (curlHandle == NULL) {
         curlHandle = curl_easy_init();
         pthread_setspecific(pthreadKey, reinterpret_cast<void *>(curlHandle));
-    } else//TODO:Temporary solution for 400 response when performing multiple post request with one curl handle
+    } /*else//TODO:Temporary solution for 400 response when performing multiple post request with one curl handle
     {
         curl_easy_cleanup(curlHandle);
         curlHandle = NULL;
         pthread_setspecific(pthreadKey, reinterpret_cast<void *>(curlHandle));
         return getCurlHandle();
     }//TODO:END:Temporary solution for 400 response when performing multiple post request with one curl handle
-
+*/
     return curlHandle;
 }
 
@@ -78,6 +78,15 @@ void HTTPCli::HTTPBasicSettings(CURL *curlHandle) {
     curl_easy_setopt(curlHandle, CURLOPT_USERAGENT, UtilAndComs::VERSION.c_str());
     curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, receiveResponseCallback);
     curl_easy_setopt(curlHandle, CURLOPT_HEADERFUNCTION, receiveHeaderCallback);
+
+    curl_easy_setopt(curlHandle, CURLOPT_TCP_KEEPALIVE, 1L);
+
+    /* keep-alive idle time to 120 seconds */
+    curl_easy_setopt(curlHandle, CURLOPT_TCP_KEEPIDLE, 120L);
+
+    /* interval time between keep-alive probes: 60 seconds */
+    curl_easy_setopt(curlHandle, CURLOPT_TCP_KEEPINTVL, 60L);
+
 }
 
 NacosString HTTPCli::encodingParams(list <NacosString> &params) {
@@ -159,7 +168,7 @@ HttpResult HTTPCli::httpGetInternal
     if (paramValues.compare("") != 0) {
         Url += "?" + paramValues;
     }
-    log_debug("HTTPGET-Assembled URL with parms:%s\n", Url.c_str());
+    log_debug("[HTTPCli]-Get:Assembled URL with parms:%s\n", Url.c_str());
 
     /*Headers look like:
         foo
@@ -173,6 +182,8 @@ HttpResult HTTPCli::httpGetInternal
     list <NacosString> assembledHeaders;
     assembleHeaders(assembledHeaders, headers);
 
+    //clear-ups
+    curl_easy_reset(curlHandle);
     /* specify URL to get */
     curl_easy_setopt(curlHandle, CURLOPT_URL, Url.c_str());
 
@@ -212,7 +223,7 @@ HttpResult HTTPCli::httpGetInternal
     }
 
     if (curlres != CURLE_OK) {
-        log_error("curl_easy_perform() failed: %d - %s\n",
+        log_error("[HTTPCli]-Get:curl_easy_perform() failed: %d - %s\n",
                   curlres, curl_easy_strerror(curlres));
         throw NetworkException(curlres, curl_easy_strerror(curlres));
     }
@@ -221,9 +232,9 @@ HttpResult HTTPCli::httpGetInternal
     curl_easy_getinfo(curlHandle, CURLINFO_RESPONSE_CODE, &response_code);
     HttpResult httpresp = HttpResult(response_code, strbuf, respheaders);
     httpresp.curlcode = curlres;
-    log_debug("HTTPGET-%lu bytes retrieved\n", (unsigned long) strbuf.length());
-    log_debug("HTTPGET-content:%s\n", strbuf.c_str());
-    log_debug("HTTPGET-resp-code:%d\n", response_code);
+    log_debug("[HTTPCli]-Get:%lu bytes retrieved\n", (unsigned long) strbuf.length());
+    log_debug("[HTTPCli]-Get:content:%s\n", strbuf.c_str());
+    log_debug("[HTTPCli]-Get:resp-code:%d\n", response_code);
 
     return httpresp;
 }
@@ -276,7 +287,7 @@ HttpResult HTTPCli::httpPostInternal
     CURLcode curlres;
 
     NacosString Url = path;
-    log_debug("HTTPPOST-Assembled URL with parms:%s\n", Url.c_str());
+    log_debug("[HTTPCli]-POST:Assembled URL with parms:%s\n", Url.c_str());
 
     /*Headers look like:
         foo
@@ -290,8 +301,10 @@ HttpResult HTTPCli::httpPostInternal
     list <NacosString> assembledHeaders;
     assembleHeaders(assembledHeaders, headers);
 
-    log_debug("Post data:%s\n", paramValues.c_str());
+    log_debug("[HTTPCli]-POST:Post data:%s\n", paramValues.c_str());
 
+    //clear-ups
+    curl_easy_reset(curlHandle);
     /* specify URL to get */
     curl_easy_setopt(curlHandle, CURLOPT_URL, Url.c_str());
 
@@ -317,7 +330,7 @@ HttpResult HTTPCli::httpPostInternal
 
     for (list<NacosString>::iterator it = assembledHeaders.begin(); it != assembledHeaders.end(); it++) {
         headerlist = curl_slist_append(headerlist, it->c_str());
-        log_debug("HTTPPOST-RequestHeaders:%s\n", it->c_str());
+        log_debug("[HTTPCli]-POST:RequestHeaders:%s\n", it->c_str());
     }
 
     if (headerlist != NULL) {
@@ -335,7 +348,7 @@ HttpResult HTTPCli::httpPostInternal
     }
 
     if (curlres != CURLE_OK) {
-        log_error("curl_easy_perform() failed: %d - %s\n",
+        log_error("[HTTPCli]-POST:curl_easy_perform() failed: %d - %s\n",
                   curlres, curl_easy_strerror(curlres));
         throw NetworkException(curlres, curl_easy_strerror(curlres));
     }
@@ -345,9 +358,9 @@ HttpResult HTTPCli::httpPostInternal
     HttpResult httpresp = HttpResult(response_code, strbuf, respheaders);
     httpresp.curlcode = curlres;
 
-    log_debug("HTTPPOST-%lu bytes retrieved\n", (unsigned long) strbuf.length());
-    log_debug("HTTPPOST-content:%s\n", strbuf.c_str());
-    log_debug("HTTPPOST-resp-code:%d\n", response_code);
+    log_debug("[HTTPCli]-POST:%lu bytes retrieved\n", (unsigned long) strbuf.length());
+    log_debug("[HTTPCli]-POST:content:%s\n", strbuf.c_str());
+    log_debug("[HTTPCli]-POST:resp-code:%d\n", response_code);
 
     return httpresp;
 }
@@ -400,7 +413,7 @@ HttpResult HTTPCli::httpPutInternal
     CURLcode curlres;
 
     NacosString Url = path;
-    log_debug("HTTPPUT-Assembled URL with parms:%s\n", Url.c_str());
+    log_debug("[HTTPCli]-PUT:Assembled URL with parms:%s\n", Url.c_str());
 
     /*Headers look like:
         foo
@@ -414,8 +427,10 @@ HttpResult HTTPCli::httpPutInternal
     list <NacosString> assembledHeaders;
     assembleHeaders(assembledHeaders, headers);
 
-    log_debug("Put data:%s\n", paramValues.c_str());
+    log_debug("[HTTPCli]-PUT:Put data:%s\n", paramValues.c_str());
 
+    //clear-ups
+    curl_easy_reset(curlHandle);
     /* specify URL to get */
     curl_easy_setopt(curlHandle, CURLOPT_URL, Url.c_str());
 
@@ -441,7 +456,7 @@ HttpResult HTTPCli::httpPutInternal
 
     for (list<NacosString>::iterator it = assembledHeaders.begin(); it != assembledHeaders.end(); it++) {
         headerlist = curl_slist_append(headerlist, it->c_str());
-        log_debug("HTTPPUT-RequestHeaders:%s\n", it->c_str());
+        log_debug("[HTTPCli]-PUT:RequestHeaders:%s\n", it->c_str());
     }
 
     if (headerlist != NULL) {
@@ -459,7 +474,7 @@ HttpResult HTTPCli::httpPutInternal
     }
 
     if (curlres != CURLE_OK) {
-        log_error("curl_easy_perform() failed: %d - %s\n",
+        log_error("[HTTPCli]-PUT:curl_easy_perform() failed: %d - %s\n",
                   curlres, curl_easy_strerror(curlres));
         throw NetworkException(curlres, curl_easy_strerror(curlres));
     }
@@ -469,9 +484,9 @@ HttpResult HTTPCli::httpPutInternal
     HttpResult httpresp = HttpResult(response_code, strbuf, respheaders);
     httpresp.curlcode = curlres;
 
-    log_debug("HTTPPUT-%lu bytes retrieved\n", (unsigned long) strbuf.length());
-    log_debug("HTTPPUT-content:%s\n", strbuf.c_str());
-    log_debug("HTTPPUT-resp-code:%d\n", response_code);
+    log_debug("[HTTPCli]-PUT:%lu bytes retrieved\n", (unsigned long) strbuf.length());
+    log_debug("[HTTPCli]-PUT:content:%s\n", strbuf.c_str());
+    log_debug("[HTTPCli]-PUT:resp-code:%d\n", response_code);
 
     return httpresp;
 }
@@ -516,7 +531,7 @@ HttpResult HTTPCli::httpDeleteInternal
     NacosString Url = path;
 
     Url += "?" + paramValues;
-    log_debug("Assembled URL with parms:%s\n", Url.c_str());
+    log_debug("[HTTPCli]-DELETE:Assembled URL with parms:%s\n", Url.c_str());
 
     /*Headers look like:
         foo
@@ -530,6 +545,8 @@ HttpResult HTTPCli::httpDeleteInternal
     list <NacosString> assembledHeaders;
     assembleHeaders(assembledHeaders, headers);
 
+    //clear-ups
+    curl_easy_reset(curlHandle);
     /* specify URL to get */
     curl_easy_setopt(curlHandle, CURLOPT_URL, Url.c_str());
 
@@ -571,7 +588,7 @@ HttpResult HTTPCli::httpDeleteInternal
     }
 
     if (curlres != CURLE_OK) {
-        log_error("curl_easy_perform() failed: %d - %s\n",
+        log_error("[HTTPCli]-DELETE:curl_easy_perform() failed: %d - %s\n",
                   curlres, curl_easy_strerror(curlres));
         throw NetworkException(curlres, curl_easy_strerror(curlres));
     }
@@ -581,9 +598,9 @@ HttpResult HTTPCli::httpDeleteInternal
     HttpResult httpresp = HttpResult(response_code, strbuf, respheaders);
     httpresp.curlcode = curlres;
 
-    log_debug("HTTPDELETE-%lu bytes retrieved\n", (unsigned long) strbuf.length());
-    log_debug("HTTPDELETE-content:%s\n", strbuf.c_str());
-    log_debug("HTTPDELETE-resp-code:%d\n", response_code);
+    log_debug("[HTTPCli]-DELETE:%lu bytes retrieved\n", (unsigned long) strbuf.length());
+    log_debug("[HTTPCli]-DELETE:content:%s\n", strbuf.c_str());
+    log_debug("[HTTPCli]-DELETE:resp-code:%d\n", response_code);
 
     return httpresp;
 }
