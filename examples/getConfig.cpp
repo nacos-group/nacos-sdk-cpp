@@ -2,7 +2,6 @@
 #include "factory/NacosServiceFactory.h"
 #include "constant/PropertyKeyConst.h"
 #include "ResourceGuard.h"
-#include "NacosString.h"
 
 using namespace std;
 using namespace nacos;
