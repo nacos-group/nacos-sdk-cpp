@@ -12,6 +12,7 @@
 #include "src/config/IOUtils.h"
 #include "constant/ConfigConstant.h"
 #include "constant/PropertyKeyConst.h"
+#include <ctime>
 
 namespace nacos{
 
@@ -77,7 +78,15 @@ int Logger::debug_helper(LOG_LEVEL level, const char *format, va_list args) {
         _last_rotate_time = now;
     }
 
-    int retval = vfprintf(_output_file, format, args);
+    time_t t = time(0);
+    struct tm current_time;
+    localtime_r(&t, &current_time);
+    //length of 9999-12-31 99:99:99 = 19
+    char time_buf[20];
+    strftime(time_buf, sizeof(time_buf), "[%Y-%m-%d %H:%M:%S]", &current_time);
+
+    int retval = fprintf(_output_file, "%s", time_buf);
+    retval += vfprintf(_output_file, format, args);
     fflush(_output_file);
     //va_end(argList);
     return retval;
