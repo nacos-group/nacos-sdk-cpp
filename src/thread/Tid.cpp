@@ -16,5 +16,8 @@ TID_T gettidv1() {
 
     return tid;
 }
+#else
+//regard the system as an unix-like system
+//for linux solved in header file
 
 #endif//OS-specific code
