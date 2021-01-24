@@ -27,7 +27,7 @@ One of the testcases will test endpoint functionality, so **you also need** to r
 
 `127.0.0.1:8848`
 
-**on path /endpoints/endpoint0**
+**on path /nacos/endpoint0**
 
 ## Integrate the library into your project
 
