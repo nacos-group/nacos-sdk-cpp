@@ -81,8 +81,8 @@ int Logger::debug_helper(LOG_LEVEL level, const char *format, va_list args) {
     time_t t = time(0);
     struct tm current_time;
     localtime_r(&t, &current_time);
-    //length of 9999-12-31 99:99:99 = 19
-    char time_buf[20];
+    //length of [9999-12-31 99:99:99] = 19
+    char time_buf[22];
     strftime(time_buf, sizeof(time_buf), "[%Y-%m-%d %H:%M:%S]", &current_time);
 
     int retval = fprintf(_output_file, "%s", time_buf);
