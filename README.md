@@ -94,8 +94,7 @@ or you can use ldconfig to add libnacos-cli.so to your lib path.
 ```C++
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
-#include "PropertyKeyConst.h"
-#include "DebugAssertion.h"
+#include "constant/PropertyKeyConst.h"
 #include "ResourceGuard.h"
 
 using namespace std;
@@ -124,16 +123,13 @@ int main() {
 }
 ``` 
 
-### Set Config
+### Publish Config
 
 ```C++
 #include <iostream>
-#include <stdlib.h>
-#include <unistd.h>
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
-#include "PropertyKeyConst.h"
-#include "DebugAssertion.h"
+#include "constant/PropertyKeyConst.h"
 
 using namespace std;
 using namespace nacos;
@@ -177,13 +173,10 @@ int main() {
 
 ```C++
 #include <iostream>
-#include <stdlib.h>
-#include <unistd.h>
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
 #include "listen/Listener.h"
-#include "PropertyKeyConst.h"
-#include "DebugAssertion.h"
+#include "constant/PropertyKeyConst.h"
 
 using namespace std;
 using namespace nacos;
@@ -231,19 +224,13 @@ int main() {
 
 ```C++
 #include <iostream>
-#include <stdlib.h>
 #include <unistd.h>
-#include "naming/NamingProxy.h"
-#include "naming/NacosNamingService.h"
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
 #include "naming/Instance.h"
-#include "Constants.h"
-#include "utils/UtilAndComs.h"
-#include "DebugAssertion.h"
 #include "NacosString.h"
 #include "Properties.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 
 using namespace std;
 using namespace nacos;
@@ -297,13 +284,10 @@ int main() {
 
 ```C++
 #include <iostream>
-#include <stdlib.h>
-#include <unistd.h>
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
 #include "naming/subscribe/EventListener.h"
-#include "PropertyKeyConst.h"
-#include "DebugAssertion.h"
+#include "constant/PropertyKeyConst.h"
 
 using namespace std;
 using namespace nacos;
@@ -358,18 +342,12 @@ int main() {
 
 ```C++
 #include <iostream>
-#include <stdlib.h>
-#include <unistd.h>
 #include <list>
 #include "factory/NacosServiceFactory.h"
 #include "naming/Instance.h"
-#include "Constants.h"
-#include "utils/UtilAndComs.h"
-#include "http/HTTPCli.h"
-#include "DebugAssertion.h"
 #include "NacosString.h"
 #include "Properties.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 #include "ResourceGuard.h"
 
 using namespace std;
