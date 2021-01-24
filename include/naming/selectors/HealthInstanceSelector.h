@@ -3,23 +3,13 @@
 
 #include <list>
 #include "naming/selectors/Selector.h"
-#include "src/log/Logger.h"
 
 namespace nacos { namespace naming { namespace selectors {
+
 class HealthInstanceSelector : public Selector<Instance>{
 private:
 public:
-    std::list<Instance> select(const std::list<Instance> &instancesToSelect){
-        std::list<Instance> result;
-        for (std::list<Instance>::const_iterator it = instancesToSelect.begin();
-            it != instancesToSelect.end(); it++) {
-            if (it->healthy) {
-                result.push_back(*it);
-            }
-        }
-
-        return result;
-    }
+    std::list<Instance> select(const std::list<Instance> &instancesToSelect);
 };
 } /*selectors*/ } /*naming*/ }/*nacos*/
 

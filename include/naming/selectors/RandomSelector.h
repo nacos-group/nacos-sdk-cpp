@@ -3,26 +3,12 @@
 
 #include <list>
 #include "naming/selectors/Selector.h"
-#include "src/log/Logger.h"
-#include "utils/ParamUtils.h"
 
 namespace nacos { namespace naming { namespace selectors {
 class RandomSelector : public Selector<Instance>{
 private:
 public:
-    std::list<Instance> select(const std::list<Instance> &instancesToSelect){
-        size_t maxSvrSlot = instancesToSelect.size();
-        log_debug("RandomSelector::select:nr_servers%d\n", maxSvrSlot);
-        srand(time(NULL));//TODO:optimize random generator
-        size_t selectedServer = rand() % maxSvrSlot;
-        log_debug("RandomSelector::select:%d\n", selectedServer);
-
-        std::list<Instance> result;
-
-        result.push_back(ParamUtils::getNthElem(instancesToSelect, selectedServer));
-
-        return result;
-    }
+    std::list<Instance> select(const std::list<Instance> &instancesToSelect);
 };
 } /*selectors*/ } /*naming*/ }/*nacos*/
 

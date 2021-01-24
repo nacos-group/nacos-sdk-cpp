@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "DebugAssertion.h"
 #include "src/init/Init.h"
+#include "src/log/Logger.h"
 #include <list>
 
 using namespace std;

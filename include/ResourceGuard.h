@@ -5,8 +5,6 @@
 #ifndef NACOS_SDK_CPP_RESOURCEGUARD_H
 #define NACOS_SDK_CPP_RESOURCEGUARD_H
 
-#include "src/log/Logger.h"
-
 namespace nacos{
 template<typename T>
 class ResourceGuard {
@@ -19,7 +17,6 @@ public:
 
     ~ResourceGuard() {
         if (_obj != NULL) {
-            log_debug("Deconstructing holded resource...\n");
             delete _obj;
             _obj = NULL;
         }
