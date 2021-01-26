@@ -12,6 +12,8 @@
 #include "constant/PropertyKeyConst.h"
 #include "src/http/HttpStatus.h"
 
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+
 using namespace std;
 
 namespace nacos{
@@ -284,7 +286,7 @@ void ClientWorker::removeListener
     addDeleteItem(operateItem);
 }
 
-NacosString ClientWorker::checkListenedKeys() {
+NacosString ClientWorker::checkListenedKeys() throw(NetworkException) {
     NacosString postData;
     pthread_mutex_lock(&watchListMutex);
     for (map<NacosString, ListeningData *>::iterator it = listeningKeys.begin(); it != listeningKeys.end(); it++) {
@@ -327,22 +329,23 @@ NacosString ClientWorker::checkListenedKeys() {
     log_debug("[ClientWorker]-checkListenedKeys:httpPost Assembled URL:%s\n", url.c_str());
 
     HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
-    try {
-        res = _httpDelegate->httpPost(url, headers, paramValues, _httpDelegate->getEncode(), _longPullingTimeout);
-    }
-    catch (NetworkException &e) {
-        log_warn("[ClientWorker]-checkListenedKeys:Request failed with: %s\n", e.what());
-        NacosString result = "";
-        return result;
-    }
-
+    res = _httpDelegate->httpPost(url, headers, paramValues, _httpDelegate->getEncode(), _longPullingTimeout);
     log_debug("[ClientWorker]-checkListenedKeys:Received the message below from server:\n%s\n", res.content.c_str());
     return res.content;
 }
 
 void ClientWorker::performWatch() {
     MD5 md5;
-    NacosString changedData = checkListenedKeys();
+    NacosString changedData;
+    try {
+        changedData = checkListenedKeys();
+    } catch (NetworkException &e) {
+        log_warn("[ClientWorker]-checkListenedKeys:sleep and retry, reason: request failed with: %s\n", e.what());
+        //wait for at lease 3 secs to avoid too many wake-ups when the network is down
+        sleep(MAX(_longPullingTimeout / 10000, 3));
+        return;
+    }
+
     vector <NacosString> changedList = ClientWorker::parseListenedKeys(changedData);
     pthread_mutex_lock(&watchListMutex);
     for (std::vector<NacosString>::iterator it = changedList.begin(); it != changedList.end(); it++) {
@@ -372,7 +375,8 @@ void ClientWorker::performWatch() {
                          listenedList->getTenant().c_str(),
                          listenedList->getGroup().c_str(),
                          listenedList->getDataId().c_str());
-                sleep(_longPullingTimeout / 1000);
+                //wait for at lease 3 secs to avoid too many wake-ups when the network is down
+                sleep(MAX(_longPullingTimeout / 10000, 3));
                 break;
             }
             log_debug("[ClientWorker]-performWatch:Data fetched from the server: %s\n", updatedcontent.c_str());

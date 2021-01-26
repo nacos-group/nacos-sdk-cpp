@@ -48,7 +48,7 @@ private:
 
     std::vector <NacosString> parseListenedKeys(const NacosString &ReturnedKeys);
 
-    NacosString checkListenedKeys();
+    NacosString checkListenedKeys() throw(NetworkException);
 
     void clearDeleteList(int maxRemoves);
 
