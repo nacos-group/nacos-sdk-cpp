@@ -1,4 +1,3 @@
-#include <iostream>
 #include "src/json/JSON.h"
 #include "src/naming/beat/BeatInfo.h"
 #include "NacosString.h"
@@ -425,7 +424,6 @@ AccessToken JSON::Json2AccessToken(const NacosString &nacosString) throw(NacosEx
 
 PushPacket JSON::Json2PushPacket(const char *jsonString) throw(NacosException)
 {
-    cout << jsonString << endl;
     PushPacket pushPacket;
     Document d;
     d.Parse(jsonString);
