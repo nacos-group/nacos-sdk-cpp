@@ -286,7 +286,7 @@ void ClientWorker::removeListener
     addDeleteItem(operateItem);
 }
 
-NacosString ClientWorker::checkListenedKeys() throw(NetworkException) {
+NacosString ClientWorker::checkListenedKeys() throw(NetworkException,NacosException) {
     NacosString postData;
     pthread_mutex_lock(&watchListMutex);
     for (map<NacosString, ListeningData *>::iterator it = listeningKeys.begin(); it != listeningKeys.end(); it++) {
@@ -331,6 +331,13 @@ NacosString ClientWorker::checkListenedKeys() throw(NetworkException) {
     HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
     res = _httpDelegate->httpPost(url, headers, paramValues, _httpDelegate->getEncode(), _longPullingTimeout);
     log_debug("[ClientWorker]-checkListenedKeys:Received the message below from server:\n%s\n", res.content.c_str());
+    log_debug("[ClientWorker]-checkListenedKeys:return status:httpcode=%d curlcode=%d\n", res.code, res.curlcode);
+    
+    if (res.code != HttpStatus::HTTP_OK) {
+        //bugfix #52 please check github
+        throw NacosException(res.code, "Error while watching keys");
+    }
+
     return res.content;
 }
 
@@ -340,8 +347,13 @@ void ClientWorker::performWatch() {
     try {
         changedData = checkListenedKeys();
     } catch (NetworkException &e) {
-        log_warn("[ClientWorker]-checkListenedKeys:sleep and retry, reason: request failed with: %s\n", e.what());
+        log_warn("[ClientWorker]-performWatch:sleep and retry, reason: NetworkException with: %s\n", e.what());
         //wait for at lease 3 secs to avoid too many wake-ups when the network is down
+        sleep(MAX(_longPullingTimeout / 10000, 3));
+        return;
+    } catch (NacosException &e) {
+        log_warn("[ClientWorker]-performWatch:sleep and retry, reason: NacosException with: %s\n", e.what());
+        //same reason as above
         sleep(MAX(_longPullingTimeout / 10000, 3));
         return;
     }
@@ -390,6 +402,7 @@ void ClientWorker::performWatch() {
             } else {
                 listenedList->setMD5("");
                 updatedcontent = "";
+
             }
             std::map < Listener * , char > const *listenerList = listenedList->getListenerList();
             for (std::map<Listener *, char>::const_iterator listenerIt = listenerList->begin();
