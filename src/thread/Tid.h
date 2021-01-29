@@ -7,7 +7,7 @@
 #define TID_T pid_t
 #define gettidv1() syscall(__NR_gettid)
 
-#elif defined(linux)
+#elif defined(linux) || defined(LINUX)
 //for linux
 #include <sys/syscall.h>
 #include <unistd.h>
@@ -19,6 +19,13 @@
 //Mac OS code goes here
 #define TID_T unsigned long long
 TID_T gettidv1();
+
+#else
+//regard the system as an unix-like system
+#include <sys/syscall.h>
+#include <unistd.h>
+#define TID_T pid_t
+#define gettidv1() syscall(__NR_gettid)
 
 #endif//OS-specific code
 

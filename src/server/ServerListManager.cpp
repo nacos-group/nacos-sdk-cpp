@@ -294,8 +294,8 @@ void ServerListManager::stop() {
     }
 }
 
-NacosString ServerListManager::getContextPath() const {
-    return _objectConfigData->_appConfigManager->get(PropertyKeyConst::CONTEXT_PATH);
+const NacosString &ServerListManager::getContextPath() const {
+    return _objectConfigData->_appConfigManager->getContextPath();
 }
 
 ServerListManager::~ServerListManager() {

@@ -14,7 +14,7 @@
  * NoOpHttpDelegate
  *
  * @author Liu, Hanyu
- * Directly send request to HttpCli without any operation
+ * Send a request to the server with authentication header
  */
 namespace nacos{
     class NacosAuthHttpDelegate : public HttpDelegate {

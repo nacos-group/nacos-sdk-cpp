@@ -54,7 +54,7 @@ public:
 
     inline int getEndpointPort() const { return atoi(_objectConfigData->_appConfigManager->get(PropertyKeyConst::ENDPOINT_PORT).c_str()); };
 
-    inline NacosString getContextPath() const;
+    inline const NacosString &getContextPath() const;
 
     inline NacosString getNamespace() const { return _objectConfigData->_appConfigManager->get(PropertyKeyConst::NAMESPACE); };
 

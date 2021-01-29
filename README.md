@@ -27,20 +27,21 @@ One of the testcases will test endpoint functionality, so **you also need** to r
 
 `127.0.0.1:8848`
 
-**on path /endpoints/endpoint0**
+**on path /nacos/endpoint0**
+
+**All these examples could be found in nacos-sdk-cpp/examples/**
 
 ## Integrate the library into your project
 
 Here is an example showing how to integrate the library(.so) into your project:
 
-Create a file named IntegratingIntoYourProject.cpp:
+IntegratingIntoYourProject.cpp:
 ```C++
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
 #include "PropertyKeyConst.h"
 #include "DebugAssertion.h"
 #include "ResourceGuard.h"
-#include "Logger.h"
 #include "NacosString.h"
 
 using namespace std;
@@ -92,13 +93,13 @@ or you can use ldconfig to add libnacos-cli.so to your lib path.
 ## Configuration
 
 ### Get Config
+
+getConfig.cpp:
 ```C++
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
-#include "PropertyKeyConst.h"
-#include "DebugAssertion.h"
+#include "constant/PropertyKeyConst.h"
 #include "ResourceGuard.h"
-#include "Logger.h"
 
 using namespace std;
 using namespace nacos;
@@ -126,17 +127,14 @@ int main() {
 }
 ``` 
 
-### Set Config
+### Publish Config
 
+setConfig.cpp:
 ```C++
 #include <iostream>
-#include <stdlib.h>
-#include <unistd.h>
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
-#include "PropertyKeyConst.h"
-#include "DebugAssertion.h"
-#include "Logger.h"
+#include "constant/PropertyKeyConst.h"
 
 using namespace std;
 using namespace nacos;
@@ -178,16 +176,13 @@ int main() {
 
 ### Listen to key change & Cancel listening
 
+listenToKeys.cpp:
 ```C++
 #include <iostream>
-#include <stdlib.h>
-#include <unistd.h>
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
 #include "listen/Listener.h"
-#include "PropertyKeyConst.h"
-#include "DebugAssertion.h"
-#include "Logger.h"
+#include "constant/PropertyKeyConst.h"
 
 using namespace std;
 using namespace nacos;
@@ -233,23 +228,16 @@ int main() {
 
 ### Register Instance & Unregister Instance
 
+registerInstances.cpp:
 ```C++
 #include <iostream>
-#include <stdlib.h>
 #include <unistd.h>
-#include "naming/NamingProxy.h"
-#include "naming/NacosNamingService.h"
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
 #include "naming/Instance.h"
-#include "Constants.h"
-#include "utils/UtilAndComs.h"
-#include "http/HTTPCli.h"
-#include "DebugAssertion.h"
-#include "Logger.h"
 #include "NacosString.h"
 #include "Properties.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 
 using namespace std;
 using namespace nacos;
@@ -301,16 +289,13 @@ int main() {
 
 ### Subscribe & Unsubscribe
 
+subscribeServices.cpp:
 ```C++
 #include <iostream>
-#include <stdlib.h>
-#include <unistd.h>
 #include "factory/NacosServiceFactory.h"
 #include "ResourceGuard.h"
 #include "naming/subscribe/EventListener.h"
-#include "PropertyKeyConst.h"
-#include "DebugAssertion.h"
-#include "Logger.h"
+#include "constant/PropertyKeyConst.h"
 
 using namespace std;
 using namespace nacos;
@@ -363,22 +348,15 @@ int main() {
 
 ### Get all instances of a service
 
+getAllInstances.cpp:
 ```C++
 #include <iostream>
-#include <stdlib.h>
-#include <unistd.h>
 #include <list>
-#include "naming/NamingProxy.h"
 #include "factory/NacosServiceFactory.h"
 #include "naming/Instance.h"
-#include "Constants.h"
-#include "utils/UtilAndComs.h"
-#include "http/HTTPCli.h"
-#include "DebugAssertion.h"
-#include "Logger.h"
 #include "NacosString.h"
 #include "Properties.h"
-#include "PropertyKeyConst.h"
+#include "constant/PropertyKeyConst.h"
 #include "ResourceGuard.h"
 
 using namespace std;

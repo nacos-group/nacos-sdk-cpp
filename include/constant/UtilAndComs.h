@@ -8,13 +8,11 @@ class UtilAndComs {
 public:
     static NacosString VERSION;
 
-    static NacosString WEB_CONTEXT;
+    static NacosString ENCODING;
 
     static NacosString NACOS_URL_BASE;
-
+    
     static NacosString NACOS_URL_INSTANCE;
-
-    static NacosString ENCODING;
 
     static int REQUEST_DOMAIN_RETRY_COUNT;
 

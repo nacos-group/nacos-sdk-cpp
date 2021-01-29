@@ -37,13 +37,14 @@ private:
     Mutex _lock;
     Condition _NotEmpty;
     Condition _NotFull;
-    bool _stop;
     static DummyTask _dummyTask;
 
     static void *runInThread(void *param);
 
     ThreadPool() :
             _poolSize(0), _poolName("CannotBeCreated"), _NotEmpty(_lock), _NotFull(_lock), _stop(true) {};
+protected:
+    volatile bool _stop;
 public:
     ThreadPool(const NacosString &poolName, size_t poolSize) :
             _poolSize(poolSize), _poolName(poolName), _NotEmpty(_lock), _NotFull(_lock), _stop(true) {
@@ -52,6 +53,8 @@ public:
     ThreadPool(size_t poolSize) :
             _poolSize(poolSize), _poolName("NacosCliWorkerThread"), _NotEmpty(_lock), _NotFull(_lock), _stop(true) {
     };
+
+    virtual ~ThreadPool() {};
 
     Task *take();
 

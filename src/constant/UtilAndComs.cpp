@@ -3,13 +3,11 @@
 namespace nacos{
 NacosString UtilAndComs::VERSION = "Nacos-C-Client:v1.0.21";//TODO:fix nacos trunk code for cpp client
 
-NacosString UtilAndComs::WEB_CONTEXT = "/nacos";
+NacosString UtilAndComs::ENCODING = "UTF-8";
 
-NacosString UtilAndComs::NACOS_URL_BASE = WEB_CONTEXT + "/v1/ns";
+NacosString UtilAndComs::NACOS_URL_BASE = "/v1/ns";
 
 NacosString UtilAndComs::NACOS_URL_INSTANCE = NACOS_URL_BASE + "/instance";
-
-NacosString UtilAndComs::ENCODING = "UTF-8";
 
 int UtilAndComs::REQUEST_DOMAIN_RETRY_COUNT = 3;
 

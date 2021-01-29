@@ -18,8 +18,8 @@ public:
     template<typename T>
     static NacosString valueOf(T val);
 
-    static const NacosString TRUE;
-    static const NacosString FALSE;
+    static const NacosString STR_TRUE;
+    static const NacosString STR_FALSE;
 };
 
 template<typename T>

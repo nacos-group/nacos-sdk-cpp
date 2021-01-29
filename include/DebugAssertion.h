@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "NacosString.h"
-#include "src/log/Logger.h"
 
 namespace nacos{
 #define TEST_ITEM_START {
