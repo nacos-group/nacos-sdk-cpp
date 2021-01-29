@@ -29,11 +29,13 @@ One of the testcases will test endpoint functionality, so **you also need** to r
 
 **on path /nacos/endpoint0**
 
+**All these examples could be found in nacos-sdk-cpp/example/**
+
 ## Integrate the library into your project
 
 Here is an example showing how to integrate the library(.so) into your project:
 
-Create a file named IntegratingIntoYourProject.cpp:
+IntegratingIntoYourProject.cpp:
 ```C++
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
@@ -91,6 +93,8 @@ or you can use ldconfig to add libnacos-cli.so to your lib path.
 ## Configuration
 
 ### Get Config
+
+getConfig.cpp:
 ```C++
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
@@ -125,6 +129,7 @@ int main() {
 
 ### Publish Config
 
+setConfig.cpp:
 ```C++
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
@@ -171,6 +176,7 @@ int main() {
 
 ### Listen to key change & Cancel listening
 
+listenToKeys.cpp:
 ```C++
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
@@ -222,6 +228,7 @@ int main() {
 
 ### Register Instance & Unregister Instance
 
+registerInstances.cpp:
 ```C++
 #include <iostream>
 #include <unistd.h>
@@ -282,6 +289,7 @@ int main() {
 
 ### Subscribe & Unsubscribe
 
+subscribeServices.cpp:
 ```C++
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
@@ -340,6 +348,7 @@ int main() {
 
 ### Get all instances of a service
 
+getAllInstances.cpp:
 ```C++
 #include <iostream>
 #include <list>
