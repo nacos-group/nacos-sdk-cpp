@@ -29,7 +29,7 @@ One of the testcases will test endpoint functionality, so **you also need** to r
 
 **on path /nacos/endpoint0**
 
-**All these examples could be found in nacos-sdk-cpp/example/**
+**All these examples could be found in nacos-sdk-cpp/examples/**
 
 ## Integrate the library into your project
 
