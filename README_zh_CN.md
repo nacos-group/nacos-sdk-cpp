@@ -24,11 +24,13 @@ Nacos-sdk-cpp是nacos客戶端的C++版本，它支持服务发现和动态配�
 
 `127.0.0.1:8848`
 
+**这些例子你都能在nacos-sdk-cpp/examples/找到**
+
 ## 将libnacos-cli集成到你的工程
 
 下面的例子说明了如何将库文件(.so) 集成到你的工程:
 
-创建一个C++文件命名为 IntegratingIntoYourProject.cpp:
+IntegratingIntoYourProject.cpp:
 ```C++
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
@@ -87,6 +89,8 @@ int main() {
 ## 配置
 
 ### 获取配置
+
+getConfig.cpp:
 ```C++
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
@@ -123,6 +127,7 @@ int main() {
 
 ### 发布配置
 
+setConfig.cpp:
 ```C++
 #include <iostream>
 #include <stdlib.h>
@@ -173,6 +178,7 @@ int main() {
 
 ### 监听配置变化和取消监听
 
+listenToKeys.cpp:
 ```C++
 #include <iostream>
 #include <stdlib.h>
@@ -228,6 +234,7 @@ int main() {
 
 ### 注册和反注册实例
 
+registerInstances.cpp:
 ```C++
 #include <iostream>
 #include <stdlib.h>
@@ -296,6 +303,7 @@ int main() {
 
 ### 订阅和取消订阅服务
 
+subscribeServices.cpp:
 ```C++
 #include <iostream>
 #include <stdlib.h>
@@ -358,6 +366,7 @@ int main() {
 
 ### 获取某个服务的全部实例
 
+getAllInstances.cpp:
 ```C++
 #include <iostream>
 #include <stdlib.h>
