@@ -105,7 +105,7 @@ void DelayedThreadPool::schedule(Task *t, long futureTimeToRun) {
         LockGuard __lockSchedTasks(_lockForScheduleTasks);
         _scheduledTasks.push_back(scheduledTask);
         std::sort(_scheduledTasks.begin(), _scheduledTasks.end(), ascOrdFunctor);
-        _delayTaskNotEmpty.notify();
+        _delayTaskNotEmpty.notifyAll();
     }
 }
 
