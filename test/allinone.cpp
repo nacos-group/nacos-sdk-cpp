@@ -122,6 +122,8 @@ bool testRemoveKeyBeingWatched();
 
 bool testGetHostIp();
 
+bool testDelayedThread();
+
 TestData disabledTestList[] =
 TEST_ITEM_START
 TEST_ITEM_END
@@ -187,6 +189,7 @@ TEST_ITEM_START
     TEST_ITEM("Test with address config containing http prefix", testPublishConfigWithHttpPrefix)
     TEST_ITEM("Test with address config containing http prefix", testRemoveKeyBeingWatched)
     TEST_ITEM("Get local machine's IP", testGetHostIp)
+    TEST_ITEM("Test delayed task pool", testDelayedThread)
 TEST_ITEM_END
 
 int main() {
