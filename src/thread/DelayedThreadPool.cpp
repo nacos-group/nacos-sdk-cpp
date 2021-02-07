@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "src/thread/DelayedThreadPool.h"
 #include "NacosExceptions.h"
 
@@ -62,7 +63,7 @@ public:
     }
 };
 
-DelayedThreadPool::DelayedThreadPool(const NacosString &poolName, long poolSize)
+DelayedThreadPool::DelayedThreadPool(const NacosString &poolName, size_t poolSize)
 :ThreadPool(poolName, poolSize),_delayTaskNotEmpty(_lockForScheduleTasks), _stop_delayed_tp(true) {
     log_debug("DelayedThreadPool::DelayedThreadPool() name = %s size = %d\n", poolName.c_str(), poolSize);
     if (poolSize <= 0) {
@@ -70,7 +71,7 @@ DelayedThreadPool::DelayedThreadPool(const NacosString &poolName, long poolSize)
     }
     delayTasks = new Task*[poolSize];
     log_debug("DelayedThreadPool::DelayedThreadPool initializing tasks\n");
-    for (int i = 0; i < poolSize; i++) {
+    for (size_t i = 0; i < poolSize; i++) {
         delayTasks[i] = new DelayedWorker(*this);
     }
 }
@@ -79,7 +80,7 @@ DelayedThreadPool::DelayedThreadPool(const NacosString &poolName, long poolSize)
 DelayedThreadPool::~DelayedThreadPool() {
     log_debug("DelayedThreadPool::~DelayedThreadPool\n");
     if (delayTasks != NULL) {
-        for (int i = 0; i < _poolSize; i++) {
+        for (size_t i = 0; i < _poolSize; i++) {
             delete delayTasks[i];
             delayTasks[i] = NULL;
         }
@@ -113,7 +114,7 @@ void DelayedThreadPool::start() {
     _stop_delayed_tp = false;
     ThreadPool::start();
     log_debug("DelayedThreadPool::start()\n");
-    for (int i = 0; i < _poolSize; i++) {
+    for (size_t i = 0; i < _poolSize; i++) {
         put(delayTasks[i]);
     }
 }

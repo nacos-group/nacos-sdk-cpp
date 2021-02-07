@@ -18,7 +18,7 @@ private:
     Task **delayTasks;
     volatile bool _stop_delayed_tp;
 public:    
-    DelayedThreadPool(const NacosString &poolName, long poolSize) ;
+    DelayedThreadPool(const NacosString &poolName, size_t poolSize) ;
     ~DelayedThreadPool();
 
     /**
