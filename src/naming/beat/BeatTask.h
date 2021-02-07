@@ -5,6 +5,7 @@
 #include "src/naming/NamingProxy.h"
 #include "BeatReactor.h"
 #include "src/thread/ThreadPool.h"
+#include "src/thread/Task.h"
 #include "thread/AtomicInt.h"
 #include "src/log/Logger.h"
 #include "src/factory/ObjectConfigData.h"

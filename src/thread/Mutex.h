@@ -1,8 +1,10 @@
 #ifndef __MUTEX_H_
 #define __MUTEX_H_
 
+#include<iostream>
 #include <pthread.h>
 #include "Tid.h"
+#include "src/utils/TimeUtils.h"
 
 /*
 * Mutex.h
@@ -49,8 +51,25 @@ public:
 
     ~Condition() { pthread_cond_destroy(&_cond); };
 
-    void wait() {
-        pthread_cond_wait(&_cond, _mutex.getPthreadMutex());
+    int wait() {
+        return pthread_cond_wait(&_cond, _mutex.getPthreadMutex());
+    }
+
+    int wait(long millis) {
+        struct timeval now;
+        struct timespec wakeup_time;
+
+        TimeUtils::getCurrentTimeInStruct(now);
+        now.tv_usec = now.tv_usec + millis * 1000;
+        now.tv_sec = now.tv_sec + now.tv_usec / 1000000;
+        now.tv_usec = now.tv_usec % 1000000;
+
+        wakeup_time.tv_nsec = now.tv_usec * 1000;
+        wakeup_time.tv_sec = now.tv_sec;
+        //std::cout << " millis:" << millis
+        //<< "   wakeup time:sec:" << wakeup_time.tv_sec << "  nsec:" << wakeup_time.tv_nsec << std::endl;
+
+        return pthread_cond_timedwait(&_cond, _mutex.getPthreadMutex(), &wakeup_time);
     }
 
     void notify() {
