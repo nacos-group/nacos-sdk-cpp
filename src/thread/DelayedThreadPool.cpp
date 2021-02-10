@@ -25,40 +25,56 @@ public:
             if (_container._scheduledTasks.empty()) {
                 log_debug("[DelayedWorker] empty, wait for task\n");
                 _container._delayTaskNotEmpty.wait();
-                _container._lockForScheduleTasks.unlock();
                 if (_container._stop_delayed_tp) {
+                    _container._lockForScheduleTasks.unlock();
                     return;
                 }
-                log_debug("[DelayedWorker] awake continue\n");
-                continue;
-            } else {//
-                log_debug("[DelayedWorker] iterating on _scheduledTasks\n");
-                std::vector< std::pair<long, Task*> >::iterator it = _container._scheduledTasks.begin();
-                while (it != _container._scheduledTasks.end()) {
-                    int64_t now_time = TimeUtils::getCurrentTimeInMs();
-                    log_debug("[DelayedWorker] now = %ld wakeup time = %ld\n", now_time, it->first);
-                    if (it->first <= now_time) {
-                        Task *task = it->second;
-                        _container._scheduledTasks.erase(it);
+                log_debug("[DelayedWorker] wake up due to incoming event\n");
+            }
+
+            /*
+            * Here actually we have 2 different design patterns:
+            * 1. wait both on the _delayTaskNotEmpty condition and the nearest task to be executed
+            * 2. wait on the nearest task to be executed
+            * 
+            * The advantages/disadvantages for pattern 1 (the pattern applied here).
+            * The advantages are that:
+            * 1. This design pattern is more responsive
+            * 2. For tasks that take a short time, this pattern is more effective since one worker can handle more tasks
+            * (compared with the pattern that wait() for exact one task in else {} block)
+            * 
+            * The disadvantages are that:
+            * 1. Will incur more wake-ups and context-switches(I guess)
+            * 2. Not as precise as the pattern 2
+            * */
+
+            log_debug("[DelayedWorker] iterating on _scheduledTasks\n");
+            std::vector< std::pair<long, Task*> >::iterator it;
+            while ((it = _container._scheduledTasks.begin()) != _container._scheduledTasks.end()) {
+                int64_t now_time = TimeUtils::getCurrentTimeInMs();
+                log_debug("[DelayedWorker] now = %ld wakeup time = %ld\n", now_time, it->first);
+                if (it->first <= now_time) {
+                    Task *task = it->second;
+                    _container._scheduledTasks.erase(it);
+                    _container._lockForScheduleTasks.unlock();
+                    //the task can also attempt to retrieve the lock
+                    if (_container._stop_delayed_tp) {
+                        return;
+                    }
+                    task->run();
+                    _container._lockForScheduleTasks.lock();
+                    log_debug("[DelayedWorker] continue 2 next task\n");
+                } else {
+                    _container._delayTaskNotEmpty.wait(it->first - now_time);
+                    //awake from sleep when a stop signal is sent
+                    if (_container._stop_delayed_tp) {
                         _container._lockForScheduleTasks.unlock();
-                        //the task can also attempt to retrieve the lock
-                        task->run();
-                        _container._lockForScheduleTasks.lock();
-                        log_debug("[DelayedWorker] continue 2 next task\n");
-                        continue;
-                    } else {
-                        _container._delayTaskNotEmpty.wait(it->first - now_time);
-                        //awake from sleep when a stop signal is sent
-                        if (_container._stop_delayed_tp) {
-                            _container._lockForScheduleTasks.unlock();
-                            return;
-                        }
-                        it = _container._scheduledTasks.begin();
-                        _container._lockForScheduleTasks.unlock();
-                        continue;
+                        return;
                     }
                 }
             }
+
+            _container._lockForScheduleTasks.unlock();
         }
     }
 };

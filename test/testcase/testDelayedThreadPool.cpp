@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
 #include "src/thread/DelayedThreadPool.h"
 #include "DebugAssertion.h"
 #include "NacosExceptions.h"
@@ -12,13 +13,23 @@ class DelayedTask : public Task {
 public:
     DelayedThreadPool *executor;
     uint64_t interval;// in MS
+    uint64_t last_exec_time;
+    DelayedTask() {
+        last_exec_time = 0;
+    }
+
     void run() {
         uint64_t now_ms = TimeUtils::getCurrentTimeInMs();
+        uint64_t interval_calc = 0;
+        if (last_exec_time != 0) {
+            interval_calc = now_ms - last_exec_time;
+        }
+        last_exec_time = now_ms;
         executor->schedule(this,now_ms + interval);//interval/1000 secs later
         if (executor == NULL) {
             throw NacosException(NacosException::INVALID_CONFIG_PARAM, "no executor");
         }
-        cout << ">>>>>>>>>>>>>>>>>>>>Task " << getTaskName().c_str() <<" triggered, time = " << now_ms/1000 << "(" << now_ms << ")"<< endl;
+        printf(">>>>>>>>>>>>>>>>>>Task %s triggered, time =%llu (%llu), interval = %llu\n", getTaskName().c_str(), now_ms/1000, now_ms, interval_calc);
 
         sleep(1);
     }
@@ -27,7 +38,7 @@ public:
 bool testDelayedThread() {
     cout << "in function testDelayedThread" << endl;
 
-    DelayedThreadPool dtp("testDPool", 2);
+    DelayedThreadPool dtp("testDPool", 5);
     dtp.start();
     cout << "create tasks" << endl;
     DelayedTask task1;
@@ -48,7 +59,7 @@ bool testDelayedThread() {
     dtp.schedule(&task1, now_ms + task1.interval);
     dtp.schedule(&task2, now_ms + task2.interval);
     dtp.schedule(&task3, now_ms + task3.interval);
-    sleep(6);
+    sleep(12);
     cout << "call stop()" << endl;
     dtp.stop();
     cout << "end of test" << endl;
