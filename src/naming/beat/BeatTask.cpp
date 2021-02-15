@@ -3,13 +3,13 @@
 #include "BeatTask.h"
 #include "NacosString.h"
 #include "src/log/Logger.h"
+#include "src/utils/TimeUtils.h"
 
 using namespace std;
 
 namespace nacos{
 BeatTask::BeatTask(BeatInfo &beatInfo, ObjectConfigData *objectConfigData)
         : _beatInfo(beatInfo), _objectConfigData(objectConfigData), _scheduled(false) {
-    incRef();
 };
 
 BeatInfo BeatTask::getBeatInfo() const {
@@ -21,14 +21,14 @@ void BeatTask::setBeatInfo(const BeatInfo &beatInfo) {
 }
 
 void BeatTask::run() {
-    long newInterval = _objectConfigData->_serverProxy->sendBeat(_beatInfo);
-    _objectConfigData->_beatReactor->setClientBeatInterval(newInterval);
-    setScheduled(false);
-    int refcount = decRef();
-    if (refcount == 0) {
-        log_debug("[BeatTask]:refCount is 0, deleting this object\n");
+    if (!_scheduled) {
+        _objectConfigData->_beatReactor->removeBeatInfo(_beatInfo.serviceName, _beatInfo.ip, _beatInfo.port);
         delete this;
+        return;
     }
+    uint64_t now_ms = TimeUtils::getCurrentTimeInMs();
+    _objectConfigData->_beatReactor->_delayedThreadPool->schedule(this, now_ms + _interval);
+    _interval = _objectConfigData->_serverProxy->sendBeat(_beatInfo);
 }
 
 BeatTask::~BeatTask() {

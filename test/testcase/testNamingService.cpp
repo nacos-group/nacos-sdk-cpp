@@ -168,7 +168,7 @@ bool testNamingServiceRegister() {
     instance.ephemeral = true;
 
     try {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
             for (int j = 0; j < 3; j++) {
                 instance.clusterName = "DefaultCluster";
@@ -185,8 +185,10 @@ bool testNamingServiceRegister() {
         return false;
     }
 
+    getchar();
+
     try {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
             for (int j = 0; j < 3; j++) {
                 NamingServiceSelector selector;
@@ -203,6 +205,8 @@ bool testNamingServiceRegister() {
         cout << "encounter exception while getting service instance, raison:" << e.what() << endl;
         return false;
     }
+    
+    getchar();
 
     cout << "testNamingServiceRegister successful" << endl;
 

@@ -116,7 +116,10 @@ void DelayedThreadPool::schedule(Task *t, long futureTimeToRun) {
     if (_stop) {
         return;
     }
-    log_debug("DelayedThreadPool::schedule() name=%s future = %d\n", t->getTaskName().c_str(), futureTimeToRun);
+    if (futureTimeToRun < 0) {
+        throw NacosException(NacosException::INVALID_PARAM, "futureTimeToRun must not be negative");
+    }
+    log_debug("DelayedThreadPool::schedule() name=%s future = %ld\n", t->getTaskName().c_str(), futureTimeToRun);
     std::pair<long, Task*> scheduledTask = std::make_pair (futureTimeToRun, t);
     {
         LockGuard __lockSchedTasks(_lockForScheduleTasks);

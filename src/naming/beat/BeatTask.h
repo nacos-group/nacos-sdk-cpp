@@ -17,8 +17,8 @@ class BeatTask : public Task {
 private:
     BeatInfo _beatInfo;
     ObjectConfigData *_objectConfigData;
-    AtomicInt _refCount;
     bool _scheduled;
+    uint64_t _interval;//interval for heartbeat got from the server
 public:
     BeatTask(BeatInfo &beatInfo, ObjectConfigData *objectConfigData);
 
@@ -26,12 +26,6 @@ public:
 
     void setBeatInfo(const BeatInfo &beatInfo);
     BeatInfo getBeatInfo() const;
-
-    int incRef() { return _refCount.inc(); };
-
-    int decRef() { return _refCount.dec(); };
-
-    int getRef() { return _refCount.get(); };
 
     void run();
 
