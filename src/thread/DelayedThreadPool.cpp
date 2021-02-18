@@ -100,7 +100,7 @@ DelayedThreadPool::~DelayedThreadPool() {
             delete delayTasks[i];
             delayTasks[i] = NULL;
         }
-        delete delayTasks;
+        delete [] delayTasks;
         delayTasks = NULL;
     }
 }
@@ -109,8 +109,9 @@ struct tagAscOrdFunctor{
     bool operator ()(const std::pair<long, Task*> &lhs, const std::pair<long, Task*> &rhs) {
         return lhs.first < rhs.first;
     };
-} ascOrdFunctor;
+} ascOrdFunctor = {};
 
+#include <stdio.h>
 //futureTimeToRun: time in MS
 void DelayedThreadPool::schedule(Task *t, long futureTimeToRun) {
     if (_stop) {

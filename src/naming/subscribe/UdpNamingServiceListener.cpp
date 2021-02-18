@@ -46,8 +46,8 @@ void *UdpNamingServiceListener::listenerThreadFunc(void *param) {
         int ret;//also data_len
 
         log_debug("before recvfrom() socketfd:%d\n", thisObj->sockfd);
-        struct sockaddr src_addr;
-        socklen_t src_addr_len;
+        struct sockaddr src_addr = {0};
+        socklen_t src_addr_len = {0};
         ret = recvfrom(thisObj->sockfd, (char *)thisObj->receiveBuffer, UDP_MSS, MSG_WAITALL, &src_addr, &src_addr_len);
         log_debug("ret got from recvfrom():%d\n", ret);
 
