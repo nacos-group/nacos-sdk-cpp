@@ -30,8 +30,10 @@ public:
     void run();
 
     void setScheduled(bool scheduled) { _scheduled = scheduled; };
-
     bool getScheduled() { return _scheduled; };
+
+    void setInterval(uint64_t interval) { _interval = interval; };
+    uint64_t getInterval() const { return _interval; };
 };
 }//namespace nacos
 

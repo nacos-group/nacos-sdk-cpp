@@ -21,15 +21,15 @@ private:
     int _threadCount;
     RWLock _beatInfoLock;
     std::map<NacosString, BeatTask *> _beatInfoList;
-    volatile long _clientBeatInterval;
+    volatile uint64_t _clientBeatInterval;
 protected:
     friend class BeatTask;
     volatile bool _stop;
     DelayedThreadPool *_delayedThreadPool;
 public:
-    void setClientBeatInterval(long interval) { _clientBeatInterval = interval; };
+    void setClientBeatInterval(uint64_t interval) { _clientBeatInterval = interval; };
 
-    long getClientBeatInterval() { return _clientBeatInterval; };
+    uint64_t getClientBeatInterval() const { return _clientBeatInterval; };
 
     BeatReactor(ObjectConfigData *objectConfigData, int threadCount)
             : _objectConfigData(objectConfigData), _beatInfoLock() {

@@ -22,7 +22,6 @@ void BeatTask::setBeatInfo(const BeatInfo &beatInfo) {
 
 void BeatTask::run() {
     if (!_scheduled) {
-        _objectConfigData->_beatReactor->removeBeatInfo(_beatInfo.serviceName, _beatInfo.ip, _beatInfo.port);
         delete this;
         return;
     }
