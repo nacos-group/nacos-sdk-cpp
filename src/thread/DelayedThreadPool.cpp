@@ -11,8 +11,9 @@ class DelayedWorker : public Task {
 private:
     DelayedThreadPool &_container;
 public:
+    volatile bool _start;
     DelayedWorker(DelayedThreadPool &container) : _container(container) {
-
+        _start = false;
     };
 
     void run() {
@@ -24,11 +25,11 @@ public:
             log_debug("[DelayedWorker] start to wait for task stop=%d\n", _container._stop);
             if (_container._scheduledTasks.empty()) {
                 log_debug("[DelayedWorker] empty, wait for task\n");
-                _container._delayTaskNotEmpty.wait();
                 if (_container._stop_delayed_tp) {
                     _container._lockForScheduleTasks.unlock();
                     return;
                 }
+                _container._delayTaskNotEmpty.wait();
                 log_debug("[DelayedWorker] wake up due to incoming event\n");
             }
 
@@ -65,17 +66,18 @@ public:
                     _container._lockForScheduleTasks.lock();
                     log_debug("[DelayedWorker] continue 2 next task\n");
                 } else {
-                    _container._delayTaskNotEmpty.wait(it->first - now_time);
                     //awake from sleep when a stop signal is sent
                     if (_container._stop_delayed_tp) {
                         _container._lockForScheduleTasks.unlock();
                         return;
                     }
+                    _container._delayTaskNotEmpty.wait(it->first - now_time);
                 }
             }
 
             _container._lockForScheduleTasks.unlock();
         }
+        _start = false;
     }
 };
 
@@ -85,7 +87,7 @@ DelayedThreadPool::DelayedThreadPool(const NacosString &poolName, size_t poolSiz
     if (poolSize <= 0) {
         throw NacosException(NacosException::INVALID_PARAM, "Poll size cannot be lesser than 0");
     }
-    delayTasks = new Task*[poolSize];
+    delayTasks = new DelayedWorker*[poolSize];
     log_debug("DelayedThreadPool::DelayedThreadPool initializing tasks\n");
     for (size_t i = 0; i < poolSize; i++) {
         delayTasks[i] = new DelayedWorker(*this);
@@ -135,7 +137,8 @@ void DelayedThreadPool::start() {
     ThreadPool::start();
     log_debug("DelayedThreadPool::start()\n");
     for (size_t i = 0; i < _poolSize; i++) {
-        put(delayTasks[i]);
+        delayTasks[i]->_start = true;
+        put((Task*)delayTasks[i]);
     }
 }
 
@@ -145,7 +148,7 @@ void DelayedThreadPool::stop() {
     }
 
     _stop_delayed_tp = true;
-
+    _delayTaskNotEmpty.notifyAll();
     for (std::list<Thread *>::iterator it = _threads.begin(); it != _threads.end(); it++) {
         (*it)->kill();
     }

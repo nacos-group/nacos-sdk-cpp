@@ -29,7 +29,7 @@ public:
         if (executor == NULL) {
             throw NacosException(NacosException::INVALID_CONFIG_PARAM, "no executor");
         }
-        printf(">>>>>>>>>>>>>>>>>>Task %s triggered, time =%llu (%llu), interval = %llu\n", getTaskName().c_str(), now_ms/1000, now_ms, interval_calc);
+        printf(">>>>>>>>>>>>>>>>>>Task %s triggered, time =%lu (%lu), interval = %lu\n", getTaskName().c_str(), now_ms/1000, now_ms, interval_calc);
 
         sleep(1);
     }
@@ -38,28 +38,50 @@ public:
 bool testDelayedThread() {
     cout << "in function testDelayedThread" << endl;
 
-    DelayedThreadPool dtp("testDPool", 5);
+    DelayedThreadPool dtp("testDPool", 11);
     dtp.start();
     cout << "create tasks" << endl;
-    DelayedTask task1;
-    task1.executor = &dtp;
-    task1.setTaskName("task1");
-    task1.interval = 1000;
-    DelayedTask task2;
-    task2.executor = &dtp;
-    task2.setTaskName("task2");
-    task2.interval = 2000;
-    DelayedTask task3;
-    task3.executor = &dtp;
-    task3.setTaskName("task3");
-    task3.interval = 3000;
 
-    cout << "do schedule" << endl;
+    DelayedTask delayedTasks[10];
+
     uint64_t now_ms = TimeUtils::getCurrentTimeInMs();
-    dtp.schedule(&task1, now_ms + task1.interval);
-    dtp.schedule(&task2, now_ms + task2.interval);
-    dtp.schedule(&task3, now_ms + task3.interval);
-    sleep(12);
+    for (size_t i = 0; i < sizeof(delayedTasks) / sizeof(DelayedTask); i++) {
+        delayedTasks[i].executor = &dtp;
+        delayedTasks[i].interval = (i + 1) * 1000;
+        delayedTasks[i].setTaskName("DelayedTask-" + NacosStringOps::valueOf(i));
+
+        dtp.schedule(&delayedTasks[i], now_ms);
+    }
+
+    sleep(20);
+
+    cout << "call stop()" << endl;
+    dtp.stop();
+    cout << "end of test" << endl;
+
+    return true;
+}
+
+bool testDelayedThread2() {
+    cout << "in function testDelayedThread2 - multiple tasks triggered at the same time" << endl;
+
+    DelayedThreadPool dtp("testDPool", 11);
+    dtp.start();
+    cout << "create tasks" << endl;
+
+    DelayedTask delayedTasks[10];
+
+    uint64_t now_ms = TimeUtils::getCurrentTimeInMs();
+    for (size_t i = 0; i < sizeof(delayedTasks) / sizeof(DelayedTask); i++) {
+        delayedTasks[i].executor = &dtp;
+        delayedTasks[i].interval = 1000;
+        delayedTasks[i].setTaskName("DelayedTask-" + NacosStringOps::valueOf(i));
+
+        dtp.schedule(&delayedTasks[i], now_ms);
+    }
+
+    sleep(20);
+
     cout << "call stop()" << endl;
     dtp.stop();
     cout << "end of test" << endl;

@@ -9,15 +9,17 @@
 
 namespace nacos {
 
+class DelayedWorker;
+
 class DelayedThreadPool : public ThreadPool {
 private:
     Condition _delayTaskNotEmpty;
     Mutex _lockForScheduleTasks;//for _scheduledTasks
     std::vector< std::pair<long, Task*> > _scheduledTasks;
     DelayedThreadPool();
-    Task **delayTasks;
+    DelayedWorker **delayTasks;
     volatile bool _stop_delayed_tp;
-public:    
+public:
     DelayedThreadPool(const NacosString &poolName, size_t poolSize) ;
     ~DelayedThreadPool();
 
