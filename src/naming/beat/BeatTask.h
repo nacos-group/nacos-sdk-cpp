@@ -5,6 +5,7 @@
 #include "src/naming/NamingProxy.h"
 #include "BeatReactor.h"
 #include "src/thread/ThreadPool.h"
+#include "src/thread/Task.h"
 #include "thread/AtomicInt.h"
 #include "src/log/Logger.h"
 #include "src/factory/ObjectConfigData.h"
@@ -16,8 +17,8 @@ class BeatTask : public Task {
 private:
     BeatInfo _beatInfo;
     ObjectConfigData *_objectConfigData;
-    AtomicInt _refCount;
     bool _scheduled;
+    uint64_t _interval;//interval for heartbeat got from the server
 public:
     BeatTask(BeatInfo &beatInfo, ObjectConfigData *objectConfigData);
 
@@ -26,17 +27,13 @@ public:
     void setBeatInfo(const BeatInfo &beatInfo);
     BeatInfo getBeatInfo() const;
 
-    int incRef() { return _refCount.inc(); };
-
-    int decRef() { return _refCount.dec(); };
-
-    int getRef() { return _refCount.get(); };
-
     void run();
 
     void setScheduled(bool scheduled) { _scheduled = scheduled; };
-
     bool getScheduled() { return _scheduled; };
+
+    void setInterval(uint64_t interval) { _interval = interval; };
+    uint64_t getInterval() const { return _interval; };
 };
 }//namespace nacos
 

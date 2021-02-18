@@ -8,6 +8,8 @@ namespace nacos{
 class TimeUtils {
 public:
     static int64_t getCurrentTimeInMs();
+    static void getCurrentTimeInStruct(struct timeval &tv);
+
 };
 }//namespace nacos
 

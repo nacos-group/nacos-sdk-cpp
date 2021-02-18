@@ -9,4 +9,8 @@ int64_t TimeUtils::getCurrentTimeInMs() {
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 
+void TimeUtils::getCurrentTimeInStruct(struct timeval &tv) {
+    gettimeofday(&tv, NULL);
+}
+
 }//namespace nacos

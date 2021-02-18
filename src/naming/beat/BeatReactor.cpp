@@ -9,8 +9,7 @@ using namespace std;
 namespace nacos{
 void BeatReactor::start() {
     _stop = false;
-    _beatMaster->start();
-    _threadPool->start();
+    _delayedThreadPool->start();
 }
 
 void BeatReactor::stop() {
@@ -19,49 +18,28 @@ void BeatReactor::stop() {
         return;
     }
     _stop = true;
-    _beatMaster->kill();
-    _beatMaster->join();
-    _threadPool->stop();
-}
-
-
-void *BeatReactor::beatMaster(void *param) {
-    BeatReactor *thisobj = (BeatReactor *) param;
-    while (!thisobj->_stop) {
-        {
-            LockGuard _lockguard(thisobj->_beatInfoLock);
-            for (map<NacosString, BeatTask *>::iterator it = thisobj->_beatInfoList.begin();
-                 it != thisobj->_beatInfoList.end(); it++) {
-                BeatTask *curtask = it->second;
-                if (curtask->getScheduled()) {
-                    continue;
-                }
-                curtask->incRef();
-                curtask->setScheduled(true);
-                thisobj->_threadPool->put(curtask);
-            }
-        }
-        sleep(thisobj->_clientBeatInterval / 1000);//TODO:sleep in a more precise way
-    }
-
-    return NULL;
+    _delayedThreadPool->stop();
 }
 
 void BeatReactor::addBeatInfo(const NacosString &serviceName, BeatInfo &beatInfo) {
     NacosString beatInfoStr = beatInfo.toString();
     log_info("[BEAT] adding beat: %s to beat map.\n", beatInfoStr.c_str());
-    BeatTask *beattask = new BeatTask(beatInfo, _objectConfigData);
     NacosString beatKey = buildKey(serviceName, beatInfo.ip, beatInfo.port);
-    beattask->setTaskName(beatKey);
+    BeatTask *newBeatTask;
     {
-        LockGuard _lockguard(_beatInfoLock);
+        WriteGuard _lockguard(_beatInfoLock);
         //The specified beatInfo is already in the list
         if (_beatInfoList.count(beatKey) != 0) {
             log_warn("Adding already-exist key:%s\n", beatKey.c_str());
             return;
         }
-        _beatInfoList[beatKey] = beattask;
+        newBeatTask = new BeatTask(beatInfo, _objectConfigData);
+        newBeatTask->setScheduled(true);
+        newBeatTask->setTaskName(beatKey);
+        newBeatTask->setInterval(_clientBeatInterval);
+        _beatInfoList[beatKey] = newBeatTask;
     }
+    _delayedThreadPool->schedule(newBeatTask, TimeUtils::getCurrentTimeInMs() + _clientBeatInterval);
     //TODO:MetricsMonitor.getDom2BeatSizeMonitor().set(dom2Beat.size());
 }
 
@@ -78,7 +56,7 @@ void BeatReactor::addBeatInfo(const NacosString &serviceName, BeatInfo &beatInfo
 bool BeatReactor::getBeatInfo(const NacosString &serviceName, const NacosString &ip, int port, BeatInfo &beatInfo) {
     NacosString beatKey = buildKey(serviceName, ip, port);
     {
-        LockGuard _lockguard(_beatInfoLock);
+        ReadGuard _lockguard(_beatInfoLock);
         if (_beatInfoList.count(beatKey) == 0) {
             return false;
         }
@@ -100,7 +78,7 @@ bool BeatReactor::modifyBeatInfo(const NacosString &serviceName, BeatInfo &beatI
     log_info("[BEAT] modify beat: %s to beat map.\n", beatInfoStr.c_str());
     NacosString beatKey = buildKey(serviceName, beatInfo.ip, beatInfo.port);
     {
-        LockGuard _lockguard(_beatInfoLock);
+        WriteGuard _lockguard(_beatInfoLock);
         if (_beatInfoList.count(beatKey) != 0) {
             log_warn("Modifying non-existent key:%s\n", beatKey.c_str());
             return false;
@@ -127,21 +105,17 @@ bool BeatReactor::modifyBeatInfo(const NacosString &serviceName, BeatInfo &beatI
 bool BeatReactor::removeBeatInfo(const NacosString &serviceName, const NacosString &ip, int port) {
     log_info("[BEAT] removing beat: %s:%s:%d from beat map.", serviceName.c_str(), ip.c_str(), port);
     NacosString beatKey = buildKey(serviceName, ip, port);
-    BeatTask *beattask = NULL;
+    BeatTask *beatTaskToRemove = NULL;
     {
-        LockGuard _lockguard(_beatInfoLock);
+        WriteGuard _lockguard(_beatInfoLock);
         //If we can't find the beatInfo in the list, just return
         if (_beatInfoList.count(beatKey) != 1) {
             log_warn("Removing non-existent key:%s\n", beatKey.c_str());
             return false;
         }
-        beattask = _beatInfoList[beatKey];
+        beatTaskToRemove = _beatInfoList[beatKey];
+        beatTaskToRemove->setScheduled(false);
         _beatInfoList.erase(beatKey);
-    }
-    int refcount = beattask->decRef();
-    if (refcount == 0) {
-        log_debug("[BEAT]:refCount is 0, deleting the object\n");
-        delete beattask;
     }
     //TODO:MetricsMonitor.getDom2BeatSizeMonitor().set(dom2Beat.size());
 
@@ -149,14 +123,13 @@ bool BeatReactor::removeBeatInfo(const NacosString &serviceName, const NacosStri
 }
 
 void BeatReactor::removeAllBeatInfo() {
-    LockGuard _lockguard(_beatInfoLock);
+    log_debug("BeatReactor::removeAllBeatInfo() start to remove\n");
+    WriteGuard _lockguard(_beatInfoLock);
     for (map<NacosString, BeatTask *>::iterator it = _beatInfoList.begin();
          it != _beatInfoList.end(); it++) {
-        BeatTask *curtask = it->second;
-        NACOS_ASSERT(curtask->getRef() == 1);
-        curtask->decRef();
-        delete curtask;
-        curtask = NULL;
+        BeatTask *curTask = it->second;
+        delete curTask;
+        curTask = NULL;
     }
     _beatInfoList.clear();
 }

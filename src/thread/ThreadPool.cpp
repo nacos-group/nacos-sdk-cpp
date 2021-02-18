@@ -1,5 +1,6 @@
 #include <exception>
 #include "ThreadPool.h"
+#include "Task.h"
 
 using namespace std;
 
@@ -9,6 +10,7 @@ DummyTask ThreadPool::_dummyTask;
 void *ThreadPool::runInThread(void *param) {
     ThreadPool *thisobj = (ThreadPool *) param;
 
+    log_debug("ThreadPool::runInThread()\n");
     while (!thisobj->_stop) {
         Task *t = thisobj->take();
         NacosString taskName = t->getTaskName();
@@ -53,6 +55,7 @@ void ThreadPool::put(Task *t) {
     {
         LockGuard _lockGuard(_lock);
 
+        log_debug("ThreadPool:::::taskList:%d poolSize:%d stop:%d\n", _taskList.size(), _poolSize, _stop);
         while (!(_taskList.size() < _poolSize) && !_stop) {
             _NotFull.wait();
         }
@@ -70,6 +73,7 @@ void ThreadPool::put(Task *t) {
 };
 
 void ThreadPool::start() {
+    log_warn("ThreadPool::start() start\n");
     if (!_stop) {
         log_warn("Thread pool named '%s' is started multiple times\n", _poolName.c_str());
         return;

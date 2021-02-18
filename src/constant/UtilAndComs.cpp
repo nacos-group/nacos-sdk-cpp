@@ -13,7 +13,7 @@ int UtilAndComs::REQUEST_DOMAIN_RETRY_COUNT = 3;
 
 NacosString UtilAndComs::SERVER_ADDR_IP_SPLITER = ":";
 
-int UtilAndComs::DEFAULT_CLIENT_BEAT_THREAD_COUNT = 1;//TODO:Calc this according to nr_processors of the host
+int UtilAndComs::DEFAULT_CLIENT_BEAT_THREAD_COUNT = 4;//TODO:Calc this according to nr_processors of the host
 
 int UtilAndComs::DEFAULT_POLLING_THREAD_COUNT = 1;//TODO:Calc this according to nr_processors of the host
 

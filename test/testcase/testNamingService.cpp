@@ -14,6 +14,8 @@
 #include "NacosString.h"
 #include "Properties.h"
 #include "constant/PropertyKeyConst.h"
+#define NR_SERVICE_INSTS 3
+#define NR_SERVICES 3
 
 using namespace std;
 using namespace nacos;
@@ -168,13 +170,13 @@ bool testNamingServiceRegister() {
     instance.ephemeral = true;
 
     try {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < NR_SERVICES; i++) {
             NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < NR_SERVICE_INSTS; j++) {
                 instance.clusterName = "DefaultCluster";
                 instance.ip = "127.0.0.1";
-                instance.port = 20000 + i*10+j;
-                instance.instanceId = "1";
+                instance.port = 20000 + i*NR_SERVICE_INSTS+j;
+                instance.instanceId = NacosStringOps::valueOf(i * NR_SERVICE_INSTS + j);
                 instance.ephemeral = true;
                 namingSvc->registerInstance(serviceName, instance);
             }
@@ -185,14 +187,21 @@ bool testNamingServiceRegister() {
         return false;
     }
 
+    sleep(5);
+
     try {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < NR_SERVICES; i++) {
             NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < NR_SERVICE_INSTS; j++) {
                 NamingServiceSelector selector;
-                selector.setSelectPort(20000 + i*10+j);
+                selector.setSelectPort(20000 + i*NR_SERVICE_INSTS+j);
                 list<Instance> instanceList = namingSvc->getInstanceWithPredicate(serviceName, &selector);
-                cout << "Instance info got from server:" << instanceList.begin()->toString() << endl;
+                if (!instanceList.empty()) {
+                    cout << (i*NR_SERVICE_INSTS+j) << ":Instance info got from server:" << instanceList.begin()->toString() << endl;
+                } else {
+                    cout << "Got empty instance list from server!" << endl;
+                    return false;
+                }
                 SHOULD_BE_TRUE(instanceList.size() == 1, "There should be only 1 instance for each port");
                 SHOULD_BE_TRUE(instanceList.begin()->clusterName == "DefaultCluster", "Cluster name should be DefaultCluster");
                 SHOULD_BE_TRUE(instanceList.begin()->ephemeral == true, "Should be ephemeral node");
@@ -205,6 +214,106 @@ bool testNamingServiceRegister() {
     }
 
     cout << "testNamingServiceRegister successful" << endl;
+
+    return true;
+}
+
+bool testNamingServiceAndDeRegisterActively() {
+    cout << "in function testNamingServiceAndDeRegisterActively" << endl;
+    Properties configProps;
+    configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
+    ADD_AUTH_INFO(configProps);
+    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
+    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    NamingService *namingSvc = factory->CreateNamingService();
+    ResourceGuard <NamingService> _serviceFactory(namingSvc);
+    Instance instance;
+    instance.clusterName = "DefaultCluster";
+    instance.ip = "127.0.0.1";
+    instance.port = 2333;
+    instance.instanceId = "1";
+    instance.ephemeral = true;
+
+    try {
+        for (int i = 0; i < NR_SERVICES; i++) {
+            NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
+            for (int j = 0; j < NR_SERVICE_INSTS; j++) {
+                instance.clusterName = "DefaultCluster";
+                instance.ip = "127.0.0.1";
+                instance.port = 20000 + i*NR_SERVICE_INSTS+j;
+                instance.instanceId = NacosStringOps::valueOf(i * NR_SERVICE_INSTS + j);
+                instance.ephemeral = true;
+                namingSvc->registerInstance(serviceName, instance);
+            }
+        }
+    }
+    catch (NacosException &e) {
+        cout << "encounter exception while registering service instance, raison:" << e.what() << endl;
+        return false;
+    }
+
+    sleep(5);
+
+    try {
+        for (int i = 0; i < NR_SERVICES; i++) {
+            NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
+            for (int j = 0; j < NR_SERVICE_INSTS; j++) {
+                NamingServiceSelector selector;
+                selector.setSelectPort(20000 + i*NR_SERVICE_INSTS+j);
+                list<Instance> instanceList = namingSvc->getInstanceWithPredicate(serviceName, &selector);
+                if (!instanceList.empty()) {
+                    cout << (i*NR_SERVICE_INSTS+j) << ":Instance info got from server:" << instanceList.begin()->toString() << endl;
+                } else {
+                    cout << "Got empty instance list from server!" << endl;
+                    return false;
+                }
+                SHOULD_BE_TRUE(instanceList.size() == 1, "There should be only 1 instance for each port");
+                SHOULD_BE_TRUE(instanceList.begin()->clusterName == "DefaultCluster", "Cluster name should be DefaultCluster");
+                SHOULD_BE_TRUE(instanceList.begin()->ephemeral == true, "Should be ephemeral node");
+            }
+        }
+    }
+    catch (NacosException &e) {
+        cout << "encounter exception while getting service instance, raison:" << e.what() << endl;
+        return false;
+    }
+
+    try {
+        for (int i = 0; i < NR_SERVICES; i++) {
+            NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
+            for (int j = 0; j < NR_SERVICE_INSTS; j++) {
+                NamingServiceSelector selector;
+                selector.setSelectPort(20000 + i*NR_SERVICE_INSTS+j);
+                namingSvc->deregisterInstance(serviceName, "127.0.0.1", 20000 + i*NR_SERVICE_INSTS+j);
+            }
+        }
+    }
+    catch (NacosException &e) {
+        cout << "encounter exception while getting service instance, raison:" << e.what() << endl;
+        return false;
+    }
+
+    cout << "wait for 40 secs to make sure all instances are removed from nacos server" << endl;
+    sleep(40);
+
+    try {
+        for (int i = 0; i < NR_SERVICES; i++) {
+            NacosString serviceName = "TestNamingService" + NacosStringOps::valueOf(i);
+            for (int j = 0; j < NR_SERVICE_INSTS; j++) {
+                NamingServiceSelector selector;
+                selector.setSelectPort(20000 + i*NR_SERVICE_INSTS+j);
+                list<Instance> instanceList = namingSvc->getInstanceWithPredicate(serviceName, &selector);
+
+                SHOULD_BE_TRUE(instanceList.empty(), "There shouldn't be any instance since removed");
+            }
+        }
+    }
+    catch (NacosException &e) {
+        cout << "encounter exception while getting service instance, raison:" << e.what() << endl;
+        return false;
+    }
+
+    cout << "testNamingServiceAndDeRegisterActively successful" << endl;
 
     return true;
 }

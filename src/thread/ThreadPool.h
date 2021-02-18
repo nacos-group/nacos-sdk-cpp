@@ -4,23 +4,11 @@
 #include <list>
 #include <deque>
 #include "Thread.h"
+#include "Task.h"
 #include "NacosString.h"
 #include "Mutex.h"
 
 namespace nacos{
-class Task {
-private:
-    NacosString _taskName;
-public:
-    virtual void run() = 0;
-
-    virtual ~Task() {};
-
-    void setTaskName(const NacosString &taskName) { _taskName = taskName; };
-
-    NacosString getTaskName() { return _taskName; };
-};
-
 class DummyTask : public Task {
 public:
     DummyTask() { setTaskName("DummyTask"); };
@@ -30,8 +18,6 @@ public:
 
 class ThreadPool {
 private:
-    size_t _poolSize;
-    std::list<Thread *> _threads;
     NacosString _poolName;
     std::deque<Task *> _taskList;
     Mutex _lock;
@@ -42,16 +28,18 @@ private:
     static void *runInThread(void *param);
 
     ThreadPool() :
-            _poolSize(0), _poolName("CannotBeCreated"), _NotEmpty(_lock), _NotFull(_lock), _stop(true) {};
+            _poolName("CannotBeCreated"), _NotEmpty(_lock), _NotFull(_lock), _stop(true), _poolSize(0) {};
 protected:
+    std::list<Thread *> _threads;
     volatile bool _stop;
+    size_t _poolSize;
 public:
     ThreadPool(const NacosString &poolName, size_t poolSize) :
-            _poolSize(poolSize), _poolName(poolName), _NotEmpty(_lock), _NotFull(_lock), _stop(true) {
+            _poolName(poolName), _NotEmpty(_lock), _NotFull(_lock), _stop(true), _poolSize(poolSize) {
     };
 
     ThreadPool(size_t poolSize) :
-            _poolSize(poolSize), _poolName("NacosCliWorkerThread"), _NotEmpty(_lock), _NotFull(_lock), _stop(true) {
+            _poolName("NacosCliWorkerThread"), _NotEmpty(_lock), _NotFull(_lock), _stop(true), _poolSize(poolSize) {
     };
 
     virtual ~ThreadPool() {};
@@ -60,9 +48,9 @@ public:
 
     void put(Task *t);
 
-    void start();
+    virtual void start();
 
-    void stop();
+    virtual void stop();
 };
 
 }//namespace nacos

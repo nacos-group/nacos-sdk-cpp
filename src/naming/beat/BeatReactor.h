@@ -6,9 +6,9 @@
 #include "naming/Instance.h"
 #include "NacosString.h"
 #include "NacosExceptions.h"
-#include "src/thread/ThreadPool.h"
+#include "src/thread/DelayedThreadPool.h"
 #include "src/thread/Thread.h"
-#include "src/thread/Mutex.h"
+#include "src/thread/RWLock.h"
 #include "BeatTask.h"
 #include "constant/ConfigConstant.h"
 #include "constant/UtilAndComs.h"
@@ -19,40 +19,41 @@ class BeatReactor {
 private:
     ObjectConfigData *_objectConfigData;
     int _threadCount;
-    ThreadPool *_threadPool;
-    Thread *_beatMaster;
-    Mutex _beatInfoLock;//TODO:rwlock
+    RWLock _beatInfoLock;
     std::map<NacosString, BeatTask *> _beatInfoList;
+    volatile uint64_t _clientBeatInterval;
+protected:
+    friend class BeatTask;
     volatile bool _stop;
-    volatile long _clientBeatInterval;
-
-    static void *beatMaster(void *param);
-
+    DelayedThreadPool *_delayedThreadPool;
 public:
-    void setClientBeatInterval(long interval) { _clientBeatInterval = interval; };
+    void setClientBeatInterval(uint64_t interval) { _clientBeatInterval = interval; };
 
-    long getClientBeatInterval() { return _clientBeatInterval; };
+    uint64_t getClientBeatInterval() const { return _clientBeatInterval; };
 
     BeatReactor(ObjectConfigData *objectConfigData, int threadCount)
-            : _objectConfigData(objectConfigData), _threadCount(threadCount), _beatInfoLock(), _stop(true),
-              _clientBeatInterval(5 * 1000) {
-        _threadPool = new ThreadPool("HeartbeatDaemonPool", _threadCount);
-        _beatMaster = new Thread("BeatMaster", beatMaster, this);
+            : _objectConfigData(objectConfigData), _beatInfoLock() {
+        _threadCount = threadCount;
+        _stop = true;
+        _clientBeatInterval = 5 * 1000;
+        _delayedThreadPool = new DelayedThreadPool("BeatReactor-Daemon", threadCount);
     };
 
     BeatReactor(ObjectConfigData *objectConfigData)
-            : _objectConfigData(objectConfigData), _threadCount(UtilAndComs::DEFAULT_CLIENT_BEAT_THREAD_COUNT), _beatInfoLock(),
-              _stop(true), _clientBeatInterval(5 * 1000) {
-        _threadPool = new ThreadPool("HeartbeatDaemonPool", _threadCount);
-        _beatMaster = new Thread("BeatMaster", beatMaster, this);
+            : _objectConfigData(objectConfigData), _beatInfoLock() {
+        _threadCount = UtilAndComs::DEFAULT_CLIENT_BEAT_THREAD_COUNT;
+        _stop = true;
+        _clientBeatInterval = 5 * 1000;
+        _delayedThreadPool = new DelayedThreadPool("BeatReactor-Daemon", _threadCount);
     };
 
     ~BeatReactor() {
+        log_debug("BeatReactor::~BeatReactor() calling stop\n");
         stop();
-        delete _beatMaster;
-        delete _threadPool;
-        _threadPool = NULL;
-        _beatMaster = NULL;
+        log_debug("BeatReactor::~BeatReactor() delete threadpool\n");
+        delete _delayedThreadPool;
+        _delayedThreadPool = NULL;
+        log_debug("BeatReactor::~BeatReactor() removeAllBeatInfo()\n");
         removeAllBeatInfo();
     };
 
