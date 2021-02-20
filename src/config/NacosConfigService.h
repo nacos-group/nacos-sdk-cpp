@@ -36,6 +36,8 @@ public:
     //Public Methods
     NacosString getConfig(const NacosString &dataId, const NacosString &group, long timeoutMs) throw(NacosException);
 
+    NacosString getConfig(const NacosString &tenant, const NacosString &dataId, const NacosString &group, long timeoutMs) throw(NacosException);
+
     bool publishConfig(const NacosString &dataId, const NacosString &group,
                        const NacosString &content) throw(NacosException);
 

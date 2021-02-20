@@ -20,6 +20,19 @@ public:
     getConfig(const NacosString &dataId, const NacosString &group, long timeoutMs) throw(NacosException) = 0;
 
     /**
+     * Get config
+     *
+     * @param dataId    tenant
+     * @param dataId    dataId
+     * @param group     group
+     * @param timeoutMs read timeout
+     * @return config value
+     * @throws NacosException NacosException
+     */
+    virtual NacosString
+    getConfig(const NacosString &tenant, const NacosString &dataId, const NacosString &group, long timeoutMs) throw(NacosException) = 0;
+
+    /**
      * Add a listener to the configuration, after the server modified the
      * configuration, the client will use the incoming listener callback.
      * Recommended asynchronous processing, the application can implement the

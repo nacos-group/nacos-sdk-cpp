@@ -27,6 +27,16 @@ NacosString NacosConfigService::getConfig
     return getConfigInner(getNamespace(), dataId, group, timeoutMs);
 }
 
+NacosString NacosConfigService::getConfig
+        (
+                const NacosString &tenant,
+                const NacosString &dataId,
+                const NacosString &group,
+                long timeoutMs
+        ) throw(NacosException) {
+    return getConfigInner(tenant, dataId, group, timeoutMs);
+}
+
 bool NacosConfigService::publishConfig
         (
                 const NacosString &dataId,
