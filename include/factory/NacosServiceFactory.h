@@ -6,6 +6,7 @@
 #define NACOS_SDK_CPP_NACOSSERVICEFACTORY_H
 
 #include "INacosServiceFactory.h"
+#include "src/thread/Mutex.h"
 namespace nacos{
 
 class AppConfigManager;
@@ -17,6 +18,10 @@ private:
     Properties props;
     bool configIsSet;
     bool propsIsSet;
+
+    Mutex logSysInitLock;
+    static volatile bool logSystemInitialized;
+    void initializeRuntimeLogSettings(AppConfigManager *_appConfigManager);
 
     void checkConfig() throw(InvalidFactoryConfigException);
     AppConfigManager *buildConfigManager(ObjectConfigData *objectConfigData);

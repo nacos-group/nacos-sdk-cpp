@@ -24,6 +24,8 @@
 //Unlike Java, in cpp, there's no container, no spring to do the ORM job, so I have to handle it myself
 namespace nacos{
 
+volatile bool NacosServiceFactory::logSystemInitialized = false;
+
 void buildSecurityManagerAndHttpDelegate(ObjectConfigData *objectConfigData) {
     AppConfigManager *appConfigManager = objectConfigData->_appConfigManager;
     if (appConfigManager->nacosAuthEnabled()) {
@@ -53,6 +55,24 @@ AppConfigManager *NacosServiceFactory::buildConfigManager(ObjectConfigData *obje
     return appConfigManager;
 }
 
+void NacosServiceFactory::initializeRuntimeLogSettings(AppConfigManager *_appConfigManager) {
+    if (logSystemInitialized) {
+        return;
+    }
+
+    {
+        LockGuard __lockLogSystem(logSysInitLock);
+
+        if (logSystemInitialized) {
+            return;
+        }
+
+        logSystemInitialized = true;
+        Properties copiedProps = _appConfigManager->getAllConfig();
+        Logger::applyLogSettings(copiedProps);
+    }
+}
+
 //FIXME:Memory leak at initializing stage, e.g.:
 //when a HttpDelegate is allocated in CreateConfigService, after that an EXCEPTION is thrown during the initialization of ServerListManager
 //the resource for HttpDelegate is never released
@@ -63,7 +83,8 @@ NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) 
     objectConfigData->name = "config";
     NacosString encoding = "UTF-8";
 
-    buildConfigManager(objectConfigData);
+    AppConfigManager *appConfigManager = buildConfigManager(objectConfigData);
+    initializeRuntimeLogSettings(appConfigManager);
 
     //Create http client
     IHttpCli *httpCli= new HTTPCli();
@@ -107,6 +128,7 @@ ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException) 
     objectConfigData->name = "name";
 
     AppConfigManager *appConfigManager = buildConfigManager(objectConfigData);
+    initializeRuntimeLogSettings(appConfigManager);
 
     //Create http client
     IHttpCli *httpCli = NULL;
@@ -139,7 +161,8 @@ NamingMaintainService *NacosServiceFactory::CreateNamingMaintainService() throw(
     objectConfigData->name = "config";
     NacosString encoding = "UTF-8";
 
-    buildConfigManager(objectConfigData);
+    AppConfigManager *appConfigManager = buildConfigManager(objectConfigData);
+    initializeRuntimeLogSettings(appConfigManager);
 
     //Create http client
     IHttpCli *httpCli= new HTTPCli();
