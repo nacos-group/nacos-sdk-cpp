@@ -128,6 +128,8 @@ bool testDelayedThread2();
 
 bool testNamingServiceAndDeRegisterActively();
 
+bool testThreadPoolConcurrentWithAtomicCounter();
+
 TestData disabledTestList[] =
 TEST_ITEM_START
 TEST_ITEM_END
@@ -197,6 +199,7 @@ TEST_ITEM_START
         TEST_ITEM("Test delayed task pool", testDelayedThread)
         TEST_ITEM("Test delayed task pool - multiple tasks triggered at the same time", testDelayedThread2)
         TEST_ITEM("Register a service instance and remove it actively", testNamingServiceAndDeRegisterActively)
+        TEST_ITEM("thread pool with concurrent add & atomic operation", testThreadPoolConcurrentWithAtomicCounter)
 TEST_ITEM_END
 
 int main() {
