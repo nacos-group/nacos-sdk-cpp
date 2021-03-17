@@ -12,11 +12,8 @@ public:
     AtomicInt(int initval = 0) : _intval(initval) {};
 
     int inc(int incval = 1) {
-        int __i = incval;
-        asm volatile(LOCK_PREFIX "xaddl %0, %1"
-        : "+r" (incval), "+m" (_intval)
-        : : "memory");
-        return incval + __i;
+        int oldValue = __sync_fetch_and_add(&_intval, incval);
+        return incval + oldValue;
     };
 
     int dec(int decval = 1) {
