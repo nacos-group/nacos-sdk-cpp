@@ -1,5 +1,5 @@
-#ifndef __EXCEPTIONS_H_
-#define __EXCEPTIONS_H_
+#ifndef __NACOS_EXCEPTIONS_H_
+#define __NACOS_EXCEPTIONS_H_
 
 #include <exception>
 #include "NacosString.h"
