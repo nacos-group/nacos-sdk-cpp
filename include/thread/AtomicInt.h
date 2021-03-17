@@ -1,9 +1,6 @@
 #ifndef __ATOMIC_INT_H_
 #define __ATOMIC_INT_H_
 
-#define __atomic_fool_gcc(x) (*(volatile struct { int a[100]; } *)x)
-#define LOCK_PREFIX "lock "
-
 namespace nacos{
 class AtomicInt {
 private:
