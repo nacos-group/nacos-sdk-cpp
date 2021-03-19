@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "NacosString.h"
 #include "src/thread/Mutex.h"
+#include "Properties.h"
 
 #define DETAILED_DEBUG_INFO
 
@@ -34,6 +35,23 @@ enum LOG_LEVEL {
     NONE
 };
 
+/**
+ * Logger
+ * Author: Liu, Hanyu
+ * This piece of code is a little bit weird, I have to admit
+ * Actually there are 2 stages which need logging:
+ * 1. The nacos-client is up but no client service is created, need to log issues when creating client service object
+ * 2. client service is created, now need to log issue for the client service
+ *
+ * stage #1 is called the bootstrap stage
+ * stage #2 is called the runtime stage
+ *
+ * On stage #1, the log will be written to:
+ * homedir(~)/nacos/logs/nacos-sdk-cpp.log
+ *
+ * On stage #2, the path can be configured AT MOST ONCE
+ * The path will be implicitly configured when the first client service object is created, so if you don't specify it, the default setting(same as #1) will be used
+ */
 class Logger {
 private:
     static LOG_LEVEL _CUR_SYS_LOG_LEVEL;
@@ -51,6 +69,7 @@ private:
 
 public:
 
+    static void applyLogSettings(Properties &props);
     static void setRotateTime(int64_t rotateTime);
     static void setBaseDir(const NacosString &baseDir);
     static void setLogLevel(LOG_LEVEL level);

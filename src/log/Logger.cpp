@@ -148,9 +148,18 @@ void Logger::deInit() {
 void Logger::initializeLogSystem() {
     Properties props;
 
-    //if we failed to read log settings
-    props = ConfigParserUtils::parseConfigFile(DirUtils::getCwd() + ConfigConstant::FILE_SEPARATOR + ConfigConstant::DEFAULT_CONFIG_FILE);
+    try {
+        props = ConfigParserUtils::parseConfigFile(DirUtils::getCwd() + ConfigConstant::FILE_SEPARATOR + ConfigConstant::DEFAULT_CONFIG_FILE);
+    } catch (IOException &e) {
+        //if we failed to read log settings
+        //use default settings as backup
+    }
 
+    applyLogSettings(props);
+}
+
+
+void Logger::applyLogSettings(Properties &props) {
     if (!props.contains(PropertyKeyConst::LOG_PATH)) {
         NacosString homedir = DirUtils::getHome();
         Logger::setBaseDir(homedir + ConfigConstant::FILE_SEPARATOR + "nacos" + ConfigConstant::FILE_SEPARATOR + "logs");
