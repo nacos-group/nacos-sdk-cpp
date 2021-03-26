@@ -24,19 +24,25 @@ INCLUDES = -Iinclude \
 LIBS = -lcurl -lpthread
 CCFLAGS = -g -Wall -O0 -fPIC
 OUTPUT = nacos-cli.out
-OUTLIB = libnacos-cli.so
+OUTLIB1 = libnacos-cli.so
+OUTLIB2 = libnacos-cli.a
 
 vpath %.cpp $(ALL_SRCS_DIRS)
 
-all :$(DEPS) $(OUTPUT) $(OUTLIB)
+all :$(DEPS) $(OUTPUT) $(OUTLIB1) $(OUTLIB2)
 
 $(OUTPUT) : $(ALL_OBJS)
 	$(info Linking $@ ...)
 	@$(CC) $^ -o $@ $(INCLUDES) $(LIBS) $(CCFLAGS)
 
-$(OUTLIB) : $(OBJS)
-	$(info Linking $@ ...)
+$(OUTLIB1) : $(OBJS)
+	$(info Linking Dynamic $@ ...)
 	@$(CC) $^ -o $@ $(INCLUDES) $(LIBS) $(CCFLAGS) -shared
+
+$(OUTLIB2) : $(OBJS)
+	$(info Linking Static $@ ...)
+	ar cru $(OUTLIB2) $(OBJS)
+	ranlib $(OUTLIB2)
 
 $(ALL_OBJS) : $(OBJ_DIR)/%.o : %.cpp
 	$(info Building $@ ...)
