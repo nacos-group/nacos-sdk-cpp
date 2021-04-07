@@ -9,6 +9,14 @@
 #include <linux/limits.h>
 #elif defined(FreeBSD)
 #include <sys/syslimits.h>
+#else
+
+//we don't know how to handle this situation, check if it's defined
+#warning "Unknown system or arch, trying fallback strategy. Please check if the compilation is correct"
+#ifndef PATH_MAX
+#define PATH_MAX 260
+#endif
+
 #endif
 
 
