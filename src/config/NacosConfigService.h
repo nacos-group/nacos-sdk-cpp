@@ -8,6 +8,7 @@
 #include "src/server/ServerListManager.h"
 #include "Properties.h"
 #include "src/factory/ObjectConfigData.h"
+#include "Compatibility.h"
 
 namespace nacos{
 class NacosConfigService : public ConfigService {
@@ -18,14 +19,14 @@ private:
     NacosConfigService();
 
     NacosString getConfigInner(const NacosString &tenant, const NacosString &dataId, const NacosString &group,
-                               long timeoutMs) throw(NacosException);
+                               long timeoutMs) NACOS_THROW(NacosException);
 
     bool removeConfigInner(const NacosString &tenant, const NacosString &dataId, const NacosString &group,
-                           const NacosString &tag) throw(NacosException);
+                           const NacosString &tag) NACOS_THROW(NacosException);
 
     bool publishConfigInner(const NacosString &tenant, const NacosString &dataId, const NacosString &group,
                             const NacosString &tag, const NacosString &appName, const NacosString &betaIps,
-                            const NacosString &content) throw(NacosException);
+                            const NacosString &content) NACOS_THROW(NacosException);
     //NacosString monitorChange(std::map<NacosString, NacosString> &keysAndContents, long timeoutMs) throw (NacosException);
     //static NacosString monitorListToString(std::map<NacosString, NacosString> &keysAndContents);
 
@@ -34,14 +35,14 @@ public:
     const static long POST_TIMEOUT = 3000L;
 
     //Public Methods
-    NacosString getConfig(const NacosString &dataId, const NacosString &group, long timeoutMs) throw(NacosException);
+    NacosString getConfig(const NacosString &dataId, const NacosString &group, long timeoutMs) NACOS_THROW(NacosException);
 
     bool publishConfig(const NacosString &dataId, const NacosString &group,
-                       const NacosString &content) throw(NacosException);
+                       const NacosString &content) NACOS_THROW(NacosException);
 
-    bool removeConfig(const NacosString &dataId, const NacosString &group) throw(NacosException);
+    bool removeConfig(const NacosString &dataId, const NacosString &group) NACOS_THROW(NacosException);
 
-    void addListener(const NacosString &dataId, const NacosString &group, Listener *listener) throw(NacosException);
+    void addListener(const NacosString &dataId, const NacosString &group, Listener *listener) NACOS_THROW(NacosException);
 
     void removeListener(const NacosString &dataId, const NacosString &group, Listener *listener);
 
@@ -66,7 +67,7 @@ public:
     void setAppConfigManager(AppConfigManager *appConfigManager) { _objectConfigData->_appConfigManager = appConfigManager; };
 
     //ctors/dtor
-    NacosConfigService(ObjectConfigData *objectConfigData) throw(NacosException);
+    NacosConfigService(ObjectConfigData *objectConfigData) NACOS_THROW(NacosException);
 
     virtual ~NacosConfigService();
 };

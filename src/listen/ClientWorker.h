@@ -14,6 +14,7 @@
 #include "src/config/LocalSnapshotManager.h"
 #include "NacosExceptions.h"
 #include "src/factory/ObjectConfigData.h"
+#include "Compatibility.h"
 
 /**
  * ClientWorker
@@ -48,7 +49,7 @@ private:
 
     std::vector <NacosString> parseListenedKeys(const NacosString &ReturnedKeys);
 
-    NacosString checkListenedKeys() throw(NetworkException,NacosException);
+    NacosString checkListenedKeys() NACOS_THROW(NetworkException,NacosException);
 
     void clearDeleteList(int maxRemoves);
 
@@ -84,9 +85,9 @@ public:
     void performWatch();
 
     NacosString getServerConfig(const NacosString &tenant, const NacosString &dataId, const NacosString &group,
-                                long timeoutMs) throw(NacosException);
+                                long timeoutMs) NACOS_THROW(NacosException);
     HttpResult getServerConfigHelper(const NacosString &tenant, const NacosString &dataId, const NacosString &group,
-                                long timeoutMs) throw(NacosException);
+                                long timeoutMs) NACOS_THROW(NacosException);
 };
 }//namespace nacos
 

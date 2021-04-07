@@ -7,6 +7,7 @@
 
 #include "INacosServiceFactory.h"
 #include "src/thread/Mutex.h"
+#include "Compatibility.h"
 namespace nacos{
 
 class AppConfigManager;
@@ -23,7 +24,7 @@ private:
     static volatile bool logSystemInitialized;
     void initializeRuntimeLogSettings(AppConfigManager *_appConfigManager);
 
-    void checkConfig() throw(InvalidFactoryConfigException);
+    void checkConfig() NACOS_THROW(InvalidFactoryConfigException);
     AppConfigManager *buildConfigManager(ObjectConfigData *objectConfigData);
 
 public:
@@ -31,11 +32,11 @@ public:
 
     void setProps(Properties &_props);
 
-    virtual NamingService *CreateNamingService() throw(NacosException);
+    virtual NamingService *CreateNamingService() NACOS_THROW(NacosException);
 
-    virtual ConfigService *CreateConfigService() throw(NacosException);
+    virtual ConfigService *CreateConfigService() NACOS_THROW(NacosException);
 
-    virtual NamingMaintainService *CreateNamingMaintainService() throw(NacosException);
+    virtual NamingMaintainService *CreateNamingMaintainService() NACOS_THROW(NacosException);
 
     NacosServiceFactory();
 

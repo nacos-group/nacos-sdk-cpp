@@ -5,7 +5,7 @@
 using namespace std;
 
 namespace nacos{
-NacosConfigService::NacosConfigService(ObjectConfigData *objectConfigData) throw(NacosException) {
+NacosConfigService::NacosConfigService(ObjectConfigData *objectConfigData) NACOS_THROW(NacosException) {
     _objectConfigData = objectConfigData;
     if (_objectConfigData->_appConfigManager->nacosAuthEnabled()) {
         _objectConfigData->_securityManager->login();
@@ -23,7 +23,7 @@ NacosString NacosConfigService::getConfig
                 const NacosString &dataId,
                 const NacosString &group,
                 long timeoutMs
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     return getConfigInner(getNamespace(), dataId, group, timeoutMs);
 }
 
@@ -32,7 +32,7 @@ bool NacosConfigService::publishConfig
                 const NacosString &dataId,
                 const NacosString &group,
                 const NacosString &content
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     return publishConfigInner(getNamespace(), dataId, group, NULLSTR, NULLSTR, NULLSTR, content);
 }
 
@@ -40,7 +40,7 @@ bool NacosConfigService::removeConfig
         (
                 const NacosString &dataId,
                 const NacosString &group
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     return removeConfigInner(getNamespace(), dataId, group, NULLSTR);
 }
 
@@ -50,7 +50,7 @@ NacosString NacosConfigService::getConfigInner
                 const NacosString &dataId,
                 const NacosString &group,
                 long timeoutMs
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     NacosString result = NULLSTR;
 
     AppConfigManager *_appConfigManager = _objectConfigData->_appConfigManager;
@@ -87,7 +87,7 @@ bool NacosConfigService::removeConfigInner
                 const NacosString &dataId,
                 const NacosString &group,
                 const NacosString &tag
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
     //Get the request url
@@ -137,7 +137,7 @@ bool NacosConfigService::publishConfigInner
                 const NacosString &appName,
                 const NacosString &betaIps,
                 const NacosString &content
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     //TODO:More stringent check, need to improve checkParam() function
     ParamUtils::checkParam(dataId, group, content);
 
@@ -200,7 +200,7 @@ void NacosConfigService::addListener
                 const NacosString &dataId,
                 const NacosString &group,
                 Listener *listener
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     NacosString parmgroup = ConfigConstant::DEFAULT_GROUP;
     if (!isNull(group)) {
         parmgroup = group;

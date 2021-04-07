@@ -3,6 +3,7 @@
 
 #include "NacosExceptions.h"
 #include "src/thread/ThreadLocal.h"
+#include "Compatibility.h"
 
 /**
  * RandomUtils
@@ -36,7 +37,7 @@ public:
      * @return a long random number
      * @throw (NacosException) if begin >= end
      */
-    static int random(int begin, int end) throw (NacosException);
+    static int random(int begin, int end) NACOS_THROW(NacosException);
 };
 }//namespace nacos
 

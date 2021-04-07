@@ -13,7 +13,7 @@ using namespace std;
 
 namespace nacos {
 
-void UdpNamingServiceListener::initializeUdpListener() throw(NacosException) {
+void UdpNamingServiceListener::initializeUdpListener() NACOS_THROW(NacosException) {
     log_debug("in thread UdpNamingServiceListener::initializeUdpListener()\n");
     // Creating socket file descriptor
     if ( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) {

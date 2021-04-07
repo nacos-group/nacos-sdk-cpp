@@ -33,7 +33,7 @@ void NacosNamingService::registerInstance
                 const NacosString &serviceName,
                 const NacosString &ip,
                 int port
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     registerInstance(serviceName, ip, port, ConfigConstant::DEFAULT_CLUSTER_NAME);
 }
 
@@ -43,7 +43,7 @@ void NacosNamingService::registerInstance
                 const NacosString &groupName,
                 const NacosString &ip,
                 int port
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     registerInstance(serviceName, groupName, ip, port, ConfigConstant::DEFAULT_CLUSTER_NAME);
 }
 
@@ -53,7 +53,7 @@ void NacosNamingService::registerInstance
                 const NacosString &ip,
                 int port,
                 const NacosString &clusterName
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     registerInstance(serviceName, ConfigConstant::DEFAULT_GROUP, ip, port, clusterName);
 }
 
@@ -64,7 +64,7 @@ void NacosNamingService::registerInstance
                 const NacosString &ip,
                 int port,
                 const NacosString &clusterName
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     Instance instance;
     instance.ip = ip;
     instance.port = port;
@@ -78,7 +78,7 @@ void NacosNamingService::registerInstance
         (
                 const NacosString &serviceName,
                 Instance &instance
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     registerInstance(serviceName, ConfigConstant::DEFAULT_GROUP, instance);
 }
 
@@ -87,7 +87,7 @@ void NacosNamingService::registerInstance
                 const NacosString &serviceName,
                 const NacosString &groupName,
                 Instance &instance
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
 
     if (instance.ephemeral) {
         BeatInfo beatInfo;
@@ -110,7 +110,7 @@ void NacosNamingService::deregisterInstance
                 const NacosString &serviceName,
                 const NacosString &ip,
                 int port
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     deregisterInstance(serviceName, ip, port, ConfigConstant::DEFAULT_CLUSTER_NAME);
 }
 
@@ -120,7 +120,7 @@ void NacosNamingService::deregisterInstance
                 const NacosString &groupName,
                 const NacosString &ip,
                 int port
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     deregisterInstance(serviceName, groupName, ip, port, ConfigConstant::DEFAULT_CLUSTER_NAME);
 }
 
@@ -130,7 +130,7 @@ void NacosNamingService::deregisterInstance
                 const NacosString &ip,
                 int port,
                 const NacosString &clusterName
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     deregisterInstance(serviceName, ConfigConstant::DEFAULT_GROUP, ip, port, clusterName);
 }
 
@@ -141,7 +141,7 @@ void NacosNamingService::deregisterInstance
                 const NacosString &ip,
                 int port,
                 const NacosString &clusterName
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     Instance instance;
     instance.ip = ip;
     instance.port = port;
@@ -155,7 +155,7 @@ void NacosNamingService::deregisterInstance
                 const NacosString &serviceName,
                 const NacosString &groupName,
                 Instance &instance
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     _objectConfigData->_beatReactor->removeBeatInfo(NamingUtils::getGroupedName(serviceName, groupName), instance.ip, instance.port);
     _objectConfigData->_serverProxy->deregisterService(NamingUtils::getGroupedName(serviceName, groupName), instance);
 }
@@ -163,7 +163,7 @@ void NacosNamingService::deregisterInstance
 list <Instance> NacosNamingService::getAllInstances
         (
                 const NacosString &serviceName
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     list <NacosString> clusters;
     return getAllInstances(serviceName, clusters);
 }
@@ -172,7 +172,7 @@ list <Instance> NacosNamingService::getAllInstances
         (
                 const NacosString &serviceName,
                 const NacosString &groupName
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     list <NacosString> clusters;
     return getAllInstances(serviceName, groupName, clusters);
 }
@@ -181,7 +181,7 @@ list <Instance> NacosNamingService::getAllInstances
         (
                 const NacosString &serviceName,
                 const list <NacosString> &clusters
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     return getAllInstances(serviceName, ConfigConstant::DEFAULT_GROUP, clusters);
 }
 
@@ -190,7 +190,7 @@ list <Instance> NacosNamingService::getAllInstances
                 const NacosString &serviceName,
                 const NacosString &groupName,
                 const list <NacosString> &clusters
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     ServiceInfo serviceInfo;
     //TODO:cache and failover
     NacosString clusterString = ParamUtils::Implode(clusters);
@@ -203,7 +203,7 @@ list <Instance> NacosNamingService::getAllInstances
     return hostlist;
 }
 
-void NacosNamingService::subscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException)
+void NacosNamingService::subscribe(const NacosString &serviceName, EventListener *listener) NACOS_THROW (NacosException)
 {
     list<NacosString> clusters;//empty cluster
     subscribe(serviceName, ConfigConstant::DEFAULT_GROUP, clusters, listener);
@@ -215,7 +215,7 @@ void NacosNamingService::subscribe
     const NacosString &serviceName,
     const NacosString &groupName,
     EventListener *listener
-) throw (NacosException)
+) NACOS_THROW (NacosException)
 {
     list<NacosString> clusters;//empty cluster
     subscribe(serviceName, groupName, clusters, listener);
@@ -225,7 +225,7 @@ void NacosNamingService::subscribe(
     const NacosString &serviceName,
     const std::list<NacosString> &clusters,
     EventListener *listener
-) throw (NacosException)
+) NACOS_THROW (NacosException)
 {
     subscribe(serviceName, ConfigConstant::DEFAULT_GROUP, clusters, listener);
 }
@@ -236,7 +236,7 @@ void NacosNamingService::subscribe
         const NacosString &groupName,
         const std::list<NacosString> &clusters,
         EventListener *listener
-) throw (NacosException)
+) NACOS_THROW (NacosException)
 {
     NacosString clusterName = ParamUtils::Implode(clusters);
     NacosString groupedName = NamingUtils::getGroupedName(serviceName, groupName);
@@ -252,7 +252,7 @@ void NacosNamingService::unsubscribe(
     const NacosString &groupName,
     const std::list<NacosString> &clusters,
     EventListener *listener
-) throw (NacosException)
+) NACOS_THROW (NacosException)
 {
     NacosString clusterName = ParamUtils::Implode(clusters);
     NacosString groupedName = NamingUtils::getGroupedName(serviceName, groupName);
@@ -271,7 +271,7 @@ void NacosNamingService::unsubscribe
     const NacosString &serviceName,
     const std::list<NacosString> &clusters,
     EventListener *listener
-) throw (NacosException)
+) NACOS_THROW (NacosException)
 {
     unsubscribe(serviceName, ConfigConstant::DEFAULT_GROUP, clusters, listener);
 }
@@ -281,23 +281,23 @@ void NacosNamingService::unsubscribe
     const NacosString &serviceName,
     const NacosString &groupName,
     EventListener *listener
-) throw (NacosException)
+) NACOS_THROW (NacosException)
 {
     list<NacosString> clusters;
     unsubscribe(serviceName, groupName, clusters, listener);
 }
 
-void NacosNamingService::unsubscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException)
+void NacosNamingService::unsubscribe(const NacosString &serviceName, EventListener *listener) NACOS_THROW (NacosException)
 {
     list<NacosString> clusters;
     unsubscribe(serviceName, ConfigConstant::DEFAULT_GROUP, clusters, listener);
 }
 
-ListView<NacosString> NacosNamingService::getServiceList(int pageNo, int pageSize) throw (NacosException) {
+ListView<NacosString> NacosNamingService::getServiceList(int pageNo, int pageSize) NACOS_THROW (NacosException) {
     return _objectConfigData->_serverProxy->getServiceList(pageNo, pageSize, ConfigConstant::DEFAULT_GROUP);
 }
 
-ListView<NacosString> NacosNamingService::getServiceList(int pageNo, int pageSize, const NacosString &groupName) throw (NacosException){
+ListView<NacosString> NacosNamingService::getServiceList(int pageNo, int pageSize, const NacosString &groupName) NACOS_THROW (NacosException){
     return _objectConfigData->_serverProxy->getServiceList(pageNo, pageSize, groupName);
 }
 
@@ -307,7 +307,7 @@ list<Instance> NacosNamingService::getInstanceWithPredicate
     const NacosString &groupName,
     const std::list <NacosString> &clusters,
     Selector<Instance> *predicate
-) throw(NacosException)
+) NACOS_THROW(NacosException)
 {
     list<Instance> allInstances = getAllInstances(serviceName, groupName, clusters);
     if (predicate) {
@@ -322,7 +322,7 @@ list<Instance> NacosNamingService::getInstanceWithPredicate
     const NacosString &serviceName,
     const std::list <NacosString> &clusters,
     Selector<Instance> *predicate
-) throw(NacosException)
+) NACOS_THROW(NacosException)
 {
     list<Instance> allInstances = getAllInstances(serviceName, ConfigConstant::DEFAULT_GROUP, clusters);
     if (predicate) {
@@ -337,7 +337,7 @@ list<Instance> NacosNamingService::getInstanceWithPredicate
     const NacosString &serviceName,
     const NacosString &groupName,
     Selector<Instance> *predicate
-) throw(NacosException)
+) NACOS_THROW(NacosException)
 {
     list<NacosString> clusters;
     list<Instance> allInstances = getAllInstances(serviceName, groupName, clusters);
@@ -352,7 +352,7 @@ list<Instance> NacosNamingService::getInstanceWithPredicate
 (
     const NacosString &serviceName,
     Selector<Instance> *predicate
-) throw(NacosException)
+) NACOS_THROW(NacosException)
 {
     list<NacosString> clusters;
     list<Instance> allInstances = getAllInstances(serviceName, ConfigConstant::DEFAULT_GROUP, clusters);

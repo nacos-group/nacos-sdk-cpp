@@ -126,7 +126,7 @@ HttpResult HTTPCli::httpGet
                 list <NacosString> &paramValues,
                 const NacosString &encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     NacosString parmVal;
     parmVal = encodingParams(paramValues);
     return httpGetInternal(path, headers, parmVal, encoding, readTimeoutMs);
@@ -139,7 +139,7 @@ HttpResult HTTPCli::httpGet
                 map <NacosString, NacosString> &paramValues,
                 const NacosString &encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     NacosString parmVal;
     parmVal = encodingParams(paramValues);
     return httpGetInternal(path, headers, parmVal, encoding, readTimeoutMs);
@@ -152,7 +152,7 @@ HttpResult HTTPCli::httpGetInternal
                 const NacosString &paramValues,
                 const NacosString &encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     CURL *curlHandle = getCurlHandle();
     CURLcode curlres;
 
@@ -247,7 +247,7 @@ HttpResult HTTPCli::httpPost
                 list <NacosString> &paramValues,
                 const NacosString &encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     NacosString parmVal;
     parmVal = encodingParams(paramValues);
     return httpPostInternal(path, headers, parmVal, encoding, readTimeoutMs);
@@ -261,7 +261,7 @@ HttpResult HTTPCli::httpPost
                 map <NacosString, NacosString> &paramValues,
                 const NacosString &encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     NacosString parmVal;
     parmVal = encodingParams(paramValues);
     return httpPostInternal(path, headers, parmVal, encoding, readTimeoutMs);
@@ -275,7 +275,7 @@ HttpResult HTTPCli::httpPostInternal
                 const NacosString &paramValues,
                 const NacosString &encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     CURL *curlHandle = getCurlHandle();
     CURLcode curlres;
 
@@ -373,7 +373,7 @@ HttpResult HTTPCli::httpPut
                 list <NacosString> &paramValues,
                 const NacosString &encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     NacosString parmVal;
     parmVal = encodingParams(paramValues);
     return httpPutInternal(path, headers, parmVal, encoding, readTimeoutMs);
@@ -387,7 +387,7 @@ HttpResult HTTPCli::httpPut
                 map <NacosString, NacosString> &paramValues,
                 const NacosString &encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     NacosString parmVal;
     parmVal = encodingParams(paramValues);
     return httpPutInternal(path, headers, parmVal, encoding, readTimeoutMs);
@@ -401,7 +401,7 @@ HttpResult HTTPCli::httpPutInternal
                 const NacosString &paramValues,
                 const NacosString &encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     CURL *curlHandle = getCurlHandle();
     CURLcode curlres;
 
@@ -491,7 +491,7 @@ HttpResult HTTPCli::httpDelete
                 list <NacosString> &paramValues,
                 const NacosString &encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     NacosString parmVal;
     parmVal = encodingParams(paramValues);
     return httpDeleteInternal(path, headers, parmVal, encoding, readTimeoutMs);
@@ -504,7 +504,7 @@ HttpResult HTTPCli::httpDelete
                 map <NacosString, NacosString> &paramValues,
                 const NacosString &encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     NacosString parmVal;
     parmVal = encodingParams(paramValues);
     return httpDeleteInternal(path, headers, parmVal, encoding, readTimeoutMs);
@@ -517,7 +517,7 @@ HttpResult HTTPCli::httpDeleteInternal
                 const NacosString &paramValues,
                 const NacosString &encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     CURL *curlHandle = getCurlHandle();
     CURLcode curlres;
 

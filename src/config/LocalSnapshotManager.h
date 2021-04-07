@@ -4,6 +4,7 @@
 #include "NacosString.h"
 #include "NacosExceptions.h"
 #include "src/config/AppConfigManager.h"
+#include "Compatibility.h"
 
 /**
  * Snapshot/Failover manager
@@ -31,7 +32,7 @@ public:
     NacosString getSnapshot(const NacosString &name, const NacosString &dataId, const NacosString &group,
                                    const NacosString &tenant);
 
-    NacosString readFile(const NacosString &file) throw(IOException);
+    NacosString readFile(const NacosString &file) NACOS_THROW(IOException);
 
     void saveSnapshot(const NacosString &envName, const NacosString &dataId, const NacosString &group,
                              const NacosString &tenant, const NacosString &config);

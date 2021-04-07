@@ -4,6 +4,7 @@
 #include "NacosExceptions.h"
 #include "NacosString.h"
 #include "Properties.h"
+#include "Compatibility.h"
 
 namespace nacos{
 
@@ -19,7 +20,7 @@ private:
 
     AppConfigManager();
 
-    void checkReloadable() throw(NacosException);
+    void checkReloadable() NACOS_THROW(NacosException);
 
     void initDefaults();
 
@@ -36,9 +37,9 @@ public:
 
     AppConfigManager(const NacosString &configFile);
 
-    size_t loadConfig(const NacosString &configFile) throw(NacosException);
+    size_t loadConfig(const NacosString &configFile) NACOS_THROW(NacosException);
 
-    size_t loadConfig() throw(NacosException);
+    size_t loadConfig() NACOS_THROW(NacosException);
 
     void clearConfig();
 

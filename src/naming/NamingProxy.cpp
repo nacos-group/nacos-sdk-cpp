@@ -37,7 +37,7 @@ NamingProxy::~NamingProxy() {
 }
 
 void NamingProxy::registerService(const NacosString &serviceName, const NacosString &groupName,
-                                  Instance &instance) throw(NacosException) {
+                                  Instance &instance) NACOS_THROW(NacosException) {
     log_info("[REGISTER-SERVICE] %s registering service %s with instance: %s\n",
              getNamespaceId().c_str(), serviceName.c_str(), instance.toString().c_str());
 
@@ -57,7 +57,7 @@ void NamingProxy::registerService(const NacosString &serviceName, const NacosStr
     reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_INSTANCE, params, IHttpCli::POST);
 }
 
-void NamingProxy::deregisterService(const NacosString &serviceName, Instance &instance) throw(NacosException) {
+void NamingProxy::deregisterService(const NacosString &serviceName, Instance &instance) NACOS_THROW(NacosException) {
     log_info("[DEREGISTER-SERVICE] %s deregistering service %s with instance: %s\n",
              getNamespaceId().c_str(), serviceName.c_str(), instance.toString().c_str());
 
@@ -73,7 +73,7 @@ void NamingProxy::deregisterService(const NacosString &serviceName, Instance &in
 }
 
 NacosString NamingProxy::queryList(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters,
-                                    int udpPort, bool healthyOnly) throw(NacosException) {
+                                    int udpPort, bool healthyOnly) NACOS_THROW(NacosException) {
     list <NacosString> params;
     const NacosString &localIp = _objectConfigData->_appConfigManager->get(PropertyKeyConst::LOCAL_IP);
     ParamUtils::addKV(params, NamingConstant::NAMESPACE_ID, getNamespaceId());
@@ -88,7 +88,7 @@ NacosString NamingProxy::queryList(const NacosString &serviceName, const NacosSt
 }
 
 NacosString
-NamingProxy::reqAPI(const NacosString &api, list <NacosString> &params, int method) throw(NacosException) {
+NamingProxy::reqAPI(const NacosString &api, list <NacosString> &params, int method) NACOS_THROW(NacosException) {
     ServerListManager *_serverListManager = _objectConfigData->_serverListManager;
     list <NacosServerInfo> servers = _serverListManager->getServerList();
 
@@ -145,7 +145,7 @@ NacosString NamingProxy::callServer
                 const NacosString &api,
                 list <NacosString> &params,
                 const NacosString &curServer
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     return callServer(api, params, nacosDomain, IHttpCli::GET);
 }
 
@@ -155,7 +155,7 @@ NacosString NamingProxy::callServer
                 list <NacosString> &params,
                 const NacosString &curServer,
                 int method
-        ) throw(NacosException) {
+        ) NACOS_THROW(NacosException) {
     NacosString requestUrl;
     //Current server address doesn't have SERVER_ADDR_IP_SPLITER, which means
     if (!ParamUtils::contains(curServer, UtilAndComs::SERVER_ADDR_IP_SPLITER)) {
@@ -259,7 +259,7 @@ long NamingProxy::sendBeat(BeatInfo &beatInfo) {
     return 0L;
 }
 
-ListView<NacosString> NamingProxy::getServiceList(int page, int pageSize, const NacosString &groupName) throw(NacosException)
+ListView<NacosString> NamingProxy::getServiceList(int page, int pageSize, const NacosString &groupName) NACOS_THROW(NacosException)
 {
     log_debug("[NAMEPRXY] request:group=%s page=%d pageSize=%d\n", groupName.c_str(), page, pageSize);
     list <NacosString> params;
@@ -276,7 +276,7 @@ ListView<NacosString> NamingProxy::getServiceList(int page, int pageSize, const 
     return nullResult;
 }
 
-ServiceInfo2 NamingProxy::getServiceInfo(const NacosString &serviceName, const NacosString &groupName) throw(NacosException)
+ServiceInfo2 NamingProxy::getServiceInfo(const NacosString &serviceName, const NacosString &groupName) NACOS_THROW(NacosException)
 {
     log_debug("[NAMEPRXY] getServiceInfo request:serviceName=%s groupName=%s\n",
               serviceName.c_str(), groupName.c_str());
@@ -316,7 +316,7 @@ bool areYouOk(const NacosString &imVeryOk) {
  *         otherwise return false
  * @throws IOException IOException
  */
-bool NamingProxy::deleteServiceInfo(const NacosString &serviceName, const NacosString &groupName) throw(NacosException) {
+bool NamingProxy::deleteServiceInfo(const NacosString &serviceName, const NacosString &groupName) NACOS_THROW(NacosException) {
     list<NacosString> params;
     ParamUtils::addKV(params, NamingConstant::SERVICE_NAME, serviceName);
     ParamUtils::addKV(params, NamingConstant::GROUP_NAME, groupName);
@@ -344,7 +344,7 @@ void assembleServiceInfoRequest(list<NacosString> &target, const ServiceInfo2 &s
     }
 }
 
-bool NamingProxy::createServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Selector *selector) throw(NacosException) {
+bool NamingProxy::createServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Selector *selector) NACOS_THROW(NacosException) {
     list<NacosString> params;
     assembleServiceInfoRequest(params, serviceInfo2);
     if (selector) {
@@ -355,7 +355,7 @@ bool NamingProxy::createServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Se
     return areYouOk(result);
 }
 
-bool NamingProxy::updateServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Selector *selector) throw(NacosException) {
+bool NamingProxy::updateServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Selector *selector) NACOS_THROW(NacosException) {
     list<NacosString> params;
     assembleServiceInfoRequest(params, serviceInfo2);
     if (selector) {
@@ -401,7 +401,7 @@ Instance NamingProxy::getServiceInstance
     int port,
     const std::map<NacosString, NacosString> &params
 )
-throw(NacosException) {
+NACOS_THROW(NacosException) {
     list<NacosString> paramsList;
     ParamUtils::addKV(paramsList, NamingConstant::SERVICE_NAME, serviceName);
     ParamUtils::addKV(paramsList, "ip", ip);
@@ -425,7 +425,7 @@ throw(NacosException) {
     return JSON::Json2Instance(result);
 }
 
-bool NamingProxy::updateServiceInstance(const Instance &instance) throw(NacosException) {
+bool NamingProxy::updateServiceInstance(const Instance &instance) NACOS_THROW(NacosException) {
     list<NacosString> params;
     ParamUtils::addKV(params, NamingConstant::SERVICE_NAME, instance.serviceName);
     ParamUtils::addKV(params, "ip", instance.ip);

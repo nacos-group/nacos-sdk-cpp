@@ -41,7 +41,7 @@ int RandomUtils::random_inner(){
     return rand();
 }
 
-int RandomUtils::random(int begin, int end) throw (NacosException) {
+int RandomUtils::random(int begin, int end) NACOS_THROW (NacosException) {
     //sanity check
     if (begin == end || begin > end) {
         throw NacosException(NacosException::INVALID_PARAM, "end must be greater than begin");
