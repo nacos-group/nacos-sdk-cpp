@@ -29,7 +29,7 @@ void UdpNamingServiceListener::initializeUdpListener() NACOS_THROW(NacosExceptio
     log_debug("udp receiver port = %d\n", cliaddr.sin_port);
 
     // Bind the socket with the server address
-    if ( bind(sockfd, (const struct sockaddr *)&cliaddr,
+    if ( ::bind(sockfd, (const struct sockaddr *)&cliaddr,
               sizeof(cliaddr)) < 0 )
     {
         throw NacosException(NacosException::UNABLE_TO_CREATE_SOCKET, "Unable to bind");
