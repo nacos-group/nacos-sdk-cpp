@@ -8,7 +8,7 @@
 
 namespace nacos{
 
-NacosString NetUtils::getHostIp() throw(NacosException){
+NacosString NetUtils::getHostIp() NACOS_THROW(NacosException){
 
     struct ifaddrs *ifaddr, *ifa;
     int s;

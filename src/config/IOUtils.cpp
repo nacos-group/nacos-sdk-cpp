@@ -21,7 +21,7 @@ size_t IOUtils::getFileSize(const NacosString &file) {
     return statbuf.st_size;
 }
 
-NacosString IOUtils::readStringFromFile(const NacosString &file, const NacosString &encoding) throw(IOException) {
+NacosString IOUtils::readStringFromFile(const NacosString &file, const NacosString &encoding) NACOS_THROW(IOException) {
     size_t toRead = getFileSize(file);
     FILE *fp = fopen(file.c_str(), "rb");
     if (fp == NULL) {
@@ -35,7 +35,7 @@ NacosString IOUtils::readStringFromFile(const NacosString &file, const NacosStri
 }
 
 void IOUtils::writeStringToFile(const NacosString &file, const NacosString &data,
-                                const NacosString &encoding) throw(IOException) {
+                                const NacosString &encoding) NACOS_THROW(IOException) {
     FILE *fp = fopen(file.c_str(), "wb");
     fwrite(data.c_str(), data.size(), 1, fp);
     fclose(fp);

@@ -21,7 +21,7 @@ HttpResult NoOpHttpDelegate::httpGet
                 std::list <NacosString> &paramValues,
                 const NacosString &_encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     HttpResult res;
 
     res = _objectConfigData->_httpCli->httpGet(path, headers, paramValues, _encoding, readTimeoutMs);
@@ -35,7 +35,7 @@ HttpResult NoOpHttpDelegate::httpDelete
                 std::list <NacosString> &paramValues,
                 const NacosString &_encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     HttpResult res;
     res = _objectConfigData->_httpCli->httpDelete(path, headers, paramValues, _encoding, readTimeoutMs);
     return res;
@@ -48,7 +48,7 @@ HttpResult NoOpHttpDelegate::httpPost
                 std::list <NacosString> &paramValues,
                 const NacosString &_encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
     HttpResult res;
 
     res = _objectConfigData->_httpCli->httpPost(path, headers, paramValues, _encoding, readTimeoutMs);
@@ -62,7 +62,7 @@ HttpResult NoOpHttpDelegate::httpPut
                 std::list <NacosString> &paramValues,
                 const NacosString &_encoding,
                 long readTimeoutMs
-        ) throw(NetworkException) {
+        ) NACOS_THROW(NetworkException) {
 
     HttpResult res;
     res = _objectConfigData->_httpCli->httpPut(path, headers, paramValues, _encoding, readTimeoutMs);

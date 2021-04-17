@@ -1,7 +1,7 @@
 #include "NamingCache.h"
 
 namespace nacos{
-ServiceInfo NamingCache::getServiceInfo(const NacosString &key) throw(NacosException)
+ServiceInfo NamingCache::getServiceInfo(const NacosString &key) NACOS_THROW(NacosException)
 {
     ReadGuard __readGuard(_rwLock);
     if (!contains(key))

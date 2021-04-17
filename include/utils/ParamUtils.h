@@ -87,7 +87,7 @@ public:
     };
 
     static void
-    checkParam(const NacosString &dataId, const NacosString &group, const NacosString &content) throw(NacosException) {
+    checkParam(const NacosString &dataId, const NacosString &group, const NacosString &content) NACOS_THROW(NacosException) {
         if (isBlank(content)) {
             throw NacosException(NacosException::CLIENT_INVALID_PARAM, "content invalid");
         }

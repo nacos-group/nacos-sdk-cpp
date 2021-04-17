@@ -23,13 +23,13 @@ bool AppConfigManager::nacosAuthEnabled() {
     }
 }
 
-void AppConfigManager::checkReloadable() throw(NacosException) {
+void AppConfigManager::checkReloadable() NACOS_THROW(NacosException) {
     if (!reloadable) {
         throw NacosException(0, "This object is initialized as a non-reloadable one");
     }
 }
 
-size_t AppConfigManager::loadConfig() throw(NacosException) {
+size_t AppConfigManager::loadConfig() NACOS_THROW(NacosException) {
     checkReloadable();
     initDefaults();
     Properties parsedConfig = ConfigParserUtils::parseConfigFile(configFile);
@@ -38,7 +38,7 @@ size_t AppConfigManager::loadConfig() throw(NacosException) {
     return appConfig.size();
 }
 
-size_t AppConfigManager::loadConfig(const NacosString &_configFile) throw(NacosException) {
+size_t AppConfigManager::loadConfig(const NacosString &_configFile) NACOS_THROW(NacosException) {
     checkReloadable();
     configFile = _configFile;
     loadConfig();

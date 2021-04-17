@@ -28,7 +28,7 @@ ObjectConfigData::ObjectConfigData(FactoryType theFactoryType) {
     _securityManager = NULL;
 }
 
-void ObjectConfigData::checkNamingService() throw(NacosException) {
+void ObjectConfigData::checkNamingService() NACOS_THROW(NacosException) {
     if (factoryType != NAMING) {
         throw NacosException(NacosException::INVALID_PARAM, "Invalid configuration for naming service, please check");
     }
@@ -46,7 +46,7 @@ void ObjectConfigData::checkNamingService() throw(NacosException) {
     NACOS_ASSERT(_udpNamingServiceListener != NULL);
 }
 
-void ObjectConfigData::checkConfigService() throw(NacosException) {
+void ObjectConfigData::checkConfigService() NACOS_THROW(NacosException) {
     if (factoryType != CONFIG) {
         throw NacosException(NacosException::INVALID_PARAM, "Invalid configuration for config service, please check");
     }
@@ -59,7 +59,7 @@ void ObjectConfigData::checkConfigService() throw(NacosException) {
     NACOS_ASSERT(_localSnapshotManager != NULL);
 }
 
-void ObjectConfigData::checkMaintainService() throw(NacosException) {
+void ObjectConfigData::checkMaintainService() NACOS_THROW(NacosException) {
     if (factoryType != MAINTAIN) {
         throw NacosException(NacosException::INVALID_PARAM, "Invalid configuration for maintain service, please check");
     }
@@ -243,7 +243,7 @@ void ObjectConfigData::destroyMaintainService() {
     }
 }
 
-void ObjectConfigData::checkAssembledObject() throw(NacosException) {
+void ObjectConfigData::checkAssembledObject() NACOS_THROW(NacosException) {
     switch (factoryType) {
     case NAMING:
         checkNamingService();

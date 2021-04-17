@@ -23,7 +23,7 @@ HttpResult NacosAuthHttpDelegate::httpGet
     std::list<NacosString> &paramValues,
     const NacosString &_encoding,
     long readTimeoutMs
-) throw(NetworkException) {
+) NACOS_THROW(NetworkException) {
     HttpResult res;
     _objectConfigData->_securityManager->addAccessToken2Req(paramValues);
     res = _objectConfigData->_httpCli->httpGet(path, headers, paramValues, _encoding, readTimeoutMs);
@@ -37,7 +37,7 @@ HttpResult NacosAuthHttpDelegate::httpDelete
     std::list<NacosString> &paramValues,
     const NacosString &_encoding,
     long readTimeoutMs
-) throw(NetworkException) {
+) NACOS_THROW(NetworkException) {
     HttpResult res;
     _objectConfigData->_securityManager->addAccessToken2Req(paramValues);
     res = _objectConfigData->_httpCli->httpDelete(path, headers, paramValues, _encoding, readTimeoutMs);
@@ -51,7 +51,7 @@ HttpResult NacosAuthHttpDelegate::httpPost
     std::list<NacosString> &paramValues,
     const NacosString &_encoding,
     long readTimeoutMs
-) throw(NetworkException) {
+) NACOS_THROW(NetworkException) {
     HttpResult res;
     _objectConfigData->_securityManager->addAccessToken2Req(paramValues);
     res = _objectConfigData->_httpCli->httpPost(path, headers, paramValues, _encoding, readTimeoutMs);
@@ -65,7 +65,7 @@ HttpResult NacosAuthHttpDelegate::httpPut
     std::list<NacosString> &paramValues,
     const NacosString &_encoding,
     long readTimeoutMs
-) throw(NetworkException) {
+) NACOS_THROW(NetworkException) {
     HttpResult res;
     _objectConfigData->_securityManager->addAccessToken2Req(paramValues);
     res = _objectConfigData->_httpCli->httpPut(path, headers, paramValues, _encoding, readTimeoutMs);

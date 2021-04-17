@@ -85,7 +85,7 @@ NacosString ServerListManager::getCurrentServerAddr() {
     return it->getCompleteAddress();
 }
 
-void ServerListManager::initAll() throw(NacosException) {
+void ServerListManager::initAll() NACOS_THROW(NacosException) {
     serverList.clear();
     Properties props = _objectConfigData->_appConfigManager->getAllConfig();
     if (props.contains(PropertyKeyConst::SERVER_ADDR)) {//Server address is configured
@@ -125,7 +125,7 @@ void ServerListManager::initAll() throw(NacosException) {
     }
 }
 
-ServerListManager::ServerListManager(ObjectConfigData *objectConfigData) throw(NacosException) {
+ServerListManager::ServerListManager(ObjectConfigData *objectConfigData) NACOS_THROW(NacosException) {
     started = false;
     _pullThread = NULL;
     _objectConfigData = objectConfigData;
@@ -133,7 +133,7 @@ ServerListManager::ServerListManager(ObjectConfigData *objectConfigData) throw(N
     initAll();
 }
 
-list <NacosServerInfo> ServerListManager::tryPullServerListFromNacosServer() throw(NacosException) {
+list <NacosServerInfo> ServerListManager::tryPullServerListFromNacosServer() NACOS_THROW(NacosException) {
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
     size_t maxSvrSlot = serverList.size();
@@ -174,7 +174,7 @@ list <NacosServerInfo> ServerListManager::tryPullServerListFromNacosServer() thr
                          + errmsg);
 }
 
-list <NacosServerInfo> ServerListManager::pullServerList() throw(NacosException) {
+list <NacosServerInfo> ServerListManager::pullServerList() NACOS_THROW(NacosException) {
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
 

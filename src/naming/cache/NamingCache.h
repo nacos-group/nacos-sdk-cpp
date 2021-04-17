@@ -7,6 +7,7 @@
 #include "naming/ServiceInfo.h"
 #include "src/thread/RWLock.h"
 #include "naming/ChangeAdvice.h"
+#include "Compatibility.h"
 
 namespace nacos{
 class NamingCache {
@@ -17,7 +18,7 @@ private:
 public:
     NamingCache();
     NamingCache(EventDispatcher *eventDispatcher) { _eventDispatcher = eventDispatcher; };
-    ServiceInfo getServiceInfo(const NacosString &key) throw(NacosException);
+    ServiceInfo getServiceInfo(const NacosString &key) NACOS_THROW(NacosException);
     bool contains(const NacosString &key);
     void setServiceInfo(const NacosString &key, const ServiceInfo &info);
     void removeServiceInfo(const NacosString &key);

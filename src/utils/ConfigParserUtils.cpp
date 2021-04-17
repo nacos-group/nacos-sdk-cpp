@@ -11,7 +11,7 @@ using namespace std;
 
 namespace nacos {
 
-Properties ConfigParserUtils::parseConfigFile(const NacosString &file) throw(NacosException) {
+Properties ConfigParserUtils::parseConfigFile(const NacosString &file) NACOS_THROW(NacosException) {
     Properties parsedConfig;
     NacosString confContent = IOUtils::readStringFromFile(file, NULLSTR);//TODO: add encoding support
 

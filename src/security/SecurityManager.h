@@ -9,6 +9,7 @@
 #include "src/http/IHttpCli.h"
 #include "src/server/ServerListManager.h"
 #include "src/factory/ObjectConfigData.h"
+#include "Compatibility.h"
 
 namespace nacos {
 
@@ -29,7 +30,7 @@ class SecurityManager {
 private:
     ObjectConfigData *_objectConfigData;
     AccessToken _accessToken;
-    void doLogin(const NacosString &serverAddr) throw(NacosException, NetworkException);
+    void doLogin(const NacosString &serverAddr) NACOS_THROW(NacosException, NetworkException);
     RWLock _rwLock;
     volatile bool _started;
     static void * tokenRefreshThreadFunc(void *param);
@@ -38,7 +39,7 @@ private:
 public:
     SecurityManager(ObjectConfigData *objectConfigData);
     ~SecurityManager();
-    void login() throw (NacosException);
+    void login() NACOS_THROW (NacosException);
     NacosString &getAccessToken();
     void addAccessToken2Req(std::list<NacosString> &parameter);
     void start();

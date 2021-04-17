@@ -3,6 +3,7 @@
 
 #include <exception>
 #include "NacosString.h"
+#include "Compatibility.h"
 
 namespace nacos{
 class NacosException : public std::exception {
@@ -10,15 +11,15 @@ protected:
     int _errcode;
     NacosString _errmsg;
 public:
-    NacosException(int errorcode, const char *errormsg) throw();
+    NacosException(int errorcode, const char *errormsg) NACOS_NOTHROW();
 
-    NacosException(int errorcode, const NacosString &errormsg) throw();
+    NacosException(int errorcode, const NacosString &errormsg) NACOS_NOTHROW();
 
-    ~NacosException() throw() {};
+    ~NacosException() NACOS_NOTHROW() {};
 
-    const char *what() const throw() { return _errmsg.c_str(); };
+    const char *what() const NACOS_NOTHROW() { return _errmsg.c_str(); };
 
-    const int errorcode() const throw() { return _errcode; };
+    const int errorcode() const NACOS_NOTHROW() { return _errcode; };
 
     static const int CLIENT_INVALID_PARAM = -400;
     /**
@@ -88,24 +89,24 @@ private:
     int _curlerrcode;
     NacosString _errmsg;
 public:
-    NetworkException(int errorcode, const char *errormsg) throw(): _curlerrcode(errorcode), _errmsg(errormsg) {};
+    NetworkException(int errorcode, const char *errormsg) NACOS_NOTHROW(): _curlerrcode(errorcode), _errmsg(errormsg) {};
 
-    NetworkException(int errorcode, const NacosString &errormsg) throw(): _curlerrcode(errorcode), _errmsg(errormsg) {};
+    NetworkException(int errorcode, const NacosString &errormsg) NACOS_NOTHROW(): _curlerrcode(errorcode), _errmsg(errormsg) {};
 
-    ~NetworkException() throw() {};
+    ~NetworkException() NACOS_NOTHROW() {};
 
-    const char *what() const throw() { return _errmsg.c_str(); };
+    const char *what() const NACOS_NOTHROW() { return _errmsg.c_str(); };
 
-    const int errorcode() const throw() { return _curlerrcode; };
+    const int errorcode() const NACOS_NOTHROW() { return _curlerrcode; };
 };
 
 class IOException : public NacosException {
 public:
-    IOException(int errorcode, const char *errormsg) throw() : NacosException(errorcode, errormsg) {};
+    IOException(int errorcode, const char *errormsg) NACOS_NOTHROW() : NacosException(errorcode, errormsg) {};
 
-    IOException(int errorcode, const NacosString &errormsg) throw() : NacosException(errorcode, errormsg) {};
+    IOException(int errorcode, const NacosString &errormsg) NACOS_NOTHROW() : NacosException(errorcode, errormsg) {};
 
-    ~IOException() throw() {};
+    ~IOException() NACOS_NOTHROW() {};
 };
 
 class MalformedConfigException : public NacosException {

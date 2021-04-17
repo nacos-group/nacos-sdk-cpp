@@ -7,6 +7,7 @@
 #include "NacosString.h"
 #include "NacosExceptions.h"
 #include "IHttpCli.h"
+#include "Compatibility.h"
 
 namespace nacos{
 
@@ -26,7 +27,7 @@ private:
                     const NacosString &paramValues,
                     const NacosString &encoding,
                     long readTimeoutMs
-            ) throw(NetworkException);
+            ) NACOS_THROW(NetworkException);
 
     HttpResult httpPostInternal
             (
@@ -35,7 +36,7 @@ private:
                     const NacosString &paramValues,
                     const NacosString &encoding,
                     long readTimeoutMs
-            ) throw(NetworkException);
+            ) NACOS_THROW(NetworkException);
 
     HttpResult httpPutInternal
             (
@@ -44,7 +45,7 @@ private:
                     const NacosString &paramValues,
                     const NacosString &encoding,
                     long readTimeoutMs
-            ) throw(NetworkException);
+            ) NACOS_THROW(NetworkException);
 
     HttpResult httpDeleteInternal
             (
@@ -53,7 +54,7 @@ private:
                     const NacosString &paramValues,
                     const NacosString &encoding,
                     long readTimeoutMs
-            ) throw(NetworkException);
+            ) NACOS_THROW(NetworkException);
 
 public:
     static NacosString encodingParams(std::list <NacosString> &params);
@@ -78,7 +79,7 @@ public:
             std::list <NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException);
+    ) NACOS_THROW(NetworkException);
 
     HttpResult httpGet(
             const NacosString &path,
@@ -86,7 +87,7 @@ public:
             std::map <NacosString, NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException);
+    ) NACOS_THROW(NetworkException);
 
     HttpResult httpDelete(
             const NacosString &path,
@@ -94,7 +95,7 @@ public:
             std::list <NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException);
+    ) NACOS_THROW(NetworkException);
 
     HttpResult httpDelete(
             const NacosString &path,
@@ -102,7 +103,7 @@ public:
             std::map <NacosString, NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException);
+    ) NACOS_THROW(NetworkException);
 
     HttpResult httpPost(
             const NacosString &path,
@@ -110,7 +111,7 @@ public:
             std::list <NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException);
+    ) NACOS_THROW(NetworkException);
 
     HttpResult httpPost(
             const NacosString &path,
@@ -118,7 +119,7 @@ public:
             std::map <NacosString, NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException);
+    ) NACOS_THROW(NetworkException);
 
     HttpResult httpPut(
             const NacosString &path,
@@ -126,7 +127,7 @@ public:
             std::list <NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException);
+    ) NACOS_THROW(NetworkException);
 
     HttpResult httpPut(
             const NacosString &path,
@@ -134,7 +135,7 @@ public:
             std::map <NacosString, NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException);
+    ) NACOS_THROW(NetworkException);
 
 };
 }//namespace nacos

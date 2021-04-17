@@ -107,7 +107,7 @@ long JSON::getLong(const NacosString &jsonString, const NacosString &fieldname) 
     return s.GetInt64();
 }
 
-Instance JSON::Json2Instance(const Value &host) throw(NacosException) {
+Instance JSON::Json2Instance(const Value &host) NACOS_THROW(NacosException) {
     Instance theinstance;
 
     markRequired(host, "instanceId");
@@ -148,7 +148,7 @@ Instance JSON::Json2Instance(const Value &host) throw(NacosException) {
     return theinstance;
 }
 
-Instance JSON::Json2Instance(const NacosString &jsonString) throw(NacosException) {
+Instance JSON::Json2Instance(const NacosString &jsonString) NACOS_THROW(NacosException) {
     Document d;
     d.Parse(jsonString.c_str());
 
@@ -201,19 +201,19 @@ Instance JSON::Json2Instance(const NacosString &jsonString) throw(NacosException
     return theinstance;
 }
 
-void JSON::markRequired(const Document &d, const NacosString &requiredField) throw(NacosException) {
+void JSON::markRequired(const Document &d, const NacosString &requiredField) NACOS_THROW(NacosException) {
     if (!d.HasMember(requiredField.c_str())) {
         throw NacosException(NacosException::LACK_JSON_FIELD, "Missing required field:" + requiredField);
     }
 }
 
-void JSON::markRequired(const Value &v, const NacosString &requiredField) throw(NacosException) {
+void JSON::markRequired(const Value &v, const NacosString &requiredField) NACOS_THROW(NacosException) {
     if (!v.HasMember(requiredField.c_str())) {
         throw NacosException(NacosException::LACK_JSON_FIELD, "Missing required field:" + requiredField);
     }
 }
 
-ServiceInfo JSON::JsonStr2ServiceInfo(const NacosString &jsonString) throw(NacosException) {
+ServiceInfo JSON::JsonStr2ServiceInfo(const NacosString &jsonString) NACOS_THROW(NacosException) {
     ServiceInfo si;
     Document d;
     d.Parse(jsonString.c_str());
@@ -282,7 +282,7 @@ NacosServerInfo parseOneNacosSvr(const Value &curSvr) {
     return res;
 }
 
-list <NacosServerInfo> JSON::Json2NacosServerInfo(const NacosString &nacosString) throw(NacosException) {
+list <NacosServerInfo> JSON::Json2NacosServerInfo(const NacosString &nacosString) NACOS_THROW(NacosException) {
     list <NacosServerInfo> nacosServerList;
     ServiceInfo si;
     Document d;
@@ -308,7 +308,7 @@ list <NacosServerInfo> JSON::Json2NacosServerInfo(const NacosString &nacosString
     return nacosServerList;
 }
 
-ListView<NacosString> JSON::Json2ServiceList(const NacosString &nacosString) throw(NacosException) {
+ListView<NacosString> JSON::Json2ServiceList(const NacosString &nacosString) NACOS_THROW(NacosException) {
     ListView<NacosString> serviceList;
     ServiceInfo si;
     Document d;
@@ -355,7 +355,7 @@ map<NacosString, NacosString> parseMetadata(const Value &value) {
     return metadata;
 }
 
-ServiceInfo2 JSON::Json2ServiceInfo2(const NacosString &nacosString) throw(NacosException) {
+ServiceInfo2 JSON::Json2ServiceInfo2(const NacosString &nacosString) NACOS_THROW(NacosException) {
     ServiceInfo2 serviceInfo2;
     Document d;
     d.Parse(nacosString.c_str());
@@ -404,7 +404,7 @@ ServiceInfo2 JSON::Json2ServiceInfo2(const NacosString &nacosString) throw(Nacos
     return serviceInfo2;
 }
 
-AccessToken JSON::Json2AccessToken(const NacosString &nacosString) throw(NacosException)
+AccessToken JSON::Json2AccessToken(const NacosString &nacosString) NACOS_THROW(NacosException)
 {
     AccessToken accessTokenRes;
     Document d;
@@ -422,7 +422,7 @@ AccessToken JSON::Json2AccessToken(const NacosString &nacosString) throw(NacosEx
     return accessTokenRes;
 }
 
-PushPacket JSON::Json2PushPacket(const char *jsonString) throw(NacosException)
+PushPacket JSON::Json2PushPacket(const char *jsonString) NACOS_THROW(NacosException)
 {
     PushPacket pushPacket;
     Document d;

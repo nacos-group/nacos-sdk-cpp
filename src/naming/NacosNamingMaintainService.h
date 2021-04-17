@@ -8,6 +8,7 @@
 #include "NacosString.h"
 #include "Properties.h"
 #include "src/factory/ObjectConfigData.h"
+#include "Compatibility.h"
 
 namespace nacos{
 
@@ -26,11 +27,11 @@ private:
     ObjectConfigData *_objectConfigData;
 public:
     NacosNamingMaintainService(ObjectConfigData *objectConfigData);
-    bool updateInstance(const NacosString &serviceName, const NacosString & groupName, const Instance &instance) throw(NacosException);
-    ServiceInfo2 queryService(const NacosString &serviceName, const NacosString &groupName) throw(NacosException);
-    bool createService(const ServiceInfo2 &service, naming::Selector *selector) throw(NacosException);
-    bool deleteService(const NacosString &serviceName, const NacosString &groupName) throw(NacosException);
-    bool updateService(const ServiceInfo2 &service, naming::Selector *selector) throw(NacosException);
+    bool updateInstance(const NacosString &serviceName, const NacosString & groupName, const Instance &instance) NACOS_THROW(NacosException);
+    ServiceInfo2 queryService(const NacosString &serviceName, const NacosString &groupName) NACOS_THROW(NacosException);
+    bool createService(const ServiceInfo2 &service, naming::Selector *selector) NACOS_THROW(NacosException);
+    bool deleteService(const NacosString &serviceName, const NacosString &groupName) NACOS_THROW(NacosException);
+    bool updateService(const ServiceInfo2 &service, naming::Selector *selector) NACOS_THROW(NacosException);
     virtual ~NacosNamingMaintainService();
 };
 }//namespace nacos

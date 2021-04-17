@@ -40,7 +40,7 @@ NacosString ClientWorker::getServerConfig
     const NacosString &dataId,
     const NacosString &group,
     long timeoutMs
-) throw(NacosException) {
+) NACOS_THROW(NacosException) {
     HttpResult res = getServerConfigHelper(tenant, dataId, group, timeoutMs);
     AppConfigManager *_appConfigManager = _objectConfigData->_appConfigManager;
     LocalSnapshotManager *localSnapshotManager = _objectConfigData->_localSnapshotManager;
@@ -70,7 +70,7 @@ HttpResult ClientWorker::getServerConfigHelper
     const NacosString &dataId,
     const NacosString &group,
     long timeoutMs
-) throw(NacosException) {
+) NACOS_THROW(NacosException) {
     std::list <NacosString> headers;
     std::list <NacosString> paramValues;
 
@@ -286,7 +286,7 @@ void ClientWorker::removeListener
     addDeleteItem(operateItem);
 }
 
-NacosString ClientWorker::checkListenedKeys() throw(NetworkException,NacosException) {
+NacosString ClientWorker::checkListenedKeys() NACOS_THROW(NetworkException,NacosException) {
     NacosString postData;
     pthread_mutex_lock(&watchListMutex);
     for (map<NacosString, ListeningData *>::iterator it = listeningKeys.begin(); it != listeningKeys.end(); it++) {

@@ -6,6 +6,7 @@
 #include <curl/curl.h>
 #include "NacosExceptions.h"
 #include "NacosString.h"
+#include "Compatibility.h"
 
 /**
  * HttpDelegate
@@ -58,7 +59,7 @@ public:
             std::list <NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException) = 0;
+    ) NACOS_THROW(NetworkException) = 0;
 
     virtual HttpResult httpGet(
             const NacosString &path,
@@ -66,7 +67,7 @@ public:
             std::map <NacosString, NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException) = 0;
+    ) NACOS_THROW(NetworkException) = 0;
 
     virtual HttpResult httpDelete(
             const NacosString &path,
@@ -74,7 +75,7 @@ public:
             std::list <NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException) = 0;
+    ) NACOS_THROW(NetworkException) = 0;
 
     virtual HttpResult httpDelete(
             const NacosString &path,
@@ -82,7 +83,7 @@ public:
             std::map <NacosString, NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException) = 0;
+    ) NACOS_THROW(NetworkException) = 0;
 
     virtual HttpResult httpPost(
             const NacosString &path,
@@ -90,7 +91,7 @@ public:
             std::list <NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException) = 0;
+    ) NACOS_THROW(NetworkException) = 0;
 
     virtual HttpResult httpPost(
             const NacosString &path,
@@ -98,7 +99,7 @@ public:
             std::map <NacosString, NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException) = 0;
+    ) NACOS_THROW(NetworkException) = 0;
 
     virtual HttpResult httpPut(
             const NacosString &path,
@@ -106,7 +107,7 @@ public:
             std::list <NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException) = 0;
+    ) NACOS_THROW(NetworkException) = 0;
 
     virtual HttpResult httpPut(
             const NacosString &path,
@@ -114,7 +115,7 @@ public:
             std::map <NacosString, NacosString> &paramValues,
             const NacosString &encoding,
             long readTimeoutMs
-    ) throw(NetworkException) = 0;
+    ) NACOS_THROW(NetworkException) = 0;
 
     virtual ~IHttpCli() {};
 };

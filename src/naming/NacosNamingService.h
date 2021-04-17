@@ -10,6 +10,7 @@
 #include "NacosString.h"
 #include "Properties.h"
 #include "src/factory/ObjectConfigData.h"
+#include "Compatibility.h"
 
 namespace nacos{
 class NacosNamingService : public NamingService {
@@ -26,81 +27,81 @@ public:
 
     ~NacosNamingService();
 
-    void registerInstance(const NacosString &serviceName, const NacosString &ip, int port) throw(NacosException);
+    void registerInstance(const NacosString &serviceName, const NacosString &ip, int port) NACOS_THROW(NacosException);
 
     void registerInstance(const NacosString &serviceName, const NacosString &groupName, const NacosString &ip,
-                          int port) throw(NacosException);
+                          int port) NACOS_THROW(NacosException);
 
     void registerInstance(const NacosString &serviceName, const NacosString &ip, int port,
-                          const NacosString &clusterName) throw(NacosException);
+                          const NacosString &clusterName) NACOS_THROW(NacosException);
 
     void registerInstance(const NacosString &serviceName, const NacosString &groupName, const NacosString &ip, int port,
-                          const NacosString &clusterName) throw(NacosException);
+                          const NacosString &clusterName) NACOS_THROW(NacosException);
 
-    void registerInstance(const NacosString &serviceName, Instance &instance) throw(NacosException);
+    void registerInstance(const NacosString &serviceName, Instance &instance) NACOS_THROW(NacosException);
 
     void registerInstance(const NacosString &serviceName, const NacosString &groupName,
-                          Instance &instance) throw(NacosException);
+                          Instance &instance) NACOS_THROW(NacosException);
 
-    void deregisterInstance(const NacosString &serviceName, const NacosString &ip, int port) throw(NacosException);
+    void deregisterInstance(const NacosString &serviceName, const NacosString &ip, int port) NACOS_THROW(NacosException);
 
     void deregisterInstance(const NacosString &serviceName, const NacosString &groupName, const NacosString &ip,
-                            int port) throw(NacosException);
+                            int port) NACOS_THROW(NacosException);
 
     void deregisterInstance(const NacosString &serviceName, const NacosString &ip, int port,
-                            const NacosString &clusterName) throw(NacosException);
+                            const NacosString &clusterName) NACOS_THROW(NacosException);
 
     void
     deregisterInstance(const NacosString &serviceName, const NacosString &groupName, const NacosString &ip, int port,
-                       const NacosString &clusterName) throw(NacosException);
+                       const NacosString &clusterName) NACOS_THROW(NacosException);
 
     void deregisterInstance(const NacosString &serviceName, const NacosString &groupName,
-                            Instance &instance) throw(NacosException);
+                            Instance &instance) NACOS_THROW(NacosException);
 
-    std::list <Instance> getAllInstances(const NacosString &serviceName) throw(NacosException);
-
-    std::list <Instance>
-    getAllInstances(const NacosString &serviceName, const NacosString &groupName) throw(NacosException);
+    std::list <Instance> getAllInstances(const NacosString &serviceName) NACOS_THROW(NacosException);
 
     std::list <Instance>
-    getAllInstances(const NacosString &serviceName, const std::list <NacosString> &clusters) throw(NacosException);
+    getAllInstances(const NacosString &serviceName, const NacosString &groupName) NACOS_THROW(NacosException);
+
+    std::list <Instance>
+    getAllInstances(const NacosString &serviceName, const std::list <NacosString> &clusters) NACOS_THROW(NacosException);
 
     std::list <Instance> getAllInstances(const NacosString &serviceName, const NacosString &groupName,
-                                         const std::list <NacosString> &clusters) throw(NacosException);
+                                         const std::list <NacosString> &clusters) NACOS_THROW(NacosException);
 
-    void subscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException);
+    void subscribe(const NacosString &serviceName, EventListener *listener) NACOS_THROW (NacosException);
 
-    void subscribe(const NacosString &serviceName, const NacosString &groupName, const std::list<NacosString> &clusters, EventListener *listener) throw (NacosException);
+    void subscribe(const NacosString &serviceName, const NacosString &groupName, const std::list<NacosString> &clusters, EventListener *listener) NACOS_THROW (NacosException);
 
-    void subscribe(const NacosString &serviceName, const NacosString &groupName, EventListener *listener) throw (NacosException);
+    void subscribe(const NacosString &serviceName, const NacosString &groupName, EventListener *listener) NACOS_THROW (NacosException);
 
-    void subscribe(const NacosString &serviceName, const std::list<NacosString> &clusters, EventListener *listener) throw (NacosException);
+    void subscribe(const NacosString &serviceName, const std::list<NacosString> &clusters, EventListener *listener) NACOS_THROW (NacosException);
 
-    void unsubscribe(const NacosString &serviceName, EventListener *listener) throw (NacosException);
+    void unsubscribe(const NacosString &serviceName, EventListener *listener) NACOS_THROW (NacosException);
 
-    void unsubscribe(const NacosString &serviceName, const NacosString &groupName, EventListener *listener) throw (NacosException);
+    void unsubscribe(const NacosString &serviceName, const NacosString &groupName, EventListener *listener) NACOS_THROW (NacosException);
 
-    void unsubscribe(const NacosString &serviceName, const std::list<NacosString> &clusters, EventListener *listener) throw (NacosException);
+    void unsubscribe(const NacosString &serviceName, const std::list<NacosString> &clusters, EventListener *listener) NACOS_THROW (NacosException);
 
-    void unsubscribe(const NacosString &serviceName, const NacosString &groupName, const std::list<NacosString> &clusters, EventListener *listener) throw (NacosException);
+    void unsubscribe(const NacosString &serviceName, const NacosString &groupName, const std::list<NacosString> &clusters, EventListener *listener) NACOS_THROW (NacosException);
 
-    ListView<NacosString> getServiceList(int pageNo, int pageSize) throw (NacosException);
+    ListView<NacosString> getServiceList(int pageNo, int pageSize) NACOS_THROW (NacosException);
 
-    ListView<NacosString> getServiceList(int pageNo, int pageSize, const NacosString &groupName) throw (NacosException);
+    ListView<NacosString> getServiceList(int pageNo, int pageSize, const NacosString &groupName) NACOS_THROW (NacosException);
 
     std::list<Instance> getInstanceWithPredicate(const NacosString &serviceName, const NacosString &groupName,
                                                  const std::list <NacosString> &clusters,
-                                                 nacos::naming::selectors::Selector<Instance> *predicate) throw(NacosException);
+                                                 nacos::naming::selectors::Selector<Instance> *predicate) NACOS_THROW(NacosException);
 
     std::list<Instance> getInstanceWithPredicate(const NacosString &serviceName,
                                                  const std::list <NacosString> &clusters,
-                                                 nacos::naming::selectors::Selector<Instance> *predicate) throw(NacosException);
+                                                 nacos::naming::selectors::Selector<Instance> *predicate) NACOS_THROW(NacosException);
 
     std::list<Instance> getInstanceWithPredicate(const NacosString &serviceName, const NacosString &groupName,
-                                                 nacos::naming::selectors::Selector<Instance> *predicate) throw(NacosException);
+                                                 nacos::naming::selectors::Selector<Instance> *predicate) NACOS_THROW(NacosException);
 
     std::list<Instance> getInstanceWithPredicate(const NacosString &serviceName,
-                                                 nacos::naming::selectors::Selector<Instance> *predicate) throw(NacosException);
+                                                 nacos::naming::selectors::Selector<Instance> *predicate) NACOS_THROW(NacosException);
 
     IHttpCli *getHttpCli() const { return _objectConfigData->_httpCli; };
 

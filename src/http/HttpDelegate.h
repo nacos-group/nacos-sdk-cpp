@@ -4,6 +4,7 @@
 #include "NacosExceptions.h"
 #include "NacosString.h"
 #include "IHttpCli.h"
+#include "Compatibility.h"
 
 /**
  * HttpDelegate
@@ -30,7 +31,7 @@ public:
 
     virtual HttpResult
     httpGet(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
-            const NacosString &encoding, long readTimeoutMs) throw(NetworkException) = 0;
+            const NacosString &encoding, long readTimeoutMs) NACOS_THROW(NetworkException) = 0;
 
     /**
     * invoke http put method
@@ -44,7 +45,7 @@ public:
     */
     virtual HttpResult
     httpPut(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
-            const NacosString &encoding, long readTimeoutMs) throw(NetworkException) = 0;
+            const NacosString &encoding, long readTimeoutMs) NACOS_THROW(NetworkException) = 0;
 
     /**
     * invoke http post method
@@ -58,7 +59,7 @@ public:
     */
     virtual HttpResult
     httpPost(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
-             const NacosString &encoding, long readTimeoutMs) throw(NetworkException) = 0;
+             const NacosString &encoding, long readTimeoutMs) NACOS_THROW(NetworkException) = 0;
 
     /**
     * invoke http delete method
@@ -72,7 +73,7 @@ public:
     */
     virtual HttpResult
     httpDelete(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
-               const NacosString &encoding, long readTimeoutMs) throw(NetworkException) = 0;
+               const NacosString &encoding, long readTimeoutMs) NACOS_THROW(NetworkException) = 0;
 
     /**
     * get encode

@@ -12,6 +12,7 @@
 #include "naming/ListView.h"
 #include "naming/ServiceInfo2.h"
 #include "src/factory/ObjectConfigData.h"
+#include "Compatibility.h"
 
 namespace nacos{
 class NamingProxy {
@@ -24,14 +25,14 @@ private:
     NamingProxy();
 
     NacosString
-    reqAPI(const NacosString &api, std::list <NacosString> &params, int method) throw(NacosException);
+    reqAPI(const NacosString &api, std::list <NacosString> &params, int method) NACOS_THROW(NacosException);
 
     NacosString
     callServer(const NacosString &api, std::list <NacosString> &params, const NacosString &curServer,
-               int method) throw(NacosException);
+               int method) NACOS_THROW(NacosException);
 
     NacosString callServer(const NacosString &api, std::list <NacosString> &params,
-                           const NacosString &curServer) throw(NacosException);
+                           const NacosString &curServer) NACOS_THROW(NacosException);
 
     std::list <NacosString> builderHeaders();
 
@@ -45,29 +46,29 @@ public:
 
     //instance CRUD
     void registerService(const NacosString &serviceName, const NacosString &groupName,
-                         Instance &instance) throw(NacosException);
+                         Instance &instance) NACOS_THROW(NacosException);
 
     Instance getServiceInstance(const NacosString &serviceName,
                                 const NacosString &ip, int port,
-                                const std::map<NacosString, NacosString> &params) throw(NacosException);
+                                const std::map<NacosString, NacosString> &params) NACOS_THROW(NacosException);
 
-    bool updateServiceInstance(const Instance &instance) throw(NacosException);
+    bool updateServiceInstance(const Instance &instance) NACOS_THROW(NacosException);
 
-    void deregisterService(const NacosString &serviceName, Instance &instance) throw(NacosException);
+    void deregisterService(const NacosString &serviceName, Instance &instance) NACOS_THROW(NacosException);
 
     NacosString queryList(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters,
-                        int udpPort, bool healthyOnly) throw(NacosException);
+                        int udpPort, bool healthyOnly) NACOS_THROW(NacosException);
 
     //service CRUD
-    ListView<NacosString> getServiceList(int page, int pageSize, const NacosString &groupName) throw(NacosException);
+    ListView<NacosString> getServiceList(int page, int pageSize, const NacosString &groupName) NACOS_THROW(NacosException);
 
-    ServiceInfo2 getServiceInfo(const NacosString &serviceName, const NacosString &groupName) throw(NacosException);
+    ServiceInfo2 getServiceInfo(const NacosString &serviceName, const NacosString &groupName) NACOS_THROW(NacosException);
 
-    bool deleteServiceInfo(const NacosString &serviceName, const NacosString &groupName) throw(NacosException);
+    bool deleteServiceInfo(const NacosString &serviceName, const NacosString &groupName) NACOS_THROW(NacosException);
 
-    bool createServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Selector *selector) throw(NacosException);
+    bool createServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Selector *selector) NACOS_THROW(NacosException);
 
-    bool updateServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Selector *selector) throw(NacosException);
+    bool updateServiceInfo(const ServiceInfo2 &serviceInfo2, naming::Selector *selector) NACOS_THROW(NacosException);
 
     inline NacosString getNamespaceId();
 

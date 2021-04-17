@@ -5,6 +5,7 @@
 #include "NacosString.h"
 #include "src/http/HttpDelegate.h"
 #include "src/factory/ObjectConfigData.h"
+#include "Compatibility.h"
 
 /**
  * NoOpHttpDelegate
@@ -21,18 +22,18 @@ public:
     NoOpHttpDelegate(ObjectConfigData *objectConfigData);
 
     HttpResult httpGet(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
-                       const NacosString &encoding, long readTimeoutMs) throw(NetworkException);
+                       const NacosString &encoding, long readTimeoutMs) NACOS_THROW(NetworkException);
 
     HttpResult httpPost(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
-                        const NacosString &encoding, long readTimeoutMs) throw(NetworkException);
+                        const NacosString &encoding, long readTimeoutMs) NACOS_THROW(NetworkException);
 
     virtual HttpResult
     httpPut(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
-            const NacosString &encoding, long readTimeoutMs) throw(NetworkException);
+            const NacosString &encoding, long readTimeoutMs) NACOS_THROW(NetworkException);
 
     HttpResult
     httpDelete(const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
-               const NacosString &encoding, long readTimeoutMs) throw(NetworkException);
+               const NacosString &encoding, long readTimeoutMs) NACOS_THROW(NetworkException);
 
     NacosString getEncode() const;
 

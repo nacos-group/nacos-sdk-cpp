@@ -6,12 +6,13 @@
 #define NACOS_SDK_CPP_CONFIGPARSERUTILS_H
 #include "Properties.h"
 #include "NacosExceptions.h"
+#include "Compatibility.h"
 
 namespace nacos {
 
 class ConfigParserUtils {
 public:
-    static Properties parseConfigFile(const NacosString &file) throw(NacosException);
+    static Properties parseConfigFile(const NacosString &file) NACOS_THROW(NacosException);
 
 };
 
