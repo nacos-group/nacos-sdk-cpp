@@ -76,7 +76,7 @@ void NacosServiceFactory::initializeRuntimeLogSettings(AppConfigManager *_appCon
 //FIXME:Memory leak at initializing stage, e.g.:
 //when a HttpDelegate is allocated in CreateConfigService, after that an EXCEPTION is thrown during the initialization of ServerListManager
 //the resource for HttpDelegate is never released
-NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) {
+NamingService *NacosServiceFactory::CreateNamingService() NACOS_THROW(NacosException) {
     Init::doInit();
     checkConfig();
     ObjectConfigData *objectConfigData = new ObjectConfigData(NAMING);
@@ -121,7 +121,7 @@ NamingService *NacosServiceFactory::CreateNamingService() throw(NacosException) 
     return instance;
 }
 
-ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException) {
+ConfigService *NacosServiceFactory::CreateConfigService() NACOS_THROW(NacosException) {
     Init::doInit();
     checkConfig();
     ObjectConfigData *objectConfigData = new ObjectConfigData(CONFIG);
@@ -154,7 +154,7 @@ ConfigService *NacosServiceFactory::CreateConfigService() throw(NacosException) 
     return instance;
 }
 
-NamingMaintainService *NacosServiceFactory::CreateNamingMaintainService() throw(NacosException){
+NamingMaintainService *NacosServiceFactory::CreateNamingMaintainService() NACOS_THROW(NacosException){
     Init::doInit();
     checkConfig();
     ObjectConfigData *objectConfigData = new ObjectConfigData(MAINTAIN);
@@ -188,7 +188,7 @@ NacosServiceFactory::~NacosServiceFactory() {
 
 }
 
-void NacosServiceFactory::checkConfig() throw(InvalidFactoryConfigException) {
+void NacosServiceFactory::checkConfig() NACOS_THROW(InvalidFactoryConfigException) {
     if (!configIsSet && !propsIsSet) {
         throw InvalidFactoryConfigException();
     }

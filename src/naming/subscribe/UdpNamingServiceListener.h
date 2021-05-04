@@ -11,6 +11,7 @@
 #include <netinet/in.h>
 #include "src/factory/ObjectConfigData.h"
 #include "src/thread/Thread.h"
+#include "Compatibility.h"
 
 #define UDP_MSS 64 * 1024
 
@@ -32,7 +33,7 @@ private:
     char receiveBuffer[UDP_MSS];
     Thread *_listenerThread;
 
-    void initializeUdpListener() throw(NacosException);
+    void initializeUdpListener() NACOS_THROW(NacosException);
     static void *listenerThreadFunc(void *param);
 public:
     UdpNamingServiceListener(ObjectConfigData *objectConfigData);

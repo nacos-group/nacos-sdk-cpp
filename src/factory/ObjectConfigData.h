@@ -4,6 +4,7 @@
 #include "naming/NamingService.h"
 #include "config/ConfigService.h"
 #include "NacosExceptions.h"
+#include "Compatibility.h"
 
 namespace nacos{
 class HttpDelegate;
@@ -34,14 +35,14 @@ private:
     void destroyMaintainService();
     //These functions are designed to prevent coding problems
     //(i.e.: forget to initialize HttpDelegate for a ConfigService) rather than run-time errors
-    void checkConfigService() throw(NacosException);
-    void checkNamingService() throw(NacosException);
-    void checkMaintainService() throw(NacosException);
+    void checkConfigService() NACOS_THROW(NacosException);
+    void checkNamingService() NACOS_THROW(NacosException);
+    void checkMaintainService() NACOS_THROW(NacosException);
     NacosString objectId;
 public:
     const NacosString &getObjectId() const { return objectId; };
     ObjectConfigData(FactoryType theFactoryType);
-    void checkAssembledObject() throw(NacosException);
+    void checkAssembledObject() NACOS_THROW(NacosException);
     ~ObjectConfigData();
     NacosString name;
     HttpDelegate *_httpDelegate;

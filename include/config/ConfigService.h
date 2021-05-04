@@ -4,6 +4,7 @@
 #include "NacosExceptions.h"
 #include "NacosString.h"
 #include "listen/Listener.h"
+#include "Compatibility.h"
 namespace nacos{
 class ConfigService {
 public:
@@ -17,7 +18,7 @@ public:
      * @throws NacosException NacosException
      */
     virtual NacosString
-    getConfig(const NacosString &dataId, const NacosString &group, long timeoutMs) throw(NacosException) = 0;
+    getConfig(const NacosString &dataId, const NacosString &group, long timeoutMs) NACOS_THROW(NacosException) = 0;
 
     /**
      * Add a listener to the configuration, after the server modified the
@@ -33,7 +34,7 @@ public:
      * @throws NacosException NacosException
      */
     virtual void
-    addListener(const NacosString &dataId, const NacosString &group, Listener *listener) throw(NacosException) = 0;
+    addListener(const NacosString &dataId, const NacosString &group, Listener *listener) NACOS_THROW(NacosException) = 0;
 
     /**
      * Publish config.
@@ -45,7 +46,7 @@ public:
      * @throws NacosException NacosException
      */
     virtual bool publishConfig(const NacosString &dataId, const NacosString &group,
-                               const NacosString &content) throw(NacosException) = 0;
+                               const NacosString &content) NACOS_THROW(NacosException) = 0;
 
     /**
      * Remove config
@@ -55,7 +56,7 @@ public:
      * @return whether remove
      * @throws NacosException NacosException
      */
-    virtual bool removeConfig(const NacosString &dataId, const NacosString &group) throw(NacosException) = 0;
+    virtual bool removeConfig(const NacosString &dataId, const NacosString &group) NACOS_THROW(NacosException) = 0;
 
     /**
      * Remove listener

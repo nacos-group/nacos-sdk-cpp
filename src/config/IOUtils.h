@@ -4,6 +4,7 @@
 #include <list>
 #include "NacosString.h"
 #include "NacosExceptions.h"
+#include "Compatibility.h"
 
 namespace nacos{
 class IOUtils {
@@ -11,10 +12,10 @@ private:
 public:
     static size_t getFileSize(const NacosString &file);
 
-    static NacosString readStringFromFile(const NacosString &file, const NacosString &encoding) throw(IOException);
+    static NacosString readStringFromFile(const NacosString &file, const NacosString &encoding) NACOS_THROW(IOException);
 
     static void
-    writeStringToFile(const NacosString &file, const NacosString &data, const NacosString &encoding) throw(IOException);
+    writeStringToFile(const NacosString &file, const NacosString &data, const NacosString &encoding) NACOS_THROW(IOException);
 
     //Returns true if:
     //a. the file doesn't exist

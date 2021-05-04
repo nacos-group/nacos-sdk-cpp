@@ -13,7 +13,7 @@ using namespace std;
 
 namespace nacos {
 
-void UdpNamingServiceListener::initializeUdpListener() throw(NacosException) {
+void UdpNamingServiceListener::initializeUdpListener() NACOS_THROW(NacosException) {
     log_debug("in thread UdpNamingServiceListener::initializeUdpListener()\n");
     // Creating socket file descriptor
     if ( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) {
@@ -29,7 +29,7 @@ void UdpNamingServiceListener::initializeUdpListener() throw(NacosException) {
     log_debug("udp receiver port = %d\n", cliaddr.sin_port);
 
     // Bind the socket with the server address
-    if ( bind(sockfd, (const struct sockaddr *)&cliaddr,
+    if ( ::bind(sockfd, (const struct sockaddr *)&cliaddr,
               sizeof(cliaddr)) < 0 )
     {
         throw NacosException(NacosException::UNABLE_TO_CREATE_SOCKET, "Unable to bind");

@@ -3,12 +3,13 @@
 
 #include "NacosString.h"
 #include "NacosExceptions.h"
+#include "Compatibility.h"
 
 namespace nacos{
 class NetUtils {
 public:
     //Get IP address (best guess)
-    static NacosString getHostIp() throw(NacosException);
+    static NacosString getHostIp() NACOS_THROW(NacosException);
 };
 }//namespace nacos
 

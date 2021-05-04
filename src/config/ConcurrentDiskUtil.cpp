@@ -16,7 +16,7 @@
 
 namespace nacos{
 NacosString
-ConcurrentDiskUtil::getFileContent(const NacosString &file, const NacosString &charsetName) throw(IOException) {
+ConcurrentDiskUtil::getFileContent(const NacosString &file, const NacosString &charsetName) NACOS_THROW(IOException) {
     if (IOUtils::checkNotExistOrNotFile(file)) {
         //TODO:add errorcode
         throw IOException(NacosException::FILE_NOT_FOUND,
@@ -53,7 +53,7 @@ bool ConcurrentDiskUtil::writeFileContent
                 const NacosString &path,
                 const NacosString &content,
                 const NacosString &charsetName
-        ) throw(IOException) {
+        ) NACOS_THROW(IOException) {
     FILE *fp = fopen(path.c_str(), "wb");
     if (fp == NULL) {
         char errbuf[100];

@@ -14,7 +14,7 @@ SecurityManager::SecurityManager(ObjectConfigData *objectConfigData) {
     _started = false;
     _tokenRefreshThread = new Thread("TokenRefreshThread", tokenRefreshThreadFunc, (void*)this);
 }
-void SecurityManager::doLogin(const NacosString &serverAddr) throw(NacosException, NetworkException) {
+void SecurityManager::doLogin(const NacosString &serverAddr) NACOS_THROW(NacosException, NetworkException) {
     //TODO:refactor string constants
     NacosString url = serverAddr + "/" + ConfigConstant::DEFAULT_CONTEXT_PATH + "/v1/auth/users/login";
     list <NacosString> headers;
@@ -33,7 +33,7 @@ void SecurityManager::doLogin(const NacosString &serverAddr) throw(NacosExceptio
     _accessToken = JSON::Json2AccessToken(result.content);
 }
 
-void SecurityManager::login() throw (NacosException) {
+void SecurityManager::login() NACOS_THROW (NacosException) {
     WriteGuard writeGuard(_rwLock);
     list <NacosServerInfo> serversToTry = _objectConfigData->_serverListManager->getServerList();
     size_t nr_servers = serversToTry.size();

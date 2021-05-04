@@ -12,6 +12,7 @@
 #include "constant/PropertyKeyConst.h"
 #include "src/thread/RWLock.h"
 #include "src/factory/ObjectConfigData.h"
+#include "Compatibility.h"
 
 namespace nacos{
 class ServerListManager {
@@ -34,13 +35,13 @@ private:
     long refreshInterval;//in Millis
     RWLock rwLock;//to lock the serverList
 
-    void initAll() throw(NacosException);
+    void initAll() NACOS_THROW(NacosException);
 
     void addToSrvList(NacosString &address);
 
-    std::list <NacosServerInfo> tryPullServerListFromNacosServer() throw(NacosException);
+    std::list <NacosServerInfo> tryPullServerListFromNacosServer() NACOS_THROW(NacosException);
 
-    std::list <NacosServerInfo> pullServerList() throw(NacosException);
+    std::list <NacosServerInfo> pullServerList() NACOS_THROW(NacosException);
 
     ObjectConfigData *_objectConfigData;
 
@@ -70,7 +71,7 @@ public:
 
     ServerListManager(std::list <NacosString> &fixed);
 
-    ServerListManager(ObjectConfigData *objectConfigData) throw(NacosException);
+    ServerListManager(ObjectConfigData *objectConfigData) NACOS_THROW(NacosException);
 
     NacosString getCurrentServerAddr();
 

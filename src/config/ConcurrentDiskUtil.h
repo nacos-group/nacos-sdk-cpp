@@ -3,6 +3,7 @@
 
 #include "NacosString.h"
 #include "NacosExceptions.h"
+#include "Compatibility.h"
 
 namespace nacos{
 class ConcurrentDiskUtil {
@@ -15,7 +16,7 @@ public:
      * @return content
      * @throws IOException IOException
      */
-    static NacosString getFileContent(const NacosString &file, const NacosString &charsetName) throw(IOException);
+    static NacosString getFileContent(const NacosString &file, const NacosString &charsetName) NACOS_THROW(IOException);
 
     /**
      * write file content
@@ -27,7 +28,7 @@ public:
      * @throws IOException IOException
      */
     static bool writeFileContent(const NacosString &path, const NacosString &content,
-                                 const NacosString &charsetName) throw(IOException);
+                                 const NacosString &charsetName) NACOS_THROW(IOException);
 };
 }//namespace nacos
 

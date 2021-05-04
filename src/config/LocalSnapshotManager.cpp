@@ -30,7 +30,7 @@ NacosString LocalSnapshotManager::getFailover(const NacosString &serverName, con
 
     try {
         return readFile(localPath);
-    } catch (IOException ioe) {
+    } catch (IOException &ioe) {
         log_error("[LocalSnapshotManager]-getFailover:[servername=%s] get failover error, file: %s, exception:%s\n", serverName.c_str(), localPath.c_str(), ioe.what());
         return NULLSTR;
     }
@@ -56,13 +56,13 @@ NacosString LocalSnapshotManager::getSnapshot
 
     try {
         return readFile(file);
-    } catch (IOException ioe) {
+    } catch (IOException &ioe) {
         log_error("[LocalSnapshotManager]-getSnapshot:[servername=%s]+get snapshot error, file:%s what:%s\n", name.c_str(), file.c_str(), ioe.what());
         return NULLSTR;
     }
 };
 
-NacosString LocalSnapshotManager::readFile(const NacosString &file) throw(IOException) {
+NacosString LocalSnapshotManager::readFile(const NacosString &file) NACOS_THROW(IOException) {
     if (IOUtils::checkNotExistOrNotFile(file)) {
         return NULLSTR;
     }
