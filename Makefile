@@ -21,8 +21,8 @@ INCLUDES = -Iinclude \
 		   -Itest \
 		   -I.
 
-LIBS = -lcurl -lpthread
-CCFLAGS = -g -Wall -O0 -fPIC
+LIBS = -lcurl -lgpr -lgrpc++_reflection -ldl  -L/usr/local/lib `pkg-config --libs protobuf grpc++`
+CCFLAGS = -g -Wall -O0 -fPIC -std=c++17 
 OUTPUT = nacos-cli.out
 OUTLIB1 = libnacos-cli.so
 OUTLIB2 = libnacos-cli.a
@@ -41,7 +41,7 @@ $(OUTLIB1) : $(OBJS)
 
 $(OUTLIB2) : $(OBJS)
 	$(info Linking Static $@ ...)
-	ar cru $(OUTLIB2) $(OBJS)
+	@ar cru $(OUTLIB2) $(OBJS)
 	ranlib $(OUTLIB2)
 
 $(ALL_OBJS) : $(OBJ_DIR)/%.o : %.cpp
