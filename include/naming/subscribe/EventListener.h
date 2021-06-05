@@ -14,7 +14,7 @@ namespace nacos{
 class EventListener {
 private:
     NacosString listenerName;
-    AtomicInt refCount;
+    AtomicInt<int> refCount;
 public:
     EventListener() {
         this->listenerName = "theListener";

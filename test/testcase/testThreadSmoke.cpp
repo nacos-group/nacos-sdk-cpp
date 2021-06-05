@@ -82,13 +82,13 @@ bool testThreadPoolSmoke() {
     return true;
 }
 
-AtomicInt totalFinishedThreads;
+AtomicInt<int> totalFinishedThreads;
 
 class SmokingTestThreadTask : public Task {
 private:
-    AtomicInt &_counter;
+    AtomicInt<int> &_counter;
 public:
-    SmokingTestThreadTask(const NacosString &taskName, AtomicInt &counter) : _counter(counter) {
+    SmokingTestThreadTask(const NacosString &taskName, AtomicInt<int> &counter) : _counter(counter) {
         setTaskName(taskName);
     };
 
@@ -108,7 +108,7 @@ bool testThreadPoolConcurrentWithAtomicCounter() {
     ThreadPool tp(10);
     tp.start();
     cout << "ok, size = 10" << endl;
-    AtomicInt totalCounter;
+    AtomicInt<int> totalCounter;
 
     Task *tasks[1000];
     for (size_t i = 0; i < 40; i++) {
