@@ -1,6 +1,7 @@
 #include <iostream>
 #include "src/thread/Thread.h"
 #include "src/utils/SequenceProvider.h"
+#include "utils/DirUtils.h"
 
 using namespace std;
 using namespace nacos;
@@ -28,7 +29,7 @@ bool testSequenceProvider() {
 
     cout << "Generating SEQ..." << endl;
 
-    sequenceProvider = new SequenceProvider<uint64_t> ("/var/tmp/defaultSeq.dat", 20000, 100);
+    sequenceProvider = new SequenceProvider<uint64_t> (DirUtils::getCwd() + "/test_seq.dat", 20000, 100);
 
     Thread *threads[NR_THREADS] = {NULL};
     for (int i = 0; i < NR_THREADS; i++) {

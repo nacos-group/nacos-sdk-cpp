@@ -35,7 +35,8 @@ private:
         if (IOUtils::checkNotExistOrNotFile(_fileName)) {
             newFile = true;
         }
-        fd = open(_fileName.c_str(), O_RDWR | O_CREAT);
+        mode_t mode = S_IRUSR | S_IWUSR | S_IRWXG | S_IWGRP;
+        fd = open(_fileName.c_str(), O_RDWR | O_CREAT, mode);
         if (fd <= 0) {
             throw new NacosException(NacosException::UNABLE_TO_OPEN_FILE, _fileName);
         }

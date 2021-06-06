@@ -130,6 +130,8 @@ bool testNamingServiceAndDeRegisterActively();
 
 bool testThreadPoolConcurrentWithAtomicCounter();
 
+bool testSequenceProvider();
+
 TestData disabledTestList[] =
 TEST_ITEM_START
 TEST_ITEM_END
@@ -137,7 +139,6 @@ TEST_ITEM_END
 TestData
 testList[] =
 TEST_ITEM_START
-
         TEST_ITEM("Normal http test", testNormalHttpRequest)
         TEST_ITEM("No server request, should fail", testNoServerRequest)
         TEST_ITEM("Publish config to server", testPublishConfig)
@@ -200,6 +201,7 @@ TEST_ITEM_START
         TEST_ITEM("Test delayed task pool - multiple tasks triggered at the same time", testDelayedThread2)
         TEST_ITEM("Register a service instance and remove it actively", testNamingServiceAndDeRegisterActively)
         TEST_ITEM("thread pool with concurrent add & atomic operation", testThreadPoolConcurrentWithAtomicCounter)
+        TEST_ITEM("Test sequence provider", testSequenceProvider)
 TEST_ITEM_END
 
 int main() {
