@@ -2,6 +2,7 @@
 #include "src/naming/subscribe/SubscriptionPoller.h"
 #include "src/naming/subscribe/UdpNamingServiceListener.h"
 #include "src/naming/beat/BeatReactor.h"
+#include "src/utils/SequenceProvider.h"
 #include "utils/NamingUtils.h"
 #include "constant/UtilAndComs.h"
 #include "utils/ParamUtils.h"
@@ -88,7 +89,8 @@ void NacosNamingService::registerInstance
                 const NacosString &groupName,
                 Instance &instance
         ) NACOS_THROW(NacosException) {
-
+    const NacosString &instanceIdPrefix = _objectConfigData->_appConfigManager->get(PropertyKeyConst::INSTANCE_ID_PREFIX);
+    instance.instanceId = instanceIdPrefix + NacosStringOps::valueOf(_objectConfigData->_sequenceProvider->next());
     if (instance.ephemeral) {
         BeatInfo beatInfo;
         beatInfo.serviceName = NamingUtils::getGroupedName(serviceName, groupName);

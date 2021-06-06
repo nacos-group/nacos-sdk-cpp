@@ -50,4 +50,6 @@ const NacosString PropertyKeyConst::CLIENT_NAME = "nacos.client.name";
 const NacosString PropertyKeyConst::AUTH_USERNAME = "nacos.auth.username";
 const NacosString PropertyKeyConst::AUTH_PASSWORD = "nacos.auth.password";
 const NacosString PropertyKeyConst::LOCAL_IP = "nacos.client.ip";
+const NacosString PropertyKeyConst::INSTANCE_ID_SEQ_FILE = "nacos.instId.seq.file";
+const NacosString PropertyKeyConst::INSTANCE_ID_PREFIX = "nacos.instId.prefix";
 }//namespace nacos

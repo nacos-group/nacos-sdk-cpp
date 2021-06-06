@@ -19,6 +19,7 @@
 #include "src/naming/subscribe/HostReactor.h"
 #include "src/security/SecurityManager.h"
 #include "src/utils/ConfigParserUtils.h"
+#include "src/utils/SequenceProvider.h"
 #include "utils/DirUtils.h"
 
 //Unlike Java, in cpp, there's no container, no spring to do the ORM job, so I have to handle it myself
@@ -113,6 +114,10 @@ NamingService *NacosServiceFactory::CreateNamingService() NACOS_THROW(NacosExcep
 
     HostReactor *hostReactor = new HostReactor(objectConfigData);
     objectConfigData->_hostReactor = hostReactor;
+
+    const NacosString &seqConfile = appConfigManager->get(PropertyKeyConst::INSTANCE_ID_SEQ_FILE);
+    SequenceProvider<int64_t> *sequenceProvider = new SequenceProvider<int64_t>(seqConfile, 1, 10);
+    objectConfigData->_sequenceProvider = sequenceProvider;
 
     objectConfigData->checkAssembledObject();
     NamingService *instance = new NacosNamingService(objectConfigData);
