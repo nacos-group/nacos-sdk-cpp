@@ -1,6 +1,8 @@
 #include <sys/stat.h>
+#include <iostream>
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
 #include "NacosString.h"
 #include "NacosExceptions.h"
 #include "thread/AtomicInt.h"
@@ -18,7 +20,7 @@ private:
     Mutex _acquireMutex;
     T _nr_to_preserve;
     T _initSequence;
-    T _hwm;//high water mark
+    volatile T _hwm;//high water mark
 
     void ensureWrite(int fd, T data) {
         size_t bytes_written = 0;
@@ -50,12 +52,13 @@ private:
         {
             bytes_read += read(fd, (char*)&current + bytes_read, sizeof(T) - bytes_read);
         }
-        _current.set(current);
-        current += _nr_to_preserve;
-        _hwm = current;
+        std::cout << "got from file:" << current << std::endl;
         lseek(fd, 0, SEEK_SET);//write from the beginning
-        ensureWrite(fd, current);
+
+        ensureWrite(fd, current + _nr_to_preserve);
         close(fd);
+        _current.set(current);
+        _hwm = current + _nr_to_preserve;
     };
 public:
     SequenceProvider(const NacosString &fileName, T initSequence, T nr_to_preserve) {
@@ -66,13 +69,12 @@ public:
 
     T next(int step = 1) {
         T res = _current.getAndInc(step);
-        if (res >= _hwm) {
+        while (res >= _hwm) {
             _acquireMutex.lock();
-            if (_current.get() >= _hwm) {
+            if (res >= _hwm) {
                 preserve();
             }
             _acquireMutex.unlock();
-            return next(step);
         }
         return res;
     };

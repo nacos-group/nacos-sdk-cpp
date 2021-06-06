@@ -11,6 +11,7 @@ void *SeqThreadFunc(void *param) {
     Thread *thisThread = *((Thread **) param);
     for (int i = 0; i < 10; i++) {
         log_debug("Thread %s SEQ: %u\n", thisThread->getThreadName().c_str(), sequenceProvider->next());
+        cout << "Thread " << thisThread->getThreadName().c_str() << " SEQ:" << ":" << sequenceProvider->next() << endl;
     }
 
     return NULL;
