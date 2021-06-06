@@ -1,5 +1,4 @@
 #include <sys/stat.h>
-#include <iostream>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
@@ -29,7 +28,7 @@ private:
         }
     }
 
-    void preserve() {
+    T preserve() {
         T current;
         int fd;
         bool newFile = false;
@@ -38,7 +37,6 @@ private:
         }
         fd = open(_fileName.c_str(), O_RDWR | O_CREAT);
         if (fd <= 0) {
-            log_debug("errno = %d", errno);
             throw new NacosException(NacosException::UNABLE_TO_OPEN_FILE, _fileName);
         }
         
@@ -52,19 +50,19 @@ private:
         {
             bytes_read += read(fd, (char*)&current + bytes_read, sizeof(T) - bytes_read);
         }
-        std::cout << "got from file:" << current << std::endl;
         lseek(fd, 0, SEEK_SET);//write from the beginning
 
         ensureWrite(fd, current + _nr_to_preserve);
         close(fd);
-        _current.set(current);
         _hwm = current + _nr_to_preserve;
+        return current;
     };
 public:
     SequenceProvider(const NacosString &fileName, T initSequence, T nr_to_preserve) {
         _fileName = fileName;
         _initSequence = initSequence;
         _nr_to_preserve = nr_to_preserve;
+        _current.set(preserve());
     };
 
     T next(int step = 1) {
