@@ -102,6 +102,7 @@ void AppConfigManager::initDefaults() {
 
     NacosString homedir = DirUtils::getHome();
 
+    set(PropertyKeyConst::INSTANCE_ID_PREFIX, NetUtils::getHostName());
     set(PropertyKeyConst::INSTANCE_ID_SEQ_FILE, homedir + ConfigConstant::FILE_SEPARATOR + "nacos" + ConfigConstant::FILE_SEPARATOR + "instance_seq.dat");
     set(PropertyKeyConst::NACOS_SNAPSHOT_PATH, homedir + ConfigConstant::FILE_SEPARATOR + "nacos" + ConfigConstant::FILE_SEPARATOR + "snapshot");
     log_info("[AppConfigManager]-initDefaults:DEFAULT_SNAPSHOT_PATH:%s\n", appConfig[PropertyKeyConst::NACOS_SNAPSHOT_PATH].c_str());

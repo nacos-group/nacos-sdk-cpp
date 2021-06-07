@@ -10,6 +10,9 @@ class NetUtils {
 public:
     //Get IP address (best guess)
     static NacosString getHostIp() NACOS_THROW(NacosException);
+
+    //Get hostname
+    static NacosString getHostName() NACOS_THROW(NacosException);
 };
 }//namespace nacos
 

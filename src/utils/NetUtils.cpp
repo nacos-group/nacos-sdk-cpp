@@ -5,6 +5,9 @@
 #include <ifaddrs.h>
 #include <src/log/Logger.h>
 #include <string.h>
+#include <unistd.h>
+
+#define HOST_AND_LEN 250
 
 namespace nacos{
 
@@ -44,4 +47,17 @@ NacosString NetUtils::getHostIp() NACOS_THROW(NacosException){
     //Usually the program will not run to here
     throw NacosException(NacosException::UNABLE_TO_GET_HOST_IP, "Failed to get IF address");
 }
+
+NacosString NetUtils::getHostName() NACOS_THROW(NacosException)
+{
+    char hostname[HOST_AND_LEN];
+    
+    int res = gethostname(hostname, HOST_AND_LEN);
+    if (res == 0) {
+        return NacosString(hostname);
+    }
+
+    throw NacosException(NacosException::UNABLE_TO_GET_HOST_NAME, "Failed to get hostname, errno = " + NacosStringOps::valueOf(errno));
+}
+
 }//namespace nacos
