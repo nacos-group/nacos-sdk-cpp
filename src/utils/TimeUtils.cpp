@@ -1,5 +1,5 @@
 #include <stddef.h>
-#include "TimeUtils.h"
+#include "utils/TimeUtils.h"
 
 namespace nacos{
 int64_t TimeUtils::getCurrentTimeInMs() {

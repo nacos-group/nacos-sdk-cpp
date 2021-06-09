@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include "NacosString.h"
 #include "src/log/Logger.h"
-#include "Tid.h"
+#include "thread/Tid.h"
 
 #define THREAD_STOP_SIGNAL SIGUSR1
 

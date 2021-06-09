@@ -1,7 +1,7 @@
 #ifndef __INIT_H_
 #define __INIT_H_
 
-#include "src/thread/Mutex.h"
+#include "thread/Mutex.h"
 
 namespace nacos{
 class Init {

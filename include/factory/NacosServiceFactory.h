@@ -6,8 +6,9 @@
 #define NACOS_SDK_CPP_NACOSSERVICEFACTORY_H
 
 #include "INacosServiceFactory.h"
-#include "src/thread/Mutex.h"
 #include "Compatibility.h"
+#include "thread/Mutex.h"
+
 namespace nacos{
 
 class AppConfigManager;

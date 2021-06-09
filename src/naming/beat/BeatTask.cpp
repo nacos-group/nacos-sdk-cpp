@@ -1,9 +1,6 @@
 #include <map>
 #include "BeatReactor.h"
-#include "BeatTask.h"
 #include "NacosString.h"
-#include "src/log/Logger.h"
-#include "src/utils/TimeUtils.h"
 
 using namespace std;
 

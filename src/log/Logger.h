@@ -4,7 +4,7 @@
 #include <cstdarg>
 #include <stdint.h>
 #include "NacosString.h"
-#include "src/thread/Mutex.h"
+#include "thread/Mutex.h"
 #include "Properties.h"
 
 #define DETAILED_DEBUG_INFO
