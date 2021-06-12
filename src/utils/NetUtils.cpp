@@ -2,6 +2,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <errno.h>
 #include <ifaddrs.h>
 #include <src/log/Logger.h>
 #include <string.h>
