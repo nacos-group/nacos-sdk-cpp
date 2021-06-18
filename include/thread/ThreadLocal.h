@@ -2,7 +2,6 @@
 #define __THREAD_LOCAL_H_
 
 #include <pthread.h>
-#include "src/log/Logger.h"
 
 namespace nacos{
 template <typename T>
@@ -20,7 +19,6 @@ private:
     T _defaultValue;
     static void destroyer(void *param) {
         ObjectWrapper<T> *wrapper = reinterpret_cast< ObjectWrapper<T> *>(param);
-        log_debug("Calling destroyer...\n");
         wrapper->threadLocalObj->onDestroy(&wrapper->wrappedObject);
         delete wrapper;
     }
@@ -40,13 +38,11 @@ private:
     }
 public:
     ThreadLocal() {
-        log_debug("ThreadLocal::ThreadLocal() is called\n");
         /* init the curl session */
         pthread_key_create(&pthreadKey, destroyer);
     }
 
     ThreadLocal(T defaultValue) {
-        log_debug("ThreadLocal::ThreadLocal(defaultValue) is called\n");
         _defaultValue = defaultValue;
         /* init the curl session */
         pthread_key_create(&pthreadKey, destroyer);
@@ -69,7 +65,6 @@ public:
     }
 
     virtual ~ThreadLocal() {
-        log_debug("ThreadLocal::~ThreadLocal is called\n");
         ObjectWrapper<T> *wrapper = getWrapper();
         if (wrapper != NULL) {
             wrapper->threadLocalObj->onDestroy(&wrapper->wrappedObject);
@@ -82,7 +77,6 @@ public:
         //do nothing by default;
         //!!!!!shall NOT access anything other than VALUE!!!!!
         *value = _defaultValue;
-        log_debug("ThreadLocal::onCreate is called\n");
     }
 
     virtual void onDestroy(T *value) {
