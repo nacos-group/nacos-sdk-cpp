@@ -9,6 +9,7 @@
 #include "src/listen/ClientWorker.h"
 #include "src/security/SecurityManager.h"
 #include "utils/UuidUtils.h"
+#include "src/utils/SequenceProvider.h"
 
 namespace nacos{
 
@@ -44,6 +45,7 @@ void ObjectConfigData::checkNamingService() NACOS_THROW(NacosException) {
     NACOS_ASSERT(_serverListManager != NULL);
     NACOS_ASSERT(_udpNamingServiceListener != NULL);
     NACOS_ASSERT(_udpNamingServiceListener != NULL);
+    NACOS_ASSERT(_sequenceProvider != NULL);
 }
 
 void ObjectConfigData::checkConfigService() NACOS_THROW(NacosException) {
@@ -205,6 +207,12 @@ void ObjectConfigData::destroyNamingService() {
     {
         delete _appConfigManager;
         _appConfigManager = NULL;
+    }
+
+    if (_sequenceProvider != NULL)
+    {
+        delete _sequenceProvider;
+        _sequenceProvider = NULL;
     }
 }
 

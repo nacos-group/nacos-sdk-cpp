@@ -110,9 +110,10 @@ long JSON::getLong(const NacosString &jsonString, const NacosString &fieldname) 
 Instance JSON::Json2Instance(const Value &host) NACOS_THROW(NacosException) {
     Instance theinstance;
 
-    markRequired(host, "instanceId");
-    const Value &instanceId = host["instanceId"];
-    theinstance.instanceId = instanceId.GetString();
+    if (host.HasMember("instanceId")) {
+        const Value &instanceId = host["instanceId"];
+        theinstance.instanceId = instanceId.GetString();
+    }
 
     markRequired(host, "port");
     const Value &port = host["port"];

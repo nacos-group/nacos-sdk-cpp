@@ -58,6 +58,10 @@ public:
 
     static const int NACOS_DEFAULT_PORT = 8848;
 
+    static const NacosString INSTANCE_ID_SEQ_FILE;
+
+    static const NacosString INSTANCE_ID_PREFIX;
+
     /*public static class SystemEnv {
 
         static const NacosString ALIBABA_ALIWARE_ENDPOINT_PORT = "ALIBABA_ALIWARE_ENDPOINT_PORT";

@@ -2,22 +2,30 @@
 #define __ATOMIC_INT_H_
 
 namespace nacos{
+template<typename T>
 class AtomicInt {
 private:
-    volatile int _intval;
+    volatile T _curval;
 public:
-    AtomicInt(int initval = 0) : _intval(initval) {};
+    AtomicInt(T curval = 0) : _curval(curval) {};
 
-    int inc(int incval = 1) {
-        int oldValue = __sync_fetch_and_add(&_intval, incval);
+    void set(T val) { _curval = val; };
+
+    T inc(T incval = 1) {
+        T oldValue = getAndInc(incval);
         return incval + oldValue;
     };
 
-    int dec(int decval = 1) {
+    T getAndInc(T incval = 1) {
+        T oldValue = __sync_fetch_and_add(&_curval, incval);
+        return oldValue;
+    }
+
+    T dec(int decval = 1) {
         return inc(-decval);
     };
 
-    int get() const { return _intval; };
+    T get() const { return _curval; };
 };
 }//namespace nacos
 

@@ -8,7 +8,7 @@ namespace nacos{
 class Listener {
 private:
     NacosString listenerName;
-    AtomicInt refCount;
+    AtomicInt<int> refCount;
 public:
     Listener() {
         this->listenerName = "theListener";

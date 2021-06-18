@@ -130,6 +130,8 @@ bool testNamingServiceAndDeRegisterActively();
 
 bool testThreadPoolConcurrentWithAtomicCounter();
 
+bool testSequenceProvider();
+
 TestData disabledTestList[] =
 TEST_ITEM_START
 TEST_ITEM_END
@@ -137,7 +139,6 @@ TEST_ITEM_END
 TestData
 testList[] =
 TEST_ITEM_START
-
         TEST_ITEM("Normal http test", testNormalHttpRequest)
         TEST_ITEM("No server request, should fail", testNoServerRequest)
         TEST_ITEM("Publish config to server", testPublishConfig)
@@ -152,6 +153,7 @@ TEST_ITEM_START
         TEST_ITEM("Test for string characteristics", testStringEqual)
         TEST_ITEM("Read&Write file test", testReadWriteFile)
         TEST_ITEM("GetFileSize, should work well", testGetFileSize)
+        TEST_ITEM("Test get instances with predicate(testRandomByWeightSelector)", testRandomByWeightSelector)
         TEST_ITEM("Check whether file exists or not", testFileExists)
         TEST_ITEM("Create&Remove file", testCreateAndRemove)
         TEST_ITEM("Create a directory with subdirectories, and clean it", testCleanDirectory)
@@ -170,6 +172,7 @@ TEST_ITEM_START
         TEST_ITEM("Smoke test for ThreadPool", testThreadPoolSmoke)
         TEST_ITEM("Test basic function of NacosNamingService's registerService", testNamingServiceRegister)
         TEST_ITEM("Test serialization/deserialization of Business Object", testString2ServiceInfo)
+        TEST_ITEM("Test get instances with predicate(Randomly)", testInstanceSelectors)
         TEST_ITEM("Test serialization/deserialization of malformed Business Object", testMalformedJson2ServiceInfo)
         TEST_ITEM("Test serialization/deserialization of malformed Business Object (Double)", testMalformedDouble2ServiceInfo)
         TEST_ITEM("Test serialization/deserialization of malformed Business Object (no cacheMillis)", testLackcacheMillisServiceInfo)
@@ -184,8 +187,6 @@ TEST_ITEM_START
         TEST_ITEM("Register many services and get one", testGetAllInstances)
         TEST_ITEM("Subscribe & unsubscribe services", testListenService)
         TEST_ITEM("Test get all service names", testGetServiceNames)
-        TEST_ITEM("Test get instances with predicate(Randomly)", testInstanceSelectors)
-        TEST_ITEM("Test get instances with predicate(testRandomByWeightSelector)", testRandomByWeightSelector)
         TEST_ITEM("Smoking test of ThreadLocal", testThreadLocal)
         TEST_ITEM("Smoking test of ThreadLocal(pointer)", testThreadLocalPtr)
         TEST_ITEM("Smoking test of ThreadLocal(pointer with initializer)", testThreadLocalPtrWithInitializer)
@@ -200,6 +201,7 @@ TEST_ITEM_START
         TEST_ITEM("Test delayed task pool - multiple tasks triggered at the same time", testDelayedThread2)
         TEST_ITEM("Register a service instance and remove it actively", testNamingServiceAndDeRegisterActively)
         TEST_ITEM("thread pool with concurrent add & atomic operation", testThreadPoolConcurrentWithAtomicCounter)
+        TEST_ITEM("Test sequence provider", testSequenceProvider)
 TEST_ITEM_END
 
 int main() {

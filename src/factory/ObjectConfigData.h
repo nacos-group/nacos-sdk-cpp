@@ -20,6 +20,7 @@ class LocalSnapshotManager;
 class SecurityManager;
 class UdpNamingServiceListener;
 class HostReactor;
+template <typename T>class SequenceProvider;
 
 enum FactoryType {
     CONFIG = 0,
@@ -58,6 +59,7 @@ public:
     SecurityManager *_securityManager;
     UdpNamingServiceListener *_udpNamingServiceListener;
     HostReactor *_hostReactor;
+    SequenceProvider<int64_t> *_sequenceProvider;
 };
 }//namespace nacos
 
