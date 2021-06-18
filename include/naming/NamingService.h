@@ -4,7 +4,7 @@
 #include <list>
 #include "naming/Instance.h"
 #include "naming/selectors/Selector.h"
-#include "naming/subscribe//EventListener.h"
+#include "naming/subscribe/EventListener.h"
 #include "NacosString.h"
 #include "NacosExceptions.h"
 #include "ListView.h"
