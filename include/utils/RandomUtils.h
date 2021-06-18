@@ -2,7 +2,7 @@
 #define __RND_UTILS_H_
 
 #include "NacosExceptions.h"
-#include "src/thread/ThreadLocal.h"
+#include "thread/ThreadLocal.h"
 #include "Compatibility.h"
 
 /**

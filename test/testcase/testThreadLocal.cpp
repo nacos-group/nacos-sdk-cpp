@@ -1,7 +1,7 @@
 #include <iostream>
-#include "utils//UuidUtils.h"
+#include "utils/UuidUtils.h"
 #include "src/thread/Thread.h"
-#include "src/thread/ThreadLocal.h"
+#include "thread/ThreadLocal.h"
 #include "DebugAssertion.h"
 #include "utils/RandomUtils.h"
 
