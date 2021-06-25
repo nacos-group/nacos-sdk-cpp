@@ -141,6 +141,20 @@ Instance JSON::Json2Instance(const Value &host) NACOS_THROW(NacosException) {
 
     theinstance.metadata = mtdata;
 
+    markRequired(host, "healthy");
+    const Value &healthy = host["healthy"];
+    if (!healthy.IsBool()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing healthy for Instance!");
+    }
+    theinstance.healthy = healthy.GetBool();
+
+    markRequired(host, "enabled");
+    const Value &enabled = host["enabled"];
+    if (!enabled.IsBool()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing enabled for Instance!");
+    }
+    theinstance.enabled = enabled.GetBool();
+
     if (host.HasMember("clusterName")) {
         const Value &clusterName = host["clusterName"];
         theinstance.clusterName = clusterName.GetString();
