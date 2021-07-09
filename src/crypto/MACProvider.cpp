@@ -7,8 +7,8 @@
 
 namespace nacos {
 
-const NacosString MACProvider::HMAC_SHA1 = "HMAC_SHA1";
-std::map<NacosString, IMAC*> MACProvider::MACRegistry;
+std::map<int, IMAC*> MACProvider::MACRegistry;
+const int MACProvider::HMAC_SHA1;
 
 class HMACSha1 : public IMAC {
 public:
@@ -30,17 +30,18 @@ void HMACSha1::getMac(const void *k,   /* secret key */
 }
 
 void MACProvider::Init() {
-    MACRegistry[HMAC_SHA1] = new HMACSha1();
+    MACRegistry[MACProvider::HMAC_SHA1] = new HMACSha1();
 }
 
 void MACProvider::DeInit() {
-    for (std::map<NacosString, IMAC*>::iterator it = MACRegistry.begin(); it != MACRegistry.end(); it++) {
-        delete it->second;
+    for (std::map<int, IMAC*>::iterator it = MACRegistry.begin(); it != MACRegistry.end(); it++) {
+        IMAC * curMACProvider = it->second;
+        delete curMACProvider;
     }
     MACRegistry.clear();
 }
 
-IMAC *MACProvider::getMAC(const NacosString &algorithm) {
+IMAC *MACProvider::getMAC(int algorithm) {
     if (MACRegistry.count(algorithm) > 0) {
         return MACRegistry[algorithm];
     }

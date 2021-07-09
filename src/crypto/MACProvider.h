@@ -22,12 +22,12 @@ public:
 
 class MACProvider {
 private:
-    static std::map<NacosString, IMAC*> MACRegistry;
+    static std::map<int, IMAC*> MACRegistry;
 public:
     static void Init();
     static void DeInit();
-    static IMAC *getMAC(const NacosString &algorithm);
-    static const NacosString HMAC_SHA1;
+    static IMAC *getMAC(int algorithm);
+    static const int HMAC_SHA1 = 1;
 };
 
 }
