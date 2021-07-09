@@ -223,6 +223,17 @@ public:
 
         return lcase_str1 == lcase_str2;
     }
+
+    static const NacosString &findByKey(const std::list <NacosString> &hayStack, const NacosString &needleKey) {
+        for (std::list<NacosString>::const_iterator it = hayStack.begin(); it != hayStack.end(); it++) {
+            if (*it == needleKey) {
+                it++;
+                return *it;
+            }
+        }
+
+        return NacosStringOps::nullstr;
+    }
 };
 }//namespace nacos
 

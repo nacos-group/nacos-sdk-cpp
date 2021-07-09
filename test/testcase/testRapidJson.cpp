@@ -1,8 +1,8 @@
 #include <iostream>
 #include "DebugAssertion.h"
-#include "src/rapidjson/document.h"
-#include "src/rapidjson/writer.h"
-#include "src/rapidjson/stringbuffer.h"
+#include "src/json/rapidjson/document.h"
+#include "src/json/rapidjson/writer.h"
+#include "src/json/rapidjson/stringbuffer.h"
 #include "src/naming/beat/BeatInfo.h"
 #include "src/json/JSON.h"
 

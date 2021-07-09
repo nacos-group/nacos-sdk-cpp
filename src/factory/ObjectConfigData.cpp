@@ -10,6 +10,7 @@
 #include "src/security/SecurityManager.h"
 #include "utils/UuidUtils.h"
 #include "src/utils/SequenceProvider.h"
+#include "src/config/ConfigProxy.h"
 
 namespace nacos{
 
@@ -27,6 +28,7 @@ ObjectConfigData::ObjectConfigData(FactoryType theFactoryType) {
     _clientWorker = NULL;
     _localSnapshotManager = NULL;
     _securityManager = NULL;
+    _configProxy = NULL;
 }
 
 void ObjectConfigData::checkNamingService() NACOS_THROW(NacosException) {
@@ -59,6 +61,7 @@ void ObjectConfigData::checkConfigService() NACOS_THROW(NacosException) {
     NACOS_ASSERT(_serverListManager != NULL);
     NACOS_ASSERT(_clientWorker != NULL);
     NACOS_ASSERT(_localSnapshotManager != NULL);
+    NACOS_ASSERT(_configProxy != NULL);
 }
 
 void ObjectConfigData::checkMaintainService() NACOS_THROW(NacosException) {
@@ -116,6 +119,11 @@ void ObjectConfigData::destroyConfigService() {
     if (_appConfigManager != NULL) {
         delete _appConfigManager;
         _appConfigManager = NULL;
+    }
+
+    if (_configProxy != NULL) {
+        delete _configProxy;
+        _configProxy = NULL;
     }
 }
 

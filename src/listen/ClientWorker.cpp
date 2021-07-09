@@ -3,7 +3,7 @@
 #include "listen/Listener.h"
 #include "utils/url.h"
 #include "utils/GroupKey.h"
-#include "src/md5/md5.h"
+#include "src/crypto/md5/md5.h"
 #include "utils/ParamUtils.h"
 #include "utils/TimeUtils.h"
 #include "src/log/Logger.h"
@@ -11,6 +11,7 @@
 #include "constant/ConfigConstant.h"
 #include "constant/PropertyKeyConst.h"
 #include "src/http/HttpStatus.h"
+#include "src/config/ConfigProxy.h"
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
@@ -93,9 +94,9 @@ HttpResult ClientWorker::getServerConfigHelper
     log_debug("[ClientWorker]-getServerConfigHelper:httpGet Assembled URL:%s\n", url.c_str());
 
     HttpResult res;
-    HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
+    ConfigProxy *_configProxy = _objectConfigData->_configProxy;
     try {
-        res = _httpDelegate->httpGet(url, headers, paramValues, _httpDelegate->getEncode(), timeoutMs);
+        res = _configProxy->reqAPI(IHttpCli::GET, url, headers, paramValues, _objectConfigData->encoding, timeoutMs);
     }
     catch (NetworkException &e) {
         throw NacosException(NacosException::SERVER_ERROR, e.what());
@@ -328,8 +329,8 @@ NacosString ClientWorker::checkListenedKeys() NACOS_THROW(NetworkException,Nacos
     NacosString url = serverAddr + "/" + path;
     log_debug("[ClientWorker]-checkListenedKeys:httpPost Assembled URL:%s\n", url.c_str());
 
-    HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
-    res = _httpDelegate->httpPost(url, headers, paramValues, _httpDelegate->getEncode(), _longPullingTimeout);
+    ConfigProxy *_configProxy = _objectConfigData->_configProxy;
+    res = _configProxy->reqAPI(IHttpCli::POST, url, headers, paramValues, _objectConfigData->encoding, _longPullingTimeout);
     log_debug("[ClientWorker]-checkListenedKeys:Received the message below from server:\n%s\n", res.content.c_str());
     log_debug("[ClientWorker]-checkListenedKeys:return status:httpcode=%d curlcode=%d\n", res.code, res.curlcode);
     

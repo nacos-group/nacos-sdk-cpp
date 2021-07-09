@@ -5,7 +5,6 @@
 #include <vector>
 #include <pthread.h>
 #include "NacosString.h"
-#include "src/http/HttpDelegate.h"
 #include "listen/Listener.h"
 #include "ListeningData.h"
 #include "OperateItem.h"

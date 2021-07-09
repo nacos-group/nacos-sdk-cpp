@@ -7,6 +7,7 @@
 #include "utils/UuidUtils.h"
 #include "utils/RandomUtils.h"
 #include "src/thread/Thread.h"
+#include "src/crypto/MACProvider.h"
 static nacos::Init initobj;//Implicitly call the constructors
 
 namespace nacos{
@@ -27,6 +28,7 @@ void Init::doInit() {
         }
 
         Logger::Init();
+        MACProvider::Init();
         HTTPCli::HTTP_GLOBAL_INIT();
         UtilAndComs::Init();
         RandomUtils::Init();
@@ -48,6 +50,7 @@ void Init::doDeinit() {
             return;
         }
 
+        MACProvider::DeInit();
         Thread::DeInit();
         UuidUtils::DeInit();
         RandomUtils::DeInit();

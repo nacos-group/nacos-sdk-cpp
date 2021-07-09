@@ -20,6 +20,7 @@
 #include "src/security/SecurityManager.h"
 #include "src/utils/ConfigParserUtils.h"
 #include "src/utils/SequenceProvider.h"
+#include "src/config/ConfigProxy.h"
 #include "utils/DirUtils.h"
 
 //Unlike Java, in cpp, there's no container, no spring to do the ORM job, so I have to handle it myself
@@ -82,7 +83,7 @@ NamingService *NacosServiceFactory::CreateNamingService() NACOS_THROW(NacosExcep
     checkConfig();
     ObjectConfigData *objectConfigData = new ObjectConfigData(NAMING);
     objectConfigData->name = "config";
-    NacosString encoding = "UTF-8";
+    objectConfigData->encoding = "UTF-8";
 
     AppConfigManager *appConfigManager = buildConfigManager(objectConfigData);
     initializeRuntimeLogSettings(appConfigManager);
@@ -131,6 +132,7 @@ ConfigService *NacosServiceFactory::CreateConfigService() NACOS_THROW(NacosExcep
     checkConfig();
     ObjectConfigData *objectConfigData = new ObjectConfigData(CONFIG);
     objectConfigData->name = "name";
+    objectConfigData->encoding = "UTF-8";
 
     AppConfigManager *appConfigManager = buildConfigManager(objectConfigData);
     initializeRuntimeLogSettings(appConfigManager);
@@ -138,7 +140,6 @@ ConfigService *NacosServiceFactory::CreateConfigService() NACOS_THROW(NacosExcep
     //Create http client
     IHttpCli *httpCli = NULL;
     httpCli = new HTTPCli();
-    NacosString encoding = "UTF-8";
     objectConfigData->_httpCli = httpCli;
 
     buildSecurityManagerAndHttpDelegate(objectConfigData);
@@ -146,6 +147,9 @@ ConfigService *NacosServiceFactory::CreateConfigService() NACOS_THROW(NacosExcep
     //Create server manager
     ServerListManager *serverListManager = new ServerListManager(objectConfigData);
     objectConfigData->_serverListManager = serverListManager;
+
+    ConfigProxy *configProxy = new ConfigProxy(objectConfigData);
+    objectConfigData->_configProxy = configProxy;
 
     LocalSnapshotManager *localSnapshotManager = new LocalSnapshotManager(appConfigManager);
     objectConfigData->_localSnapshotManager = localSnapshotManager;
@@ -164,7 +168,7 @@ NamingMaintainService *NacosServiceFactory::CreateNamingMaintainService() NACOS_
     checkConfig();
     ObjectConfigData *objectConfigData = new ObjectConfigData(MAINTAIN);
     objectConfigData->name = "config";
-    NacosString encoding = "UTF-8";
+    objectConfigData->encoding = "UTF-8";
 
     AppConfigManager *appConfigManager = buildConfigManager(objectConfigData);
     initializeRuntimeLogSettings(appConfigManager);

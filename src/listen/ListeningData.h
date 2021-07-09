@@ -5,7 +5,7 @@
 #include <list>
 #include "NacosString.h"
 #include "listen/Listener.h"
-#include "src/md5/md5.h"
+#include "src/crypto//md5/md5.h"
 #include "src/log/Logger.h"
 
 namespace nacos{

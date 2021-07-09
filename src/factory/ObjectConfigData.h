@@ -20,6 +20,7 @@ class LocalSnapshotManager;
 class SecurityManager;
 class UdpNamingServiceListener;
 class HostReactor;
+class ConfigProxy;
 template <typename T>class SequenceProvider;
 
 enum FactoryType {
@@ -46,6 +47,7 @@ public:
     void checkAssembledObject() NACOS_THROW(NacosException);
     ~ObjectConfigData();
     NacosString name;
+    NacosString encoding;
     HttpDelegate *_httpDelegate;
     IHttpCli *_httpCli;
     NamingProxy *_serverProxy;
@@ -60,6 +62,7 @@ public:
     UdpNamingServiceListener *_udpNamingServiceListener;
     HostReactor *_hostReactor;
     SequenceProvider<int64_t> *_sequenceProvider;
+    ConfigProxy *_configProxy;
 };
 }//namespace nacos
 
