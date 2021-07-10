@@ -5,6 +5,10 @@
 #include "ConfigProxy.h"
 #include "src/http/HttpDelegate.h"
 #include "utils/ParamUtils.h"
+#include "utils/TimeUtils.h"
+#include "src/config/AppConfigManager.h"
+#include "constant/PropertyKeyConst.h"
+#include "src/crypto/SignatureTool.h"
 
 namespace nacos {
 
@@ -33,6 +37,25 @@ HttpResult ConfigProxy::reqAPI
         ) NACOS_THROW(NetworkException) {
     HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
     NacosString dataToSign = getDataToSign(paramValues);
+    NacosString nowTimeMs = NacosStringOps::valueOf(TimeUtils::getCurrentTimeInMs());
+    if (!NacosStringOps::isNullStr(dataToSign)) {
+        dataToSign = dataToSign + "+" + nowTimeMs;
+    } else {
+        dataToSign = nowTimeMs;
+    }
+
+    //TODO: refactor to a common procedure
+    NacosString secretKey = _objectConfigData->_appConfigManager->get(PropertyKeyConst::SECRET_KEY);
+    NacosString accessKey = _objectConfigData->_appConfigManager->get(PropertyKeyConst::ACCESS_KEY);
+
+    //If SPAS security credentials are set, SPAS is enabled
+    if (!ParamUtils::isBlank(secretKey) && !ParamUtils::isBlank(accessKey)) {
+        NacosString signature = SignatureTool::SignWithHMAC_SHA1(dataToSign, secretKey);
+        ParamUtils::addKV(headers, "Spas-Signature", signature);
+        ParamUtils::addKV(headers, "Timestamp", nowTimeMs);
+        ParamUtils::addKV(headers, "Spas-AccessKey", accessKey);
+    }
+
     switch (method) {
         case IHttpCli::GET:
             return _httpDelegate->httpGet(path, headers, paramValues, encoding, readTimeoutMs);

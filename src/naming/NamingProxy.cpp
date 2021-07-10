@@ -3,12 +3,11 @@
 #include "constant/NamingConstant.h"
 #include "constant/UtilAndComs.h"
 #include "utils/UuidUtils.h"
-#include "src/utils/NetUtils.h"
 #include "utils/RandomUtils.h"
 #include "src/json/JSON.h"
 #include "src/http/HttpStatus.h"
-#include "src/log/Logger.h"
 #include "NacosExceptions.h"
+#include "src/crypto/SignatureTool.h"
 
 using namespace std;
 
@@ -85,6 +84,18 @@ NacosString NamingProxy::queryList(const NacosString &serviceName, const NacosSt
     ParamUtils::addKV(params, NamingConstant::HEALTHY_ONLY, NacosStringOps::valueOf(healthyOnly));
 
     return reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_BASE + "/instance/list", params, IHttpCli::GET);
+}
+
+NacosString NamingProxy::getDataToSign(const std::list <NacosString> &paramValues, NacosString &nowTimeMs) {
+    NacosString serviceName = ParamUtils::findByKey(paramValues, NamingConstant::SERVICE_NAME);
+
+    NacosString dataToSign = "";
+    if (!ParamUtils::isBlank(serviceName)) {
+        dataToSign = serviceName + "@@";
+    }
+
+    dataToSign += nowTimeMs;
+    return dataToSign;
 }
 
 NacosString
@@ -170,6 +181,20 @@ NacosString NamingProxy::callServer
     HttpResult requestRes;
     list <NacosString> headers;
     headers = builderHeaders();
+
+    //SPAS security
+    NacosString secretKey = _objectConfigData->_appConfigManager->get(PropertyKeyConst::SECRET_KEY);
+    NacosString accessKey = _objectConfigData->_appConfigManager->get(PropertyKeyConst::ACCESS_KEY);
+
+    //If SPAS security credentials are set, SPAS is enabled
+    if (!ParamUtils::isBlank(secretKey) && !ParamUtils::isBlank(accessKey)) {
+        NacosString nowTimeMs = NacosStringOps::valueOf(TimeUtils::getCurrentTimeInMs());
+        NacosString dataToSign = getDataToSign(params, nowTimeMs);
+
+        NacosString signature = SignatureTool::SignWithHMAC_SHA1(dataToSign, secretKey);
+        //inject security credentials
+        requestUrl = requestUrl + "?signature=" + signature + "&data=" + dataToSign + "&ak=" + accessKey;
+    }
 
     HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
     try {

@@ -39,6 +39,9 @@ private:
     long _hb_fail_wait;//Time to wait when a heartbeat request fails (in ms)
 
     static ListView<NacosString> nullResult;
+
+    NacosString getDataToSign(const std::list <NacosString> &paramValues, NacosString &nowTimeMs);
+
 public:
     NamingProxy(ObjectConfigData *objectConfigData);
 

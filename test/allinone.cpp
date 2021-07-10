@@ -132,6 +132,8 @@ bool testThreadPoolConcurrentWithAtomicCounter();
 
 bool testSequenceProvider();
 
+bool testHMACSHA1();
+
 TestData disabledTestList[] =
 TEST_ITEM_START
 TEST_ITEM_END
@@ -202,6 +204,7 @@ TEST_ITEM_START
         TEST_ITEM("Register a service instance and remove it actively", testNamingServiceAndDeRegisterActively)
         TEST_ITEM("thread pool with concurrent add & atomic operation", testThreadPoolConcurrentWithAtomicCounter)
         TEST_ITEM("Test sequence provider", testSequenceProvider)
+        TEST_ITEM("Test Message digest algorithm - HMACSHA1", testHMACSHA1)
 TEST_ITEM_END
 
 int main() {
