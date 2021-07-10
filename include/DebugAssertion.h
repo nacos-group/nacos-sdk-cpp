@@ -46,5 +46,16 @@ do { \
 #else
 #define ADD_AUTH_INFO(x)
 #endif
+
+#ifdef NACOS_SPAS
+#define ADD_SPAS_INFO(x) \
+do { \
+    (x)["secretKey"] = "nacos"; \
+    (x)["accessKey"] = "nacos"; \
+} while (0)
+#else
+#define ADD_SPAS_INFO(x)
+#endif
+
 }//namespace nacos
 #endif

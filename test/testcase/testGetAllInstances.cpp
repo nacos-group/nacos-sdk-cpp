@@ -22,6 +22,7 @@ bool testGetAllInstances() {
     cout << "in function testGetAllInstances" << endl;
     Properties configProps;
     ADD_AUTH_INFO(configProps);
+    ADD_SPAS_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     configProps[PropertyKeyConst::NAMESPACE] = "238e832b-d103-44c6-b618-d74da8c38b06";
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);

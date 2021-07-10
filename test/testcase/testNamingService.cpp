@@ -25,6 +25,7 @@ bool testNamingProxySmokeTest() {
     NacosString servers = "127.0.0.1:8848";
     Properties props;
     ADD_AUTH_INFO(props);
+    ADD_SPAS_INFO(props);
     props[PropertyKeyConst::SERVER_ADDR] = servers;
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
@@ -103,6 +104,7 @@ bool testNamingProxyServerHealthy() {
     NacosString servers = "127.0.0.1:8848";
     Properties props;
     ADD_AUTH_INFO(props);
+    ADD_SPAS_INFO(props);
     props[PropertyKeyConst::SERVER_ADDR] = servers;
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
@@ -160,6 +162,7 @@ bool testNamingServiceRegister() {
     Properties configProps;
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     ADD_AUTH_INFO(configProps);
+    ADD_SPAS_INFO(configProps);
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     NamingService *namingSvc = factory->CreateNamingService();
@@ -225,6 +228,7 @@ bool testNamingServiceAndDeRegisterActively() {
     Properties configProps;
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     ADD_AUTH_INFO(configProps);
+    ADD_SPAS_INFO(configProps);
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     NamingService *namingSvc = factory->CreateNamingService();
