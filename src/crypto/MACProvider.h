@@ -27,7 +27,7 @@ public:
     static void Init();
     static void DeInit();
     static IMAC *getMAC(int algorithm);
-    static const int HMAC_SHA1 = 1;
+    static const int HMAC_SHA1 = 930620;
 };
 
 }

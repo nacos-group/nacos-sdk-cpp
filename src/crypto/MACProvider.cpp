@@ -38,7 +38,6 @@ void MACProvider::DeInit() {
         IMAC * curMACProvider = it->second;
         delete curMACProvider;
     }
-    MACRegistry.clear();
 }
 
 IMAC *MACProvider::getMAC(int algorithm) {
