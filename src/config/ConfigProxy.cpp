@@ -12,7 +12,7 @@
 
 namespace nacos {
 
-NacosString ConfigProxy::getDataToSign(const std::list <NacosString> &paramValues) {
+NacosString ConfigProxy::getDataToSign(const std::list <NacosString> &paramValues, const NacosString &nowTimeMs) {
     const NacosString & group = ParamUtils::findByKey(paramValues, "group");
     const NacosString & tenant = ParamUtils::findByKey(paramValues, "tenant");
     NacosString dataToSign = "";
@@ -21,6 +21,12 @@ NacosString ConfigProxy::getDataToSign(const std::list <NacosString> &paramValue
     }
     if (!NacosStringOps::isNullStr(group)) {
         dataToSign += group;
+    }
+
+    if (!NacosStringOps::isNullStr(dataToSign)) {
+        dataToSign += "+" + nowTimeMs;
+    } else {
+        dataToSign = nowTimeMs;
     }
 
     return dataToSign;
@@ -36,13 +42,6 @@ HttpResult ConfigProxy::reqAPI
                 long readTimeoutMs
         ) NACOS_THROW(NetworkException) {
     HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
-    NacosString dataToSign = getDataToSign(paramValues);
-    NacosString nowTimeMs = NacosStringOps::valueOf(TimeUtils::getCurrentTimeInMs());
-    if (!NacosStringOps::isNullStr(dataToSign)) {
-        dataToSign = dataToSign + "+" + nowTimeMs;
-    } else {
-        dataToSign = nowTimeMs;
-    }
 
     //TODO: refactor to a common procedure
     NacosString secretKey = _objectConfigData->_appConfigManager->get(PropertyKeyConst::SECRET_KEY);
@@ -50,6 +49,8 @@ HttpResult ConfigProxy::reqAPI
 
     //If SPAS security credentials are set, SPAS is enabled
     if (!ParamUtils::isBlank(secretKey) && !ParamUtils::isBlank(accessKey)) {
+        NacosString nowTimeMs = NacosStringOps::valueOf(TimeUtils::getCurrentTimeInMs());
+        NacosString dataToSign = getDataToSign(paramValues, nowTimeMs);
         NacosString signature = SignatureTool::SignWithHMAC_SHA1(dataToSign, secretKey);
         ParamUtils::addKV(headers, "Spas-Signature", signature);
         ParamUtils::addKV(headers, "Timestamp", nowTimeMs);

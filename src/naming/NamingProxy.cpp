@@ -86,18 +86,6 @@ NacosString NamingProxy::queryList(const NacosString &serviceName, const NacosSt
     return reqAPI("/" + _objectConfigData->_appConfigManager->getContextPath() + UtilAndComs::NACOS_URL_BASE + "/instance/list", params, IHttpCli::GET);
 }
 
-NacosString NamingProxy::getDataToSign(const std::list <NacosString> &paramValues, NacosString &nowTimeMs) {
-    NacosString serviceName = ParamUtils::findByKey(paramValues, NamingConstant::SERVICE_NAME);
-
-    NacosString dataToSign = "";
-    if (!ParamUtils::isBlank(serviceName)) {
-        dataToSign = serviceName + "@@";
-    }
-
-    dataToSign += nowTimeMs;
-    return dataToSign;
-}
-
 NacosString
 NamingProxy::reqAPI(const NacosString &api, list <NacosString> &params, int method) NACOS_THROW(NacosException) {
     ServerListManager *_serverListManager = _objectConfigData->_serverListManager;
@@ -160,6 +148,18 @@ NacosString NamingProxy::callServer
     return callServer(api, params, nacosDomain, IHttpCli::GET);
 }
 
+NacosString NamingProxy::getDataToSign(const std::list <NacosString> &paramValues, NacosString &nowTimeMs) {
+    const NacosString &serviceName = ParamUtils::findByKey(paramValues, NamingConstant::SERVICE_NAME);
+
+    NacosString dataToSign = "";
+    if (!ParamUtils::isBlank(serviceName)) {
+        dataToSign = serviceName + "@@";
+    }
+
+    dataToSign += nowTimeMs;
+    return dataToSign;
+}
+
 NacosString NamingProxy::callServer
         (
                 const NacosString &api,
@@ -190,13 +190,19 @@ NacosString NamingProxy::callServer
     if (!ParamUtils::isBlank(secretKey) && !ParamUtils::isBlank(accessKey)) {
         NacosString nowTimeMs = NacosStringOps::valueOf(TimeUtils::getCurrentTimeInMs());
         NacosString dataToSign = getDataToSign(params, nowTimeMs);
-
         NacosString signature = SignatureTool::SignWithHMAC_SHA1(dataToSign, secretKey);
         //inject security credentials
-        requestUrl = requestUrl + "?signature=" + signature + "&data=" + dataToSign + "&ak=" + accessKey;
+        if (method == IHttpCli::GET || method == IHttpCli::DELETE) {
+            ParamUtils::addKV(params, "signature", signature);
+            ParamUtils::addKV(params, "data", dataToSign);
+            ParamUtils::addKV(params, "ak", accessKey);
+        } else {
+            requestUrl = requestUrl + "?signature=" + signature + "&data=" + dataToSign + "&ak=" + accessKey;
+        }
     }
 
     HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
+    
     try {
         long _http_req_timeout = _objectConfigData->_appConfigManager->getServeReqTimeout();
         switch (method) {

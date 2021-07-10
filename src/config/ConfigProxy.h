@@ -12,7 +12,7 @@ namespace nacos {
 class ConfigProxy {
 private:
     ObjectConfigData *_objectConfigData;
-    NacosString getDataToSign(const std::list <NacosString> &paramValues);
+    NacosString getDataToSign(const std::list <NacosString> &paramValues, const NacosString &nowTimeMs);
 public:
     ConfigProxy(ObjectConfigData *objectConfigData) : _objectConfigData(objectConfigData) {};
     HttpResult reqAPI(int method, const NacosString &path, std::list <NacosString> &headers, std::list <NacosString> &paramValues,
