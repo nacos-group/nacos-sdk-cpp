@@ -23,6 +23,10 @@ void HostReactor::processServiceJson(const NacosString &json) {
     {
         WriteGuard _writeGuard(rwLock);
         if (serviceInfoMap.count(key) == 0) {
+            if (serviceInfo.ipCount()==0) {
+                log_warn("hosts got from server is empty.\n");
+                return;
+            }
             serviceInfoMap[key] = serviceInfo;
             newServiceInfo = true;
         } else {
