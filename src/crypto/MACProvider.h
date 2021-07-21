@@ -22,7 +22,7 @@ public:
 
 class MACProvider {
 private:
-    static std::map<int, IMAC*> MACRegistry;
+    static std::map<int, IMAC*> *MACRegistry;
 public:
     static void Init();
     static void DeInit();
