@@ -1,6 +1,7 @@
-#include "src/config/NacosConfigService.h"
+#include "NacosConfigService.h"
 #include "src/security/SecurityManager.h"
 #include "src/log/Logger.h"
+#include "ConfigProxy.h"
 
 using namespace std;
 
@@ -111,9 +112,9 @@ bool NacosConfigService::removeConfigInner
     NacosString url = serverAddr + "/" + path;
     log_debug("[NacosConfigService]-removeConfigInner: Assembled URL:%s\n", url.c_str());
 
-    HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
+    ConfigProxy *_configProxy = _objectConfigData->_configProxy;
     try {
-        res = _httpDelegate->httpDelete(url, headers, paramValues, _httpDelegate->getEncode(), POST_TIMEOUT);
+        res = _configProxy->reqAPI(IHttpCli::DELETE, url, headers, paramValues, _objectConfigData->encoding, POST_TIMEOUT);
     }
     catch (NetworkException &e) {
         log_warn("[NacosConfigService]-removeConfigInner: error, %s, %s, %s, msg: %s\n", dataId.c_str(), group.c_str(), tenant.c_str(), e.what());
@@ -176,9 +177,9 @@ bool NacosConfigService::publishConfigInner
     NacosString url = serverAddr + "/" + path;
     log_debug("[NacosConfigService]-publishConfigInner:httpPost Assembled URL:%s\n", url.c_str());
 
-    HttpDelegate *_httpDelegate = _objectConfigData->_httpDelegate;
+    ConfigProxy *_configProxy = _objectConfigData->_configProxy;
     try {
-        res = _httpDelegate->httpPost(url, headers, paramValues, _httpDelegate->getEncode(), POST_TIMEOUT);
+        res = _configProxy->reqAPI(IHttpCli::POST, url, headers, paramValues, _objectConfigData->encoding, POST_TIMEOUT);
     }
     catch (NetworkException &e) {
         //

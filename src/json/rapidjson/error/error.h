@@ -15,7 +15,7 @@
 #ifndef RAPIDJSON_ERROR_ERROR_H_
 #define RAPIDJSON_ERROR_ERROR_H_
 
-#include "../rapidjson.h"
+#include "src/json/rapidjson/rapidjson.h"
 
 #ifdef __clang__
 RAPIDJSON_DIAG_PUSH

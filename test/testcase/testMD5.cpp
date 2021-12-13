@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
-#include "src/md5/md5.h"
+#include "src/crypto/md5/md5.h"
 #include "DebugAssertion.h"
 
 using namespace std;

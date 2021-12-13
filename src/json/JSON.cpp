@@ -238,11 +238,36 @@ ServiceInfo JSON::JsonStr2ServiceInfo(const NacosString &jsonString) NACOS_THROW
                              "Error while parsing the JSON String for ServiceInfo!");
     }
 
+    //bugfix #75, need to refresh the lastRefTime if it is present in the json
+    if (d.HasMember("lastRefTime")) {
+        const Value &lastRefTime = d["lastRefTime"];
+        if (!lastRefTime.IsInt64()) {
+            throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing lastRefTime for ServiceInfo!");
+        }
+        si.setLastRefTime(lastRefTime.GetInt64());
+    }
+
+    markRequired(d, "name");
+    const Value &name = d["name"];
+    ServiceInfo::fromKey(si, name.GetString());
+
+    markRequired(d, "clusters");
+    const Value &clusters = d["clusters"];
+    si.setClusters(clusters.GetString());
+
+    markRequired(d, "cacheMillis");
+    const Value &cacheMillis = d["cacheMillis"];
+    if (!cacheMillis.IsInt64()) {
+        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing cacheMillis for ServiceInfo!");
+    }
+    si.setCacheMillis(cacheMillis.GetInt64());
+
     markRequired(d, "hosts");
     const Value &hosts = d["hosts"];
     if (hosts.Size() == 0) {
         return si;
     }
+
     std::list <Instance> hostlist;
     for (SizeType i = 0; i < hosts.Size(); i++) {
         const Value &curhost = hosts[i];
@@ -252,31 +277,9 @@ ServiceInfo JSON::JsonStr2ServiceInfo(const NacosString &jsonString) NACOS_THROW
 
     si.setHosts(hostlist);
 
-    markRequired(d, "cacheMillis");
-    const Value &cacheMillis = d["cacheMillis"];
-    if (!cacheMillis.IsInt64()) {
-        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing cacheMillis for ServiceInfo!");
-    }
-    si.setCacheMillis(cacheMillis.GetInt64());
-
     markRequired(d, "checksum");
     const Value &checkSum = d["checksum"];
     si.setChecksum(checkSum.GetString());
-
-    markRequired(d, "lastRefTime");
-    const Value &lastRefTime = d["lastRefTime"];
-    if (!lastRefTime.IsInt64()) {
-        throw NacosException(NacosException::INVALID_JSON_FORMAT, "Error while parsing lastRefTime for ServiceInfo!");
-    }
-    si.setLastRefTime(lastRefTime.GetInt64());
-
-    markRequired(d, "clusters");
-    const Value &clusters = d["clusters"];
-    si.setClusters(clusters.GetString());
-
-    markRequired(d, "name");
-    const Value &name = d["name"];
-    ServiceInfo::fromKey(si, name.GetString());
 
     return si;
 }

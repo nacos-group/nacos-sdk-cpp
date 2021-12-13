@@ -209,14 +209,14 @@ public:
     //!!BE CAREFUL!!
     //This function is very expensive!! call it with care!
     NacosString toInstanceString() const{
-        NacosString res = "[\n";
+        NacosString res = "{\"lastRefTime\":" + NacosStringOps::valueOf(_lastRefTime) + " [\n";
         for (std::list<Instance>::const_iterator it = _hosts.begin();
             it != _hosts.end(); it++)
         {
             res += it->toString() + "\n";
         }
 
-        res += "\n]";
+        res += "\n]}";
 
         return res;
     }

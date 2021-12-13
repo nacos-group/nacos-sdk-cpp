@@ -34,6 +34,7 @@ bool testAddListener() {
     Properties props;
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
     ADD_AUTH_INFO(props);
+    ADD_SPAS_INFO(props);
     KeyChangeListener *thelistener = new KeyChangeListener();
     thelistener->setKey("k");
     bool bSucc;

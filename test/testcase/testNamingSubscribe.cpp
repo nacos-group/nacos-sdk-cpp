@@ -35,6 +35,7 @@ bool testListenService() {
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
     props[PropertyKeyConst::LOCAL_IP] = "127.0.0.1";
     ADD_AUTH_INFO(props);
+    ADD_SPAS_INFO(props);
     NacosServiceFactory *factory = new NacosServiceFactory(props);
     ResourceGuard <NacosServiceFactory> _guardFactory(factory);
     NamingService *n = factory->CreateNamingService();
