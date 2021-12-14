@@ -56,7 +56,16 @@ add_executable(nacos-cli.out ${TEST_SRCS_DIRS} ${SRCS_DIRS})
 add_library(nacos-cli SHARED ${SRCS_DIRS})
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
-target_link_libraries(nacos-cli PRIVATE Threads::Threads CURL)
-target_link_libraries(nacos-cli.out PRIVATE Threads::Threads CURL)
+target_link_libraries(nacos-cli PRIVATE Threads::Threads curl)
+target_link_libraries(nacos-cli.out PRIVATE Threads::Threads curl)
 find_package(Threads REQUIRED)
 find_package(CURL REQUIRED)
+
+install(TARGETS nacos-cli
+		LIBRARY)
+		
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
+		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nacos-sdk-cpp
+		FILES_MATCHING PATTERN "*.h*")
+
+install(TARGETS nacos-cli)
