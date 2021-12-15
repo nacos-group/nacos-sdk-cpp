@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.4.1)
 
 project(nacos-sdk-cpp)
 
-#add_definitions(NACOS_AUTH)
-#add_definitions(NACOS_SPAS)
+#add_definitions(-DNACOS_AUTH)
+#add_definitions(-DNACOS_SPAS)
 
 include_directories (
 .
