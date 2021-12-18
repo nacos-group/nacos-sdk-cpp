@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.4.1)
 
 project(nacos-sdk-cpp)
 
+#add_definitions(-DNACOS_AUTH)
+#add_definitions(-DNACOS_SPAS)
+
 include_directories (
 .
 include
@@ -63,7 +66,7 @@ find_package(CURL REQUIRED)
 
 install(TARGETS nacos-cli
 		LIBRARY)
-		
+
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
 		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nacos-sdk-cpp
 		FILES_MATCHING PATTERN "*.h*")
