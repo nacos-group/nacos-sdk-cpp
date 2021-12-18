@@ -57,7 +57,7 @@ private:
     static LOG_LEVEL _CUR_SYS_LOG_LEVEL;
     static NacosString _log_base_dir;
     static NacosString _log_file;
-    static int64_t _rotate_time;
+    static int64_t _rotate_size;
     static int64_t _last_rotate_time;
     static FILE *_output_file;
 
@@ -70,11 +70,11 @@ private:
 public:
 
     static void applyLogSettings(Properties &props);
-    static void setRotateTime(int64_t rotateTime);
+    static void setRotateSize(int64_t rotateSize);
     static void setBaseDir(const NacosString &baseDir);
     static void setLogLevel(LOG_LEVEL level);
 
-    static int64_t getRotateTime();
+    static int64_t getRotateSize();
     static const NacosString &getBaseDir();
     static LOG_LEVEL getLogLevel();
 

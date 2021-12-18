@@ -34,9 +34,16 @@
 # temp
 tmp/
 
+# CMakeFiles
+CMakeFiles/
+CMakeLists.txt
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+Makefile
+
 # idea project
 .idea
-CMakeLists.txt
 cmake-build-debug
 
 *.dat

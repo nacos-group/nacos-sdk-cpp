@@ -12,6 +12,7 @@
 #else
 
 //we don't know how to handle this situation, check if it's defined
+//the is not necessarily an issue, actually in most cases it will just work
 #warning "Unknown system or arch, trying fallback strategy. Please check if the compilation is correct"
 #ifndef PATH_MAX
 #define PATH_MAX 260

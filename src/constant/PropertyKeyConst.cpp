@@ -43,7 +43,7 @@ const NacosString PropertyKeyConst::HB_FAIL_WAIT_TIME = "naming.heartbeat.failwa
 const NacosString PropertyKeyConst::NACOS_SNAPSHOT_PATH = "nacos.snapshot.path";
 
 const NacosString PropertyKeyConst::LOG_PATH = "nacos.log.path";
-const NacosString PropertyKeyConst::LOG_ROTATE_TIME = "nacos.log.rotateTime";
+const NacosString PropertyKeyConst::LOG_ROTATE_SIZE = "nacos.log.rotateSize";
 const NacosString PropertyKeyConst::LOG_LEVEL = "nacos.log.level";
 
 const NacosString PropertyKeyConst::CLIENT_NAME = "nacos.client.name";

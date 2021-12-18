@@ -13,20 +13,21 @@
 #include "constant/ConfigConstant.h"
 #include "constant/PropertyKeyConst.h"
 #include <ctime>
+#include <sys/stat.h>
 
 namespace nacos{
 
 LOG_LEVEL Logger::_CUR_SYS_LOG_LEVEL = ERROR;
 NacosString Logger::_log_base_dir = "";
 NacosString Logger::_log_file = "";
-int64_t Logger::_rotate_time;
+int64_t Logger::_rotate_size;
 int64_t Logger::_last_rotate_time;
 FILE *Logger::_output_file;
 Mutex Logger::setFileLock;
 
 //rotate time (in Ms)
-void Logger::setRotateTime(int64_t rotateTime) {
-    _rotate_time = rotateTime;
+void Logger::setRotateSize(int64_t rotateSize) {
+    _rotate_size = rotateSize;
 }
 
 void Logger::setBaseDir(const NacosString &baseDir) {
@@ -37,8 +38,8 @@ void Logger::setBaseDir(const NacosString &baseDir) {
         _output_file = NULL;
     }
 
-    IOUtils::recursivelyCreate(_log_base_dir.c_str());
     _log_file = _log_base_dir + ConfigConstant::FILE_SEPARATOR + "nacos-sdk-cpp.log";
+    IOUtils::recursivelyCreate(_log_base_dir.c_str());
     _output_file = fopen(_log_file.c_str(), "a");
     if (_output_file == NULL) {
         NacosString errMsg = "Unable to open file ";
@@ -51,8 +52,8 @@ void Logger::setLogLevel(LOG_LEVEL level) {
     _CUR_SYS_LOG_LEVEL = level;
 };
 
-int64_t Logger::getRotateTime() {
-    return _rotate_time;
+int64_t Logger::getRotateSize() {
+    return _rotate_size;
 }
 
 const NacosString &Logger::getBaseDir() {
@@ -73,9 +74,34 @@ int Logger::debug_helper(LOG_LEVEL level, const char *format, va_list args) {
 
     //va_start(argList, format);
     int64_t now = TimeUtils::getCurrentTimeInMs();
-    if (now - _last_rotate_time >= _rotate_time) {
+
+    struct stat stat_buf;
+    stat(_log_file.c_str(), &stat_buf);
+    if (stat_buf.st_size >= _rotate_size) {
         truncate(_log_file.c_str(), 0);
         _last_rotate_time = now;
+    }
+
+    const char *log_level;
+    switch (level) {
+        case DEBUG:
+            log_level = "[DEBUG]";
+            break;
+        case INFO:
+            log_level = "[INFO]";
+            break;
+        case WARN:
+            log_level = "[WARN]";
+            break;
+        case ERROR:
+            log_level = "[ERROR]";
+            break;
+        case NONE:
+            log_level = "[NONE]";
+            break;
+        default:
+            log_level = "[UNKNOWN]";
+            break;
     }
 
     time_t t = time(0);
@@ -85,7 +111,7 @@ int Logger::debug_helper(LOG_LEVEL level, const char *format, va_list args) {
     char time_buf[22];
     strftime(time_buf, sizeof(time_buf), "[%Y-%m-%d %H:%M:%S]", &current_time);
 
-    int retval = fprintf(_output_file, "%s", time_buf);
+    int retval = fprintf(_output_file, "%s%s", time_buf, log_level);
     retval += vfprintf(_output_file, format, args);
     fflush(_output_file);
     //va_end(argList);
@@ -186,30 +212,51 @@ void Logger::applyLogSettings(Properties &props) {
         }
     }
 
-    if (!props.contains(PropertyKeyConst::LOG_ROTATE_TIME)) {
-        Logger::setRotateTime(24 * 60 * 60 * 1000);
+    if (!props.contains(PropertyKeyConst::LOG_ROTATE_SIZE)) {
+        Logger::setRotateSize(10 * 1024 *1024);//10M by default
     } else {
-        const NacosString &logRotateTimeStr = props[PropertyKeyConst::LOG_ROTATE_TIME];
-        if (ParamUtils::isBlank(logRotateTimeStr)) {
+        const NacosString &logRotateSizeStr = props[PropertyKeyConst::LOG_ROTATE_SIZE];
+        if (ParamUtils::isBlank(logRotateSizeStr)) {
             throw NacosException(NacosException::INVALID_CONFIG_PARAM,
-                                 "Invalid option " + logRotateTimeStr + " for " + PropertyKeyConst::LOG_ROTATE_TIME);
+                                 "Invalid option '" + logRotateSizeStr + "' for " + PropertyKeyConst::LOG_ROTATE_SIZE);
         }
 
-        if (logRotateTimeStr[logRotateTimeStr.length() - 1] != 'h' &&
-            logRotateTimeStr[logRotateTimeStr.length() - 1] != 'H') {
-            throw NacosException(NacosException::INVALID_CONFIG_PARAM,
-                                 "Invalid option " + logRotateTimeStr + " for " + PropertyKeyConst::LOG_ROTATE_TIME + ", we only support hour currently");
+        size_t logrotate_lastch = logRotateSizeStr.length() - 1;
+        int mulplier = 1;
+        unsigned long logRotateSize = 0;
+        switch (logRotateSizeStr[logrotate_lastch])
+        {
+            case 'g':
+            case 'G':
+                mulplier *= 1024;
+            case 'm':
+            case 'M':
+                mulplier *= 1024;
+            case 'k':
+            case 'K':
+                mulplier *= 1024;
+                logRotateSize = atol(logRotateSizeStr.substr(0, logrotate_lastch).c_str());//logrotate_lastch = exclude the unit
+                logRotateSize *= mulplier;
+                break;
+            default:
+                if (!isdigit(logRotateSizeStr[logrotate_lastch])) {
+                    throw NacosException(NacosException::INVALID_CONFIG_PARAM,
+                        "Invalid option '" + logRotateSizeStr + "' for " + PropertyKeyConst::LOG_ROTATE_SIZE + ", the unit of size must be G/g M/m K/k or decimal numbers.");
+
+                }
+                mulplier = 1;
+                logRotateSize = atol(logRotateSizeStr.substr(0, logRotateSizeStr.length()).c_str());
+                break;
         }
 
-        int logRotateTime = atol(logRotateTimeStr.substr(0, logRotateTimeStr.length() - 2).c_str());
-        if (logRotateTime <= 0) {
+        if (logRotateSize <= 0) {
             throw NacosException(NacosException::INVALID_CONFIG_PARAM,
-                                 PropertyKeyConst::LOG_ROTATE_TIME + " should be greater than 0");
+                                 PropertyKeyConst::LOG_ROTATE_SIZE + " should be greater than 0");
         }
-        Logger::setRotateTime(logRotateTime);
+        Logger::setRotateSize(logRotateSize);
     }
 
-    log_info("DEFAULT_LOG_PATH:%s\n", Logger::getBaseDir().c_str());
+    log_info("Current log path:%s\n", Logger::getBaseDir().c_str());
 }
 
 void Logger::Init() {
