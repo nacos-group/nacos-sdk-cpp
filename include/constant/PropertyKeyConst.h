@@ -47,7 +47,7 @@ public:
     static const NacosString NACOS_SNAPSHOT_PATH;
 
     static const NacosString LOG_PATH;
-    static const NacosString LOG_ROTATE_TIME;
+    static const NacosString LOG_ROTATE_SIZE;
     static const NacosString LOG_LEVEL;
 
     static const NacosString CLIENT_NAME;

@@ -48,7 +48,7 @@ void SecurityManager::login() NACOS_THROW (NacosException) {
     }
 
     for (size_t nr_tries = 0; nr_tries < nr_servers; nr_tries++) {
-        const NacosServerInfo &curServer = ParamUtils::getNthElem(serversToTry, nr_tries + start % nr_servers);
+        const NacosServerInfo &curServer = ParamUtils::getNthElem(serversToTry, (nr_tries + start) % nr_servers);
         NacosString serverAddr = curServer.getCompleteAddress();
         try {
             //the method will throw if there's something wrong(e.g.: network problem)
@@ -114,9 +114,16 @@ void *SecurityManager::tokenRefreshThreadFunc(void *param) {
             thisObj->login();
         } catch (NacosException &e) {
             if (e.errorcode() == NacosException::INVALID_LOGIN_CREDENTIAL) {
+                log_error("Invalid credential!\n");
                 throw e;//Invalid login credential, let it crash
             } else if (e.errorcode() == NacosException::ALL_SERVERS_TRIED_AND_FAILED) {
+                log_warn("Network down, sleep for 30 secs and retry\n");
                 sleep(30);//network down, wait for a moment
+                continue;
+            } else {
+                //unknown error, there should be a better way to handle this situation
+                log_error("Unknown error happend, code: %d, reason: %s\n", e.errorcode(), e.what());
+                sleep(30);//unknown error, wait for 30 sec and continue
                 continue;
             }
         }
