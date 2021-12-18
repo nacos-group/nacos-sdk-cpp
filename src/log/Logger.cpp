@@ -74,10 +74,34 @@ int Logger::debug_helper(LOG_LEVEL level, const char *format, va_list args) {
 
     //va_start(argList, format);
     int64_t now = TimeUtils::getCurrentTimeInMs();
-    long file_size = ftell(_output_file);//the file position can be considered as the size of the file
-    if (file_size >= _rotate_size) {
+
+    struct stat stat_buf;
+    stat(_log_file.c_str(), &stat_buf);
+    if (stat_buf.st_size >= _rotate_size) {
         truncate(_log_file.c_str(), 0);
         _last_rotate_time = now;
+    }
+
+    const char *log_level;
+    switch (level) {
+        case DEBUG:
+            log_level = "[DEBUG]";
+            break;
+        case INFO:
+            log_level = "[INFO]";
+            break;
+        case WARN:
+            log_level = "[WARN]";
+            break;
+        case ERROR:
+            log_level = "[ERROR]";
+            break;
+        case NONE:
+            log_level = "[NONE]";
+            break;
+        default:
+            log_level = "[UNKNOWN]";
+            break;
     }
 
     time_t t = time(0);
@@ -87,7 +111,7 @@ int Logger::debug_helper(LOG_LEVEL level, const char *format, va_list args) {
     char time_buf[22];
     strftime(time_buf, sizeof(time_buf), "[%Y-%m-%d %H:%M:%S]", &current_time);
 
-    int retval = fprintf(_output_file, "%s", time_buf);
+    int retval = fprintf(_output_file, "%s%s", time_buf, log_level);
     retval += vfprintf(_output_file, format, args);
     fflush(_output_file);
     //va_end(argList);
@@ -211,7 +235,7 @@ void Logger::applyLogSettings(Properties &props) {
             case 'k':
             case 'K':
                 mulplier *= 1024;
-                logRotateSize = atol(logRotateSizeStr.substr(0, logrotate_lastch - 1).c_str());//exclude the unit
+                logRotateSize = atol(logRotateSizeStr.substr(0, logrotate_lastch).c_str());//logrotate_lastch = exclude the unit
                 logRotateSize *= mulplier;
                 break;
             default:
@@ -221,7 +245,7 @@ void Logger::applyLogSettings(Properties &props) {
 
                 }
                 mulplier = 1;
-                logRotateSize = atol(logRotateSizeStr.substr(0, logrotate_lastch).c_str());
+                logRotateSize = atol(logRotateSizeStr.substr(0, logRotateSizeStr.length()).c_str());
                 break;
         }
 
