@@ -8,16 +8,6 @@ project(nacos-sdk-cpp)
 include_directories (
 .
 include
-include/config
-include/constant
-include/factory
-include/listen
-include/naming
-include/naming/selectors
-include/naming/subscribe
-include/server
-include/thread
-include/utils
 )
 
 aux_source_directory( src SRCS_DIRS)
@@ -68,7 +58,7 @@ install(TARGETS nacos-cli
 		LIBRARY)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
-		DESTINATION include/nacos-sdk-cpp
+		DESTINATION include/nacossdkcpp
 		FILES_MATCHING PATTERN "*.h*")
 
 install(TARGETS nacos-cli)
