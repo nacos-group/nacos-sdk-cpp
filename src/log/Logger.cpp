@@ -194,12 +194,12 @@ void Logger::applyLogSettings(Properties &props) {
         const NacosString &logRotateSizeStr = props[PropertyKeyConst::LOG_ROTATE_SIZE];
         if (ParamUtils::isBlank(logRotateSizeStr)) {
             throw NacosException(NacosException::INVALID_CONFIG_PARAM,
-                                 "Invalid option " + logRotateSizeStr + " for " + PropertyKeyConst::LOG_ROTATE_SIZE);
+                                 "Invalid option '" + logRotateSizeStr + "' for " + PropertyKeyConst::LOG_ROTATE_SIZE);
         }
 
         size_t logrotate_lastch = logRotateSizeStr.length() - 1;
         int mulplier = 1;
-        int logRotateSize = 0;
+        unsigned long logRotateSize = 0;
         switch (logRotateSizeStr[logrotate_lastch])
         {
             case 'g':
@@ -211,12 +211,13 @@ void Logger::applyLogSettings(Properties &props) {
             case 'k':
             case 'K':
                 mulplier *= 1024;
-                break;
                 logRotateSize = atol(logRotateSizeStr.substr(0, logrotate_lastch - 1).c_str());//exclude the unit
+                logRotateSize *= mulplier;
+                break;
             default:
                 if (!isdigit(logRotateSizeStr[logrotate_lastch])) {
                     throw NacosException(NacosException::INVALID_CONFIG_PARAM,
-                        "Invalid option " + logRotateSizeStr + " for " + PropertyKeyConst::LOG_ROTATE_SIZE + ", the unit of size must be G/g M/m K/k or decimal numbers.");
+                        "Invalid option '" + logRotateSizeStr + "' for " + PropertyKeyConst::LOG_ROTATE_SIZE + ", the unit of size must be G/g M/m K/k or decimal numbers.");
 
                 }
                 mulplier = 1;
