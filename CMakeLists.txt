@@ -55,10 +55,8 @@ find_package(Threads REQUIRED)
 find_package(CURL REQUIRED)
 
 install(TARGETS nacos-cli
-		LIBRARY)
+		LIBRARY DESTINATION lib)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
 		DESTINATION include/nacossdkcpp
 		FILES_MATCHING PATTERN "*.h*")
-
-install(TARGETS nacos-cli)
