@@ -15,12 +15,14 @@ Nacos-sdk-cpp for c++ clients allow users to access Nacos service, it supports s
 Download the source and run the following command in bash:
 
 `cd nacos-sdk-cpp`
-
+`cmake .`
 `make`
 
 a libnacos-cli.so and a nacos-cli.out will be generated
 
 run `./nacos-cli.out` to perform test on the library
+
+run `make install` to install the libnacos-cli to your system library path
 
 **Note:** You need to run a nacos server on your local machine listening on port 8848 to go through the whole test
 One of the testcases will test endpoint functionality, so **you also need** to run a simple http server on port 80 which provides the following content:

@@ -60,5 +60,3 @@ install(TARGETS nacos-cli
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
 		DESTINATION include/nacossdkcpp
 		FILES_MATCHING PATTERN "*.h*")
-
-install(TARGETS nacos-cli)

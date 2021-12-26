@@ -12,12 +12,14 @@ Nacos-sdk-cpp是nacos客戶端的C++版本，它支持服务发现和动态配�
 下载工程源代码并且执行下述命令:
 
 `cd nacos-sdk-cpp`
-
+`cmake .`
 `make`
 
 将会产生一个libnacos-cli.so 和一个 nacos-cli.out
 
 运行 `./nacos-cli.out` 以执行客户端的所有testcase
+
+运行 `make install` 将libnacos-cli安装到lib目录
 
 **注意:** 你需要在本机运行一个nacos server，监听8848端口以完成所有测试
 其中有个测试将会测试端点（endpoint）功能，**所以你还需要**在本机运行一个http服务器，在路径/endpoints/endpoint0提供下述内容：
