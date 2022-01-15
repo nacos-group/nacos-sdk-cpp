@@ -31,10 +31,13 @@ private:
     int udpReceiverPort;
     struct sockaddr_in cliaddr;
     char receiveBuffer[UDP_MSS];
+    //assume the max compress ratio = 90%
+    char uncompressedData[UDP_MSS * 10];
     Thread *_listenerThread;
 
     void initializeUdpListener() NACOS_THROW(NacosException);
     static void *listenerThreadFunc(void *param);
+    bool unGzip(char *inBuffer, size_t inSize);
 public:
     UdpNamingServiceListener(ObjectConfigData *objectConfigData);
     ~UdpNamingServiceListener();

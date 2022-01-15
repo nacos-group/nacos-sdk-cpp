@@ -7,6 +7,7 @@
 #include "constant/PropertyKeyConst.h"
 #include "src/json/JSON.h"
 #include "HostReactor.h"
+#include "zlib.h"
 
 #include <iostream>
 using namespace std;
@@ -38,6 +39,48 @@ void UdpNamingServiceListener::initializeUdpListener() NACOS_THROW(NacosExceptio
     log_debug("socket bound\n");
 }
 
+bool UdpNamingServiceListener::unGzip(char *inBuffer, size_t inSize) {
+    //reference:https://zlib.net/zlib_how.html
+    /* allocate inflate state */
+    z_stream strm;
+    strm.zalloc = Z_NULL;
+    strm.zfree = Z_NULL;
+    strm.opaque = Z_NULL;
+    strm.avail_in = 0;
+    strm.next_in = Z_NULL;
+    int ret = inflateInit2(&strm, MAX_WBITS + 16);
+    if (ret != Z_OK) {
+        log_error("failed to perform inflateInit()\n");
+        return false;
+    }
+
+    strm.avail_in = inSize;
+    strm.next_in = (unsigned char*)inBuffer;
+    strm.avail_out = sizeof(this->uncompressedData);
+    strm.next_out = (unsigned char*)this->uncompressedData;
+    ret = inflate(&strm, Z_NO_FLUSH);
+    NACOS_ASSERT(ret != Z_STREAM_ERROR);
+    switch (ret) {
+    case Z_NEED_DICT:
+        ret = Z_DATA_ERROR;     /* and fall through */
+    case Z_DATA_ERROR:
+    case Z_MEM_ERROR:
+        (void)inflateEnd(&strm);
+        log_error("in switch block, inflate failed with code = %d\n", ret);
+        return false;
+    }
+    
+    if (strm.avail_out == 0) {
+        log_error("uncompressed data exceeds the size limit, please consider a larger uncompressedData\n");
+        return false;
+    }
+
+    (void)inflateEnd(&strm);
+
+    this->uncompressedData[sizeof(this->uncompressedData) - strm.avail_out] = '\0';
+    return true;
+}
+
 void *UdpNamingServiceListener::listenerThreadFunc(void *param) {
     UdpNamingServiceListener *thisObj = (UdpNamingServiceListener*)param;
     log_debug("in thread UdpNamingServiceListener::listenerThreadFunc()\n");
@@ -65,7 +108,19 @@ void *UdpNamingServiceListener::listenerThreadFunc(void *param) {
         PushPacket pushPacket;
 
         try {
-            pushPacket = JSON::Json2PushPacket(thisObj->receiveBuffer);
+            if (ret <= 2) {
+                //the server returns a packet shorter than 2 bytes, which could not be parsed by the listener
+                log_warn("got an invalid packet, len = %d, content = %s", ret, thisObj->receiveBuffer);
+                continue;
+            }
+            char *packetToParse = thisObj->receiveBuffer;
+            if ((unsigned char)thisObj->receiveBuffer[0] == 0x1f && (unsigned char)thisObj->receiveBuffer[1] == 0x8b) {
+                if (!thisObj->unGzip(thisObj->receiveBuffer, ret)) {
+                    continue;
+                }
+                packetToParse = thisObj->uncompressedData;
+            }
+            pushPacket = JSON::Json2PushPacket(packetToParse);
         } catch (NacosException &e) {
             log_error("Invalid json string got from server:%s\n", thisObj->receiveBuffer);
             continue;
@@ -90,7 +145,7 @@ void *UdpNamingServiceListener::listenerThreadFunc(void *param) {
 
         ssize_t recv_ret = sendto(thisObj->sockfd, ack.c_str(), ack.length(), 0, &src_addr, src_addr_len);
         if (recv_ret < 0) {
-            log_error("error while sending data...%d", errno);
+            log_error("error while sending data...%d\n", errno);
         }
     }
 

@@ -59,3 +59,33 @@ bool testListenService() {
 
     return true;
 }
+
+//testcase for bugfix#101, if the problem persists, this function will cause a coredump
+bool testSubscribeAlotOfServices() {
+    cout << "in function testSubscribeAlotOfServices" << endl;
+    Properties props;
+    props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
+    props[PropertyKeyConst::LOCAL_IP] = "127.0.0.1";
+    props[PropertyKeyConst::LOG_LEVEL] = "WARN";
+    ADD_AUTH_INFO(props);
+    ADD_SPAS_INFO(props);
+    NacosServiceFactory *factory = new NacosServiceFactory(props);
+    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    NamingService *n = factory->CreateNamingService();
+    ResourceGuard <NamingService> _serviceFactory(n);
+
+    n->subscribe("ss", new MyServiceListener(1));
+
+    for (int i = 0; i < 1000; i++) {
+
+        n->registerInstance("ss", "127.0.0.1", 2000+i);
+    }
+
+    sleep(20);
+
+    for (int i = 0; i < 1000; i++) {
+        n->deregisterInstance("ss", "127.0.0.1", 2000+i);
+    }
+
+    return true;
+}
