@@ -2,8 +2,8 @@
 #include <vector>
 #include "naming/selectors/RandomByWeightSelector.h"
 #include "src/log/Logger.h"
-#include "utils/ParamUtils.h"
-#include "utils/RandomUtils.h"
+#include "src/utils/ParamUtils.h"
+#include "src/utils/RandomUtils.h"
 
 #define BASIC_WEIGHT 65536
 

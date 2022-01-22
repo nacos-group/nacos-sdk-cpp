@@ -4,7 +4,7 @@
 
 #include "HostReactor.h"
 #include "src/json/JSON.h"
-#include "utils/NamingUtils.h"
+#include "src/utils/NamingUtils.h"
 #include "src/naming/subscribe/EventDispatcher.h"
 
 namespace nacos {

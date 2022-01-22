@@ -6,7 +6,7 @@
 #include "DebugAssertion.h"
 #include "listen/Listener.h"
 #include "src/http/HttpDelegate.h"
-#include "factory/NacosServiceFactory.h"
+#include "factory/NacosFactoryFactory.h"
 #include "ResourceGuard.h"
 #include "constant/PropertyKeyConst.h"
 
@@ -39,8 +39,8 @@ bool testAddListener() {
     thelistener->setKey("k");
     bool bSucc;
     try {
-        NacosServiceFactory *factory = new NacosServiceFactory(props);
-        ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+        INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(props);
+        ResourceGuard <INacosServiceFactory> _guardFactory(factory);
         ConfigService *n = factory->CreateConfigService();
         ResourceGuard <ConfigService> _serviceFactory(n);
         n->removeConfig("k4", NULLSTR);

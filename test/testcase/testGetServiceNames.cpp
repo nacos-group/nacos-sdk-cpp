@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <list>
 #include "src/naming/NamingProxy.h"
-#include "factory/NacosServiceFactory.h"
+#include "factory/NacosFactoryFactory.h"
 #include "naming/Instance.h"
 #include "constant/ConfigConstant.h"
 #include "constant/UtilAndComs.h"
@@ -24,8 +24,8 @@ bool testGetServiceNames() {
     ADD_AUTH_INFO(configProps);
     ADD_SPAS_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
-    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(configProps);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     NamingService *namingSvc = factory->CreateNamingService();
     ResourceGuard <NamingService> _guardService(namingSvc);
 

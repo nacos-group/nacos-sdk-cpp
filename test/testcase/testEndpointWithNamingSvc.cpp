@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include "src/naming/NamingProxy.h"
 #include "src/naming/NacosNamingService.h"
-#include "factory/NacosServiceFactory.h"
+#include "factory/NacosFactoryFactory.h"
 #include "ResourceGuard.h"
 #include "naming/Instance.h"
 #include "constant/ConfigConstant.h"
@@ -31,8 +31,8 @@ bool testEndpointWithNamingProxy() {
     configProps[PropertyKeyConst::CONTEXT_PATH] = "nacos";
     configProps[PropertyKeyConst::CLUSTER_NAME] = "endpoint0";
 
-    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(configProps);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     NamingService *namingSvc = factory->CreateNamingService();
     ResourceGuard <NamingService> _serviceFactory(namingSvc);
     Instance instance;

@@ -4,7 +4,7 @@
 #include<iostream>
 #include <pthread.h>
 #include "Tid.h"
-#include "utils/TimeUtils.h"
+#include "src/utils/TimeUtils.h"
 
 /*
 * Mutex.h

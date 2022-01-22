@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include "src/naming/NamingProxy.h"
 #include "src/naming/NacosNamingService.h"
-#include "factory/NacosServiceFactory.h"
+#include "factory/NacosFactoryFactory.h"
 #include "ResourceGuard.h"
 #include "naming/Instance.h"
 #include "constant/ConfigConstant.h"
@@ -27,8 +27,8 @@ bool testNamingProxySmokeTest() {
     ADD_AUTH_INFO(props);
     ADD_SPAS_INFO(props);
     props[PropertyKeyConst::SERVER_ADDR] = servers;
-    NacosServiceFactory *factory = new NacosServiceFactory(props);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(props);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     NamingService *n = factory->CreateNamingService();
     ResourceGuard <NamingService> _serviceFactory(n);
     NacosNamingService *nn = (NacosNamingService *) n;
@@ -106,8 +106,8 @@ bool testNamingProxyServerHealthy() {
     ADD_AUTH_INFO(props);
     ADD_SPAS_INFO(props);
     props[PropertyKeyConst::SERVER_ADDR] = servers;
-    NacosServiceFactory *factory = new NacosServiceFactory(props);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(props);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     NamingService *n = factory->CreateNamingService();
     ResourceGuard <NamingService> _serviceFactory(n);
     NacosNamingService *nn = (NacosNamingService *) n;
@@ -163,8 +163,8 @@ bool testNamingServiceRegister() {
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     ADD_AUTH_INFO(configProps);
     ADD_SPAS_INFO(configProps);
-    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(configProps);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     NamingService *namingSvc = factory->CreateNamingService();
     ResourceGuard <NamingService> _serviceFactory(namingSvc);
     Instance instance;
@@ -229,8 +229,8 @@ bool testNamingServiceAndDeRegisterActively() {
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     ADD_AUTH_INFO(configProps);
     ADD_SPAS_INFO(configProps);
-    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(configProps);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     NamingService *namingSvc = factory->CreateNamingService();
     ResourceGuard <NamingService> _serviceFactory(namingSvc);
     Instance instance;

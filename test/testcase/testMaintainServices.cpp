@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <list>
-#include "factory/NacosServiceFactory.h"
+#include "factory/NacosFactoryFactory.h"
 #include "naming/NamingMaintainService.h"
 #include "DebugAssertion.h"
 #include "src/log/Logger.h"
@@ -20,8 +20,8 @@ bool testMaintainGetService() {
     ADD_AUTH_INFO(configProps);
     ADD_SPAS_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
-    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(configProps);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     NamingMaintainService *maintainService = factory->CreateNamingMaintainService();
     ResourceGuard <NamingMaintainService> _guardService(maintainService);
     NamingService *namingService = factory->CreateNamingService();
@@ -48,8 +48,8 @@ bool testMaintainUpdateService() {
     ADD_AUTH_INFO(configProps);
     ADD_SPAS_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
-    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(configProps);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     NamingMaintainService *maintainService = factory->CreateNamingMaintainService();
     ResourceGuard <NamingMaintainService> _guardService(maintainService);
     NamingService *namingService = factory->CreateNamingService();
@@ -83,8 +83,8 @@ bool testMaintainCreateService() {
     ADD_AUTH_INFO(configProps);
     ADD_SPAS_INFO(configProps);
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
-    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(configProps);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     NamingMaintainService *maintainService = factory->CreateNamingMaintainService();
     ResourceGuard <NamingMaintainService> _guardService(maintainService);
 

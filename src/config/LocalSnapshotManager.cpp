@@ -6,8 +6,8 @@
 #include <errno.h>
 #include "NacosExceptions.h"
 #include "NacosString.h"
-#include "utils/ParamUtils.h"
-#include "utils/DirUtils.h"
+#include "src/utils/ParamUtils.h"
+#include "src/utils/DirUtils.h"
 #include "SnapShotSwitch.h"
 #include "JVMUtil.h"
 #include "ConcurrentDiskUtil.h"

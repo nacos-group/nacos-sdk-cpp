@@ -1,6 +1,6 @@
 #include <iostream>
 #include <unistd.h>
-#include "factory/NacosServiceFactory.h"
+#include "factory/NacosFactoryFactory.h"
 #include "ResourceGuard.h"
 #include "naming/Instance.h"
 #include "NacosString.h"
@@ -13,8 +13,8 @@ using namespace nacos;
 int main() {
     Properties configProps;
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
-    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(configProps);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     NamingService *namingSvc = factory->CreateNamingService();
     ResourceGuard <NamingService> _serviceFactory(namingSvc);
     Instance instance;

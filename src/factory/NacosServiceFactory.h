@@ -5,9 +5,9 @@
 #ifndef NACOS_SDK_CPP_NACOSSERVICEFACTORY_H
 #define NACOS_SDK_CPP_NACOSSERVICEFACTORY_H
 
-#include "INacosServiceFactory.h"
+#include "factory/INacosServiceFactory.h"
 #include "Compatibility.h"
-#include "thread/Mutex.h"
+#include "src/thread/Mutex.h"
 
 namespace nacos{
 

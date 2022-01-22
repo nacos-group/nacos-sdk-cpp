@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
-#include "utils/DirUtils.h"
+#include "src/utils/DirUtils.h"
 
 #if defined(__CYGWIN__) || defined(MS_WINDOWS)
 #define PATH_MAX 260

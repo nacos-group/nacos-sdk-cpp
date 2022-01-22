@@ -1,4 +1,4 @@
-#include "thread/Tid.h"
+#include "src/thread/Tid.h"
 
 #if defined(__CYGWIN__) || defined(MS_WINDOWS)
 //TODO:for windows/cygwin

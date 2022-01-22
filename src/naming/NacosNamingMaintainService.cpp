@@ -1,5 +1,6 @@
 #include "src/naming/NacosNamingMaintainService.h"
 #include "src/security/SecurityManager.h"
+#include "constant/ConfigConstant.h"
 
 using namespace std;
 

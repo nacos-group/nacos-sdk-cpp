@@ -1,6 +1,6 @@
 #include <iostream>
 #include <list>
-#include "factory/NacosServiceFactory.h"
+#include "factory/NacosFactoryFactory.h"
 #include "naming/Instance.h"
 #include "NacosString.h"
 #include "Properties.h"

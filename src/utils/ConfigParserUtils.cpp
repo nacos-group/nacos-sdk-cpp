@@ -5,7 +5,7 @@
 #include <vector>
 #include "ConfigParserUtils.h"
 #include "src/config/IOUtils.h"
-#include "utils/ParamUtils.h"
+#include "src/utils/ParamUtils.h"
 #include "constant/ConfigConstant.h"
 using namespace std;
 
