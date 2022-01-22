@@ -47,9 +47,11 @@ aux_source_directory(test/testcase TEST_SRCS_DIRS)
 
 add_executable(nacos-cli.out ${TEST_SRCS_DIRS} ${SRCS_DIRS})
 add_library(nacos-cli SHARED ${SRCS_DIRS})
+add_library(nacos-cli-static STATIC ${SRCS_DIRS})
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 target_link_libraries(nacos-cli PRIVATE Threads::Threads curl z)
+target_link_libraries(nacos-cli-static PRIVATE Threads::Threads curl z)
 target_link_libraries(nacos-cli.out PRIVATE Threads::Threads curl z)
 find_package(Threads REQUIRED)
 find_package(CURL REQUIRED)
