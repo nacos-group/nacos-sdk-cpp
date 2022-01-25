@@ -3,8 +3,8 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-#include "utils/UuidUtils.h"
-#include "utils/RandomUtils.h"
+#include "src/utils/UuidUtils.h"
+#include "src/utils/RandomUtils.h"
 
 namespace nacos{
 void UuidUtils::Init() {

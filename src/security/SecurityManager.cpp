@@ -4,8 +4,10 @@
 
 #include "SecurityManager.h"
 #include "src/json/JSON.h"
-#include "utils/RandomUtils.h"
-#include "utils/TimeUtils.h"
+#include "src/utils/RandomUtils.h"
+#include "src/utils/TimeUtils.h"
+#include "src/utils/ParamUtils.h"
+#include "constant/ConfigConstant.h"
 
 using namespace std;
 namespace nacos {

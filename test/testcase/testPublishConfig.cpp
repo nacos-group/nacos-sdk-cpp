@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "factory/NacosServiceFactory.h"
+#include "factory/NacosFactoryFactory.h"
 #include "ResourceGuard.h"
 #include "constant/PropertyKeyConst.h"
-#include "DebugAssertion.h"
+#include "src/debug/DebugAssertion.h"
 #include "src/log/Logger.h"
 
 using namespace std;
@@ -17,8 +17,8 @@ bool testPublishConfig() {
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
     ADD_AUTH_INFO(props);
     ADD_SPAS_INFO(props);
-    NacosServiceFactory *factory = new NacosServiceFactory(props);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(props);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
     ResourceGuard <ConfigService> _serviceFactory(n);
     bool bSucc;

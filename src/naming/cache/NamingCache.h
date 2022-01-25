@@ -8,6 +8,7 @@
 #include "src/thread/RWLock.h"
 #include "naming/ChangeAdvice.h"
 #include "Compatibility.h"
+#include "NacosExceptions.h"
 
 namespace nacos{
 class NamingCache {

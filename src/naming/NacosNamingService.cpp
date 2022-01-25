@@ -3,9 +3,9 @@
 #include "src/naming/subscribe/UdpNamingServiceListener.h"
 #include "src/naming/beat/BeatReactor.h"
 #include "src/utils/SequenceProvider.h"
-#include "utils/NamingUtils.h"
+#include "src/utils/NamingUtils.h"
 #include "constant/UtilAndComs.h"
-#include "utils/ParamUtils.h"
+#include "src/utils/ParamUtils.h"
 #include "constant/PropertyKeyConst.h"
 #include "src/json/JSON.h"
 

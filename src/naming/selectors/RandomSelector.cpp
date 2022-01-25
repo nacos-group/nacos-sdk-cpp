@@ -1,7 +1,7 @@
 #include "naming/selectors/RandomSelector.h"
 #include "src/log/Logger.h"
-#include "utils/RandomUtils.h"
-#include "utils/ParamUtils.h"
+#include "src/utils/RandomUtils.h"
+#include "src/utils/ParamUtils.h"
 
 namespace nacos { namespace naming { namespace selectors {
 

@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "factory/NacosServiceFactory.h"
+#include "factory/NacosFactoryFactory.h"
 #include "ResourceGuard.h"
 #include "naming/subscribe/EventListener.h"
 #include "constant/PropertyKeyConst.h"
-#include "DebugAssertion.h"
+#include "src/debug/DebugAssertion.h"
 #include "src/log/Logger.h"
 
 using namespace std;
@@ -36,8 +36,8 @@ bool testListenService() {
     props[PropertyKeyConst::LOCAL_IP] = "127.0.0.1";
     ADD_AUTH_INFO(props);
     ADD_SPAS_INFO(props);
-    NacosServiceFactory *factory = new NacosServiceFactory(props);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(props);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     NamingService *n = factory->CreateNamingService();
     ResourceGuard <NamingService> _serviceFactory(n);
 
@@ -69,8 +69,8 @@ bool testSubscribeAlotOfServices() {
     props[PropertyKeyConst::LOG_LEVEL] = "WARN";
     ADD_AUTH_INFO(props);
     ADD_SPAS_INFO(props);
-    NacosServiceFactory *factory = new NacosServiceFactory(props);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(props);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     NamingService *n = factory->CreateNamingService();
     ResourceGuard <NamingService> _serviceFactory(n);
 

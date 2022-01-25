@@ -5,15 +5,17 @@
 Nacos-sdk-cpp是nacos客戶端的C++版本，它支持服务发现和动态配置
 
 [![Gitter](https://badges.gitter.im/alibaba/nacos.svg)](https://gitter.im/alibaba/nacos?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)   [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
-[![Gitter](https://travis-ci.org/alibaba/nacos.svg?branch=master)](https://travis-ci.org/alibaba/nacos)
+
 
 # 快速开始
 ## 设置工程
 下载工程源代码并且执行下述命令:
 
-`cd nacos-sdk-cpp`
-`cmake .`
-`make`
+```
+cd nacos-sdk-cpp
+cmake .
+make
+```
 
 将会产生一个libnacos-cli.so 和一个 nacos-cli.out
 
@@ -35,11 +37,7 @@ Nacos-sdk-cpp是nacos客戶端的C++版本，它支持服务发现和动态配�
 IntegratingIntoYourProject.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "PropertyKeyConst.h"
-#include "DebugAssertion.h"
-#include "ResourceGuard.h"
-#include "NacosString.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -68,7 +66,7 @@ int main() {
 
 ```
 
-`g++ IntegratingIntoYourProject.cpp -L. -lnacos-cli -Iinclude -o integrated.out`
+`g++ -I/usr/local/include/nacos/ IntegratingIntoYourProject.cpp -lnacos-cli -o integrated.out`
 
 在本机的8848端口启动一个nacos server, 并且运行 `./integrated.out`
 
@@ -76,16 +74,14 @@ int main() {
 
 `SuccessfullyIntegrated`
 
-你可能会遇到下述问题:
+## 如果你使用静态库(.a)链接
+假设.a文件和待编译文件在同一目录, 请执行下述命令:
 
-`error while loading shared libraries: libnacos-cli.so: cannot open shared object file: No such file or directory`
+`g++ -I/usr/local/include/nacos/ IntegratingIntoYourProject.cpp -lcurl -lz -L. -lnacos-cli-static -o integrated.out`
 
-**解决方法:**
+使用-lcurl -lz指定nacos客户端使用的curl和lz库
 
-假设你的 libnacos-cli.so 在如下目录 /usr/local/libnacos/
-`export LD_LIBRARY_PATH=/usr/local/libnacos/` (请勿包含lib文件的名字)
-
-你也可以通过ldconfig将库配置到libpath当中
+使用-L. -lnacos-cli-static引用当前目录下的libnacos-cli-static.a
 
 ## 配置
 
@@ -94,9 +90,7 @@ int main() {
 getConfig.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "constant/PropertyKeyConst.h"
-#include "ResourceGuard.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -129,9 +123,7 @@ int main() {
 setConfig.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "ResourceGuard.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -176,10 +168,7 @@ int main() {
 listenToKeys.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "ResourceGuard.h"
-#include "listen/Listener.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -229,12 +218,7 @@ registerInstances.cpp:
 ```C++
 #include <iostream>
 #include <unistd.h>
-#include "factory/NacosServiceFactory.h"
-#include "ResourceGuard.h"
-#include "naming/Instance.h"
-#include "NacosString.h"
-#include "Properties.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -289,10 +273,7 @@ int main() {
 subscribeServices.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "ResourceGuard.h"
-#include "naming/subscribe/EventListener.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -349,12 +330,7 @@ getAllInstances.cpp:
 ```C++
 #include <iostream>
 #include <list>
-#include "factory/NacosServiceFactory.h"
-#include "naming/Instance.h"
-#include "NacosString.h"
-#include "Properties.h"
-#include "constant/PropertyKeyConst.h"
-#include "ResourceGuard.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -388,6 +364,20 @@ using namespace nacos;
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     configProps[PropertyKeyConst::AUTH_USERNAME] = "username";
     configProps[PropertyKeyConst::AUTH_PASSWORD] = "password";
+    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
+    ConfigService *n = factory->CreateConfigService();
+    NamingService *namingSvc = factory->CreateNamingService();
+......
+```
+
+### 启动SPAS鉴权
+
+```C++
+using namespace nacos;
+......
+    configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
+    configProps[PropertyKeyConst::ACCESS_KEY] = "accessKey";
+    configProps[PropertyKeyConst::SECRET_KEY] = "secretKey";
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ConfigService *n = factory->CreateConfigService();
     NamingService *namingSvc = factory->CreateNamingService();

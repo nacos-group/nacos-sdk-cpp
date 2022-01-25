@@ -61,5 +61,5 @@ install(TARGETS nacos-cli
 		LIBRARY DESTINATION lib)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
-		DESTINATION include/nacossdkcpp
+		DESTINATION include/nacos
 		FILES_MATCHING PATTERN "*.h*")

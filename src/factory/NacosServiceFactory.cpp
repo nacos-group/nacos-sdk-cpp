@@ -2,7 +2,7 @@
 // Created by liuhanyu on 2020/8/30.
 //
 
-#include "factory/NacosServiceFactory.h"
+#include "src/factory/NacosServiceFactory.h"
 #include "src/init/Init.h"
 #include "src/naming/NacosNamingService.h"
 #include "src/naming/NacosNamingMaintainService.h"
@@ -21,7 +21,7 @@
 #include "src/utils/ConfigParserUtils.h"
 #include "src/utils/SequenceProvider.h"
 #include "src/config/ConfigProxy.h"
-#include "utils/DirUtils.h"
+#include "src/utils/DirUtils.h"
 
 //Unlike Java, in cpp, there's no container, no spring to do the ORM job, so I have to handle it myself
 namespace nacos{

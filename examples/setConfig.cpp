@@ -1,7 +1,5 @@
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "ResourceGuard.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -9,8 +7,8 @@ using namespace nacos;
 int main() {
     Properties props;
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";//server address
-    NacosServiceFactory *factory = new NacosServiceFactory(props);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(props);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
     ResourceGuard <ConfigService> _serviceFactory(n);
     bool bSucc = false;

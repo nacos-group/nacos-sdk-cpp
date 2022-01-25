@@ -1,8 +1,5 @@
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "ResourceGuard.h"
-#include "naming/subscribe/EventListener.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -30,8 +27,8 @@ int main() {
     //Interval for poller to check the status of subscribed services(unit:Ms), 30000 by default
     //Here we set it to 5000 to see the output more quick
     props[PropertyKeyConst::SUBSCRIPTION_POLL_INTERVAL] = "5000";
-    NacosServiceFactory *factory = new NacosServiceFactory(props);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(props);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     NamingService *n = factory->CreateNamingService();
     ResourceGuard <NamingService> _serviceFactory(n);
 

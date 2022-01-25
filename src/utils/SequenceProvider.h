@@ -5,7 +5,7 @@
 #include "NacosString.h"
 #include "NacosExceptions.h"
 #include "thread/AtomicInt.h"
-#include "thread/Mutex.h"
+#include "src/thread/Mutex.h"
 #include "src/config/IOUtils.h"
 
 namespace nacos

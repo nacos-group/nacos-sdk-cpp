@@ -4,8 +4,8 @@
 #include "src/config/JVMUtil.h"
 #include "naming/ServiceInfo2.h"
 #include "constant/UtilAndComs.h"
-#include "utils/UuidUtils.h"
-#include "utils/RandomUtils.h"
+#include "src/utils/UuidUtils.h"
+#include "src/utils/RandomUtils.h"
 #include "src/thread/Thread.h"
 #include "src/crypto/MACProvider.h"
 static nacos::Init initobj;//Implicitly call the constructors

@@ -2,7 +2,7 @@
 #define __BLOCKING_Q_H_
 
 #include <deque>
-#include "thread/Mutex.h"
+#include "src/thread/Mutex.h"
 /*
 * BlockingQueue.h
 * Thanks to Shuo, Chen's muduo: https://github.com/chenshuo/muduo/blob/master/muduo/base/BlockingQueue.h

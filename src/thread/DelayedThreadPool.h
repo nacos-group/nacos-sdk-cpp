@@ -5,7 +5,7 @@
 #include <utility>
 #include "src/thread/ThreadPool.h"
 #include "src/thread/Task.h"
-#include "thread/Mutex.h"
+#include "src/thread/Mutex.h"
 
 namespace nacos {
 
