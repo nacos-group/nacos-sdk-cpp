@@ -14,9 +14,11 @@ Nacos-sdk-cpp for c++ client allows users to access Nacos service, it supports s
 ## Setup project
 Download the source and run the following command in bash:
 
-`cd nacos-sdk-cpp`
-`cmake .`
-`make`
+```
+cd nacos-sdk-cpp
+cmake .
+make
+```
 
 a libnacos-cli.so and a nacos-cli.out will be generated
 
@@ -40,10 +42,7 @@ Here is an example showing how to integrate the library(.so) into your project:
 IntegratingIntoYourProject.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "PropertyKeyConst.h"
-#include "ResourceGuard.h"
-#include "NacosString.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -81,9 +80,12 @@ Then you'll see:
 `SuccessfullyIntegrated`
 
 ## If you are using a static lib(.a):
-Assume that the file being compiled resides in the same directory as the .a library, please use the following command:
+Assume that the file you are compiling resides in the same directory as the .a library, please use the following command:
+
 `g++ -I/usr/local/include/nacos/ IntegratingIntoYourProject.cpp -lcurl -lz -L. -lnacos-cli-static -o integrated.out`
+
 -lcurl -lz Specifies the curl and lz library used by libnacos
+
 -L. -lnacos-cli-static links the static libnacos library resides in the same directory as IntegratingIntoYourProject.cpp
 
 ## Configuration
@@ -93,9 +95,7 @@ Assume that the file being compiled resides in the same directory as the .a libr
 getConfig.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "constant/PropertyKeyConst.h"
-#include "ResourceGuard.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -128,9 +128,7 @@ int main() {
 setConfig.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "ResourceGuard.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -175,10 +173,7 @@ int main() {
 listenToKeys.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "ResourceGuard.h"
-#include "listen/Listener.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -228,12 +223,7 @@ registerInstances.cpp:
 ```C++
 #include <iostream>
 #include <unistd.h>
-#include "factory/NacosServiceFactory.h"
-#include "ResourceGuard.h"
-#include "naming/Instance.h"
-#include "NacosString.h"
-#include "Properties.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -288,10 +278,7 @@ int main() {
 subscribeServices.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "ResourceGuard.h"
-#include "naming/subscribe/EventListener.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -348,12 +335,7 @@ getAllInstances.cpp:
 ```C++
 #include <iostream>
 #include <list>
-#include "factory/NacosServiceFactory.h"
-#include "naming/Instance.h"
-#include "NacosString.h"
-#include "Properties.h"
-#include "constant/PropertyKeyConst.h"
-#include "ResourceGuard.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -392,6 +374,21 @@ using namespace nacos;
     NamingService *namingSvc = factory->CreateNamingService();
 ......
 ```
+
+### Enabling SPAS Authentication
+
+```C++
+using namespace nacos;
+......
+    configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
+    configProps[PropertyKeyConst::ACCESS_KEY] = "accessKey";
+    configProps[PropertyKeyConst::SECRET_KEY] = "secretKey";
+    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
+    ConfigService *n = factory->CreateConfigService();
+    NamingService *namingSvc = factory->CreateNamingService();
+......
+```
+
 # Supported System/Compilers
 
 | OS/Environment | Compilers | Tested version |

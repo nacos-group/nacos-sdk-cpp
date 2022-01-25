@@ -1,7 +1,5 @@
 #include <iostream>
-#include "factory/NacosFactoryFactory.h"
-#include "ResourceGuard.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;

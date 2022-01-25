@@ -1,11 +1,6 @@
 #include <iostream>
 #include <unistd.h>
-#include "factory/NacosFactoryFactory.h"
-#include "ResourceGuard.h"
-#include "naming/Instance.h"
-#include "NacosString.h"
-#include "Properties.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;

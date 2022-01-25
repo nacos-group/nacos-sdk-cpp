@@ -11,9 +11,11 @@ Nacos-sdk-cpp是nacos客戶端的C++版本，它支持服务发现和动态配�
 ## 设置工程
 下载工程源代码并且执行下述命令:
 
-`cd nacos-sdk-cpp`
-`cmake .`
-`make`
+```
+cd nacos-sdk-cpp
+cmake .
+make
+```
 
 将会产生一个libnacos-cli.so 和一个 nacos-cli.out
 
@@ -35,10 +37,7 @@ Nacos-sdk-cpp是nacos客戶端的C++版本，它支持服务发现和动态配�
 IntegratingIntoYourProject.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "PropertyKeyConst.h"
-#include "ResourceGuard.h"
-#include "NacosString.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -75,10 +74,13 @@ int main() {
 
 `SuccessfullyIntegrated`
 
-## 如果你是使用静态库(.a)链接的
-假设.a文件和待编译文件在同一目录, 执行下述命令:
+## 如果你使用静态库(.a)链接
+假设.a文件和待编译文件在同一目录, 请执行下述命令:
+
 `g++ -I/usr/local/include/nacos/ IntegratingIntoYourProject.cpp -lcurl -lz -L. -lnacos-cli-static -o integrated.out`
+
 使用-lcurl -lz指定nacos客户端使用的curl和lz库
+
 使用-L. -lnacos-cli-static引用当前目录下的libnacos-cli-static.a
 
 ## 配置
@@ -88,9 +90,7 @@ int main() {
 getConfig.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "constant/PropertyKeyConst.h"
-#include "ResourceGuard.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -123,9 +123,7 @@ int main() {
 setConfig.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "ResourceGuard.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -170,10 +168,7 @@ int main() {
 listenToKeys.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "ResourceGuard.h"
-#include "listen/Listener.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -223,12 +218,7 @@ registerInstances.cpp:
 ```C++
 #include <iostream>
 #include <unistd.h>
-#include "factory/NacosServiceFactory.h"
-#include "ResourceGuard.h"
-#include "naming/Instance.h"
-#include "NacosString.h"
-#include "Properties.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -283,10 +273,7 @@ int main() {
 subscribeServices.cpp:
 ```C++
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
-#include "ResourceGuard.h"
-#include "naming/subscribe/EventListener.h"
-#include "constant/PropertyKeyConst.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -343,12 +330,7 @@ getAllInstances.cpp:
 ```C++
 #include <iostream>
 #include <list>
-#include "factory/NacosServiceFactory.h"
-#include "naming/Instance.h"
-#include "NacosString.h"
-#include "Properties.h"
-#include "constant/PropertyKeyConst.h"
-#include "ResourceGuard.h"
+#include "Nacos.h"
 
 using namespace std;
 using namespace nacos;
@@ -382,6 +364,20 @@ using namespace nacos;
     configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     configProps[PropertyKeyConst::AUTH_USERNAME] = "username";
     configProps[PropertyKeyConst::AUTH_PASSWORD] = "password";
+    NacosServiceFactory *factory = new NacosServiceFactory(configProps);
+    ConfigService *n = factory->CreateConfigService();
+    NamingService *namingSvc = factory->CreateNamingService();
+......
+```
+
+### 启动SPAS鉴权
+
+```C++
+using namespace nacos;
+......
+    configProps[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
+    configProps[PropertyKeyConst::ACCESS_KEY] = "accessKey";
+    configProps[PropertyKeyConst::SECRET_KEY] = "secretKey";
     NacosServiceFactory *factory = new NacosServiceFactory(configProps);
     ConfigService *n = factory->CreateConfigService();
     NamingService *namingSvc = factory->CreateNamingService();
