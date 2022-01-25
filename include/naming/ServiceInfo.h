@@ -1,13 +1,8 @@
 #ifndef __SVC_INFO_H_
 #define __SVC_INFO_H_
 
-#include <vector>
 #include <list>
-#include <sys/time.h>
 #include "NacosString.h"
-#include "constant/ConfigConstant.h"
-#include "utils/url.h"
-#include "utils/ParamUtils.h"
 #include "naming/Instance.h"
 
 namespace nacos{
@@ -34,200 +29,77 @@ private:
     volatile bool _allIPs;
 
 public:
-    ServiceInfo() : _jsonFromServer(""), _cacheMillis(1000L), _lastRefTime(0L), _checksum(""), _allIPs(false) {
-    }
+    ServiceInfo();
 
-    bool isAllIPs() const{
-        return _allIPs;
-    }
+    bool isAllIPs() const;
 
-    void setAllIPs(bool allIPs) {
-        _allIPs = allIPs;
-    }
+    void setAllIPs(bool allIPs);
 
-    explicit ServiceInfo(const NacosString &key)  : _jsonFromServer(""), _cacheMillis(1000L), _lastRefTime(0L), _checksum(""),
-                                          _allIPs(false) {
-        std::vector <NacosString> segs;
-        ParamUtils::Explode(segs, key, ConfigConstant::SERVICE_INFO_SPLITER);
+    explicit ServiceInfo(const NacosString &key);
 
-        if (segs.size() == 2) {
-            setGroupName(segs[0]);
-            setName(segs[1]);
-        } else if (segs.size() == 3) {
-            setGroupName(segs[0]);
-            setName(segs[1]);
-            setClusters(segs[2]);
-        }
-    }
+    ServiceInfo(const NacosString &name, const NacosString &clusters);
 
-    ServiceInfo(const NacosString &name, const NacosString &clusters) {
-        _name = name;
-        _clusters = clusters;
-    }
+    int ipCount();
 
-    int ipCount() {
-        return _hosts.size();
-    }
+    bool expired() const;
 
-    bool expired() const{
-        //TODO:extract this snippet to a common util
-        struct timeval tp;
-        gettimeofday(&tp, NULL);
-        long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+    void setHosts(std::list <Instance> &hosts);
 
-        return ms - _lastRefTime > _cacheMillis;
-    }
+    bool isValid();
 
-    void setHosts(std::list <Instance> &hosts) {
-        _hosts = hosts;
-    }
+    NacosString getName();
 
-    bool isValid() {
-        return _hosts.size() > 0;
-    }
+    void setName(const NacosString &name);
 
-    NacosString getName() {
-        return _name;
-    }
+    NacosString getGroupName();
 
-    void setName(const NacosString &name) {
-        _name = name;
-    }
+    void setGroupName(const NacosString &groupName);
 
-    NacosString getGroupName() {
-        return _groupName;
-    }
+    void setLastRefTime(long lastRefTime);
 
-    void setGroupName(const NacosString &groupName) {
-        _groupName = groupName;
-    }
+    long getLastRefTime();
 
-    void setLastRefTime(long lastRefTime) {
-        _lastRefTime = lastRefTime;
-    }
+    NacosString getClusters();
 
-    long getLastRefTime() {
-        return _lastRefTime;
-    }
+    void setClusters(const NacosString &clusters);
 
-    NacosString getClusters() {
-        return _clusters;
-    }
+    long getCacheMillis();
 
-    void setClusters(const NacosString &clusters) {
-        _clusters = clusters;
-    }
+    void setCacheMillis(long cacheMillis);
 
-    long getCacheMillis() {
-        return _cacheMillis;
-    }
+    std::list <Instance> getHosts();
 
-    void setCacheMillis(long cacheMillis) {
-        _cacheMillis = cacheMillis;
-    }
+    std::list <Instance> *getHostsNocopy();
 
-    std::list <Instance> getHosts() {
-        return _hosts;
-    }
-
-    std::list <Instance> *getHostsNocopy() {
-        return &_hosts;
-    }
-
-    bool validate() const{
-        if (isAllIPs()) {
-            return true;
-        }
-
-        //TODO: Idk what does this mean in Java, ignore in C++
-        /*std::list<Instance> validHosts;
-        for (std::list<Instance>::iterator it = _hosts.begin()
-        it != _hosts.end(); it++)
-        {
-            if (it->isHealthy())
-            {
-                continue;
-            }
-
-            for (int i = 0; i < it->getWeight(); i++)
-            {
-                validHosts.push_back(*it);
-            }
-        }*/
-
-        return true;
-    }
+    bool validate() const;
 
     //@JSONField(serialize = false)
-    NacosString getJsonFromServer() const{
-        return _jsonFromServer;
-    }
+    NacosString getJsonFromServer() const;
 
-    void setJsonFromServer(const NacosString &jsonFromServer) {
-        _jsonFromServer = jsonFromServer;
-    }
+    void setJsonFromServer(const NacosString &jsonFromServer);
 
     //@JSONField(serialize = false)
-    NacosString getKey() const{
-        return getKey(_name, _clusters);
-    }
+    NacosString getKey() const;
 
     //@JSONField(serialize = false)
-    NacosString getKeyEncoded() const{
-        return getKey(urlencode(_name), _clusters);
-    }
+    NacosString getKeyEncoded() const;
 
     //@JSONField(serialize = false)
-    static void fromKey(ServiceInfo &serviceInfo, const NacosString &key) {
-        std::vector <NacosString> segs;
-        ParamUtils::Explode(segs, key, ConfigConstant::SERVICE_INFO_SPLITER);
-
-        if (segs.size() == 2) {
-            serviceInfo.setGroupName(segs[0]);
-            serviceInfo.setName(segs[1]);
-        } else if (segs.size() == 3) {
-            serviceInfo.setGroupName(segs[0]);
-            serviceInfo.setName(segs[1]);
-            serviceInfo.setClusters(segs[2]);
-        }
-    }
+    static void fromKey(ServiceInfo &serviceInfo, const NacosString &key);
 
     //@JSONField(serialize = false)
-    static NacosString getKey(const NacosString &name, const NacosString &clusters) {
-        if (!ParamUtils::isBlank(clusters)) {
-            return name + ConfigConstant::SERVICE_INFO_SPLITER + clusters;
-        }
-
-        return name;
-    }
+    static NacosString getKey(const NacosString &name, const NacosString &clusters);
 
     //@Override
-    NacosString toString() const{
-        return getKey();
-    }
+    NacosString toString() const;
 
     //!!BE CAREFUL!!
     //This function is very expensive!! call it with care!
-    NacosString toInstanceString() const{
-        NacosString res = "{\"lastRefTime\":" + NacosStringOps::valueOf(_lastRefTime) + " [\n";
-        for (std::list<Instance>::const_iterator it = _hosts.begin();
-            it != _hosts.end(); it++)
-        {
-            res += it->toString() + "\n";
-        }
+    NacosString toInstanceString() const;
 
-        res += "\n]}";
+    NacosString getChecksum() const;
 
-        return res;
-    }
-
-    NacosString getChecksum() const{
-        return _checksum;
-    }
-
-    void setChecksum(const NacosString &checksum) {
-        _checksum = checksum;
-    }
+    void setChecksum(const NacosString &checksum);
 };
 }//namespace nacos
 

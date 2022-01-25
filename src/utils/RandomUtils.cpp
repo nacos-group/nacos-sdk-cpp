@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "utils/RandomUtils.h"
+#include "src/utils/RandomUtils.h"
 
 namespace nacos{
 int RandomUtils::fd;

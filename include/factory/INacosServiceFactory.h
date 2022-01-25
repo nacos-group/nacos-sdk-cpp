@@ -23,7 +23,7 @@ public:
 
     virtual NamingMaintainService *CreateNamingMaintainService() = 0;
 
-    ~INacosServiceFactory() {};
+    virtual ~INacosServiceFactory() {};
 };
 
 }//namespace nacos

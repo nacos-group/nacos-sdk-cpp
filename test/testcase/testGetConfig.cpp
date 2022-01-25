@@ -1,7 +1,7 @@
 #include <iostream>
-#include "factory/NacosServiceFactory.h"
+#include "factory/NacosFactoryFactory.h"
 #include "constant/PropertyKeyConst.h"
-#include "DebugAssertion.h"
+#include "src/debug/DebugAssertion.h"
 #include "ResourceGuard.h"
 #include "src/log/Logger.h"
 
@@ -14,8 +14,8 @@ bool testGetConfig() {
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
     ADD_AUTH_INFO(props);
     ADD_SPAS_INFO(props);
-    NacosServiceFactory *factory = new NacosServiceFactory(props);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(props);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
     ResourceGuard <ConfigService> _serviceFactory(n);
     NacosString ss = "";
@@ -39,8 +39,8 @@ bool testGetConfigwithDefaultPort() {
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1";
     ADD_AUTH_INFO(props);
     ADD_SPAS_INFO(props);
-    NacosServiceFactory *factory = new NacosServiceFactory(props);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(props);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
     ResourceGuard <ConfigService> _serviceFactory(n);
     NacosString ss = n->getConfig("k", NULLSTR, 1000);
@@ -57,8 +57,8 @@ bool testInvalidConfig() {
 
     NacosString ss;
     try {
-        NacosServiceFactory *factory = new NacosServiceFactory(props);
-        ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+        INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(props);
+        ResourceGuard <INacosServiceFactory> _guardFactory(factory);
         ConfigService *n = factory->CreateConfigService();
         ResourceGuard <ConfigService> _serviceFactory(n);
         ss = n->getConfig("k", NULLSTR, 1000);

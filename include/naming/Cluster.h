@@ -1,14 +1,8 @@
 #ifndef __CLUSTER_H_
 #define __CLUSTER_H_
 
-#include <vector>
-#include <list>
-#include <sys/time.h>
+#include <map>
 #include "NacosString.h"
-#include "constant/ConfigConstant.h"
-#include "utils/url.h"
-#include "utils/ParamUtils.h"
-#include "naming/Instance.h"
 
 namespace nacos{
 class HealthChecker {
@@ -24,29 +18,17 @@ private:
     HealthChecker healthChecker;
     std::map<NacosString, NacosString> metadata;
 public:
-    NacosString getName() const {
-        return name;
-    }
+    NacosString getName() const;
 
-    void setName(const NacosString &name) {
-        Cluster::name = name;
-    }
+    void setName(const NacosString &name);
 
-    HealthChecker getHealthChecker() const {
-        return healthChecker;
-    }
+    HealthChecker getHealthChecker() const;
 
-    void setHealthChecker(const HealthChecker &healthChecker) {
-        Cluster::healthChecker = healthChecker;
-    }
+    void setHealthChecker(const HealthChecker &healthChecker);
 
-    std::map<NacosString, NacosString> getMetadata() const {
-        return metadata;
-    }
+    std::map<NacosString, NacosString> getMetadata() const;
 
-    void setMetadata(const std::map<NacosString, NacosString> &metadata) {
-        Cluster::metadata = metadata;
-    }
+    void setMetadata(const std::map<NacosString, NacosString> &metadata);
 };
 }//namespace nacos
 

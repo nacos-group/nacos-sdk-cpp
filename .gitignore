@@ -47,3 +47,6 @@ Makefile
 cmake-build-debug
 
 *.dat
+
+
+.vscode/

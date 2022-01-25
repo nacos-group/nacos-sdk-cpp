@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string.h>
-#include "DebugAssertion.h"
+#include "src/debug/DebugAssertion.h"
 #include "src/crypto/MACProvider.h"
 
 using namespace std;

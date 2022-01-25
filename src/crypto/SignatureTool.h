@@ -8,6 +8,7 @@
 #include "NacosString.h"
 #include "MACProvider.h"
 #include "base64/base64.h"
+#include "src/debug/DebugAssertion.h"
 
 namespace nacos {
 

@@ -3,12 +3,12 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include "Logger.h"
-#include "utils/TimeUtils.h"
+#include "src/utils/TimeUtils.h"
 #include "NacosExceptions.h"
 #include "src/utils/ConfigParserUtils.h"
 #include "Properties.h"
-#include "utils/DirUtils.h"
-#include "utils/ParamUtils.h"
+#include "src/utils/DirUtils.h"
+#include "src/utils/ParamUtils.h"
 #include "src/config/IOUtils.h"
 #include "constant/ConfigConstant.h"
 #include "constant/PropertyKeyConst.h"

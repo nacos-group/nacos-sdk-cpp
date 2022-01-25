@@ -2,7 +2,7 @@
 #include <map>
 #include "src/server/ServerListManager.h"
 #include "src/config/NacosConfigService.h"
-#include "factory/NacosServiceFactory.h"
+#include "factory/NacosFactoryFactory.h"
 #include "ResourceGuard.h"
 #include "src/http/HTTPCli.h"
 #include "constant/PropertyKeyConst.h"
@@ -15,8 +15,8 @@ bool testServerListManager() {
     cout << "in function testServerListManager" << endl;
     Properties props;
     props[PropertyKeyConst::SERVER_ADDR] = "127.0.0.1:8848";
-    NacosServiceFactory *factory = new NacosServiceFactory(props);
-    ResourceGuard <NacosServiceFactory> _guardFactory(factory);
+    INacosServiceFactory *factory = NacosFactoryFactory::getNacosFactory(props);
+    ResourceGuard <INacosServiceFactory> _guardFactory(factory);
     ConfigService *n = factory->CreateConfigService();
     ResourceGuard <ConfigService> _serviceFactory(n);
 

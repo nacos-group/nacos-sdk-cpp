@@ -1,7 +1,7 @@
 #include <iostream>
 #include "src/thread/Thread.h"
 #include "src/utils/SequenceProvider.h"
-#include "utils/DirUtils.h"
+#include "src/utils/DirUtils.h"
 
 using namespace std;
 using namespace nacos;

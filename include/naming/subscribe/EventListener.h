@@ -8,7 +8,6 @@
 #include "NacosString.h"
 #include "thread/AtomicInt.h"
 #include "naming/ChangeAdvice.h"
-#include "DebugAssertion.h"
 
 namespace nacos{
 class EventListener {
@@ -32,7 +31,7 @@ public:
 
     virtual void receiveNamingInfo(const ServiceInfo &changeAdvice) = 0;
 
-    virtual ~EventListener() { NACOS_ASSERT(refCnt() == 0) };
+    virtual ~EventListener();
 };
 }//namespace nacos
 

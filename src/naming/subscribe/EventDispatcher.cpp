@@ -3,7 +3,7 @@
 //
 
 #include "EventDispatcher.h"
-#include "DebugAssertion.h"
+#include "src/debug/DebugAssertion.h"
 
 using namespace std;
 

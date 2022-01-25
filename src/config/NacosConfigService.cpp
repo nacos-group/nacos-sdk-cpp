@@ -2,6 +2,7 @@
 #include "src/security/SecurityManager.h"
 #include "src/log/Logger.h"
 #include "ConfigProxy.h"
+#include "src/utils/ParamUtils.h"
 
 using namespace std;
 

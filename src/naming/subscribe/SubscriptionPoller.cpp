@@ -1,6 +1,6 @@
 #include "SubscriptionPoller.h"
 #include "constant/ConfigConstant.h"
-#include "utils/NamingUtils.h"
+#include "src/utils/NamingUtils.h"
 #include "src/json/JSON.h"
 #include "HostReactor.h"
 

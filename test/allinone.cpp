@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdio.h>
-#include "DebugAssertion.h"
+#include "src/debug/DebugAssertion.h"
 #include "src/init/Init.h"
 #include "src/log/Logger.h"
 #include <list>
@@ -134,6 +134,8 @@ bool testSequenceProvider();
 
 bool testHMACSHA1();
 
+bool testSubscribeAlotOfServices();
+
 TestData disabledTestList[] =
 TEST_ITEM_START
 TEST_ITEM_END
@@ -205,6 +207,7 @@ TEST_ITEM_START
         TEST_ITEM("thread pool with concurrent add & atomic operation", testThreadPoolConcurrentWithAtomicCounter)
         TEST_ITEM("Test sequence provider", testSequenceProvider)
         TEST_ITEM("Test Message digest algorithm - HMACSHA1", testHMACSHA1)
+        TEST_ITEM("Test subscribe a lot of services, bugfix #101", testSubscribeAlotOfServices)
 TEST_ITEM_END
 
 int main() {

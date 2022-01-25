@@ -6,7 +6,7 @@
 #include "Thread.h"
 #include "Task.h"
 #include "NacosString.h"
-#include "thread/Mutex.h"
+#include "src/thread/Mutex.h"
 
 namespace nacos{
 class DummyTask : public Task {

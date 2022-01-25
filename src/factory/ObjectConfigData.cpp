@@ -8,9 +8,10 @@
 #include "src/naming/subscribe/HostReactor.h"
 #include "src/listen/ClientWorker.h"
 #include "src/security/SecurityManager.h"
-#include "utils/UuidUtils.h"
+#include "src/utils/UuidUtils.h"
 #include "src/utils/SequenceProvider.h"
 #include "src/config/ConfigProxy.h"
+#include "src/debug/DebugAssertion.h"
 
 namespace nacos{
 
