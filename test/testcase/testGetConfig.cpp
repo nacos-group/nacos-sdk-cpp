@@ -1,7 +1,7 @@
 #include <iostream>
 #include "factory/NacosFactoryFactory.h"
 #include "constant/PropertyKeyConst.h"
-#include "DebugAssertion.h"
+#include "src/debug/DebugAssertion.h"
 #include "ResourceGuard.h"
 #include "src/log/Logger.h"
 

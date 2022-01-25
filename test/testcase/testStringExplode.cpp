@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <list>
 #include "src/utils/ParamUtils.h"
-#include "DebugAssertion.h"
+#include "src/debug/DebugAssertion.h"
 #include "src/log/Logger.h"
 
 using namespace std;

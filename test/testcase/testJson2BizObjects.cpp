@@ -1,5 +1,5 @@
 #include <iostream>
-#include "DebugAssertion.h"
+#include "src/debug/DebugAssertion.h"
 #include "src/json/rapidjson/document.h"
 #include "src/json/rapidjson/writer.h"
 #include "src/json/rapidjson/stringbuffer.h"

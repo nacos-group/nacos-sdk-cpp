@@ -9,7 +9,7 @@
 #include "constant/ConfigConstant.h"
 #include "constant/UtilAndComs.h"
 #include "src/http/HTTPCli.h"
-#include "DebugAssertion.h"
+#include "src/debug/DebugAssertion.h"
 #include "src/log/Logger.h"
 #include "NacosString.h"
 #include "Properties.h"

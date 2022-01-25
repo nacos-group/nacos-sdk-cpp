@@ -11,6 +11,7 @@
 #include "src/utils/UuidUtils.h"
 #include "src/utils/SequenceProvider.h"
 #include "src/config/ConfigProxy.h"
+#include "src/debug/DebugAssertion.h"
 
 namespace nacos{
 

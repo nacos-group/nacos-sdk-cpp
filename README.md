@@ -8,7 +8,7 @@ Nacos-sdk-cpp for c++ client allows users to access Nacos service, it supports s
 
 
 [![Gitter](https://badges.gitter.im/alibaba/nacos.svg)](https://gitter.im/alibaba/nacos?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)   [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
-[![Gitter](https://travis-ci.org/alibaba/nacos.svg?branch=master)](https://travis-ci.org/alibaba/nacos)
+
 
 # Quick Examples
 ## Setup project
@@ -42,7 +42,6 @@ IntegratingIntoYourProject.cpp:
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
 #include "PropertyKeyConst.h"
-#include "DebugAssertion.h"
 #include "ResourceGuard.h"
 #include "NacosString.h"
 
@@ -73,7 +72,7 @@ int main() {
 
 ```
 
-`g++ IntegratingIntoYourProject.cpp -L. -lnacos-cli -Iinclude -o integrated.out`
+`g++ -I/usr/local/include/nacos/ IntegratingIntoYourProject.cpp -lnacos-cli -o integrated.out`
 
 Start a nacos on your localmachine listening on port 8848, and run `./integrated.out`
 
@@ -81,16 +80,11 @@ Then you'll see:
 
 `SuccessfullyIntegrated`
 
-You may come across the following problem:
-
-`error while loading shared libraries: libnacos-cli.so: cannot open shared object file: No such file or directory`
-
-**solution:**
-
-assume that your libnacos-cli.so resides in /usr/local/libnacos/
-`export LD_LIBRARY_PATH=/usr/local/libnacos/` (DON'T include the so file's name)
-
-or you can use ldconfig to add libnacos-cli.so to your lib path.
+## If you are using a static lib(.a):
+Assume that the file being compiled resides in the same directory as the .a library, please use the following command:
+`g++ -I/usr/local/include/nacos/ IntegratingIntoYourProject.cpp -lcurl -lz -L. -lnacos-cli-static -o integrated.out`
+-lcurl -lz Specifies the curl and lz library used by libnacos
+-L. -lnacos-cli-static links the static libnacos library resides in the same directory as IntegratingIntoYourProject.cpp
 
 ## Configuration
 

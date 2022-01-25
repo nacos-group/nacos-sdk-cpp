@@ -1,6 +1,6 @@
 #include <iostream>
 #include "NacosString.h"
-#include "DebugAssertion.h"
+#include "src/debug/DebugAssertion.h"
 
 using namespace std;
 using namespace nacos;

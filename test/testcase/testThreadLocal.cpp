@@ -1,8 +1,8 @@
 #include <iostream>
 #include "src/utils/UuidUtils.h"
 #include "src/thread/Thread.h"
-#include "thread/ThreadLocal.h"
-#include "DebugAssertion.h"
+#include "src/thread/ThreadLocal.h"
+#include "src/debug/DebugAssertion.h"
 #include "src/utils/RandomUtils.h"
 
 using namespace std;

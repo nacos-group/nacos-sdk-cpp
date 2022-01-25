@@ -5,7 +5,7 @@
 Nacos-sdk-cpp是nacos客戶端的C++版本，它支持服务发现和动态配置
 
 [![Gitter](https://badges.gitter.im/alibaba/nacos.svg)](https://gitter.im/alibaba/nacos?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)   [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
-[![Gitter](https://travis-ci.org/alibaba/nacos.svg?branch=master)](https://travis-ci.org/alibaba/nacos)
+
 
 # 快速开始
 ## 设置工程
@@ -37,7 +37,6 @@ IntegratingIntoYourProject.cpp:
 #include <iostream>
 #include "factory/NacosServiceFactory.h"
 #include "PropertyKeyConst.h"
-#include "DebugAssertion.h"
 #include "ResourceGuard.h"
 #include "NacosString.h"
 
@@ -68,7 +67,7 @@ int main() {
 
 ```
 
-`g++ IntegratingIntoYourProject.cpp -L. -lnacos-cli -Iinclude -o integrated.out`
+`g++ -I/usr/local/include/nacos/ IntegratingIntoYourProject.cpp -lnacos-cli -o integrated.out`
 
 在本机的8848端口启动一个nacos server, 并且运行 `./integrated.out`
 
@@ -76,16 +75,11 @@ int main() {
 
 `SuccessfullyIntegrated`
 
-你可能会遇到下述问题:
-
-`error while loading shared libraries: libnacos-cli.so: cannot open shared object file: No such file or directory`
-
-**解决方法:**
-
-假设你的 libnacos-cli.so 在如下目录 /usr/local/libnacos/
-`export LD_LIBRARY_PATH=/usr/local/libnacos/` (请勿包含lib文件的名字)
-
-你也可以通过ldconfig将库配置到libpath当中
+## 如果你是使用静态库(.a)链接的
+假设.a文件和待编译文件在同一目录, 执行下述命令:
+`g++ -I/usr/local/include/nacos/ IntegratingIntoYourProject.cpp -lcurl -lz -L. -lnacos-cli-static -o integrated.out`
+使用-lcurl -lz指定nacos客户端使用的curl和lz库
+使用-L. -lnacos-cli-static引用当前目录下的libnacos-cli-static.a
 
 ## 配置
 

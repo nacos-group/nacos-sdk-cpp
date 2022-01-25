@@ -8,6 +8,7 @@
 #include "src/json/JSON.h"
 #include "HostReactor.h"
 #include "zlib.h"
+#include "src/debug/DebugAssertion.h"
 
 #include <iostream>
 using namespace std;
