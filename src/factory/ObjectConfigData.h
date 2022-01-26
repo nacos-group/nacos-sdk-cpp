@@ -5,6 +5,7 @@
 #include "config/ConfigService.h"
 #include "NacosExceptions.h"
 #include "Compatibility.h"
+#include <stdint.h>
 
 namespace nacos{
 class HttpDelegate;
