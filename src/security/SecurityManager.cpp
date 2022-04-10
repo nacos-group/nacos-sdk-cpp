@@ -18,7 +18,7 @@ SecurityManager::SecurityManager(ObjectConfigData *objectConfigData) {
 }
 void SecurityManager::doLogin(const NacosString &serverAddr) NACOS_THROW(NacosException, NetworkException) {
     //TODO:refactor string constants
-    NacosString url = serverAddr + "/" + ConfigConstant::DEFAULT_CONTEXT_PATH + "/v1/auth/users/login";
+    NacosString url = serverAddr + "/" + _objectConfigData->_appConfigManager->getContextPath() + "/v1/auth/users/login";
     list <NacosString> headers;
     list <NacosString> paramValues;
 
@@ -62,8 +62,17 @@ void SecurityManager::login() NACOS_THROW (NacosException) {
             //for some cases, e.g.:invalid username/password,
             //we should throw exception directly since retry on another node will not correct this problem
             if (e.errorcode() == NacosException::INVALID_LOGIN_CREDENTIAL) {
+                /**
+                 * Here we don't need to keep log for it, because there are 3 situations where we will call this login() routine:
+                 * 1. Initialization stage of NamingService
+                 * 2. Initialization stage of ConfigService
+                 * 3. tokenRefreshThreadFunc's invocation of this routine to refresh the credentials
+                 * In case 1 and case 2, the program will crash, because these situations are considered as a config error of the program, so let it crash
+                 * In case 3, the log is printed by tokenRefreshThreadFunc to remind the dev-ops to correct the config
+                */
                 throw e;
             }
+            log_error("Unknown error while login to server, e:%d = %s\n", e.errorcode(), e.what());
             continue;
         }
         //login succeeded
@@ -116,8 +125,14 @@ void *SecurityManager::tokenRefreshThreadFunc(void *param) {
             thisObj->login();
         } catch (NacosException &e) {
             if (e.errorcode() == NacosException::INVALID_LOGIN_CREDENTIAL) {
-                log_error("Invalid credential!\n");
-                throw e;//Invalid login credential, let it crash
+                /**
+                 * invalid credential while the application is running, wait for a moment and retry
+                 * since the existing data in the nacos client is still usable for the application
+                 * we should keep the application alive for the Availability, but the Consistency, in this case, is NOT guaranteed
+                 * the error log reminds the dev-ops to check the config
+                 */
+                log_error("Invalid credential, please check your server settings!\n");
+                sleep(30);
             } else if (e.errorcode() == NacosException::ALL_SERVERS_TRIED_AND_FAILED) {
                 log_warn("Network down, sleep for 30 secs and retry\n");
                 sleep(30);//network down, wait for a moment
