@@ -74,11 +74,14 @@ NacosString NacosConfigService::getConfigInner
         result = _objectConfigData->_clientWorker->getServerConfig(tenant, dataId, group, timeoutMs);
     } catch (NacosException &e) {
         if (e.errorcode() == NacosException::NO_RIGHT) {
-            throw e;
+            log_error("Invalid credential, e: %d = %s\n", e.errorcode(), e.what());
         }
-
         const NacosString &clientName = _appConfigManager->get(PropertyKeyConst::CLIENT_NAME);
         result = _localSnapshotManager->getSnapshot(clientName, dataId, group, tenant);
+        if (e.errorcode() == NacosException::NO_RIGHT && NacosStringOps::isNullStr(result)) {
+            //permission denied and no failback, let user decide what to do
+            throw e;
+        }
     }
     return result;
 }

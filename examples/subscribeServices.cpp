@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Nacos.h"
+#include <stdio.h>
 
 using namespace std;
 using namespace nacos;
