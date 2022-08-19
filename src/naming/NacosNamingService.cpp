@@ -104,7 +104,7 @@ void NacosNamingService::registerInstance
         _objectConfigData->_beatReactor->addBeatInfo(NamingUtils::getGroupedName(serviceName, groupName), beatInfo);
     }
 
-    _objectConfigData->_serverProxy->registerService(NamingUtils::getGroupedName(serviceName, groupName), groupName, instance);
+    _objectConfigData->_serverProxy->registerService(serviceName, groupName, instance);
 }
 
 void NacosNamingService::deregisterInstance
