@@ -319,6 +319,8 @@ NacosString ClientWorker::checkListenedKeys() NACOS_THROW(NetworkException,Nacos
     paramValues.push_back(ConfigConstant::PROBE_MODIFY_REQUEST);
     paramValues.push_back(postData);
     log_debug("[ClientWorker]-checkListenedKeys:Assembled postData:%s\n", postData.c_str());
+    paramValues.push_back("tenant");
+    paramValues.push_back(_objectConfigData->_serverListManager->getNamespace());
 
     //Get the request url
     //TODO:move /listener to constant
