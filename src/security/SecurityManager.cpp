@@ -107,7 +107,11 @@ void SecurityManager::sleepWithRunStatusCheck(long _milliSecsToSleep) {
     long sleep_start_time = TimeUtils::getCurrentTimeInMs();
     long sleep_end_time = sleep_start_time + _milliSecsToSleep;
     while (_started) {
-        if (TimeUtils::getCurrentTimeInMs() >= sleep_end_time) {
+        if (sleep_end_time <= granularity * 1000) {
+            sleep(1);
+            break;
+        }
+        if (TimeUtils::getCurrentTimeInMs() >= (sleep_end_time  - granularity * 1000)) {
             break;
         }
         sleep(granularity);
