@@ -113,6 +113,10 @@ void ServerListManager::initAll() NACOS_THROW(NacosException) {
         if (NacosStringOps::isNullStr(getNamespace())) {
             addressServerUrl = endpoint + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
                                getContextPath() + "/" + getClusterName();
+            const NacosString& endpointQueryParams = getEndpointQueryParams();
+            if (NacosStringOps::isNullStr(endpointQueryParams)) {
+                addressServerUrl += ("?" + endpointQueryParams);
+            }
         } else {
             addressServerUrl = endpoint + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
                                getContextPath() + "/" + getClusterName() + "?namespace=" + getNamespace();

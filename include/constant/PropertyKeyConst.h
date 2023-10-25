@@ -14,6 +14,8 @@ public:
 
     static const NacosString NAMESPACE;
 
+    static const NacosString ENDPOINT_QUERY_PARAMS;
+
     static const NacosString ACCESS_KEY;
 
     static const NacosString SECRET_KEY;

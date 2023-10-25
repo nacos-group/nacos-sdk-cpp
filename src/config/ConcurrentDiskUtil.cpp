@@ -26,7 +26,7 @@ ConcurrentDiskUtil::getFileContent(const NacosString &file, const NacosString &c
     FILE *fp = fopen(file.c_str(), "rb");
     if (fp == NULL) {
         char errbuf[100];
-        sprintf(errbuf, "Failed to open file for read, errno: %d", errno);
+        snprintf(errbuf, sizeof(errbuf), "Failed to open file for read, errno: %d", errno);
         //TODO:add errorcode
         throw IOException(NacosException::UNABLE_TO_OPEN_FILE, errbuf);
     }
@@ -57,7 +57,7 @@ bool ConcurrentDiskUtil::writeFileContent
     FILE *fp = fopen(path.c_str(), "wb");
     if (fp == NULL) {
         char errbuf[100];
-        sprintf(errbuf, "Failed to open file for write, errno: %d", errno);
+        snprintf(errbuf, sizeof(errbuf), "Failed to open file for write, errno: %d", errno);
         //TODO:add errorcode
         throw IOException(NacosException::UNABLE_TO_OPEN_FILE, errbuf);
     }

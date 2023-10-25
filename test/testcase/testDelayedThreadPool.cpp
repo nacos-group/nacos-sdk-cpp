@@ -29,7 +29,7 @@ public:
         if (executor == NULL) {
             throw NacosException(NacosException::INVALID_CONFIG_PARAM, "no executor");
         }
-        printf(">>>>>>>>>>>>>>>>>>Task %s triggered, time =%ld (%ld), interval = %ld\n", getTaskName().c_str(), now_ms/1000, now_ms, interval_calc);
+        printf(">>>>>>>>>>>>>>>>>>Task %s triggered, time =%llu (%llu), interval = %llu\n", getTaskName().c_str(), now_ms/1000, now_ms, interval_calc);
 
         sleep(1);
     }

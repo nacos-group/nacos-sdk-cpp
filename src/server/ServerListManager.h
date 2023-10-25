@@ -59,6 +59,8 @@ public:
 
     inline NacosString getNamespace() const { return _objectConfigData->_appConfigManager->get(PropertyKeyConst::NAMESPACE); };
 
+    inline NacosString getEndpointQueryParams() const { return _objectConfigData->_appConfigManager->get(PropertyKeyConst::ENDPOINT_QUERY_PARAMS); }
+
     std::list <NacosServerInfo> __debug();//DO NOT use, may be changed without prior notification
 
     HttpDelegate *getHttpDelegate() const { return _objectConfigData->_httpDelegate; };
