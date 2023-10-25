@@ -9,7 +9,7 @@ const NacosString PropertyKeyConst::ENDPOINT_PORT = "endpointPort";
 
 const NacosString PropertyKeyConst::NAMESPACE = "namespace";
 
-const NacosString PropertyKeyConst::ENDPOINT_QUERY_PARAMS = "endpoint.query.params";
+const NacosString PropertyKeyConst::ENDPOINT_QUERY_PARAMS = "endpointQueryParams";
 
 const NacosString PropertyKeyConst::ACCESS_KEY = "accessKey";
 
