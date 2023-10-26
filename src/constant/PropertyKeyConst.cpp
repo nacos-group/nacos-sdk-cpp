@@ -15,11 +15,15 @@ const NacosString PropertyKeyConst::ACCESS_KEY = "accessKey";
 
 const NacosString PropertyKeyConst::SECRET_KEY = "secretKey";
 
+const NacosString PropertyKeyConst::APP_NAME = "appName";
+
 const NacosString PropertyKeyConst::RAM_ROLE_NAME = "ramRoleName";
 
 const NacosString PropertyKeyConst::SERVER_ADDR = "serverAddr";
 
 const NacosString PropertyKeyConst::CONTEXT_PATH = "nacos.server.contextpath";
+
+const NacosString PropertyKeyConst::ENDPOINT_CONTEXT_PATH = "endpointContextPath";
 
 const NacosString PropertyKeyConst::CLUSTER_NAME = "clusterName";
 

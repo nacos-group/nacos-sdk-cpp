@@ -20,11 +20,15 @@ public:
 
     static const NacosString SECRET_KEY;
 
+    static const NacosString APP_NAME;
+
     static const NacosString RAM_ROLE_NAME;
 
     static const NacosString SERVER_ADDR;
 
     static const NacosString CONTEXT_PATH;
+
+    static const NacosString ENDPOINT_CONTEXT_PATH;
 
     static const NacosString CLUSTER_NAME;
 
