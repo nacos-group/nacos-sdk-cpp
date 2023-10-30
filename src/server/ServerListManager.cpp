@@ -131,14 +131,14 @@ void ServerListManager::initAll() NACOS_THROW(NacosException) {
             }
         }
 
+        const NacosString& namespaceInfo = getNamespace();
+        if (!namespaceInfo.empty()) {
+            addressServerUrl += ("?namespace=" + namespaceInfo);
+        }
+
         const NacosString& endpointQueryParams = getEndpointQueryParams();
-        if (endpointQueryParams.empty()) {
-            const NacosString& namespaceInfo = getNamespace();
-            if (!namespaceInfo.empty()) {
-                addressServerUrl += ("?namespace=" + namespaceInfo);
-            }
-        } else {
-            addressServerUrl += ("?" + endpointQueryParams);
+        if (!endpointQueryParams.empty()) {
+            addressServerUrl += ((namespaceInfo.empty() ? "?" : "&") + endpointQueryParams);
         }
 
         log_debug("Assembled addressServerUrl:%s\n", addressServerUrl.c_str());
