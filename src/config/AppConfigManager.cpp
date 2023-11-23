@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include "src/log/Logger.h"
 #include "src/utils/ConfigParserUtils.h"
+#include "src/utils/Env.h"
 
 using namespace std;
 
@@ -49,7 +50,7 @@ void AppConfigManager::clearConfig() {
     appConfig.clear();
 }
 
-const NacosString &AppConfigManager::get(const NacosString &key) {
+const NacosString& AppConfigManager::get(const NacosString &key) {
     if (appConfig.count(key) == 0) {
         return NULLSTR;
     }
@@ -59,7 +60,13 @@ const NacosString &AppConfigManager::get(const NacosString &key) {
     {
         return NULLSTR;
     }
-    return appConfig[key];
+
+    Properties::iterator iter = appConfig.find(key);
+    if (iter == appConfig.end()) {
+        return NULLSTR;
+    }
+    
+    return iter->second;
 }
 
 void AppConfigManager::set(const NacosString &key, const NacosString &value) {
@@ -87,6 +94,15 @@ AppConfigManager::AppConfigManager(const NacosString &_configFile) {
     configFile = _configFile;
 }
 
+NacosString getAppNameFromEnv() {
+    const char* env = getEnv("APP_NAME");
+    if (env != NULL && std::char_traits<char>::length(env) > 0) {
+        return NacosString(env);
+    }
+
+    return NacosStringOps::nullstr;
+}
+
 void AppConfigManager::initDefaults() {
     appConfig.clear();
     //appConfig[PropertyKeyConst::NAMESPACE] = "public";
@@ -100,6 +116,11 @@ void AppConfigManager::initDefaults() {
     set(PropertyKeyConst::LOCAL_IP, NetUtils::getHostIp());
     set(PropertyKeyConst::UDP_RECEIVER_PORT, "30620");
 
+    NacosString appName = getAppNameFromEnv();
+    if (!NacosStringOps::isNullStr(appName)) {
+        set(PropertyKeyConst::APP_NAME, appName);
+    }
+    
     NacosString homedir = DirUtils::getHome();
 
     set(PropertyKeyConst::INSTANCE_ID_PREFIX, NetUtils::getHostName());

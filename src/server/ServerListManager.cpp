@@ -104,22 +104,44 @@ void ServerListManager::initAll() NACOS_THROW(NacosException) {
         }
 
         isFixed = false;
-        NacosString endpoint = getEndpoint();
+        const NacosString& endpoint = getEndpoint();
         NacosString endpoint_lc = ParamUtils::toLower(endpoint);
         //endpoint doesn't start with http or https prefix, consider it as http
-        if (!(endpoint_lc.find("http://") == 0) && !(endpoint_lc.find("https://") == 0)) {
-            endpoint = "http://" + endpoint;
+        if (endpoint_lc.find("http://") == NacosString::npos && endpoint_lc.find("https://") == NacosString::npos) {
+            endpoint_lc = "http://" + endpoint_lc;
         }
-        if (NacosStringOps::isNullStr(getNamespace())) {
-            addressServerUrl = endpoint + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
-                               getContextPath() + "/" + getClusterName();
-        } else {
-            addressServerUrl = endpoint + ":" + NacosStringOps::valueOf(getEndpointPort()) + "/" +
-                               getContextPath() + "/" + getClusterName() + "?namespace=" + getNamespace();
+        addressServerUrl = endpoint_lc + ":" + NacosStringOps::valueOf(getEndpointPort());
+        const NacosString& endpointContextPath = getEndpointContextPath();
+        const NacosString& contextPath = endpointContextPath.empty() ? getContextPath() : endpointContextPath;
+        if (!contextPath.empty()) {
+            if (contextPath[0] != '/') {
+                // not start by ’/‘
+                addressServerUrl += ("/" + contextPath);
+            } else {
+                addressServerUrl += contextPath;
+            }
+        }
+
+        const NacosString& clusterName = getClusterName();
+        if (!clusterName.empty()) {
+            if (clusterName[0] != '/') {
+                addressServerUrl += ("/" + clusterName);
+            } else {
+                addressServerUrl += clusterName;
+            }
+        }
+
+        const NacosString& namespaceInfo = getNamespace();
+        if (!namespaceInfo.empty()) {
+            addressServerUrl += ("?namespace=" + namespaceInfo);
+        }
+
+        const NacosString& endpointQueryParams = getEndpointQueryParams();
+        if (!endpointQueryParams.empty()) {
+            addressServerUrl += ((namespaceInfo.empty() ? "?" : "&") + endpointQueryParams);
         }
 
         log_debug("Assembled addressServerUrl:%s\n", addressServerUrl.c_str());
-
         serverList = pullServerList();
         start();
     }

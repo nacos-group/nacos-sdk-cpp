@@ -25,8 +25,8 @@ bool testPublishConfigWithHttpPrefix() {
     for (int i = 0; i < 50; i++) {
         char key_s[200];
         char val_s[200];
-        sprintf(key_s, "Key%d", i);
-        sprintf(val_s, "v__%d", i);
+        snprintf(key_s, sizeof(key_s), "Key%d", i);
+        snprintf(val_s, sizeof(val_s), "v__%d", i);
         NacosString ss = "";
 
         try {

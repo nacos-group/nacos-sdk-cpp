@@ -21,7 +21,7 @@ NacosString UuidUtils::generateUuid() {
     RandomUtils::getRandomBuffer(random_num, UUID_LEN_BYTES);
 
     int32_t *val_ptr = (int32_t *) random_num;
-    sprintf(str_buffer, "%08X%08X%08X%08X", val_ptr[0], val_ptr[1], val_ptr[2], val_ptr[3]);
+    snprintf(str_buffer, sizeof(str_buffer), "%08X%08X%08X%08X", val_ptr[0], val_ptr[1], val_ptr[2], val_ptr[3]);
 
     NacosString uuid = str_buffer;
     return uuid;
