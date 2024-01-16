@@ -4,6 +4,7 @@
 #include "constant/UtilAndComs.h"
 #include "src/utils/UuidUtils.h"
 #include "src/utils/ParamUtils.h"
+#include "src/utils/url.h"
 #include "src/utils/RandomUtils.h"
 #include "src/json/JSON.h"
 #include "src/http/HttpStatus.h"
@@ -151,13 +152,14 @@ NacosString NamingProxy::callServer
 
 NacosString NamingProxy::getDataToSign(const std::list <NacosString> &paramValues, NacosString &nowTimeMs) {
     const NacosString &serviceName = ParamUtils::findByKey(paramValues, NamingConstant::SERVICE_NAME);
+    const NacosString &groupName = ParamUtils::findByKey(paramValues, NamingConstant::GROUP_NAME);
 
     NacosString dataToSign = "";
-    if (!ParamUtils::isBlank(serviceName)) {
-        dataToSign = serviceName + "@@";
+    if ((!ParamUtils::isBlank(serviceName) && serviceName.find(NamingConstant::SPLITER) != std::string::npos) || ParamUtils::isBlank(groupName)) {
+        dataToSign = nowTimeMs + NamingConstant::SPLITER + serviceName;
+    } else {
+        dataToSign = nowTimeMs + NamingConstant::SPLITER + groupName + NamingConstant::SPLITER + serviceName;
     }
-
-    dataToSign += nowTimeMs;
     return dataToSign;
 }
 
@@ -198,7 +200,7 @@ NacosString NamingProxy::callServer
             ParamUtils::addKV(params, "data", dataToSign);
             ParamUtils::addKV(params, "ak", accessKey);
         } else {
-            requestUrl = requestUrl + "?signature=" + signature + "&data=" + dataToSign + "&ak=" + accessKey;
+            requestUrl = requestUrl + "?signature=" + urlencode(signature) + "&data=" + dataToSign + "&ak=" + accessKey;
         }
     }
 
