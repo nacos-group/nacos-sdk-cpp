@@ -151,13 +151,14 @@ NacosString NamingProxy::callServer
 
 NacosString NamingProxy::getDataToSign(const std::list <NacosString> &paramValues, NacosString &nowTimeMs) {
     const NacosString &serviceName = ParamUtils::findByKey(paramValues, NamingConstant::SERVICE_NAME);
+    const NacosString &groupName = ParamUtils::findByKey(paramValues, NamingConstant::GROUP_NAME);
 
     NacosString dataToSign = "";
-    if (!ParamUtils::isBlank(serviceName)) {
-        dataToSign = serviceName + "@@";
+    if ((!ParamUtils::isBlank(serviceName) && serviceName.find(NamingConstant::SPLITER) != std::string::npos) || ParamUtils::isBlank(groupName)) {
+        dataToSign = nowTimeMs + NamingConstant::SPLITER + serviceName;
+    } else {
+        dataToSign = nowTimeMs + NamingConstant::SPLITER + groupName + NamingConstant::SPLITER + serviceName;
     }
-
-    dataToSign += nowTimeMs;
     return dataToSign;
 }
 
@@ -198,6 +199,13 @@ NacosString NamingProxy::callServer
             ParamUtils::addKV(params, "data", dataToSign);
             ParamUtils::addKV(params, "ak", accessKey);
         } else {
+            size_t pos = 0;
+            NacosString from = "+";
+            NacosString to = "%2B";
+            while((pos = signature.find(from, pos)) != std::string::npos) {
+                signature.replace(pos,  from.size(), to);
+                pos += to.size();
+            }
             requestUrl = requestUrl + "?signature=" + signature + "&data=" + dataToSign + "&ak=" + accessKey;
         }
     }
