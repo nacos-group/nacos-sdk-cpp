@@ -302,7 +302,7 @@ HttpResult HTTPCli::httpPostInternal
     curl_easy_setopt(curlHandle, CURLOPT_URL, Url.c_str());
 
     curl_easy_setopt(curlHandle, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_easy_setopt(curlHandle, CURLOPT_COPYPOSTFIELDS, paramValues.c_str());
+    curl_easy_setopt(curlHandle, CURLOPT_POSTFIELDS, paramValues.c_str());
     curl_easy_setopt(curlHandle, CURLOPT_POSTFIELDSIZE, paramValues.size());
     //Setup common parameters
     HTTPBasicSettings(curlHandle);
