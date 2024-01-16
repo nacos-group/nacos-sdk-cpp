@@ -150,14 +150,18 @@ NacosString NamingProxy::callServer
 }
 
 NacosString NamingProxy::getDataToSign(const std::list <NacosString> &paramValues, NacosString &nowTimeMs) {
+    const NacosString &groupName = ParamUtils::findByKey(paramValues, NamingConstant::GROUP_NAME);
     const NacosString &serviceName = ParamUtils::findByKey(paramValues, NamingConstant::SERVICE_NAME);
 
-    NacosString dataToSign = "";
+    NacosString dataToSign = "" + nowTimeMs;
     if (!ParamUtils::isBlank(serviceName)) {
-        dataToSign = serviceName + "@@";
+        if (ParamUtils::contains(serviceName, "@@") || ParamUtils::isBlank(groupName)) {
+            dataToSign += "@@" + serviceName;
+        } else {
+            dataToSign += "@@" + groupName + "@@" + serviceName;
+        }
     }
 
-    dataToSign += nowTimeMs;
     return dataToSign;
 }
 
