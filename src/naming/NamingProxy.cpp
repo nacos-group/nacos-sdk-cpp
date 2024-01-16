@@ -4,6 +4,7 @@
 #include "constant/UtilAndComs.h"
 #include "src/utils/UuidUtils.h"
 #include "src/utils/ParamUtils.h"
+#include "src/utils/url.h"
 #include "src/utils/RandomUtils.h"
 #include "src/json/JSON.h"
 #include "src/http/HttpStatus.h"
@@ -199,14 +200,7 @@ NacosString NamingProxy::callServer
             ParamUtils::addKV(params, "data", dataToSign);
             ParamUtils::addKV(params, "ak", accessKey);
         } else {
-            size_t pos = 0;
-            NacosString from = "+";
-            NacosString to = "%2B";
-            while((pos = signature.find(from, pos)) != std::string::npos) {
-                signature.replace(pos,  from.size(), to);
-                pos += to.size();
-            }
-            requestUrl = requestUrl + "?signature=" + signature + "&data=" + dataToSign + "&ak=" + accessKey;
+            requestUrl = requestUrl + "?signature=" + urlencode(signature) + "&data=" + dataToSign + "&ak=" + accessKey;
         }
     }
 
