@@ -282,7 +282,8 @@ long NamingProxy::sendBeat(BeatInfo &beatInfo) {
         //JSONObject jsonObject = JSON.parseObject(result);
 
         if (!isNull(result)) {
-            return JSON::getLong(result, "clientBeatInterval");
+            // Default clientBeatInterval 5s 
+            return 5000;
         }
     }
     catch (NacosException &e) {
