@@ -70,6 +70,7 @@ void SecurityManager::login() NACOS_THROW (NacosException) {
                  * In case 1 and case 2, the program will crash, because these situations are considered as a config error of the program, so let it crash
                  * In case 3, the log is printed by tokenRefreshThreadFunc to remind the dev-ops to correct the config
                 */
+                log_error("error INVALID_LOGIN_CREDENTIAL exit!");
                 throw e;
             }
             log_error("Unknown error while login to server, e:%d = %s\n", e.errorcode(), e.what());
