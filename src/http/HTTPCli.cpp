@@ -79,6 +79,7 @@ void HTTPCli::HTTPBasicSettings(CURL *curlHandle) {
 
     /* interval time between keep-alive probes: 60 seconds */
     curl_easy_setopt(curlHandle, CURLOPT_TCP_KEEPINTVL, 60L);
+    curl_easy_setopt(curlHandle, CURLOPT_NOSIGNAL, 1);
 
 }
 
@@ -179,6 +180,7 @@ HttpResult HTTPCli::httpGetInternal
     curl_easy_reset(curlHandle);
     /* specify URL to get */
     curl_easy_setopt(curlHandle, CURLOPT_URL, Url.c_str());
+    curl_easy_setopt(curlHandle, CURLOPT_NOSIGNAL, 1);
 
     //Setup common parameters
     HTTPBasicSettings(curlHandle);
@@ -300,6 +302,7 @@ HttpResult HTTPCli::httpPostInternal
     curl_easy_reset(curlHandle);
     /* specify URL to get */
     curl_easy_setopt(curlHandle, CURLOPT_URL, Url.c_str());
+    curl_easy_setopt(curlHandle, CURLOPT_NOSIGNAL, 1);
 
     curl_easy_setopt(curlHandle, CURLOPT_CUSTOMREQUEST, "POST");
     curl_easy_setopt(curlHandle, CURLOPT_POSTFIELDS, paramValues.c_str());
@@ -430,6 +433,7 @@ HttpResult HTTPCli::httpPutInternal
     curl_easy_setopt(curlHandle, CURLOPT_CUSTOMREQUEST, "PUT");
     curl_easy_setopt(curlHandle, CURLOPT_POSTFIELDS, paramValues.c_str());
     curl_easy_setopt(curlHandle, CURLOPT_POSTFIELDSIZE, paramValues.size());
+    curl_easy_setopt(curlHandle, CURLOPT_NOSIGNAL, 1);
     //Setup common parameters
     HTTPBasicSettings(curlHandle);
 
@@ -540,6 +544,7 @@ HttpResult HTTPCli::httpDeleteInternal
 
     //clear-ups
     curl_easy_reset(curlHandle);
+    curl_easy_setopt(curlHandle, CURLOPT_NOSIGNAL, 1);
     /* specify URL to get */
     curl_easy_setopt(curlHandle, CURLOPT_URL, Url.c_str());
 
