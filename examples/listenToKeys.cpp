@@ -36,6 +36,8 @@ int main() {
     getchar();
     cout << "remove listener" << endl;
     n->removeListener("dqid", NULLSTR, theListener);//Cancel listening
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
     getchar();
 
     return 0;
