@@ -107,11 +107,11 @@ NamingService *NacosServiceFactory::CreateNamingService() NACOS_THROW(NacosExcep
     EventDispatcher *eventDispatcher = new EventDispatcher();
     objectConfigData->_eventDispatcher = eventDispatcher;
 
-    SubscriptionPoller *subscriptionPoller = new SubscriptionPoller(objectConfigData);
-    objectConfigData->_subscriptionPoller = subscriptionPoller;
-
     UdpNamingServiceListener *udpNamingServiceListener = new UdpNamingServiceListener(objectConfigData);
     objectConfigData->_udpNamingServiceListener = udpNamingServiceListener;
+
+    SubscriptionPoller *subscriptionPoller = new SubscriptionPoller(objectConfigData);
+    objectConfigData->_subscriptionPoller = subscriptionPoller;
 
     HostReactor *hostReactor = new HostReactor(objectConfigData);
     objectConfigData->_hostReactor = hostReactor;

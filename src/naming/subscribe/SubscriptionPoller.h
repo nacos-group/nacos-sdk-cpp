@@ -10,6 +10,7 @@
 #include "src/naming/NamingProxy.h"
 #include "EventDispatcher.h"
 #include "src/factory/ObjectConfigData.h"
+#include <pthread.h>
 
 namespace nacos{
 struct PollingData
@@ -28,6 +29,9 @@ private:
     int _udpPort;//udp receiver port
     volatile bool _started;
     ObjectConfigData *_objectConfigData;
+
+    pthread_cond_t _pollCond;
+    pthread_mutex_t _pollMutex;
 
     SubscriptionPoller();
 

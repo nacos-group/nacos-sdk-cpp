@@ -35,7 +35,7 @@ private:
     char uncompressedData[UDP_MSS * 10];
     Thread *_listenerThread;
 
-    void initializeUdpListener() NACOS_THROW(NacosException);
+    int initializeUdpListener() NACOS_THROW(NacosException);
     static void *listenerThreadFunc(void *param);
     bool unGzip(char *inBuffer, size_t inSize);
 public:

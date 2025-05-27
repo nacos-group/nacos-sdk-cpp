@@ -14,6 +14,9 @@ SubscriptionPoller::SubscriptionPoller(ObjectConfigData *objectConfigData)
     _pollingInterval = atoi(_objectConfigData->_appConfigManager->get(PropertyKeyConst::SUBSCRIPTION_POLL_INTERVAL).c_str());
     _udpPort = atoi(_objectConfigData->_appConfigManager->get(PropertyKeyConst::UDP_RECEIVER_PORT).c_str());
     _started = false;
+    
+    pthread_mutex_init(&_pollMutex, NULL);
+    pthread_cond_init(&_pollCond, NULL);
 }
 
 SubscriptionPoller::~SubscriptionPoller()
@@ -26,6 +29,9 @@ SubscriptionPoller::~SubscriptionPoller()
         delete _pollingThread;
         _pollingThread = NULL;
     }
+    
+    pthread_mutex_destroy(&_pollMutex);
+    pthread_cond_destroy(&_pollCond);
 }
 
 bool SubscriptionPoller::addPollItem(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters)
@@ -37,14 +43,23 @@ bool SubscriptionPoller::addPollItem(const NacosString &serviceName, const Nacos
     NacosString name = NamingUtils::getGroupedName(serviceName, groupName);
     NacosString key = ServiceInfo::getKey(name, clusters);
 
+    bool added = false;
     {
         WriteGuard __writeGuard(rwLock);
         if (pollingList.count(key) > 0) {
             return false;
         }
         pollingList[key] = pd;
-        return true;
+        added = true;
     }
+
+    if (added) {
+        pthread_mutex_lock(&_pollMutex);
+        pthread_cond_signal(&_pollCond);
+        pthread_mutex_unlock(&_pollMutex);
+    }
+    
+    return added;
 }
 
 bool SubscriptionPoller::removePollItem(const NacosString &serviceName, const NacosString &groupName, const NacosString &clusters)
@@ -95,8 +110,22 @@ void *SubscriptionPoller::pollingThreadFunc(void *parm)
             log_debug("Copied polling list, size = %d\n", copiedList.size());
         }
         if (copiedList.empty()) {
-            log_debug("PollingList is empty, hibernating...\n", copiedList.size());
-            sleep(thisObj->_pollingInterval / 1000);
+            log_debug("PollingList is empty, waiting for new items...\n");
+            pthread_mutex_lock(&thisObj->_pollMutex);
+
+            {
+                ReadGuard __readGuard(thisObj->rwLock);
+                if (!thisObj->pollingList.empty()) {
+                    pthread_mutex_unlock(&thisObj->_pollMutex);
+                    continue;
+                }
+            }
+
+            struct timespec ts;
+            clock_gettime(CLOCK_REALTIME, &ts);
+            ts.tv_sec += thisObj->_pollingInterval / 1000;
+            pthread_cond_timedwait(&thisObj->_pollCond, &thisObj->_pollMutex, &ts);
+            pthread_mutex_unlock(&thisObj->_pollMutex);
             continue;
         }
 
@@ -130,7 +159,21 @@ void *SubscriptionPoller::pollingThreadFunc(void *parm)
         }
 
         log_debug("Polling process finished, hibernating...\n");
-        sleep(thisObj->_pollingInterval / 1000);
+        pthread_mutex_lock(&thisObj->_pollMutex);
+
+        {
+            ReadGuard __readGuard(thisObj->rwLock);
+            if (thisObj->pollingList.size() != copiedList.size()) {
+                pthread_mutex_unlock(&thisObj->_pollMutex);
+                continue;
+            }
+        }
+
+        struct timespec ts;
+        clock_gettime(CLOCK_REALTIME, &ts);
+        ts.tv_sec += thisObj->_pollingInterval / 1000;
+        pthread_cond_timedwait(&thisObj->_pollCond, &thisObj->_pollMutex, &ts);
+        pthread_mutex_unlock(&thisObj->_pollMutex);
     }
     log_debug("Polling thread for NamingService exited normally.\n");
     return NULL;

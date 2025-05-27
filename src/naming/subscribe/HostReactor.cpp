@@ -4,6 +4,7 @@
 
 #include "HostReactor.h"
 #include "src/json/JSON.h"
+#include "src/log/Logger.h"
 #include "src/utils/NamingUtils.h"
 #include "src/naming/subscribe/EventDispatcher.h"
 
@@ -43,6 +44,7 @@ void HostReactor::processServiceJson(const NacosString &json) {
     if (newServiceInfo) {
         changeAdvice.added = true;
         changeAdvice.newServiceInfo = serviceInfo;
+        log_debug("processServiceJson_key: %s\n", key.c_str());
         _objectConfigData->_eventDispatcher->notifyDirectly(changeAdvice);
     } else {//service info is updated
         ChangeAdvice::compareChange(oldServiceInfo, serviceInfo, changeAdvice);

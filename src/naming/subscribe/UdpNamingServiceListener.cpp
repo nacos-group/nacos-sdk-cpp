@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <netinet/in.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -15,7 +16,7 @@ using namespace std;
 
 namespace nacos {
 
-void UdpNamingServiceListener::initializeUdpListener() NACOS_THROW(NacosException) {
+int UdpNamingServiceListener::initializeUdpListener() NACOS_THROW(NacosException) {
     log_debug("in thread UdpNamingServiceListener::initializeUdpListener()\n");
     // Creating socket file descriptor
     if ( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) {
@@ -27,7 +28,7 @@ void UdpNamingServiceListener::initializeUdpListener() NACOS_THROW(NacosExceptio
     // Filling client information
     cliaddr.sin_family = AF_INET; // IPv4
     cliaddr.sin_addr.s_addr = INADDR_ANY;
-    cliaddr.sin_port = htons(udpReceiverPort);
+    cliaddr.sin_port = htons(0);
     log_debug("udp receiver port = %d\n", cliaddr.sin_port);
 
     // Bind the socket with the server address
@@ -37,7 +38,17 @@ void UdpNamingServiceListener::initializeUdpListener() NACOS_THROW(NacosExceptio
         throw NacosException(NacosException::UNABLE_TO_CREATE_SOCKET, "Unable to bind");
     }
 
+    // 获取实际绑定的端口号
+    struct sockaddr_in bound_addr;
+    socklen_t addr_len = sizeof(bound_addr);
+    if (getsockname(sockfd, (struct sockaddr*)&bound_addr, &addr_len) < 0) {
+        perror("getsockname 失败");
+        close(sockfd);
+        exit(EXIT_FAILURE);
+    }
+
     log_debug("socket bound\n");
+    return ntohs(bound_addr.sin_port);
 }
 
 bool UdpNamingServiceListener::unGzip(char *inBuffer, size_t inSize) {
@@ -85,7 +96,7 @@ bool UdpNamingServiceListener::unGzip(char *inBuffer, size_t inSize) {
 void *UdpNamingServiceListener::listenerThreadFunc(void *param) {
     UdpNamingServiceListener *thisObj = (UdpNamingServiceListener*)param;
     log_debug("in thread UdpNamingServiceListener::listenerThreadFunc()\n");
-    thisObj->initializeUdpListener();
+    // thisObj->initializeUdpListener();
     while (thisObj->_started) {
         int ret;//also data_len
 
@@ -158,7 +169,9 @@ UdpNamingServiceListener::UdpNamingServiceListener(ObjectConfigData *objectConfi
     _listenerThread = NULL;
     _started = false;
     _objectConfigData = objectConfigData;
-    udpReceiverPort = atoi(_objectConfigData->_appConfigManager->get(PropertyKeyConst::UDP_RECEIVER_PORT).c_str());
+    int udp_port = initializeUdpListener();
+    // udpReceiverPort = atoi(_objectConfigData->_appConfigManager->get(PropertyKeyConst::UDP_RECEIVER_PORT).c_str());
+    objectConfigData->_appConfigManager->set(PropertyKeyConst::UDP_RECEIVER_PORT, NacosStringOps::valueOf(udp_port));
     log_debug("udpReceiverPort is %d\n", udpReceiverPort);
     _listenerThread = new Thread(objectConfigData->name + "UDPListener", listenerThreadFunc, (void*)this);
 }
