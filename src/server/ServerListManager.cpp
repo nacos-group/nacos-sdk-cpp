@@ -207,9 +207,14 @@ list <NacosServerInfo> ServerListManager::pullServerList() NACOS_THROW(NacosExce
         list<NacosString> explodedServerList;
         ParamUtils::Explode(explodedServerList, serverRes.content, '\n');
         list <NacosServerInfo> serversPulled;
+        log_debug("getServerListFromServer: %s\n", serverRes.content.c_str());
 
         for (list<NacosString>::const_iterator it = explodedServerList.begin();
                 it != explodedServerList.end(); it++) {
+            if (it->empty())
+            {
+                continue;
+            }
             NacosServerInfo curServer;
             size_t pos = it->find(":");
             if (pos == std::string::npos) {
