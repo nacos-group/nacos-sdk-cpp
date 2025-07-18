@@ -126,6 +126,12 @@ void ObjectConfigData::destroyConfigService() {
         delete _configProxy;
         _configProxy = NULL;
     }
+
+    if (_localSnapshotManager != NULL) {
+        delete _localSnapshotManager;
+        _localSnapshotManager = NULL;
+    }
+
 }
 
 void ObjectConfigData::destroyNamingService() {
