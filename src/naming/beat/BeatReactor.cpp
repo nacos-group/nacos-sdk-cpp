@@ -117,6 +117,12 @@ bool BeatReactor::removeBeatInfo(const NacosString &serviceName, const NacosStri
         beatTaskToRemove->setScheduled(false);
         _beatInfoList.erase(beatKey);
     }
+
+    if (beatTaskToRemove) {
+        delete beatTaskToRemove;
+        beatTaskToRemove = NULL;
+    }
+
     //TODO:MetricsMonitor.getDom2BeatSizeMonitor().set(dom2Beat.size());
 
     return true;
